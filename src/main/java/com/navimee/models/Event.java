@@ -1,4 +1,4 @@
-package com.models;
+package com.navimee.models;
 
 public class Event {
 

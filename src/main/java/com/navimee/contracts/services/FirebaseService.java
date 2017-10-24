@@ -1,4 +1,4 @@
-package com.contracts.services;
+package com.navimee.contracts.services;
 
 public interface FirebaseService {
      void startFirebaseListener();

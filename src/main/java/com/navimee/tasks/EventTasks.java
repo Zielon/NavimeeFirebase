@@ -1,6 +1,6 @@
 package com.navimee.tasks;
 
-import com.contracts.services.FirebaseService;
+import com.navimee.contracts.services.FirebaseService;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

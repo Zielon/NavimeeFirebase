@@ -1,6 +1,6 @@
-package com.data;
+package com.navimee.data;
 
-import com.contracts.repositories.FlightstatsRepository;
+import com.navimee.contracts.repositories.FlightstatsRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository

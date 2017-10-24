@@ -1,4 +1,4 @@
-package com.contracts.repositories;
+package com.navimee.contracts.repositories;
 
 public interface FlightstatsRepository {
 }

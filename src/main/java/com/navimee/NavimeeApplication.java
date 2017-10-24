@@ -1,6 +1,6 @@
 package com.navimee;
 
-import com.contracts.services.FirebaseService;
+import com.navimee.contracts.services.FirebaseService;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

@@ -1,7 +1,7 @@
-package com.services;
+package com.navimee.services;
 
-import com.contracts.services.FirebaseService;
-import com.models.Event;
+import com.navimee.contracts.services.FirebaseService;
+import com.navimee.models.Event;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;

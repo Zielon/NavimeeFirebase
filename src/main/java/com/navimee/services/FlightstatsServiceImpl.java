@@ -1,6 +1,6 @@
-package com.services;
+package com.navimee.services;
 
-import com.contracts.services.FlightstatsService;
+import com.navimee.contracts.services.FlightstatsService;
 import org.springframework.stereotype.Service;
 
 @Service

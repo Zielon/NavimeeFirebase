@@ -1,6 +1,6 @@
-package com.data;
+package com.navimee.data;
 
-import com.contracts.repositories.FacebookRepository;
+import com.navimee.contracts.repositories.FacebookRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository

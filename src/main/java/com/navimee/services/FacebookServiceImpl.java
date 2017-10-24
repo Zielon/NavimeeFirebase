@@ -1,6 +1,6 @@
-package com.services;
+package com.navimee.services;
 
-import com.contracts.services.FacebookService;
+import com.navimee.contracts.services.FacebookService;
 import org.springframework.stereotype.Service;
 
 @Service
