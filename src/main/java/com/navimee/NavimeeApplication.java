@@ -1,7 +1,7 @@
-package com.navimee.navimee;
+package com.navimee;
 
-import com.navimee.navimee.service.FirebaseService;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.contracts.services.FirebaseService;
+
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.web.support.SpringBootServletInitializer;
@@ -16,10 +16,6 @@ public class NavimeeApplication extends SpringBootServletInitializer {
 
 		ConfigurableApplicationContext context = SpringApplication.run(NavimeeApplication.class, args);
 
-         /*
-            TODO: Initialize firebase service
-         */
 		context.getBean(FirebaseService.class).startFirebaseListener();
-
 	}
 }

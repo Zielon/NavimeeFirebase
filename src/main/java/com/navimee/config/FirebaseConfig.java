@@ -1,4 +1,4 @@
-package com.navimee.navimee.config;
+package com.navimee.config;
 
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
@@ -11,14 +11,9 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.Resource;
 
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 
-
-/**
- * Created by Wojtek on 2017-10-23.
- */
 @Configuration
 public class FirebaseConfig {
 

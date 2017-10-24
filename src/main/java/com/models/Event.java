@@ -1,8 +1,5 @@
-package com.navimee.navimee.model;
+package com.models;
 
-/**
- * Created by Wojtek on 2017-10-23.
- */
 public class Event {
 
     private Integer id;
@@ -12,7 +9,6 @@ public class Event {
 
     public Event() {
     }
-
 
     public Event(Integer id, String text, String name, String photoUrl) {
         this.id = id;

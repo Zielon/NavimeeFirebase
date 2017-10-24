@@ -1,10 +1,12 @@
-package com.navimee.navimee.service;
+package com.services;
+
+import com.contracts.services.FirebaseService;
+import com.models.Event;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
-import com.navimee.navimee.model.Event;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -13,17 +15,12 @@ import org.springframework.stereotype.Service;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * Created by Wojtek on 2017-10-23.
- */
 @Service
 public class FirebaseServiceImpl implements FirebaseService {
 
     @Autowired
     @Qualifier("main")
     DatabaseReference mainDatabaseReference;
-
-
 
     @Value("${firebase.path}")
     private String chatPath;
