@@ -1,10 +1,11 @@
-package com.navimee.config;
+package com.navimee.configs;
 
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
 import com.google.firebase.auth.FirebaseCredentials;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.navimee.FirebaseConfiguration;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -15,10 +16,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 
 @Configuration
-public class FirebaseConfig {
-
-    @Value("${firebase.path}")
-    private String chatPath;
+public class DependencyConfig {
 
     @Value(value = "classpath:google-services.json")
     private Resource gservicesConfig;
@@ -39,7 +37,12 @@ public class FirebaseConfig {
     }
 
     @Bean
-    @Qualifier("main")
+    FirebaseConfiguration providerFirebaseConfiguration() throws IOException {
+        return new FirebaseConfiguration(gservicesConfig);
+    }
+
+    @Bean
+    @Qualifier("dbContext")
     public DatabaseReference provideDatabaseReference(FirebaseApp firebaseApp) {
         FirebaseDatabase
                 .getInstance(firebaseApp)
@@ -48,5 +51,4 @@ public class FirebaseConfig {
                 .getInstance(firebaseApp)
                 .getReference();
     }
-
 }
