@@ -26,7 +26,7 @@ public class HttpClientImpl implements HttpClient {
     FirebaseConfiguration firebaseConfiguration;
 
     @Override
-    public <T> List<T> GetAsync(Class<T> type, String child) throws IOException, UnirestException {
+    public <T> List<T> Get(Class<T> type, String child) throws IOException, UnirestException {
 
         JsonNode json = Unirest.get(String.format("%s/{child}{end}", databaseUrl))
                 .header("accept", "application/json")

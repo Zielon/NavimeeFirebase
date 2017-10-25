@@ -34,12 +34,12 @@ public class NavimeeRepositoryImpl implements NavimeeRepository {
 
     @Override
     public List<City> getCities() throws IOException, UnirestException {
-        return httpClient.GetAsync(City.class, citiesPath);
+        return httpClient.Get(City.class, citiesPath);
     }
 
     @Override
     public List<Coordinate> getCoordinates() throws IOException, UnirestException{
-        return httpClient.GetAsync(Coordinate.class, coordinatesPath);
+        return httpClient.Get(Coordinate.class, coordinatesPath);
     }
 
     @Override
