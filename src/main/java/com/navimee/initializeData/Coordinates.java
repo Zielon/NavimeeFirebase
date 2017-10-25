@@ -1,4 +1,4 @@
-package com.navimee.firebaseInitData;
+package com.navimee.initializeData;
 
 import com.navimee.entities.Coordinate;
 

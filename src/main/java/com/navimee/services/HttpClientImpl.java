@@ -1,15 +1,19 @@
 package com.navimee.services;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mashape.unirest.http.JsonNode;
 import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
 import com.navimee.FirebaseConfiguration;
 import com.navimee.contracts.services.HttpClient;
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -22,7 +26,7 @@ public class HttpClientImpl implements HttpClient {
     FirebaseConfiguration firebaseConfiguration;
 
     @Override
-    public <T> List<T> GetAsync(String child) throws IOException, UnirestException {
+    public <T> List<T> GetAsync(Class<T> type, String child) throws IOException, UnirestException {
 
         JsonNode json = Unirest.get(String.format("%s/{child}{end}", databaseUrl))
                 .header("accept", "application/json")
@@ -31,6 +35,14 @@ public class HttpClientImpl implements HttpClient {
                 .queryString("access_token", firebaseConfiguration.GetAccessToken())
                 .asJson().getBody();
 
-        return null;
+        ObjectMapper mapper = new ObjectMapper();
+        JSONObject object = json.getObject();
+        List<T> list = new ArrayList<>();
+        for(Object obj : object.keySet()){
+            String key = obj.toString();
+            T mapped = mapper.readValue(object.get(key).toString(), type);
+            list.add(mapped);
+        }
+        return list;
     }
 }

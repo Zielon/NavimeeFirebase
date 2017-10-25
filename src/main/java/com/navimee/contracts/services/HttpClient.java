@@ -6,5 +6,5 @@ import java.io.IOException;
 import java.util.List;
 
 public interface HttpClient {
-    <T> List<T> GetAsync(String uri) throws IOException, UnirestException;
+    <T> List<T> GetAsync(Class<T> type, String uri) throws IOException, UnirestException;
 }

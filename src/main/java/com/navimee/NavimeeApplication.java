@@ -1,6 +1,7 @@
 package com.navimee;
 
 import com.navimee.contracts.repositories.NavimeeRepository;
+import com.navimee.entities.City;
 import com.navimee.entities.Coordinate;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -22,7 +23,9 @@ public class NavimeeApplication extends SpringBootServletInitializer {
 		navimeeRepository.AddCoordinates();
 		navimeeRepository.AddCities();
 
+		List<City> s = navimeeRepository.getCities();
 		List<Coordinate> l = navimeeRepository.getCoordinates();
-		List<String> s = navimeeRepository.getCities();
+
+		System.out.println("End");
 	}
 }

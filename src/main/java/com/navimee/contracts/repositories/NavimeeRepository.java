@@ -1,15 +1,15 @@
 package com.navimee.contracts.repositories;
 
 import com.mashape.unirest.http.exceptions.UnirestException;
+import com.navimee.entities.City;
 import com.navimee.entities.Coordinate;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 
 public interface NavimeeRepository {
-    List<String> getCities();
-    List<Coordinate> getCoordinates() throws IOException, UnirestException, ExecutionException, InterruptedException;
+    List<City> getCities() throws IOException, UnirestException;
+    List<Coordinate> getCoordinates() throws IOException, UnirestException;
     void AddCoordinates();
     void AddCities();
 }

@@ -8,8 +8,7 @@ public class Coordinate {
     private Double longitude;
     private String street;
 
-    public Coordinate() {
-    }
+    public Coordinate() {}
 
     public Coordinate(String city, String country, Double latitude, Double longitude, String street) {
         this.city = city;
