@@ -1,5 +1,6 @@
 {
   "clientId": "370194840083371",
   "clientSecret": "1e0c9db58af703479e3476be3e58cf15",
-  "accessToken": "370194840083371|R-jM021k4n6dj1lB0oVsuYF4ZYM"
+  "accessToken": "370194840083371|R-jM021k4n6dj1lB0oVsuYF4ZYM",
+  "apiUrl" : "https://graph.facebook.com/v2.10"
 }

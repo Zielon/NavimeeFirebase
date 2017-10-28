@@ -3,13 +3,19 @@ package com.navimee.queries;
 import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.JsonNode;
 import com.mashape.unirest.http.Unirest;
+import com.mashape.unirest.http.exceptions.UnirestException;
+import com.navimee.configuration.Configuration;
 import com.navimee.models.Place;
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.AsyncResult;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
+import java.util.stream.Collectors;
 
 public class PlacesQuery extends Query<Place> {
 
@@ -23,17 +29,17 @@ public class PlacesQuery extends Query<Place> {
 
     @Async
     @Override
-    public Future<List<Place>> get(String accessToken) {
-
-        Future<HttpResponse<JsonNode>> response = Unirest.get("https://graph.facebook.com/v2.10/search")
-                .header("accept", "application/json")
-                .queryString("q", "*")
-                .queryString("type", "place")
-                .queryString("center", String.format("%f,%f", lat,lon))
-                .queryString("fields", "name,category,location")
-                .queryString("limit", "100")
-                .queryString("access_token", accessToken)
-                .asJsonAsync();
+    public Future<List<Place>> get(Configuration configuration) {
+        Future<HttpResponse<JsonNode>> response =
+                Unirest.get(configuration.getJSONObject().getString("apiUrl") + "/search")
+                    .queryString("q", "*")
+                    .queryString("type", "place")
+                    .queryString("center", lat + "," + lon)
+                    .queryString("distance", "3000")
+                    .queryString("fields", "name,category,location")
+                    .queryString("limit", "100")
+                    .queryString("access_token", configuration.getAccessToken())
+                    .asJsonAsync();
 
         try {
             return new AsyncResult<>(map(response.get().getBody().getObject(), Place.class));
@@ -44,5 +50,38 @@ public class PlacesQuery extends Query<Place> {
         }
 
         return null;
+    }
+
+    @Override
+    protected List<Place> map(JSONObject object, Class<Place> type) {
+        List<Place> list = new ArrayList<>();
+        list.addAll(convertNode(object.getJSONArray("data")));
+        JSONObject paging = object.getJSONObject("paging");
+        String nextUrl = paging.getString("next");
+        while (list.size() < 10000){
+            try {
+                JSONObject nextObj = Unirest.get(nextUrl).asJson().getBody().getObject();
+                list.addAll(convertNode(nextObj.getJSONArray("data")));
+                nextUrl = object.getJSONObject("paging").getString("next");
+                if(nextUrl != null || nextUrl != "") break;
+            } catch (UnirestException e) {
+                e.printStackTrace();
+            }
+        }
+        return list.stream().distinct().collect(Collectors.toList());
+    }
+
+    private List<Place> convertNode(JSONArray array){
+        List<Place> list = new ArrayList<>();
+        for(int n = 0; n < array.length(); n++){
+            JSONObject placeJson = array.getJSONObject(n);
+            String id = placeJson.getString("id");
+            String name = placeJson.getString("name");
+            Place place = new Place();
+            place.id = id;
+            place.name = name;
+            list.add(place);
+        }
+        return list;
     }
 }

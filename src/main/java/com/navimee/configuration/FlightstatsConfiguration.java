@@ -21,7 +21,7 @@ public class FlightstatsConfiguration extends Configuration {
     }
 
     @Override
-    public JSONObject getConfiguration() {
+    public JSONObject getJSONObject() {
         return config;
     }
 }

@@ -17,7 +17,7 @@ public class FirebaseConfiguration extends Configuration {
         config = transformConfig(firebaseConfig);
     }
 
-    public JSONObject getConfiguration(){
+    public JSONObject getJSONObject(){
         return config;
     }
 
