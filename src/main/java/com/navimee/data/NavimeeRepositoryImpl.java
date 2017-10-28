@@ -33,13 +33,31 @@ public class NavimeeRepositoryImpl implements NavimeeRepository {
     HttpClient httpClient;
 
     @Override
-    public List<City> getCities() throws IOException, UnirestException {
-        return httpClient.getFromFirebase(City.class, citiesPath);
+    public List<City> getCities() {
+        List<City> cities = null;
+        try {
+            cities = httpClient.getFromFirebase(City.class, citiesPath);
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (UnirestException e) {
+            e.printStackTrace();
+        }
+
+        return cities;
     }
 
     @Override
-    public List<Coordinate> getCoordinates() throws IOException, UnirestException{
-        return httpClient.getFromFirebase(Coordinate.class, coordinatesPath);
+    public List<Coordinate> getCoordinates(){
+        List<Coordinate> coordinates = null;
+        try {
+            coordinates = httpClient.getFromFirebase(Coordinate.class, coordinatesPath);
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (UnirestException e) {
+            e.printStackTrace();
+        }
+
+        return coordinates;
     }
 
     @Override

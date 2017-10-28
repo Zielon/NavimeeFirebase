@@ -15,7 +15,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
-import java.util.stream.Collectors;
 
 public class PlacesQuery extends Query<Place> {
 
@@ -40,7 +39,6 @@ public class PlacesQuery extends Query<Place> {
                     .queryString("limit", "100")
                     .queryString("access_token", configuration.getAccessToken())
                     .asJsonAsync();
-
         try {
             return new AsyncResult<>(map(response.get().getBody().getObject(), Place.class));
         } catch (InterruptedException e) {
@@ -68,7 +66,7 @@ public class PlacesQuery extends Query<Place> {
                 e.printStackTrace();
             }
         }
-        return list.stream().distinct().collect(Collectors.toList());
+        return list;
     }
 
     private List<Place> convertNode(JSONArray array){

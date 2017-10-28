@@ -1,61 +1,27 @@
 package com.navimee.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Event {
+    public String name;
+    public String id;
+    public String category;
+    public String start_time;
+    public String end_time;
+    public long attending_count;
+    public long maybe_count;
+    public String type;
+    public Location place;
 
-    private Integer id;
-    private String text;
-    private String name;
-    private String photoUrl;
-
-    public Event() {
-    }
-
-    public Event(Integer id, String text, String name, String photoUrl) {
-        this.id = id;
-        this.text = text;
-        this.name = name;
-        this.photoUrl = photoUrl;
-    }
-
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    public String getText() {
-        return text;
-    }
-
-    public void setText(String text) {
-        this.text = text;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getPhotoUrl() {
-        return photoUrl;
-    }
-
-    public void setPhotoUrl(String photoUrl) {
-        this.photoUrl = photoUrl;
+    @Override
+    public boolean equals(Object obj) {
+        Event event = (Event) obj;
+        return event.id.equals(this.id);
     }
 
     @Override
-    public String toString() {
-        return "FriendlyMessage{" +
-                "id='" + id + '\'' +
-                ", text='" + text + '\'' +
-                ", name='" + name + '\'' +
-                ", photoUrl='" + photoUrl + '\'' +
-                '}';
+    public int hashCode() {
+        return this.id.hashCode();
     }
 }

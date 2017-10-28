@@ -6,25 +6,33 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
 import com.navimee.contracts.repositories.FacebookRepository;
 import com.navimee.models.Event;
+import com.navimee.models.Place;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Repository;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Repository
 public class FacebookRepositoryImpl implements FacebookRepository {
 
     private static final String eventsPath = "events";
+    private static final String placesPath = "places";
 
     @Autowired
     @Qualifier("dbContext")
     DatabaseReference dbContext;
 
     @Override
-    public void addEvent(Event event) {
+    public void addEvents(List<Event> events) {
+        Map<String, Event> map = new HashMap<>();
+        events.forEach(e -> map.put(e.id, e));
         dbContext.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot snapshot) {
-                dbContext.child(eventsPath).push().setValueAsync(event);
+                dbContext.child(eventsPath).setValueAsync(map);
             }
 
             @Override
@@ -33,7 +41,22 @@ public class FacebookRepositoryImpl implements FacebookRepository {
     }
 
     @Override
-    public void updateEvent(Event event) {
+    public void addPlaces(List<Place> places) {
+        Map<String, Place> map = new HashMap<>();
+        places.forEach(p -> map.put(p.id, p));
+        dbContext.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot snapshot) {
+                dbContext.child(placesPath).setValueAsync(map);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {}
+        });
+    }
+
+    @Override
+    public void updateEvents(List<Event> events) {
 
     }
 }
