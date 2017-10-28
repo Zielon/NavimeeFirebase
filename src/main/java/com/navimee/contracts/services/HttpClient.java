@@ -6,5 +6,5 @@ import java.io.IOException;
 import java.util.List;
 
 public interface HttpClient {
-    <T> List<T> Get(Class<T> type, String uri) throws IOException, UnirestException;
+    <T> List<T> getFromFirebase(Class<T> type, String uri) throws IOException, UnirestException;
 }

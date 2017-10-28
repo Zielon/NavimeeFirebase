@@ -1,6 +1,7 @@
 package com.navimee;
 
 import com.navimee.contracts.repositories.NavimeeRepository;
+import com.navimee.contracts.services.FacebookService;
 import com.navimee.entities.City;
 import com.navimee.entities.Coordinate;
 import org.springframework.boot.SpringApplication;
@@ -19,12 +20,9 @@ public class NavimeeApplication extends SpringBootServletInitializer {
 
 		ConfigurableApplicationContext context = SpringApplication.run(NavimeeApplication.class, args);
 
-		NavimeeRepository navimeeRepository = context.getBean(NavimeeRepository.class);
-		navimeeRepository.AddCoordinates();
-		navimeeRepository.AddCities();
+		FacebookService facebookService = context.getBean(FacebookService.class);
 
-		List<City> s = navimeeRepository.getCities();
-		List<Coordinate> l = navimeeRepository.getCoordinates();
+		facebookService.getPlaces();
 
 		System.out.println("End");
 	}

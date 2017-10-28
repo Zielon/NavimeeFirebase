@@ -1,34 +1,34 @@
-package com.navimee;
+package com.navimee.configuration;
 
 import com.google.api.client.googleapis.auth.oauth2.GoogleCredential;
 import org.json.JSONObject;
 import org.springframework.core.io.Resource;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.Arrays;
 
-public class FirebaseConfiguration {
+public class FirebaseConfiguration extends Configuration {
+
     private final JSONObject config;
     private final Resource firebaseConfig;
 
     public FirebaseConfiguration(Resource firebaseConfig) throws IOException {
         this.firebaseConfig = firebaseConfig;
-        BufferedReader streamReader = new BufferedReader(
-                new InputStreamReader(firebaseConfig.getInputStream(), "UTF-8"));
-        StringBuilder responseStrBuilder = new StringBuilder();
-        String inputStr;
-        while ((inputStr = streamReader.readLine()) != null) responseStrBuilder.append(inputStr);
-        config = new JSONObject(responseStrBuilder.toString());
+        config = transformConfig(firebaseConfig);
     }
 
-    public JSONObject GetConfig(){
+    public JSONObject getConfiguration(){
         return config;
     }
 
-    public String GetAccessToken() throws IOException {
-        GoogleCredential googleCred = GoogleCredential.fromStream(firebaseConfig.getInputStream());
+    public String getAccessToken(){
+        GoogleCredential googleCred = null;
+        try {
+            googleCred = GoogleCredential.fromStream(firebaseConfig.getInputStream());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
         GoogleCredential scoped = googleCred.createScoped(
             Arrays.asList(
                     "https://www.googleapis.com/auth/firebase.database",
@@ -36,7 +36,11 @@ public class FirebaseConfiguration {
             )
         );
 
-        scoped.refreshToken();
+        try {
+            scoped.refreshToken();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         return scoped.getAccessToken();
     }
 }

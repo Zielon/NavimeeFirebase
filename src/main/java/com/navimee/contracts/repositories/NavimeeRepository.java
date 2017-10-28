@@ -10,6 +10,6 @@ import java.util.List;
 public interface NavimeeRepository {
     List<City> getCities() throws IOException, UnirestException;
     List<Coordinate> getCoordinates() throws IOException, UnirestException;
-    void AddCoordinates();
-    void AddCities();
+    void addCoordinates();
+    void addCities();
 }

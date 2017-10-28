@@ -5,7 +5,10 @@ import com.google.firebase.FirebaseOptions;
 import com.google.firebase.auth.FirebaseCredentials;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.navimee.FirebaseConfiguration;
+import com.navimee.configuration.FacebookConfiguration;
+import com.navimee.configuration.FirebaseConfiguration;
+import com.navimee.configuration.FlightstatsConfiguration;
+import com.navimee.models.Flight;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -19,7 +22,13 @@ import java.io.IOException;
 public class DependencyConfig {
 
     @Value(value = "classpath:google-services.json")
-    private Resource gservicesConfig;
+    private Resource firebaseConfig;
+
+    @Value(value = "classpath:facebook-services.json")
+    private Resource facebookConfig;
+
+    @Value(value = "classpath:flightstats-services.json")
+    private Resource flightstatsConfig;
 
     @Value("${firebase.database-url}")
     private String databaseUrl;
@@ -27,7 +36,7 @@ public class DependencyConfig {
     @Bean
     public FirebaseApp provideFirebaseOptions() throws IOException {
         FileInputStream serviceAccount =
-                new FileInputStream(gservicesConfig.getFile());
+                new FileInputStream(firebaseConfig.getFile());
         FirebaseOptions options = new FirebaseOptions.Builder()
                 .setCredential(FirebaseCredentials.fromCertificate(serviceAccount))
                 .setDatabaseUrl(databaseUrl)
@@ -38,7 +47,17 @@ public class DependencyConfig {
 
     @Bean
     FirebaseConfiguration providerFirebaseConfiguration() throws IOException {
-        return new FirebaseConfiguration(gservicesConfig);
+        return new FirebaseConfiguration(firebaseConfig);
+    }
+
+    @Bean
+    FacebookConfiguration providerFacebookConfiguration() throws IOException {
+        return new FacebookConfiguration(facebookConfig);
+    }
+
+    @Bean
+    FlightstatsConfiguration providerFlightstatsConfiguration () throws IOException {
+        return new FlightstatsConfiguration(flightstatsConfig);
     }
 
     @Bean

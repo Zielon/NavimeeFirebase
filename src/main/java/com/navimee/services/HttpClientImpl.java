@@ -4,9 +4,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mashape.unirest.http.JsonNode;
 import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
-import com.navimee.FirebaseConfiguration;
+import com.navimee.configuration.FirebaseConfiguration;
 import com.navimee.contracts.services.HttpClient;
-import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -26,14 +25,15 @@ public class HttpClientImpl implements HttpClient {
     FirebaseConfiguration firebaseConfiguration;
 
     @Override
-    public <T> List<T> Get(Class<T> type, String child) throws IOException, UnirestException {
+    public <T> List<T> getFromFirebase(Class<T> type, String child) throws IOException, UnirestException {
 
         JsonNode json = Unirest.get(String.format("%s/{child}{end}", databaseUrl))
                 .header("accept", "application/json")
                 .routeParam("child", child)
                 .routeParam("end", ".json")
-                .queryString("access_token", firebaseConfiguration.GetAccessToken())
-                .asJson().getBody();
+                .queryString("access_token", firebaseConfiguration.getAccessToken())
+                .asJson()
+                .getBody();
 
         ObjectMapper mapper = new ObjectMapper();
         JSONObject object = json.getObject();

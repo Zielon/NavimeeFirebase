@@ -34,16 +34,16 @@ public class NavimeeRepositoryImpl implements NavimeeRepository {
 
     @Override
     public List<City> getCities() throws IOException, UnirestException {
-        return httpClient.Get(City.class, citiesPath);
+        return httpClient.getFromFirebase(City.class, citiesPath);
     }
 
     @Override
     public List<Coordinate> getCoordinates() throws IOException, UnirestException{
-        return httpClient.Get(Coordinate.class, coordinatesPath);
+        return httpClient.getFromFirebase(Coordinate.class, coordinatesPath);
     }
 
     @Override
-    public void AddCoordinates() {
+    public void addCoordinates() {
         dbContext.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot snapshot) {
@@ -58,7 +58,7 @@ public class NavimeeRepositoryImpl implements NavimeeRepository {
     }
 
     @Override
-    public void AddCities() {
+    public void addCities() {
         dbContext.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot snapshot) {
