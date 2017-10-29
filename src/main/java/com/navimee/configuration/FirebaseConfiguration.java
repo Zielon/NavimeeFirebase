@@ -12,16 +12,15 @@ public class FirebaseConfiguration extends Configuration {
     private final JSONObject config;
     private final Resource firebaseConfig;
 
+    public final String accessToken;
+
     public FirebaseConfiguration(Resource firebaseConfig) throws IOException {
         this.firebaseConfig = firebaseConfig;
         config = transformConfig(firebaseConfig);
+        accessToken = getAccessToken();
     }
 
-    public JSONObject getJSONObject(){
-        return config;
-    }
-
-    public String getAccessToken(){
+    private String getAccessToken(){
         GoogleCredential googleCred = null;
         try {
             googleCred = GoogleCredential.fromStream(firebaseConfig.getInputStream());

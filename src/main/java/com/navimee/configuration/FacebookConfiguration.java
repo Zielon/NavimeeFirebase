@@ -9,11 +9,11 @@ public class FacebookConfiguration extends Configuration {
 
     private final JSONObject config;
 
-    public String apiUrl;
-    public String clientId;
-    public String clientSecret;
-    public String accessToken;
-    public String eventsPath;
+    public final String apiUrl;
+    public final String clientId;
+    public final String clientSecret;
+    public final String accessToken;
+    public final String eventsPath;
 
     public FacebookConfiguration(Resource facebookConfig) throws IOException {
 

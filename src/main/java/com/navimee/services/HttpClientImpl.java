@@ -31,7 +31,7 @@ public class HttpClientImpl implements HttpClient {
                 .header("accept", "application/json")
                 .routeParam("child", child)
                 .routeParam("end", ".json")
-                .queryString("access_token", firebaseConfiguration.getAccessToken())
+                .queryString("access_token", firebaseConfiguration.accessToken)
                 .asJson()
                 .getBody();
 
