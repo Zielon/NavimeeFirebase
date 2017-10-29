@@ -7,6 +7,6 @@ import java.util.Arrays;
 
 public class Cities {
     public static ArrayList<City> Get(){
-        return new ArrayList<>(Arrays.asList(new City("warsaw"), new City("gdansk"), new City("sopot")));
+        return new ArrayList<>(Arrays.asList(new City("WARSAW"), new City("GDANSK"), new City("SOPOT")));
     }
 }

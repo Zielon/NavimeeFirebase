@@ -1,4 +1,4 @@
-package com.navimee.configs;
+package com.navimee.injections;
 
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
@@ -8,7 +8,6 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.navimee.configuration.FacebookConfiguration;
 import com.navimee.configuration.FirebaseConfiguration;
 import com.navimee.configuration.FlightstatsConfiguration;
-import com.navimee.models.Flight;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;

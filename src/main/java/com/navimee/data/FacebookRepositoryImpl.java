@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Repository;
 
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -28,7 +29,7 @@ public class FacebookRepositoryImpl implements FacebookRepository {
     @Override
     public void addEvents(List<Event> events) {
         Map<String, Event> map = new HashMap<>();
-        events.forEach(e -> map.put(e.id, e));
+        events.stream().sorted(Comparator.comparing(e2 -> e2.start_time)).forEach(e -> map.put(e.id, e));
         dbContext.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot snapshot) {
@@ -56,7 +57,5 @@ public class FacebookRepositoryImpl implements FacebookRepository {
     }
 
     @Override
-    public void updateEvents(List<Event> events) {
-
-    }
+    public void updateEvents(List<Event> events) { }
 }

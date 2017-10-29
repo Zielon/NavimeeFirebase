@@ -6,12 +6,17 @@ import com.mashape.unirest.http.JsonNode;
 import com.mashape.unirest.http.Unirest;
 import com.navimee.configuration.FacebookConfiguration;
 import com.navimee.models.Event;
+import org.joda.time.DateTimeZone;
+import org.joda.time.LocalDateTime;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.scheduling.annotation.AsyncResult;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
@@ -35,10 +40,18 @@ public class EventsQuery extends Query<Event, FacebookConfiguration> {
 
         String eventsFields = "place.fields(id,name,location),id,name,start_time,end_time,type,category,attending_count,maybe_count,picture.type(large)";
 
+        DateTimeZone zone = DateTimeZone.forID("Europe/Warsaw");
+        LocalDateTime warsawCurrent = LocalDateTime.now(zone);
+        LocalDateTime warsaw1MonthLater = warsawCurrent.plusMonths(2);
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+
         Future<HttpResponse<JsonNode>> response =
                 Unirest.get(configuration.apiUrl)
                         .queryString("id", id)
-                        .queryString("fields", String.format("name,category,events.fields(%s).since(2017-10-10T10:10:10).until(2017-12-12T10:10:10)", eventsFields))
+                        .queryString("fields", String.format("name,category,events.fields(%s).since(%s).until(%s)",
+                                eventsFields,
+                                sdf.format(warsawCurrent.toDate()),
+                                sdf.format(warsaw1MonthLater.toDate())))
                         .queryString("access_token", configuration.accessToken)
                         .asJsonAsync();
 

@@ -39,9 +39,9 @@ public class PlacesQuery extends Query<Place, FacebookConfiguration> {
                     .queryString("q", "*")
                     .queryString("type", "place")
                     .queryString("center", lat + "," + lon)
-                    .queryString("distance", "3000")
+                    .queryString("distance", "2000")
                     .queryString("fields", "name,category,location")
-                    .queryString("limit", "100")
+                    .queryString("limit", "200")
                     .queryString("access_token", configuration.accessToken)
                     .asJsonAsync();
 
