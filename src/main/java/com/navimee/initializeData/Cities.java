@@ -1,6 +1,6 @@
 package com.navimee.initializeData;
 
-import com.navimee.entities.City;
+import com.navimee.models.City;
 
 import java.util.ArrayList;
 import java.util.Arrays;

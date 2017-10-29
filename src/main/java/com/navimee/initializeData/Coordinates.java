@@ -1,6 +1,6 @@
 package com.navimee.initializeData;
 
-import com.navimee.entities.Coordinate;
+import com.navimee.models.Coordinate;
 
 import java.util.ArrayList;
 import java.util.Arrays;

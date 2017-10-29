@@ -9,9 +9,6 @@ import java.io.InputStreamReader;
 
 public abstract class Configuration {
 
-    public abstract String getAccessToken();
-    public abstract JSONObject getJSONObject();
-
     protected JSONObject transformConfig(Resource configuration) throws IOException {
 
         BufferedReader streamReader = new BufferedReader(

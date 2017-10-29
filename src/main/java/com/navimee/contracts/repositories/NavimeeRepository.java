@@ -1,7 +1,7 @@
 package com.navimee.contracts.repositories;
 
-import com.navimee.entities.City;
-import com.navimee.entities.Coordinate;
+import com.navimee.models.City;
+import com.navimee.models.Coordinate;
 
 import java.util.List;
 

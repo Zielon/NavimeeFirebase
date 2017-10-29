@@ -9,19 +9,15 @@ public class FlightstatsConfiguration extends Configuration {
 
     private final JSONObject config;
 
+    public String apiUrl;
+    public String clientId;
+    public String clientSecret;
+    public String accessToken;
+
     public FlightstatsConfiguration(Resource flightstastConfig) throws IOException {
         config = transformConfig(flightstastConfig);
-    }
 
-    @Override
-    public String getAccessToken() {
-        String appId = config.getString("appId");
-        String appSecrets = config.getString("appSecrets");
-        return String.format("?appId=%s?appKey=%s", appId, appSecrets);
-    }
-
-    @Override
-    public JSONObject getJSONObject() {
-        return config;
+        clientId = config.getString("clientId");
+        clientSecret = config.getString("clientSecret");
     }
 }

@@ -1,4 +1,6 @@
 {
   "clientId": "2afceaa1",
-  "clientSecret": "12565d6e0441fa16ae7ca7221cf7f8ce"
+  "clientSecret": "12565d6e0441fa16ae7ca7221cf7f8ce",
+  "apiUrl" : "",
+  "flightsPath":"flights"
 }

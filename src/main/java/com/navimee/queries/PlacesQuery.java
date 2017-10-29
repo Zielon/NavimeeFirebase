@@ -4,7 +4,7 @@ import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.JsonNode;
 import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
-import com.navimee.configuration.Configuration;
+import com.navimee.configuration.FacebookConfiguration;
 import com.navimee.models.Place;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -16,10 +16,14 @@ import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
-public class PlacesQuery extends Query<Place> {
+public class PlacesQuery extends Query<Place, FacebookConfiguration> {
 
     private double lat;
     private double lon;
+
+    public PlacesQuery(FacebookConfiguration configuration){
+        super(configuration);
+    }
 
     public void setCoordinates(double lat, double lon){
         this.lat = lat;
@@ -28,17 +32,19 @@ public class PlacesQuery extends Query<Place> {
 
     @Async
     @Override
-    public Future<List<Place>> get(Configuration configuration) {
+    public Future<List<Place>> execute() {
+
         Future<HttpResponse<JsonNode>> response =
-                Unirest.get(configuration.getJSONObject().getString("apiUrl") + "/search")
+                Unirest.get(configuration.apiUrl + "/search")
                     .queryString("q", "*")
                     .queryString("type", "place")
                     .queryString("center", lat + "," + lon)
                     .queryString("distance", "3000")
                     .queryString("fields", "name,category,location")
                     .queryString("limit", "100")
-                    .queryString("access_token", configuration.getAccessToken())
+                    .queryString("access_token", configuration.accessToken)
                     .asJsonAsync();
+
         try {
             return new AsyncResult<>(map(response.get().getBody().getObject(), Place.class));
         } catch (InterruptedException e) {
@@ -73,11 +79,10 @@ public class PlacesQuery extends Query<Place> {
         List<Place> list = new ArrayList<>();
         for(int n = 0; n < array.length(); n++){
             JSONObject placeJson = array.getJSONObject(n);
-            String id = placeJson.getString("id");
-            String name = placeJson.getString("name");
             Place place = new Place();
-            place.id = id;
-            place.name = name;
+            place.id = placeJson.getString("id");
+            place.name = placeJson.getString("name");
+            place.category = placeJson.getString("category");
             list.add(place);
         }
         return list;
