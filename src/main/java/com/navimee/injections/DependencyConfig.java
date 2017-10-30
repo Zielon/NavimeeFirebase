@@ -31,23 +31,7 @@ public class DependencyConfig {
     @Value("${firebase.database-url}")
     private String databaseUrl;
 
-    private static DatabaseReference databaseReference;
 
-    private DatabaseReference getDatabaseReference() throws IOException {
-        if(databaseReference == null){
-            FileInputStream serviceAccount = new FileInputStream(firebaseConfig.getFile());
-            FirebaseOptions options = new FirebaseOptions.Builder()
-                    .setCredential(FirebaseCredentials.fromCertificate(serviceAccount))
-                    .setDatabaseUrl(databaseUrl)
-                    .build();
-
-            FirebaseApp app = FirebaseApp.initializeApp(options);
-            FirebaseDatabase.getInstance(app).setPersistenceEnabled(false);
-            databaseReference = FirebaseDatabase.getInstance(app).getReference();
-        }
-
-        return databaseReference;
-    }
 
     @Bean
     FirebaseConfiguration providerFirebaseConfiguration() throws IOException {
@@ -62,10 +46,5 @@ public class DependencyConfig {
     @Bean
     FlightstatsConfiguration providerFlightstatsConfiguration () throws IOException {
         return new FlightstatsConfiguration(flightstatsConfig);
-    }
-
-    @Bean
-    public DatabaseReference provideDatabaseReference() throws IOException {
-        return getDatabaseReference();
     }
 }

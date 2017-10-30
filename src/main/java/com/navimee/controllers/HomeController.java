@@ -1,15 +1,21 @@
 package com.navimee.controllers;
 
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import com.navimee.contracts.repositories.NavimeeRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.stream.Collectors;
+
 @RestController
-@EnableAutoConfiguration
 public class HomeController {
 
-    @RequestMapping("/")
+    @Autowired
+    NavimeeRepository navimeeRepository;
+
+    @RequestMapping(value = "/", method = RequestMethod.GET, produces = "application/json")
     public String home() {
-        return "Navimee...";
+        return navimeeRepository.getCoordinates().stream().map(c -> c.city + " -> " + c.street).collect(Collectors.joining ("\n"));
     }
 }

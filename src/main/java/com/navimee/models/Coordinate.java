@@ -17,4 +17,9 @@ public class Coordinate {
         this.longitude = longitude;
         this.street = street;
     }
+
+    @Override
+    public String toString() {
+        return String.format("%d -> %d", city, country);
+    }
 }
