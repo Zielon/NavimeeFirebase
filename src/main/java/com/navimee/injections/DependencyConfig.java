@@ -8,7 +8,6 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.navimee.configuration.FacebookConfiguration;
 import com.navimee.configuration.FirebaseConfiguration;
 import com.navimee.configuration.FlightstatsConfiguration;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -32,16 +31,22 @@ public class DependencyConfig {
     @Value("${firebase.database-url}")
     private String databaseUrl;
 
-    @Bean
-    public FirebaseApp provideFirebaseOptions() throws IOException {
-        FileInputStream serviceAccount =
-                new FileInputStream(firebaseConfig.getFile());
-        FirebaseOptions options = new FirebaseOptions.Builder()
-                .setCredential(FirebaseCredentials.fromCertificate(serviceAccount))
-                .setDatabaseUrl(databaseUrl)
-                .build();
+    private static DatabaseReference databaseReference;
 
-        return FirebaseApp.initializeApp(options);
+    private DatabaseReference getDatabaseReference() throws IOException {
+        if(databaseReference == null){
+            FileInputStream serviceAccount = new FileInputStream(firebaseConfig.getFile());
+            FirebaseOptions options = new FirebaseOptions.Builder()
+                    .setCredential(FirebaseCredentials.fromCertificate(serviceAccount))
+                    .setDatabaseUrl(databaseUrl)
+                    .build();
+
+            FirebaseApp app = FirebaseApp.initializeApp(options);
+            FirebaseDatabase.getInstance(app).setPersistenceEnabled(false);
+            databaseReference = FirebaseDatabase.getInstance(app).getReference();
+        }
+
+        return databaseReference;
     }
 
     @Bean
@@ -60,13 +65,7 @@ public class DependencyConfig {
     }
 
     @Bean
-    @Qualifier("dbContext")
-    public DatabaseReference provideDatabaseReference(FirebaseApp firebaseApp) {
-        FirebaseDatabase
-                .getInstance(firebaseApp)
-                .setPersistenceEnabled(false);
-        return FirebaseDatabase
-                .getInstance(firebaseApp)
-                .getReference();
+    public DatabaseReference provideDatabaseReference() throws IOException {
+        return getDatabaseReference();
     }
 }

@@ -26,7 +26,6 @@ public class NavimeeRepositoryImpl implements NavimeeRepository {
     private static final String citiesPath = "cities";
 
     @Autowired
-    @Qualifier("dbContext")
     DatabaseReference dbContext;
 
     @Autowired

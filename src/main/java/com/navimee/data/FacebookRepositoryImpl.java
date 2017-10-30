@@ -23,7 +23,6 @@ public class FacebookRepositoryImpl implements FacebookRepository {
     private static final String placesPath = "places";
 
     @Autowired
-    @Qualifier("dbContext")
     DatabaseReference dbContext;
 
     @Override
