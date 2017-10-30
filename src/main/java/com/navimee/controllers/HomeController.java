@@ -6,10 +6,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @EnableAutoConfiguration
-public class Home {
+public class HomeController {
 
     @RequestMapping("/")
-    String home() {
-        return "Navimee";
+    public String home() {
+        return "Navimee...";
     }
 }
