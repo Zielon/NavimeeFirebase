@@ -17,11 +17,15 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 @SpringBootApplication
 @EnableScheduling
 @EnableAutoConfiguration
 public class NavimeeApplication extends SpringBootServletInitializer {
+
+	public static List<String> logs = new ArrayList<>();
 
 	public static void main(String[] args) throws Exception {
 
@@ -32,6 +36,7 @@ public class NavimeeApplication extends SpringBootServletInitializer {
 		navimeeRepository.addCoordinates();
 	}
 
+	// TODO Remove this reference to a more appropriate place.
 	private static DatabaseReference databaseReference;
 
 	public static DatabaseReference getDatabaseReference() {

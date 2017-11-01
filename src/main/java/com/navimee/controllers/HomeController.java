@@ -1,5 +1,6 @@
 package com.navimee.controllers;
 
+import com.navimee.NavimeeApplication;
 import com.navimee.contracts.repositories.NavimeeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -16,6 +17,6 @@ public class HomeController {
 
     @RequestMapping(value = "/", method = RequestMethod.GET, produces = "application/json")
     public String home() {
-        return navimeeRepository.getCoordinates().stream().map(c -> c.city + " -> " + c.street).collect(Collectors.joining ("\n"));
+        return NavimeeApplication.logs.stream().collect(Collectors.joining ("\n"));
     }
 }
