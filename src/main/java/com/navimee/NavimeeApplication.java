@@ -8,15 +8,10 @@ import org.springframework.boot.web.support.SpringBootServletInitializer;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
-import java.util.ArrayList;
-import java.util.List;
-
 @SpringBootApplication
 @EnableScheduling
 @EnableAutoConfiguration
 public class NavimeeApplication extends SpringBootServletInitializer {
-
-    public static List<String> logs = new ArrayList<>();
 
     public static void main(String[] args) throws Exception {
 
