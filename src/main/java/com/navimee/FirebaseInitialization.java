@@ -13,33 +13,37 @@ import java.io.IOException;
 
 public class FirebaseInitialization {
 
-    private static DatabaseReference databaseReference;
+    private static FirebaseApp firebaseApp;
 
     public static DatabaseReference getDatabaseReference() {
-        if(databaseReference == null){
-            FileInputStream serviceAccount = null;
-            try {
-                ClassLoader classLoader = NavimeeApplication.class.getClassLoader();
-                File configFile = new File(classLoader.getResource("google-services.json").getFile());
-                serviceAccount = new FileInputStream(configFile);
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
+        synchronized (FirebaseInitialization.class) {
+            if (firebaseApp == null) {
+                NavimeeApplication.logs.add("INSIDE ->" + Thread.currentThread().getName());
+                FileInputStream serviceAccount = null;
+                try {
+                    ClassLoader classLoader = NavimeeApplication.class.getClassLoader();
+                    File configFile = new File(classLoader.getResource("google-services.json").getFile());
+                    serviceAccount = new FileInputStream(configFile);
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                }
+
+                FirebaseOptions options = null;
+                try {
+                    options = new FirebaseOptions.Builder()
+                            .setCredential(FirebaseCredentials.fromCertificate(serviceAccount))
+                            .setDatabaseUrl("https://navimee-1a213.firebaseio.com")
+                            .build();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+                firebaseApp = FirebaseApp.initializeApp(options, "Navimee");
+                FirebaseDatabase.getInstance(firebaseApp).setPersistenceEnabled(false);
             }
 
-            FirebaseOptions options = null;
-            try {
-                options = new FirebaseOptions.Builder()
-                        .setCredential(FirebaseCredentials.fromCertificate(serviceAccount))
-                        .setDatabaseUrl("https://navimee-1a213.firebaseio.com")
-                        .build();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
-            FirebaseApp.initializeApp(options);
-            databaseReference = FirebaseDatabase.getInstance().getReference();
+            NavimeeApplication.logs.add("OUTSIDE ->" + Thread.currentThread().getName());
+            return FirebaseDatabase.getInstance(firebaseApp).getReference();
         }
-
-        return databaseReference;
     }
 }

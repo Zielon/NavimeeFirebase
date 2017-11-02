@@ -9,6 +9,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -22,11 +23,26 @@ public class Scheduler {
     @Autowired
     FacebookRepository facebookRepository;
 
-    @Scheduled(fixedRate = 1000 * 60 * 60)
-    public void updateEvents() {
+    @Scheduled(fixedRate = 3000)
+    public void updateTest() {
+
         NavimeeApplication.logs.add("Start -> " + new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS").format(new Date()));
-        List<Event> events = facebookService.getEvents();
+
+        List<Event> events = new ArrayList<>();
+
+        Event e = new Event();
+        e.id = Integer.toString((int)(Math.random() * 100));
+        e.start_time = new Date();
+
+        Event e1 = new Event();
+        e1.id = Integer.toString((int)(Math.random() * 100));
+        e1.start_time = new Date();
+
+        events.add(e);
+        events.add(e1);
+
         facebookRepository.addEvents(events);
+
         NavimeeApplication.logs.add("End   -> " + new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS").format(new Date()));
     }
 }

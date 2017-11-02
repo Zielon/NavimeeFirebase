@@ -60,9 +60,7 @@ public class NavimeeRepositoryImpl implements NavimeeRepository {
 
     @Override
     public void addCoordinates() {
-
         DatabaseReference dbContext = FirebaseInitialization.getDatabaseReference();
-
         dbContext.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot snapshot) {
@@ -78,9 +76,7 @@ public class NavimeeRepositoryImpl implements NavimeeRepository {
 
     @Override
     public void addCities() {
-
         DatabaseReference dbContext = FirebaseInitialization.getDatabaseReference();
-
         dbContext.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot snapshot) {
