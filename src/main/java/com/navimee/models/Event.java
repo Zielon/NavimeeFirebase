@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.navimee.serializers.DateSerializer;
+
 import java.util.Date;
 
 @JsonIgnoreProperties(ignoreUnknown = true)

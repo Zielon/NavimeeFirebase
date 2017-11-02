@@ -9,6 +9,8 @@ import java.util.List;
 @Repository
 public interface FacebookRepository {
     void addEvents(List<Event> events);
+
     void addPlaces(List<Place> places);
+
     void updateEvents(List<Event> events);
 }

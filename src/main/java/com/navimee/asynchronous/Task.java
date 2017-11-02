@@ -7,9 +7,9 @@ import java.util.concurrent.Future;
 
 public class Task {
 
-    public static <T> List<T> waitForAll(List<Future<List<T>>> futures){
+    public static <T> List<T> waitForAll(List<Future<List<T>>> futures) {
         List<T> output = new ArrayList<>();
-        for(Future<List<T>> future : futures){
+        for (Future<List<T>> future : futures) {
             try {
                 output.addAll(future.get());
             } catch (InterruptedException e) {

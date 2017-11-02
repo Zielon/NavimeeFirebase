@@ -1,10 +1,11 @@
-package com.navimee;
+package com.navimee.configuration;
 
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
 import com.google.firebase.auth.FirebaseCredentials;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.navimee.NavimeeApplication;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -15,10 +16,10 @@ public class FirebaseInitialization {
 
     private static FirebaseApp firebaseApp;
 
+    // Initialize the Firebase instance only once.
     public static DatabaseReference getDatabaseReference() {
         synchronized (FirebaseInitialization.class) {
             if (firebaseApp == null) {
-                NavimeeApplication.logs.add("INSIDE ->" + Thread.currentThread().getName());
                 FileInputStream serviceAccount = null;
                 try {
                     ClassLoader classLoader = NavimeeApplication.class.getClassLoader();
@@ -42,7 +43,6 @@ public class FirebaseInitialization {
                 FirebaseDatabase.getInstance(firebaseApp).setPersistenceEnabled(false);
             }
 
-            NavimeeApplication.logs.add("OUTSIDE ->" + Thread.currentThread().getName());
             return FirebaseDatabase.getInstance(firebaseApp).getReference();
         }
     }

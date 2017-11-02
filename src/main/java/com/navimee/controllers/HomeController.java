@@ -17,6 +17,6 @@ public class HomeController {
 
     @RequestMapping(value = "/", method = RequestMethod.GET, produces = "application/json")
     public String home() {
-        return NavimeeApplication.logs.stream().collect(Collectors.joining ("\n"));
+        return NavimeeApplication.logs.stream().collect(Collectors.joining("\n"));
     }
 }

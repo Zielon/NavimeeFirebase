@@ -7,7 +7,7 @@ import java.util.Arrays;
 
 public class Coordinates {
 
-    public static ArrayList<Coordinate> Get(){
+    public static ArrayList<Coordinate> Get() {
         return new ArrayList<>(Arrays.asList(
                 new Coordinate("WARSAW", "POLAND", 52.231883, 21.005796, "Palac Kultury"),
                 new Coordinate("WARSAW", "POLAND", 52.240184, 21.03219, "Syrenka"),

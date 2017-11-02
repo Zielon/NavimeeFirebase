@@ -16,14 +16,14 @@ import java.util.List;
 @EnableAutoConfiguration
 public class NavimeeApplication extends SpringBootServletInitializer {
 
-	public static List<String> logs = new ArrayList<>();
+    public static List<String> logs = new ArrayList<>();
 
-	public static void main(String[] args) throws Exception {
+    public static void main(String[] args) throws Exception {
 
-		ConfigurableApplicationContext context = SpringApplication.run(NavimeeApplication.class, args);
-		NavimeeRepository navimeeRepository = context.getBean(NavimeeRepository.class);
+        ConfigurableApplicationContext context = SpringApplication.run(NavimeeApplication.class, args);
+        NavimeeRepository navimeeRepository = context.getBean(NavimeeRepository.class);
 
-		navimeeRepository.addCities();
-		navimeeRepository.addCoordinates();
-	}
+        navimeeRepository.addCities();
+        navimeeRepository.addCoordinates();
+    }
 }

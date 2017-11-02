@@ -14,7 +14,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.stream.Collectors;
 
@@ -47,9 +46,9 @@ public class FacebookServiceImpl implements FacebookService {
         PlacesQuery query = new PlacesQuery(facebookConfiguration);
         List<Future<List<Place>>> tasks = new ArrayList<>();
 
-        navimeeRepository.getCoordinates().forEach((Coordinate c) ->{
-                query.setCoordinates(c.latitude, c.longitude);
-                tasks.add(query.execute());
+        navimeeRepository.getCoordinates().forEach((Coordinate c) -> {
+            query.setCoordinates(c.latitude, c.longitude);
+            tasks.add(query.execute());
         });
 
         return Task.waitForAll(tasks).stream().distinct().collect(Collectors.toList());

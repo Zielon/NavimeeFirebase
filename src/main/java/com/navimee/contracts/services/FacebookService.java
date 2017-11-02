@@ -9,5 +9,6 @@ import java.util.List;
 @Service
 public interface FacebookService {
     List<Event> getEvents();
+
     List<Place> getPlaces();
 }

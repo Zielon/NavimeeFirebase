@@ -7,7 +7,7 @@ public class Place {
 
     @Override
     public boolean equals(Object obj) {
-        Place place = (Place)obj;
+        Place place = (Place) obj;
         return place.id.equals(this.id);
     }
 

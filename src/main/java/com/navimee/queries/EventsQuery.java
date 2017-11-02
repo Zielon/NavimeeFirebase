@@ -8,8 +8,6 @@ import com.navimee.configuration.FacebookConfiguration;
 import com.navimee.models.Event;
 import org.joda.time.DateTimeZone;
 import org.joda.time.LocalDateTime;
-import org.joda.time.format.DateTimeFormat;
-import org.joda.time.format.DateTimeFormatter;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -27,7 +25,7 @@ public class EventsQuery extends Query<Event, FacebookConfiguration> {
 
     private String id;
 
-    public EventsQuery(FacebookConfiguration configuration){
+    public EventsQuery(FacebookConfiguration configuration) {
         super(configuration);
     }
 
@@ -72,17 +70,18 @@ public class EventsQuery extends Query<Event, FacebookConfiguration> {
         try {
             JSONObject obj = object.getJSONObject("events");
             list.addAll(convertNode(obj.getJSONArray("data"), type));
-        }catch (JSONException e){ }
+        } catch (JSONException e) {
+        }
 
         return list.stream().filter(e -> e.attending_count > 100)
-                            .filter(e -> e.place != null)
-                            .collect(Collectors.toList());
+                .filter(e -> e.place != null)
+                .collect(Collectors.toList());
     }
 
-    private List<Event> convertNode(JSONArray array, Class<Event> type){
+    private List<Event> convertNode(JSONArray array, Class<Event> type) {
         List<Event> list = new ArrayList<>();
         ObjectMapper mapper = new ObjectMapper();
-        for(int n = 0; n < array.length(); n++){
+        for (int n = 0; n < array.length(); n++) {
             JSONObject eventJson = array.getJSONObject(n);
             try {
                 Event mapped = mapper.readValue(eventJson.toString(), type);

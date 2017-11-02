@@ -9,7 +9,10 @@ import java.util.List;
 @Repository
 public interface NavimeeRepository {
     List<City> getCities();
+
     List<Coordinate> getCoordinates();
+
     void addCoordinates();
+
     void addCities();
 }

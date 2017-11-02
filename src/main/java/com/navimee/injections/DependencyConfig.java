@@ -33,7 +33,7 @@ public class DependencyConfig {
     }
 
     @Bean
-    FlightstatsConfiguration providerFlightstatsConfiguration () throws IOException {
+    FlightstatsConfiguration providerFlightstatsConfiguration() throws IOException {
         return new FlightstatsConfiguration(flightstatsConfig);
     }
 }

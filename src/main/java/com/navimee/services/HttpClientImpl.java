@@ -38,7 +38,7 @@ public class HttpClientImpl implements HttpClient {
         ObjectMapper mapper = new ObjectMapper();
         JSONObject object = json.getObject();
         List<T> list = new ArrayList<>();
-        for(Object obj : object.keySet()){
+        for (Object obj : object.keySet()) {
             String key = obj.toString();
             T mapped = mapper.readValue(object.get(key).toString(), type);
             list.add(mapped);

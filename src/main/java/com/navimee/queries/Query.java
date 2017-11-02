@@ -10,10 +10,11 @@ public abstract class Query<T, C extends Configuration> {
 
     protected C configuration;
 
-    public Query(C configuration){
+    public Query(C configuration) {
         this.configuration = configuration;
     }
 
     public abstract Future<List<T>> execute();
+
     protected abstract List<T> map(JSONObject object, Class<T> type);
 }

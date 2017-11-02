@@ -21,11 +21,11 @@ public class PlacesQuery extends Query<Place, FacebookConfiguration> {
     private double lat;
     private double lon;
 
-    public PlacesQuery(FacebookConfiguration configuration){
+    public PlacesQuery(FacebookConfiguration configuration) {
         super(configuration);
     }
 
-    public void setCoordinates(double lat, double lon){
+    public void setCoordinates(double lat, double lon) {
         this.lat = lat;
         this.lon = lon;
     }
@@ -36,14 +36,14 @@ public class PlacesQuery extends Query<Place, FacebookConfiguration> {
 
         Future<HttpResponse<JsonNode>> response =
                 Unirest.get(configuration.apiUrl + "/search")
-                    .queryString("q", "*")
-                    .queryString("type", "place")
-                    .queryString("center", lat + "," + lon)
-                    .queryString("distance", "2000")
-                    .queryString("fields", "name,category,location")
-                    .queryString("limit", "200")
-                    .queryString("access_token", configuration.accessToken)
-                    .asJsonAsync();
+                        .queryString("q", "*")
+                        .queryString("type", "place")
+                        .queryString("center", lat + "," + lon)
+                        .queryString("distance", "2000")
+                        .queryString("fields", "name,category,location")
+                        .queryString("limit", "200")
+                        .queryString("access_token", configuration.accessToken)
+                        .asJsonAsync();
 
         try {
             return new AsyncResult<>(map(response.get().getBody().getObject(), Place.class));
@@ -62,12 +62,12 @@ public class PlacesQuery extends Query<Place, FacebookConfiguration> {
         list.addAll(convertNode(object.getJSONArray("data")));
         JSONObject paging = object.getJSONObject("paging");
         String nextUrl = paging.getString("next");
-        while (list.size() < 10000){
+        while (list.size() < 10000) {
             try {
                 JSONObject nextObj = Unirest.get(nextUrl).asJson().getBody().getObject();
                 list.addAll(convertNode(nextObj.getJSONArray("data")));
                 nextUrl = object.getJSONObject("paging").getString("next");
-                if(nextUrl != null || nextUrl != "") break;
+                if (nextUrl != null || nextUrl != "") break;
             } catch (UnirestException e) {
                 e.printStackTrace();
             }
@@ -75,9 +75,9 @@ public class PlacesQuery extends Query<Place, FacebookConfiguration> {
         return list;
     }
 
-    private List<Place> convertNode(JSONArray array){
+    private List<Place> convertNode(JSONArray array) {
         List<Place> list = new ArrayList<>();
-        for(int n = 0; n < array.length(); n++){
+        for (int n = 0; n < array.length(); n++) {
             JSONObject placeJson = array.getJSONObject(n);
             Place place = new Place();
             place.id = placeJson.getString("id");

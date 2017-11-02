@@ -20,7 +20,7 @@ public class FirebaseConfiguration extends Configuration {
         accessToken = getAccessToken();
     }
 
-    private String getAccessToken(){
+    private String getAccessToken() {
         GoogleCredential googleCred = null;
         try {
             googleCred = GoogleCredential.fromStream(firebaseConfig.getInputStream());
@@ -29,10 +29,10 @@ public class FirebaseConfiguration extends Configuration {
         }
 
         GoogleCredential scoped = googleCred.createScoped(
-            Arrays.asList(
-                    "https://www.googleapis.com/auth/firebase.database",
-                    "https://www.googleapis.com/auth/userinfo.email"
-            )
+                Arrays.asList(
+                        "https://www.googleapis.com/auth/firebase.database",
+                        "https://www.googleapis.com/auth/userinfo.email"
+                )
         );
 
         try {
