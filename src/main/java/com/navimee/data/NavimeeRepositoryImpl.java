@@ -5,6 +5,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
 import com.mashape.unirest.http.exceptions.UnirestException;
+import com.navimee.FirebaseInitialization;
 import com.navimee.NavimeeApplication;
 import com.navimee.contracts.repositories.NavimeeRepository;
 import com.navimee.contracts.services.HttpClient;
@@ -59,7 +60,9 @@ public class NavimeeRepositoryImpl implements NavimeeRepository {
 
     @Override
     public void addCoordinates() {
-        DatabaseReference dbContext = NavimeeApplication.getDatabaseReference();
+
+        DatabaseReference dbContext = FirebaseInitialization.getDatabaseReference();
+
         dbContext.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot snapshot) {
@@ -75,7 +78,9 @@ public class NavimeeRepositoryImpl implements NavimeeRepository {
 
     @Override
     public void addCities() {
-        DatabaseReference dbContext = NavimeeApplication.getDatabaseReference();
+
+        DatabaseReference dbContext = FirebaseInitialization.getDatabaseReference();
+
         dbContext.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot snapshot) {
