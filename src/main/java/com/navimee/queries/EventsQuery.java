@@ -11,13 +11,13 @@ import org.joda.time.LocalDateTime;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.springframework.scheduling.annotation.AsyncResult;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.stream.Collectors;
 
@@ -36,7 +36,18 @@ public class EventsQuery extends Query<Event, FacebookConfiguration> {
     @Override
     public Future<List<Event>> execute() {
 
-        String eventsFields = "place.fields(id,name,location),id,name,start_time,end_time,type,category,attending_count,maybe_count,picture.type(large)";
+        ExecutorService executor = Executors.newSingleThreadExecutor();
+
+        String eventsFields =
+                "place.fields(id,name,location)," +
+                        "id," +
+                        "name," +
+                        "start_time," +
+                        "end_time," +
+                        "type,category," +
+                        "attending_count," +
+                        "maybe_count," +
+                        "picture.type(large)";
 
         DateTimeZone zone = DateTimeZone.forID("Europe/Warsaw");
         LocalDateTime warsawCurrent = LocalDateTime.now(zone);
@@ -53,15 +64,7 @@ public class EventsQuery extends Query<Event, FacebookConfiguration> {
                         .queryString("access_token", configuration.accessToken)
                         .asJsonAsync();
 
-        try {
-            return new AsyncResult<>(map(response.get().getBody().getObject(), Event.class));
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        }
-
-        return null;
+        return executor.submit(() -> map(response.get().getBody().getObject(), Event.class));
     }
 
     @Override
@@ -70,7 +73,8 @@ public class EventsQuery extends Query<Event, FacebookConfiguration> {
         try {
             JSONObject obj = object.getJSONObject("events");
             list.addAll(convertNode(obj.getJSONArray("data"), type));
-        } catch (JSONException e) {}
+        } catch (JSONException _) {
+        }
 
         return list.stream().filter(e -> e.attending_count > 100)
                 .filter(e -> e.place != null)

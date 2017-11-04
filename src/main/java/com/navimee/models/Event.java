@@ -26,6 +26,10 @@ public class Event {
     public String type;
     public Location place;
 
+    public String getId() {
+        return id;
+    }
+
     @Override
     public boolean equals(Object obj) {
         Event event = (Event) obj;

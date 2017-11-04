@@ -1,9 +1,6 @@
 package com.navimee.data;
 
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.ValueEventListener;
 import com.mashape.unirest.http.exceptions.UnirestException;
 import com.navimee.configuration.FirebaseInitialization;
 import com.navimee.contracts.repositories.NavimeeRepository;
@@ -21,10 +18,6 @@ import java.util.List;
 
 @Repository
 public class NavimeeRepositoryImpl implements NavimeeRepository {
-
-    // PATHS
-    private final String coordinatesPath = "coordinates";
-    private final String citiesPath = "cities";
 
     private final DatabaseReference dbContext = FirebaseInitialization.getDatabaseReference();
 
@@ -61,31 +54,11 @@ public class NavimeeRepositoryImpl implements NavimeeRepository {
 
     @Override
     public void addCoordinates() {
-        dbContext.child(coordinatesPath).addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot snapshot) {
-                if (!snapshot.exists()) {
-                    Coordinates.Get().forEach(c -> dbContext.child(coordinatesPath).push().setValueAsync(c));
-                }
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {}
-        });
+        Coordinates.Get().forEach(c -> dbContext.child(coordinatesPath).push().setValueAsync(c));
     }
 
     @Override
     public void addCities() {
-        dbContext.child(citiesPath).addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot snapshot) {
-                if (!snapshot.exists()) {
-                    Cities.Get().forEach(c -> dbContext.child(citiesPath).push().setValueAsync(c));
-                }
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {}
-        });
+        Cities.Get().forEach(c -> dbContext.child(citiesPath).push().setValueAsync(c));
     }
 }

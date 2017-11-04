@@ -9,11 +9,11 @@ import com.navimee.models.Place;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.scheduling.annotation.Async;
-import org.springframework.scheduling.annotation.AsyncResult;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
 public class PlacesQuery extends Query<Place, FacebookConfiguration> {
@@ -34,6 +34,8 @@ public class PlacesQuery extends Query<Place, FacebookConfiguration> {
     @Override
     public Future<List<Place>> execute() {
 
+        ExecutorService executor = Executors.newSingleThreadExecutor();
+
         Future<HttpResponse<JsonNode>> response =
                 Unirest.get(configuration.apiUrl + "/search")
                         .queryString("q", "*")
@@ -45,15 +47,7 @@ public class PlacesQuery extends Query<Place, FacebookConfiguration> {
                         .queryString("access_token", configuration.accessToken)
                         .asJsonAsync();
 
-        try {
-            return new AsyncResult<>(map(response.get().getBody().getObject(), Place.class));
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        }
-
-        return null;
+        return executor.submit(() -> map(response.get().getBody().getObject(), Place.class));
     }
 
     @Override

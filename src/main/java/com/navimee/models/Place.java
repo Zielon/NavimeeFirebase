@@ -5,6 +5,10 @@ public class Place {
     public String id;
     public String category;
 
+    public String getId() {
+        return id;
+    }
+
     @Override
     public boolean equals(Object obj) {
         Place place = (Place) obj;
