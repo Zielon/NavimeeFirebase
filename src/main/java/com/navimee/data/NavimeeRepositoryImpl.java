@@ -22,9 +22,11 @@ import java.util.List;
 @Repository
 public class NavimeeRepositoryImpl implements NavimeeRepository {
 
-    private static final String coordinatesPath = "coordinates";
-    private static final String citiesPath = "cities";
-    private DatabaseReference dbContext = FirebaseInitialization.getDatabaseReference();
+    // PATHS
+    private final String coordinatesPath = "coordinates";
+    private final String citiesPath = "cities";
+
+    private final DatabaseReference dbContext = FirebaseInitialization.getDatabaseReference();
 
     @Autowired
     HttpClient httpClient;
@@ -59,33 +61,31 @@ public class NavimeeRepositoryImpl implements NavimeeRepository {
 
     @Override
     public void addCoordinates() {
-        dbContext.addListenerForSingleValueEvent(new ValueEventListener() {
+        dbContext.child(coordinatesPath).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot snapshot) {
-                if (!snapshot.hasChild(coordinatesPath)) {
+                if (!snapshot.exists()) {
                     Coordinates.Get().forEach(c -> dbContext.child(coordinatesPath).push().setValueAsync(c));
                 }
             }
 
             @Override
-            public void onCancelled(DatabaseError databaseError) {
-            }
+            public void onCancelled(DatabaseError databaseError) {}
         });
     }
 
     @Override
     public void addCities() {
-        dbContext.addListenerForSingleValueEvent(new ValueEventListener() {
+        dbContext.child(citiesPath).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot snapshot) {
-                if (!snapshot.hasChild(citiesPath)) {
+                if (!snapshot.exists()) {
                     Cities.Get().forEach(c -> dbContext.child(citiesPath).push().setValueAsync(c));
                 }
             }
 
             @Override
-            public void onCancelled(DatabaseError databaseError) {
-            }
+            public void onCancelled(DatabaseError databaseError) {}
         });
     }
 }

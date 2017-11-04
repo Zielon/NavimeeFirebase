@@ -70,8 +70,7 @@ public class EventsQuery extends Query<Event, FacebookConfiguration> {
         try {
             JSONObject obj = object.getJSONObject("events");
             list.addAll(convertNode(obj.getJSONArray("data"), type));
-        } catch (JSONException e) {
-        }
+        } catch (JSONException e) {}
 
         return list.stream().filter(e -> e.attending_count > 100)
                 .filter(e -> e.place != null)

@@ -5,12 +5,13 @@ import com.navimee.models.Place;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.concurrent.Future;
 
 @Repository
 public interface FacebookRepository {
-    void addEvents(List<Event> events);
-
+    void setEvents(List<Event> events);
     void addPlaces(List<Place> places);
-
     void updateEvents(List<Event> events);
+    void updateHistorical(List<Event> events);
+    Future<List<Event>> getEvents();
 }

@@ -1,6 +1,6 @@
 package com.navimee.services;
 
-import com.navimee.asynchronous.Task;
+import com.navimee.asynchronous.HelperMethods;
 import com.navimee.configuration.FacebookConfiguration;
 import com.navimee.contracts.repositories.NavimeeRepository;
 import com.navimee.contracts.services.FacebookService;
@@ -37,7 +37,7 @@ public class FacebookServiceImpl implements FacebookService {
             tasks.add(query.execute());
         });
 
-        return Task.waitForAll(tasks).stream().distinct().collect(Collectors.toList());
+        return HelperMethods.waitForAll(tasks).stream().distinct().collect(Collectors.toList());
     }
 
     @Override
@@ -51,6 +51,6 @@ public class FacebookServiceImpl implements FacebookService {
             tasks.add(query.execute());
         });
 
-        return Task.waitForAll(tasks).stream().distinct().collect(Collectors.toList());
+        return HelperMethods.waitForAll(tasks).stream().distinct().collect(Collectors.toList());
     }
 }
