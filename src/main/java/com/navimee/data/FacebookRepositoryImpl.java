@@ -29,7 +29,7 @@ public class FacebookRepositoryImpl implements FacebookRepository {
     }
 
     @Override
-    public void addPlaces(List<Place> places) {
+    public void setPlaces(List<Place> places) {
         Map<String, Place> map =
                 places.stream().collect(Collectors.toMap(Place::getId, Function.identity()));
 

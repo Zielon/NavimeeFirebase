@@ -15,7 +15,7 @@ public interface FacebookRepository {
 
     void setEvents(List<Event> events);
 
-    void addPlaces(List<Place> places);
+    void setPlaces(List<Place> places);
 
     void updateEvents(List<Event> events);
 

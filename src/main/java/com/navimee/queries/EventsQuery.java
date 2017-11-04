@@ -16,6 +16,7 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.StringJoiner;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -37,17 +38,18 @@ public class EventsQuery extends Query<Event, FacebookConfiguration> {
     public Future<List<Event>> execute() {
 
         ExecutorService executor = Executors.newSingleThreadExecutor();
+        StringJoiner joiner = new StringJoiner(",");
 
-        String eventsFields =
-                "place.fields(id,name,location)," +
-                        "id," +
-                        "name," +
-                        "start_time," +
-                        "end_time," +
-                        "type,category," +
-                        "attending_count," +
-                        "maybe_count," +
-                        "picture.type(large)";
+        joiner.add("place.fields(id,name,location)");
+        joiner.add("id");
+        joiner.add("name");
+        joiner.add("start_time");
+        joiner.add("end_time");
+        joiner.add("type");
+        joiner.add("category");
+        joiner.add("attending_count");
+        joiner.add("maybe_count");
+        joiner.add("picture.type(large)");
 
         DateTimeZone zone = DateTimeZone.forID("Europe/Warsaw");
         LocalDateTime warsawCurrent = LocalDateTime.now(zone);
@@ -58,7 +60,7 @@ public class EventsQuery extends Query<Event, FacebookConfiguration> {
                 Unirest.get(configuration.apiUrl)
                         .queryString("id", id)
                         .queryString("fields", String.format("name,category,events.fields(%s).since(%s).until(%s)",
-                                eventsFields,
+                                joiner.toString(),
                                 sdf.format(warsawCurrent.toDate()),
                                 sdf.format(warsaw1MonthLater.toDate())))
                         .queryString("access_token", configuration.accessToken)

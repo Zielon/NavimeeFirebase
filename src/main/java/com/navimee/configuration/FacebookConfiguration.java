@@ -13,16 +13,13 @@ public class FacebookConfiguration extends Configuration {
     public final String clientId;
     public final String clientSecret;
     public final String accessToken;
-    public final String eventsPath;
 
     public FacebookConfiguration(Resource facebookConfig) throws IOException {
 
         config = transformConfig(facebookConfig);
-
         apiUrl = config.getString("apiUrl");
         clientId = config.getString("clientId");
         clientSecret = config.getString("clientSecret");
         accessToken = config.getString("accessToken");
-        eventsPath = config.getString("eventsPath");
     }
 }
