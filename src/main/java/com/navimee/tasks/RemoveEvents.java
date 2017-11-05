@@ -23,7 +23,7 @@ public class RemoveEvents {
     @Autowired
     FacebookRepository facebookRepository;
 
-    @Scheduled(fixedRate = 1000 * 60 * 30)
+    @Scheduled(fixedRate = 1000 * 60 * 10)
     public void removeEvents() throws ExecutionException, InterruptedException {
 
         DateTimeZone zone = DateTimeZone.forID("Europe/Warsaw");
@@ -38,7 +38,10 @@ public class RemoveEvents {
                 snapshot.getChildren().forEach(e -> events.add(e.getValue(Event.class)));
 
                 List<Event> eventsToRemove = events.stream()
-                        .filter(e -> e.end_time == null || warsawCurrent.toDate().after(e.end_time))
+                        .filter(e -> e.end_time == null
+                                  || e.place == null
+                                  || e.attending_count < 100
+                                  || warsawCurrent.toDate().after(e.end_time))
                         .collect(Collectors.toList());
 
                 facebookRepository.updateHistorical(eventsToRemove);

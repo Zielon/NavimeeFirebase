@@ -9,7 +9,7 @@ public class HelperMethods {
 
     public static <T> List<T> waitForAll(List<Future<List<T>>> futures) {
         List<T> output = new ArrayList<>();
-        for (Future<List<T>> future : futures) {
+        futures.parallelStream().forEach(future -> {
             try {
                 output.addAll(future.get());
             } catch (InterruptedException e) {
@@ -17,7 +17,8 @@ public class HelperMethods {
             } catch (ExecutionException e) {
                 e.printStackTrace();
             }
-        }
+        });
+
         return output;
     }
 }

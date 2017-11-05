@@ -56,12 +56,12 @@ public class PlacesQuery extends Query<Place, FacebookConfiguration> {
         list.addAll(convertNode(object.getJSONArray("data")));
         JSONObject paging = object.getJSONObject("paging");
         String nextUrl = paging.getString("next");
-        while (list.size() < 10000) {
+        while (list.size() < 3000) {
             try {
                 JSONObject nextObj = Unirest.get(nextUrl).asJson().getBody().getObject();
                 list.addAll(convertNode(nextObj.getJSONArray("data")));
                 nextUrl = object.getJSONObject("paging").getString("next");
-                if (nextUrl != null || nextUrl != "") break;
+                if (nextUrl == null || nextUrl == "") break;
             } catch (UnirestException e) {
                 e.printStackTrace();
             }

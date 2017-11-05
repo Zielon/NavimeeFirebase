@@ -53,7 +53,7 @@ public class EventsQuery extends Query<Event, FacebookConfiguration> {
 
         DateTimeZone zone = DateTimeZone.forID("Europe/Warsaw");
         LocalDateTime warsawCurrent = LocalDateTime.now(zone);
-        LocalDateTime warsaw1MonthLater = warsawCurrent.plusMonths(2);
+        LocalDateTime warsaw1MonthLater = warsawCurrent.plusDays(14);
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
 
         Future<HttpResponse<JsonNode>> response =
@@ -78,7 +78,9 @@ public class EventsQuery extends Query<Event, FacebookConfiguration> {
         } catch (JSONException _) {
         }
 
-        return list.stream().filter(e -> e.attending_count > 100)
+        return list
+                .stream()
+                .filter(e -> e.attending_count > 100)
                 .filter(e -> e.place != null)
                 .collect(Collectors.toList());
     }

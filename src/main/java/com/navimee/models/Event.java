@@ -8,7 +8,7 @@ import com.navimee.serializers.DateSerializer;
 import java.util.Date;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class Event {
+public class Event implements Comparable {
     public String name;
     public String id;
     public String category;
@@ -39,5 +39,11 @@ public class Event {
     @Override
     public int hashCode() {
         return this.id.hashCode();
+    }
+
+    @Override
+    public int compareTo(Object o) {
+        Event event = (Event) o;
+        return event.id.compareTo(this.id);
     }
 }

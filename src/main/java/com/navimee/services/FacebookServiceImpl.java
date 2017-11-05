@@ -32,7 +32,7 @@ public class FacebookServiceImpl implements FacebookService {
         EventsQuery query = new EventsQuery(facebookConfiguration);
         List<Future<List<Event>>> tasks = new ArrayList<>();
 
-        getPlaces().forEach(p -> {
+        getPlaces().parallelStream().forEach(p -> {
             query.setId(p.id);
             tasks.add(query.execute());
         });

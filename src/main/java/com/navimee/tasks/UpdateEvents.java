@@ -15,7 +15,7 @@ public class UpdateEvents {
     @Autowired
     FacebookRepository facebookRepository;
 
-    @Scheduled(fixedRate = 1000 * 60 * 15)
+    @Scheduled(fixedRate = 1000 * 60 * 30)
     public void updateEvents() {
         facebookRepository.updateEvents(facebookService.getEvents());
     }

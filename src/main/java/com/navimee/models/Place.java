@@ -1,6 +1,6 @@
 package com.navimee.models;
 
-public class Place {
+public class Place implements Comparable {
     public String name;
     public String id;
     public String category;
@@ -18,5 +18,11 @@ public class Place {
     @Override
     public int hashCode() {
         return this.id.hashCode();
+    }
+
+    @Override
+    public int compareTo(Object o) {
+        Place place = (Place) o;
+        return place.id.compareTo(this.id);
     }
 }
