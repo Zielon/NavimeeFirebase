@@ -1,22 +1,22 @@
 package com.navimee.contracts.repositories;
 
-import com.navimee.models.City;
-import com.navimee.models.Coordinate;
+import com.navimee.models.entities.Coordinate;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Map;
 
 @Repository
 public interface NavimeeRepository {
 
     String coordinatesPath = "coordinates";
-    String citiesPath = "cities";
+    String availableCities = "availableCities";
 
-    List<City> getCities();
+    Map<String, List<Coordinate>> getCoordinates();
 
-    List<Coordinate> getCoordinates();
+    List<String> getAvailableCities();
 
     void addCoordinates();
 
-    void addCities();
+    void addAvailableCities();
 }

@@ -6,8 +6,8 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
 import com.navimee.configuration.FirebaseInitialization;
 import com.navimee.contracts.repositories.FacebookRepository;
-import com.navimee.models.Event;
-import com.navimee.models.Place;
+import com.navimee.models.entities.Event;
+import com.navimee.models.entities.Place;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -37,11 +37,11 @@ public class FacebookRepositoryImpl implements FacebookRepository {
     }
 
     @Override
-    public void updateEvents(List<Event> events) {
+    public void updateEvents(List<Event> events, String path) {
         Map<String, Object> newEventsMap =
                 events.stream().collect(Collectors.toMap(Event::getId, Function.identity()));
 
-        dbContext.child(eventsPath).updateChildrenAsync(newEventsMap);
+        dbContext.child(path).updateChildrenAsync(newEventsMap);
     }
 
     @Override
@@ -53,11 +53,11 @@ public class FacebookRepositoryImpl implements FacebookRepository {
     }
 
     @Override
-    public void removeEvents(List<Event> events) {
+    public void removeEvents(List<Event> events, String path) {
         Map<String, Object> eventsToRemove =
                 events.stream().collect(Collectors.toMap(Event::getId, Function.identity()));
 
-        dbContext.child(eventsPath).addListenerForSingleValueEvent(new ValueEventListener() {
+        dbContext.child(path).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot snapshot) {
                 snapshot.getChildren().forEach((e -> {

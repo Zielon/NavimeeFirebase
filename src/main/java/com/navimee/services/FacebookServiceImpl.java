@@ -4,9 +4,9 @@ import com.navimee.asynchronous.HelperMethods;
 import com.navimee.configuration.FacebookConfiguration;
 import com.navimee.contracts.repositories.NavimeeRepository;
 import com.navimee.contracts.services.FacebookService;
-import com.navimee.models.Coordinate;
-import com.navimee.models.Event;
-import com.navimee.models.Place;
+import com.navimee.models.entities.Coordinate;
+import com.navimee.models.entities.Event;
+import com.navimee.models.entities.Place;
 import com.navimee.queries.EventsQuery;
 import com.navimee.queries.PlacesQuery;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.Future;
 import java.util.stream.Collectors;
 
@@ -46,10 +47,13 @@ public class FacebookServiceImpl implements FacebookService {
         PlacesQuery query = new PlacesQuery(facebookConfiguration);
         List<Future<List<Place>>> tasks = new ArrayList<>();
 
-        navimeeRepository.getCoordinates().forEach((Coordinate c) -> {
-            query.setCoordinates(c.latitude, c.longitude);
-            tasks.add(query.execute());
-        });
+        Map<String, List<Coordinate>> coordinates = navimeeRepository.getCoordinates();
+
+        coordinates.keySet().forEach(key ->
+                coordinates.get(key).forEach((Coordinate c) -> {
+                    query.setCoordinates(c.latitude, c.longitude);
+                    tasks.add(query.execute());
+        }));
 
         return HelperMethods.waitForAll(tasks).stream().distinct().collect(Collectors.toList());
     }

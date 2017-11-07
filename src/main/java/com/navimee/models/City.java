@@ -1,12 +1,8 @@
 package com.navimee.models;
 
+import com.navimee.models.partials.FacebookEvents;
+
 public class City {
     public String name;
-
-    public City() {
-    }
-
-    public City(String name) {
-        this.name = name;
-    }
+    public FacebookEvents facebookEvents;
 }

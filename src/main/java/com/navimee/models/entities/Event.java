@@ -1,11 +1,8 @@
-package com.navimee.models;
+package com.navimee.models.entities;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.navimee.serializers.DateSerializer;
-
-import java.util.Date;
+import org.joda.time.DateTime;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Event implements Comparable {
@@ -14,12 +11,10 @@ public class Event implements Comparable {
     public String category;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ssZ")
-    @JsonSerialize(using = DateSerializer.class)
-    public Date start_time;
+    public DateTime start_time;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ssZ")
-    @JsonSerialize(using = DateSerializer.class)
-    public Date end_time;
+    public DateTime end_time;
 
     public long attending_count;
     public long maybe_count;

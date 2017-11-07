@@ -1,4 +1,4 @@
-package com.navimee.models;
+package com.navimee.models.entities;
 
 public class Place implements Comparable {
     public String name;

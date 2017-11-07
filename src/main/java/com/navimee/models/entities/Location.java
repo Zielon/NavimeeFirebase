@@ -1,4 +1,4 @@
-package com.navimee.models;
+package com.navimee.models.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;

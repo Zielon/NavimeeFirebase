@@ -1,19 +1,20 @@
 package com.navimee.data;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.google.firebase.database.DatabaseReference;
-import com.mashape.unirest.http.exceptions.UnirestException;
 import com.navimee.configuration.FirebaseInitialization;
 import com.navimee.contracts.repositories.NavimeeRepository;
 import com.navimee.contracts.services.HttpClient;
-import com.navimee.initializeData.Cities;
+import com.navimee.initializeData.AvailableCities;
 import com.navimee.initializeData.Coordinates;
-import com.navimee.models.City;
-import com.navimee.models.Coordinate;
+import com.navimee.models.entities.Coordinate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ExecutionException;
 
 
 @Repository
@@ -25,27 +26,16 @@ public class NavimeeRepositoryImpl implements NavimeeRepository {
     HttpClient httpClient;
 
     @Override
-    public List<City> getCities() {
-        List<City> cities = null;
-        try {
-            cities = httpClient.getFromFirebase(City.class, citiesPath);
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (UnirestException e) {
-            e.printStackTrace();
-        }
+    public Map<String, List<Coordinate>> getCoordinates() {
 
-        return cities;
-    }
+        Map<String, List<Coordinate>> coordinates = null;
+        TypeReference<HashMap<String, List<Coordinate>>> type = new TypeReference<HashMap<String, List<Coordinate>>>() {};
 
-    @Override
-    public List<Coordinate> getCoordinates() {
-        List<Coordinate> coordinates = null;
         try {
-            coordinates = httpClient.getFromFirebase(Coordinate.class, coordinatesPath);
-        } catch (IOException e) {
+            coordinates = httpClient.getFromFirebase(type, coordinatesPath).get();
+        } catch (InterruptedException e) {
             e.printStackTrace();
-        } catch (UnirestException e) {
+        } catch (ExecutionException e) {
             e.printStackTrace();
         }
 
@@ -53,12 +43,29 @@ public class NavimeeRepositoryImpl implements NavimeeRepository {
     }
 
     @Override
-    public void addCoordinates() {
-        Coordinates.Get().forEach(c -> dbContext.child(coordinatesPath).push().setValueAsync(c));
+    public List<String> getAvailableCities() {
+
+        List<String> cities = null;
+        TypeReference<List<String>> type = new TypeReference<List<String> >() {};
+
+        try {
+            cities = httpClient.getFromFirebase(type, availableCities).get();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
+
+        return cities;
     }
 
     @Override
-    public void addCities() {
-        Cities.Get().forEach(c -> dbContext.child(citiesPath).push().setValueAsync(c));
+    public void addCoordinates() {
+        dbContext.child(coordinatesPath).setValueAsync(Coordinates.Get());
+    }
+
+    @Override
+    public void addAvailableCities() {
+        dbContext.child(availableCities).setValueAsync(AvailableCities.Get());
     }
 }

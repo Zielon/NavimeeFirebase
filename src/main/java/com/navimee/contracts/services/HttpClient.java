@@ -1,12 +1,11 @@
 package com.navimee.contracts.services;
 
-import com.mashape.unirest.http.exceptions.UnirestException;
+import com.fasterxml.jackson.core.type.TypeReference;
 import org.springframework.stereotype.Service;
 
-import java.io.IOException;
-import java.util.List;
+import java.util.concurrent.Future;
 
 @Service
 public interface HttpClient {
-    <T> List<T> getFromFirebase(Class<T> type, String uri) throws IOException, UnirestException;
+    <T> Future<T> getFromFirebase(TypeReference<T> type, String uri);
 }

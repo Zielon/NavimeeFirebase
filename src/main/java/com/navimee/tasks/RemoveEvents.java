@@ -5,7 +5,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
 import com.navimee.configuration.FirebaseInitialization;
 import com.navimee.contracts.repositories.FacebookRepository;
-import com.navimee.models.Event;
+import com.navimee.models.entities.Event;
 import org.joda.time.DateTimeZone;
 import org.joda.time.LocalDateTime;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +23,7 @@ public class RemoveEvents {
     @Autowired
     FacebookRepository facebookRepository;
 
-    @Scheduled(fixedRate = 1000 * 60 * 10)
+    //@Scheduled(fixedRate = 1000 * 60 * 10)
     public void removeEvents() throws ExecutionException, InterruptedException {
 
         DateTimeZone zone = DateTimeZone.forID("Europe/Warsaw");
@@ -40,12 +40,12 @@ public class RemoveEvents {
                 List<Event> eventsToRemove = events.stream()
                         .filter(e -> e.end_time == null
                                   || e.place == null
-                                  || e.attending_count < 100
-                                  || warsawCurrent.toDate().after(e.end_time))
+                                  || e.attending_count < 100)
+                         //         || warsawCurrent.c > e.end_time)
                         .collect(Collectors.toList());
 
                 facebookRepository.updateHistorical(eventsToRemove);
-                facebookRepository.removeEvents(eventsToRemove);
+                facebookRepository.removeEvents(eventsToRemove, FacebookRepository.eventsPath);
             }
 
             @Override

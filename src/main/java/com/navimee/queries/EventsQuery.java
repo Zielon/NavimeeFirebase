@@ -1,11 +1,12 @@
 package com.navimee.queries;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.joda.JodaModule;
 import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.JsonNode;
 import com.mashape.unirest.http.Unirest;
 import com.navimee.configuration.FacebookConfiguration;
-import com.navimee.models.Event;
+import com.navimee.models.entities.Event;
 import org.joda.time.DateTimeZone;
 import org.joda.time.LocalDateTime;
 import org.json.JSONArray;
@@ -88,6 +89,7 @@ public class EventsQuery extends Query<Event, FacebookConfiguration> {
     private List<Event> convertNode(JSONArray array, Class<Event> type) {
         List<Event> list = new ArrayList<>();
         ObjectMapper mapper = new ObjectMapper();
+        mapper.registerModule(new JodaModule());
         for (int n = 0; n < array.length(); n++) {
             JSONObject eventJson = array.getJSONObject(n);
             try {

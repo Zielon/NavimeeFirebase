@@ -21,7 +21,10 @@ public class NavimeeApplication extends SpringBootServletInitializer {
         ConfigurableApplicationContext context = SpringApplication.run(NavimeeApplication.class, args);
         NavimeeRepository navimeeRepository = context.getBean(NavimeeRepository.class);
 
-//        navimeeRepository.addCities();
-//        navimeeRepository.addCoordinates();
+        navimeeRepository.addCoordinates();
+        navimeeRepository.addAvailableCities();
+
+        //navimeeRepository.getAvailableCities();
+        navimeeRepository.getCoordinates();
     }
 }
