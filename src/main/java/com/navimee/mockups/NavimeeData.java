@@ -18,7 +18,7 @@ import java.util.Map;
 
 public class NavimeeData {
 
-    private JSONObject getJsonObject(Mocks mocks){
+    private JSONObject getJsonObject(Mocks mocks) {
         Resource seleted = mocks == Mocks.Cities ? new ClassPathResource("NavimeeData/availableCities.json")
                 : new ClassPathResource("NavimeeData/coordinates.json");
         BufferedReader streamReader = null;
@@ -39,7 +39,7 @@ public class NavimeeData {
         return new JSONObject(responseStrBuilder.toString());
     }
 
-    public List<City> getCities(){
+    public List<City> getCities() {
         JSONObject object = getJsonObject(Mocks.Cities);
         ObjectMapper mapper = new ObjectMapper();
         List<City> cities = new ArrayList<>();
@@ -56,7 +56,7 @@ public class NavimeeData {
         return cities;
     }
 
-    public Map<String, List<Coordinate>> getCoordinates(){
+    public Map<String, List<Coordinate>> getCoordinates() {
         JSONObject object = getJsonObject(Mocks.Coordinates);
         Map<String, List<Coordinate>> coordinates = new HashMap<>();
         ObjectMapper mapper = new ObjectMapper();

@@ -4,7 +4,7 @@ public abstract class Place implements Comparable {
     public String name;
     public String id;
 
-    public String getId(){
+    public String getId() {
         return id;
     }
 
