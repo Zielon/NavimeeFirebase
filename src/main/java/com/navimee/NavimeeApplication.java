@@ -30,12 +30,14 @@ public class NavimeeApplication extends SpringBootServletInitializer {
 
         NavimeeData navimeeData = new NavimeeData();
 
-        List<Place> places = placesService.getFacebookPlaces(placesRepository.getCoordinates("WARSAW"));
         Map<String, List<Coordinate>> coordinates = navimeeData.getCoordinates();
         List<City> cities = navimeeData.getCities();
 
+        // Wait
         placesRepository.setCoordinates(coordinates).get();
         placesRepository.setAvailableCities(cities).get();
+
+        List<Place> places = placesService.getFacebookPlaces(placesRepository.getCoordinates("WARSAW"));
         placesRepository.setPlaces(places, "WARSAW").get();
 
         List<FacebookPlace> fb = placesRepository.getPlaces("WARSAW", FacebookPlace.class);
