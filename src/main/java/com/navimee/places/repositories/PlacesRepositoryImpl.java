@@ -1,6 +1,5 @@
 package com.navimee.places.repositories;
 
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.api.core.ApiFuture;
 import com.google.cloud.firestore.DocumentSnapshot;
@@ -19,6 +18,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -71,23 +72,52 @@ public class PlacesRepositoryImpl implements PlacesRepository {
     }
 
     @Override
-    public void setCoordinates(Map<String, List<Coordinate>> coordinatesMap) {
-        coordinatesMap.keySet().forEach(key -> {
-            List<Coordinate> coordinates = coordinatesMap.get(key);
-            Map<String, List<Coordinate>> elements = new HashMap<>();
-            elements.put("points", coordinates);
-            db.collection(coordinatesPath).document(key).set(elements);
-        });
+    public Future setCoordinates(Map<String, List<Coordinate>> coordinatesMap) {
+
+        return Executors.newSingleThreadExecutor().submit(
+                () -> coordinatesMap.keySet().forEach(key -> {
+                            List<Coordinate> coordinates = coordinatesMap.get(key);
+                            Map<String, List<Coordinate>> elements = new HashMap<>();
+                            elements.put("points", coordinates);
+                            try {
+                                db.collection(coordinatesPath).document(key).set(elements).get();
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            } catch (ExecutionException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                ));
     }
 
     @Override
-    public void setAvailableCities(List<City> cities) {
-        cities.forEach(c -> db.collection(availableCitiesPath).document(c.name).set(c));
+    public Future setAvailableCities(List<City> cities) {
+
+        return Executors.newSingleThreadExecutor().submit(
+                () -> cities.forEach(c -> {
+                    try {
+                        db.collection(availableCitiesPath).document(c.name).set(c).get();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    } catch (ExecutionException e) {
+                        e.printStackTrace();
+                    }
+                }));
     }
 
     @Override
-    public void setPlaces(List<Place> places, String city) {
-        Map<String, Place> p = places.stream().collect(Collectors.toMap(Place::getId, Function.identity()));
-        db.collection(placesPath).document(city).set(p);
+    public Future setPlaces(List<Place> places, String city) {
+
+        return Executors.newSingleThreadExecutor().submit(
+                () -> {
+                    Map<String, Place> p = places.stream().collect(Collectors.toMap(Place::getId, Function.identity()));
+                    try {
+                        db.collection(placesPath).document(city).set(p).get();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    } catch (ExecutionException e) {
+                        e.printStackTrace();
+                    }
+                });
     }
 }

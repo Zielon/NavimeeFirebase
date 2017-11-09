@@ -47,7 +47,7 @@ public class FacebookPlacesQuery extends Query<FacebookPlace, FacebookConfigurat
         list.addAll(convertNode(object.getJSONArray("data")));
         JSONObject paging = object.getJSONObject("paging");
         String nextUrl = paging.getString("next");
-        while (list.size() < 3000) {
+        while (list.size() < 2000) {
             try {
                 JSONObject nextObj = Unirest.get(nextUrl).asJson().getBody().getObject();
                 list.addAll(convertNode(nextObj.getJSONArray("data")));

@@ -6,6 +6,7 @@ import com.navimee.contracts.models.places.Place;
 
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Future;
 
 public interface PlacesRepository {
 
@@ -19,9 +20,9 @@ public interface PlacesRepository {
 
     <T extends Place> List<T> getPlaces(String city, Class<T> type);
 
-    void setCoordinates(Map<String, List<Coordinate>> coordinatesMap);
+    Future setCoordinates(Map<String, List<Coordinate>> coordinatesMap);
 
-    void setAvailableCities(List<City> cities);
+    Future setAvailableCities(List<City> cities);
 
-    void setPlaces(List<Place> places, String city);
+    Future setPlaces(List<Place> places, String city);
 }

@@ -10,11 +10,11 @@ import com.navimee.places.queries.PlacesParams;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.stream.Collectors;
+
+import static com.navimee.asynchronous.HelperMethods.waitForAll;
 
 @Service
 public class PlacesServiceImpl implements PlacesService {
@@ -34,17 +34,7 @@ public class PlacesServiceImpl implements PlacesService {
                 }
         ).collect(Collectors.toList());
 
-        List<Place> places = new ArrayList<>();
-        for (Future<List<FacebookPlace>> future : futures)
-            try {
-                places.addAll(future.get());
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            } catch (ExecutionException e) {
-                e.printStackTrace();
-            }
-
-        return places.stream().distinct().collect(Collectors.toList());
+        return waitForAll(futures).stream().distinct().collect(Collectors.toList());
     }
 
     @Override
