@@ -1,4 +1,4 @@
-package com.navimee.models.partials;
+package com.navimee.events;
 
 import com.navimee.contracts.models.events.Event;
 

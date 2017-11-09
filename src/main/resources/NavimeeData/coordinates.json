@@ -1,0 +1,22 @@
+{
+  "GDANSK" : {
+    "points" : [
+      {
+        "latitude" : 52.231883,
+        "longitude" : 21.005796
+      }
+    ]
+  },
+  "WARSAW" : {
+    "points" : [
+      {
+        "latitude" : 52.231883,
+        "longitude" : 21.005796
+      },
+      {
+        "latitude" : 52.240184,
+        "longitude" : 21.03219
+      }
+    ]
+  }
+}
