@@ -1,11 +1,11 @@
 package com.navimee.configuration.specific;
 
-import com.navimee.NavimeeApplication;
 import com.google.auth.oauth2.GoogleCredentials;
 import com.google.cloud.firestore.Firestore;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
 import com.google.firebase.cloud.FirestoreClient;
+import com.navimee.NavimeeApplication;
 
 import java.io.*;
 
@@ -32,12 +32,13 @@ public class FirebaseInitialization {
                     GoogleCredentials credentials = GoogleCredentials.fromStream(serviceAccount);
                     options = new FirebaseOptions.Builder()
                             .setCredentials(credentials)
+                            .setDatabaseUrl("https://navimeestore.firebaseio.com")
                             .build();
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
 
-                firebaseApp = FirebaseApp.initializeApp(options, "Navimee");
+                firebaseApp = FirebaseApp.initializeApp(options);
             }
 
             return FirestoreClient.getFirestore();

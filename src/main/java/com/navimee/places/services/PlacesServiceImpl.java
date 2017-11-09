@@ -1,8 +1,8 @@
 package com.navimee.places.services;
 
-import com.navimee.contracts.services.places.PlacesService;
 import com.navimee.contracts.models.places.Coordinate;
 import com.navimee.contracts.models.places.Place;
+import com.navimee.contracts.services.places.PlacesService;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

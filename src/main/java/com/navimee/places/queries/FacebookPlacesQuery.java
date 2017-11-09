@@ -1,12 +1,12 @@
 package com.navimee.places.queries;
 
-import com.navimee.configuration.specific.FacebookConfiguration;
-import com.navimee.queries.Query;
 import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.JsonNode;
 import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
+import com.navimee.configuration.specific.FacebookConfiguration;
 import com.navimee.contracts.models.places.FacebookPlace;
+import com.navimee.queries.Query;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.scheduling.annotation.Async;

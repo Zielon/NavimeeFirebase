@@ -1,7 +1,7 @@
 package com.navimee.events.repositories;
 
-import com.navimee.contracts.repositories.events.EventsRepository;
 import com.navimee.contracts.models.events.Event;
+import com.navimee.contracts.repositories.events.EventsRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;

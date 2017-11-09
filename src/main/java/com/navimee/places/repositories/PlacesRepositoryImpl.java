@@ -1,16 +1,14 @@
 package com.navimee.places.repositories;
 
-import com.navimee.configuration.specific.FirebaseInitialization;
-import com.navimee.contracts.repositories.palces.PlacesRepository;
 import com.google.api.core.ApiFuture;
-import com.google.cloud.firestore.DocumentSnapshot;
-import com.google.cloud.firestore.Firestore;
-import com.google.cloud.firestore.QuerySnapshot;
+import com.google.cloud.firestore.*;
+import com.navimee.configuration.specific.FirebaseInitialization;
 import com.navimee.contracts.models.places.Coordinate;
+import com.navimee.contracts.repositories.palces.PlacesRepository;
+import com.navimee.places.Coordinates;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 
 @Repository
 public class PlacesRepositoryImpl implements PlacesRepository {
@@ -19,16 +17,7 @@ public class PlacesRepositoryImpl implements PlacesRepository {
 
     @Override
     public List<Coordinate> getCoordinates(String city) {
-        ApiFuture<QuerySnapshot> query = db.collection(String.format("%s/%s", coordinatesPath, city)).get();
-        QuerySnapshot querySnapshot = null;
-        try {
-            querySnapshot = query.get();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        }
-        List<DocumentSnapshot> documents = querySnapshot.getDocuments();
+        ApiFuture<QuerySnapshot> query = db.collection(coordinatesPath).get();
         return null;
     }
 
@@ -39,7 +28,8 @@ public class PlacesRepositoryImpl implements PlacesRepository {
 
     @Override
     public void setCoordinates() {
-
+        CollectionReference collection = db.collection(coordinatesPath);
+        Coordinates.Get().keySet().forEach(k -> collection.document(k).set(Coordinates.Get().get(k)));
     }
 
     @Override

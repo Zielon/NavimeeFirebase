@@ -1,11 +1,9 @@
 package com.navimee.contracts.repositories.events;
 
 import com.navimee.contracts.models.events.Event;
-import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
-@Repository
 public interface EventsRepository {
 
     String placesPath = "places";

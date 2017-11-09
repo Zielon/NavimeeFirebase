@@ -1,13 +1,13 @@
 package com.navimee.events.queries;
 
-import com.navimee.configuration.specific.FacebookConfiguration;
-import com.navimee.queries.Query;
-import com.navimee.contracts.models.events.Event;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.joda.JodaModule;
 import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.JsonNode;
 import com.mashape.unirest.http.Unirest;
+import com.navimee.configuration.specific.FacebookConfiguration;
+import com.navimee.contracts.models.events.Event;
+import com.navimee.queries.Query;
 import org.joda.time.DateTimeZone;
 import org.joda.time.LocalDateTime;
 import org.json.JSONArray;

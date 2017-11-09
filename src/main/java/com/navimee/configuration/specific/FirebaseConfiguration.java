@@ -1,7 +1,7 @@
 package com.navimee.configuration.specific;
 
-import com.navimee.configuration.Configuration;
 import com.google.api.client.googleapis.auth.oauth2.GoogleCredential;
+import com.navimee.configuration.Configuration;
 import org.json.JSONObject;
 import org.springframework.core.io.Resource;
 

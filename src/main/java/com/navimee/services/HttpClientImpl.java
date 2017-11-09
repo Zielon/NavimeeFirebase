@@ -1,12 +1,12 @@
 package com.navimee.services;
 
-import com.navimee.configuration.specific.FirebaseConfiguration;
-import com.navimee.contracts.services.HttpClient;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.JsonNode;
 import com.mashape.unirest.http.Unirest;
+import com.navimee.configuration.specific.FirebaseConfiguration;
+import com.navimee.contracts.services.HttpClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
