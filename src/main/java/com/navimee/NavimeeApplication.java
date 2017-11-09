@@ -16,6 +16,9 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 @SpringBootApplication
 @EnableScheduling
@@ -37,9 +40,18 @@ public class NavimeeApplication extends SpringBootServletInitializer {
         placesRepository.setCoordinates(coordinates).get();
         placesRepository.setAvailableCities(cities).get();
 
-        List<Place> places = placesService.getFacebookPlaces(placesRepository.getCoordinates("WARSAW"));
-        placesRepository.setPlaces(places, "WARSAW").get();
+        ExecutorService executor = Executors.newFixedThreadPool(3);
 
-        List<FacebookPlace> fb = placesRepository.getPlaces("WARSAW", FacebookPlace.class);
+    //    Future<List<Place>> warsaw = executor.submit(() -> placesService.getFacebookPlaces(placesRepository.getCoordinates("WARSAW")));
+    //    Future<List<Place>> gdansk = executor.submit(() -> placesService.getFacebookPlaces(placesRepository.getCoordinates("GDANSK")));
+     //   Future<List<Place>> sopot = executor.submit(() -> placesService.getFacebookPlaces(placesRepository.getCoordinates("SOPOT")));
+
+    //    placesRepository.setPlaces(warsaw.get(), "WARSAW").get();
+     //   placesRepository.setPlaces(gdansk.get(), "GDANSK").get();
+     //   placesRepository.setPlaces(sopot.get(), "SOPOT").get();
+
+        List<FacebookPlace> fbWarsaw = placesRepository.getPlaces("WARSAW", FacebookPlace.class);
+        List<FacebookPlace> fbGdansk = placesRepository.getPlaces("GDANSK", FacebookPlace.class);
+        List<FacebookPlace> fbSopot = placesRepository.getPlaces("SOPOT", FacebookPlace.class);
     }
 }
