@@ -1,4 +1,4 @@
-package com.places.services;
+package com.navimee.places.services;
 
 import com.navimee.contracts.services.places.PlacesService;
 import com.navimee.contracts.models.places.Coordinate;

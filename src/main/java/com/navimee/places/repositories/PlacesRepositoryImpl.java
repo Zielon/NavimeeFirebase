@@ -1,4 +1,4 @@
-package com.places.repositories;
+package com.navimee.places.repositories;
 
 import com.navimee.configuration.specific.FirebaseInitialization;
 import com.navimee.contracts.repositories.palces.PlacesRepository;

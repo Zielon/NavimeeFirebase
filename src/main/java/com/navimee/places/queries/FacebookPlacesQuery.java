@@ -1,4 +1,4 @@
-package com.places.queries;
+package com.navimee.places.queries;
 
 import com.navimee.configuration.specific.FacebookConfiguration;
 import com.navimee.queries.Query;

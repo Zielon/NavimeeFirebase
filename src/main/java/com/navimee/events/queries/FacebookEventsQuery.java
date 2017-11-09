@@ -1,4 +1,4 @@
-package com.events.queries;
+package com.navimee.events.queries;
 
 import com.navimee.configuration.specific.FacebookConfiguration;
 import com.navimee.queries.Query;

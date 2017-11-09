@@ -1,4 +1,4 @@
-package com.events.services;
+package com.navimee.events.services;
 
 import com.navimee.contracts.services.events.EventsService;
 import com.navimee.contracts.models.events.Event;

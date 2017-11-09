@@ -1,4 +1,4 @@
-package com.events.repositories;
+package com.navimee.events.repositories;
 
 import com.navimee.contracts.repositories.events.EventsRepository;
 import com.navimee.contracts.models.events.Event;

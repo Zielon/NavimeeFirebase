@@ -1,4 +1,4 @@
-package com.events.queries;
+package com.navimee.events.queries;
 
 import com.navimee.queries.QueryParams;
 
