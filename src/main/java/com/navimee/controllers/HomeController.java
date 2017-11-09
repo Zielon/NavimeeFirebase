@@ -28,7 +28,7 @@ public class HomeController {
 
         return cities//placesRepository.getPlaces("SOPOT", FacebookPlace.class)
                 .stream()
-                .map(c -> String.format("%s -> %s", c.name))
+                .map(c -> String.format("%s", c.name))
                 .collect(Collectors.joining("\n"));
     }
 }
