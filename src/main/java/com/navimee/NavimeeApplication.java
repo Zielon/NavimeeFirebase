@@ -25,6 +25,8 @@ import java.util.concurrent.Future;
 @EnableAutoConfiguration
 public class NavimeeApplication extends SpringBootServletInitializer {
 
+    public static String end = "START !!";
+
     public static void main(String[] args) throws Exception {
 
         ConfigurableApplicationContext context = SpringApplication.run(NavimeeApplication.class, args);
@@ -53,5 +55,7 @@ public class NavimeeApplication extends SpringBootServletInitializer {
         List<FacebookPlace> fbWarsaw = placesRepository.getPlaces("WARSAW", FacebookPlace.class);
         List<FacebookPlace> fbGdansk = placesRepository.getPlaces("GDANSK", FacebookPlace.class);
         List<FacebookPlace> fbSopot = placesRepository.getPlaces("SOPOT", FacebookPlace.class);
+
+        end = "END !!";
     }
 }
