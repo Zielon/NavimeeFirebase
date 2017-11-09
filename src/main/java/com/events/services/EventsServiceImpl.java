@@ -1,0 +1,15 @@
+package com.events.services;
+
+import com.navimee.contracts.services.events.EventsService;
+import com.navimee.contracts.models.events.Event;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+
+@Service
+public class EventsServiceImpl implements EventsService {
+    @Override
+    public List<Event> getFacebookEvents() {
+        return null;
+    }
+}

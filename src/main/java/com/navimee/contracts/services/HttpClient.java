@@ -7,5 +7,5 @@ import java.util.concurrent.Future;
 
 @Service
 public interface HttpClient {
-    <T> Future<T> getFromFirebase(TypeReference<T> type, String uri);
+    <T> Future<T> getFromFirestore(TypeReference<T> type, String path);
 }

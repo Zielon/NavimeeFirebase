@@ -1,13 +1,12 @@
 package com.navimee.services;
 
+import com.navimee.configuration.specific.FirebaseConfiguration;
+import com.navimee.contracts.services.HttpClient;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.JsonNode;
 import com.mashape.unirest.http.Unirest;
-import com.navimee.configuration.FirebaseConfiguration;
-import com.navimee.contracts.services.HttpClient;
-import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -27,7 +26,7 @@ public class HttpClientImpl implements HttpClient {
     FirebaseConfiguration firebaseConfiguration;
 
     @Override
-    public <T> Future<T> getFromFirebase(TypeReference<T> type, String child) {
+    public <T> Future<T> getFromFirestore(TypeReference<T> type, String child) {
 
         ExecutorService executor = Executors.newSingleThreadExecutor();
 
@@ -41,7 +40,7 @@ public class HttpClientImpl implements HttpClient {
         return executor.submit(() -> map(response.get().getBody(), type));
     }
 
-    private <T> T map(JsonNode json, TypeReference<T> type){
+    private <T> T map(JsonNode json, TypeReference<T> type) {
         ObjectMapper mapper = new ObjectMapper();
         T output = null;
         try {

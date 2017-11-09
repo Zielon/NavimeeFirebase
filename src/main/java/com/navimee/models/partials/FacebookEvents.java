@@ -1,6 +1,6 @@
 package com.navimee.models.partials;
 
-import com.navimee.models.entities.Event;
+import com.navimee.contracts.models.events.Event;
 
 import java.util.Map;
 

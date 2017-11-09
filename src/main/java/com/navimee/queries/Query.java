@@ -6,7 +6,7 @@ import org.json.JSONObject;
 import java.util.List;
 import java.util.concurrent.Future;
 
-public abstract class Query<T, C extends Configuration> {
+public abstract class Query<T, C extends Configuration, P extends QueryParams> {
 
     protected C configuration;
 
@@ -14,7 +14,7 @@ public abstract class Query<T, C extends Configuration> {
         this.configuration = configuration;
     }
 
-    public abstract Future<List<T>> execute();
+    public abstract Future<List<T>> execute(P params);
 
     protected abstract List<T> map(JSONObject object, Class<T> type);
 }

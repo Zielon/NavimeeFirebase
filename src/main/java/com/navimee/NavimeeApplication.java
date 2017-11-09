@@ -1,7 +1,6 @@
 package com.navimee;
 
-import com.mashape.unirest.http.Unirest;
-import com.navimee.contracts.repositories.NavimeeRepository;
+import com.navimee.contracts.repositories.palces.PlacesRepository;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -16,15 +15,9 @@ public class NavimeeApplication extends SpringBootServletInitializer {
 
     public static void main(String[] args) throws Exception {
 
-        Unirest.setConcurrency(2000, 200);
-
         ConfigurableApplicationContext context = SpringApplication.run(NavimeeApplication.class, args);
-        NavimeeRepository navimeeRepository = context.getBean(NavimeeRepository.class);
+        PlacesRepository placesRepository = context.getBean(PlacesRepository.class);
 
-        navimeeRepository.addCoordinates();
-        navimeeRepository.addAvailableCities();
-
-        //navimeeRepository.getAvailableCities();
-        navimeeRepository.getCoordinates();
+        placesRepository.getCoordinates("WARSAW");
     }
 }
