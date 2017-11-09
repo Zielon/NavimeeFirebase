@@ -25,9 +25,11 @@ import java.util.concurrent.Future;
 @EnableAutoConfiguration
 public class NavimeeApplication extends SpringBootServletInitializer {
 
-    public static String end = "START !!";
+    public static String end = "OUT !!";
 
     public static void main(String[] args) throws Exception {
+
+        end = "START !!";
 
         ConfigurableApplicationContext context = SpringApplication.run(NavimeeApplication.class, args);
         PlacesRepository placesRepository = context.getBean(PlacesRepository.class);
