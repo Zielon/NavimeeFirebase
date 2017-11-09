@@ -42,13 +42,13 @@ public class NavimeeApplication extends SpringBootServletInitializer {
 
         ExecutorService executor = Executors.newFixedThreadPool(3);
 
-    //    Future<List<Place>> warsaw = executor.submit(() -> placesService.getFacebookPlaces(placesRepository.getCoordinates("WARSAW")));
-    //    Future<List<Place>> gdansk = executor.submit(() -> placesService.getFacebookPlaces(placesRepository.getCoordinates("GDANSK")));
-     //   Future<List<Place>> sopot = executor.submit(() -> placesService.getFacebookPlaces(placesRepository.getCoordinates("SOPOT")));
+        Future<List<Place>> warsaw = executor.submit(() -> placesService.getFacebookPlaces(placesRepository.getCoordinates("WARSAW")));
+        Future<List<Place>> gdansk = executor.submit(() -> placesService.getFacebookPlaces(placesRepository.getCoordinates("GDANSK")));
+        Future<List<Place>> sopot = executor.submit(() -> placesService.getFacebookPlaces(placesRepository.getCoordinates("SOPOT")));
 
-    //    placesRepository.setPlaces(warsaw.get(), "WARSAW").get();
-     //   placesRepository.setPlaces(gdansk.get(), "GDANSK").get();
-     //   placesRepository.setPlaces(sopot.get(), "SOPOT").get();
+        placesRepository.setPlaces(warsaw.get(), "WARSAW").get();
+        placesRepository.setPlaces(gdansk.get(), "GDANSK").get();
+        placesRepository.setPlaces(sopot.get(), "SOPOT").get();
 
         List<FacebookPlace> fbWarsaw = placesRepository.getPlaces("WARSAW", FacebookPlace.class);
         List<FacebookPlace> fbGdansk = placesRepository.getPlaces("GDANSK", FacebookPlace.class);
