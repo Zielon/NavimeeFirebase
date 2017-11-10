@@ -10,6 +10,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executors;
@@ -36,8 +37,10 @@ public class AddEventsTask {
 
         placesRepository.getAvailableCities().parallelStream().forEach(city ->
                 Executors.newSingleThreadExecutor().submit(() -> {
+                            System.out.println("EVENT TASK START " + city.name + " at " + new Date());
                             List<Place> places = placesRepository.getPlaces(city.name, Place.class);
                             List<Event> events = eventsService.getFacebookEvents(places);
+                            System.out.println("EVENT TASK END " + city.name + " at " + new Date());
                             futures.add(eventsRepository.updateEvents(events, city.name));
                         }
                 ));
