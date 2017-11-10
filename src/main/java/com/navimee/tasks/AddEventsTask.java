@@ -30,7 +30,7 @@ public class AddEventsTask {
 
     // Once per 1 hour.
     @Scheduled(fixedRate = 1000 * 60 * 60)
-    public void addPlaces() throws ExecutionException, InterruptedException {
+    public void addEvents() throws ExecutionException, InterruptedException {
 
         List<Future> futures = new ArrayList<>();
 

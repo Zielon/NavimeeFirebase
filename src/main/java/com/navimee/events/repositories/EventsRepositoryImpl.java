@@ -1,6 +1,7 @@
 package com.navimee.events.repositories;
 
 import com.google.cloud.firestore.Firestore;
+import com.google.cloud.firestore.SetOptions;
 import com.navimee.configuration.specific.FirebaseInitialization;
 import com.navimee.contracts.models.events.Event;
 import com.navimee.contracts.repositories.events.EventsRepository;
@@ -23,9 +24,9 @@ public class EventsRepositoryImpl implements EventsRepository {
     public Future updateEvents(List<Event> events, String city) {
 
         return Executors.newSingleThreadExecutor().submit(() -> {
-            Map<String, Event> e = events.stream().collect(Collectors.toMap(Event::getId, Function.identity()));
             try {
-                db.collection(eventsPath).document(city).set(e).get();
+                Map<String, Event> e = events.stream().collect(Collectors.toMap(Event::getId, Function.identity()));
+                db.collection(eventsPath).document(city).set(e, SetOptions.merge()).get();
             } catch (InterruptedException e1) {
                 e1.printStackTrace();
             } catch (ExecutionException e1) {
