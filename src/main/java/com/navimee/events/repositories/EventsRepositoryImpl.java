@@ -7,6 +7,7 @@ import com.navimee.contracts.models.events.Event;
 import com.navimee.contracts.repositories.events.EventsRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
@@ -27,6 +28,7 @@ public class EventsRepositoryImpl implements EventsRepository {
             try {
                 Map<String, Event> e = events.stream().collect(Collectors.toMap(Event::getId, Function.identity()));
                 db.collection(eventsPath).document(city).set(e, SetOptions.merge()).get();
+                System.out.println("EVENTS ADDED " + city + " at " + new Date());
             } catch (InterruptedException e1) {
                 e1.printStackTrace();
             } catch (ExecutionException e1) {
