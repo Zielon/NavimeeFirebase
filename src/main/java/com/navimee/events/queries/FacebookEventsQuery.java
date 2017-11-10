@@ -92,9 +92,7 @@ public class FacebookEventsQuery extends Query<Event, FacebookConfiguration, Eve
             try {
                 Event mapped = mapper.readValue(eventJson.toString(), type);
                 list.add(mapped);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            } catch (IOException e) { }
         }
 
         return list;

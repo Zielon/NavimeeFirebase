@@ -36,10 +36,10 @@ public class AddEventsTask {
 
         placesRepository.getAvailableCities().parallelStream().forEach(city ->
                 Executors.newSingleThreadExecutor().submit(() -> {
-                        List<Place> places = placesRepository.getPlaces(city.name, Place.class);
-                        List<Event> events = eventsService.getFacebookEvents(places);
-                        futures.add(eventsRepository.updateEvents(events, city.name));
-                    }
+                            List<Place> places = placesRepository.getPlaces(city.name, Place.class);
+                            List<Event> events = eventsService.getFacebookEvents(places);
+                            futures.add(eventsRepository.updateEvents(events, city.name));
+                        }
                 ));
     }
 }

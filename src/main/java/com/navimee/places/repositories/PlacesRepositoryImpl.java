@@ -5,6 +5,7 @@ import com.google.api.core.ApiFuture;
 import com.google.cloud.firestore.DocumentSnapshot;
 import com.google.cloud.firestore.Firestore;
 import com.google.cloud.firestore.QuerySnapshot;
+import com.google.cloud.firestore.SetOptions;
 import com.navimee.configuration.specific.FirebaseInitialization;
 import com.navimee.contracts.models.firestore.City;
 import com.navimee.contracts.models.firestore.Coordinates;
@@ -75,12 +76,12 @@ public class PlacesRepositoryImpl implements PlacesRepository {
     public Future setCoordinates(Map<String, List<Coordinate>> coordinatesMap) {
 
         return Executors.newSingleThreadExecutor().submit(
-                () -> coordinatesMap.keySet().forEach(key -> {
-                            List<Coordinate> coordinates = coordinatesMap.get(key);
+                () -> coordinatesMap.keySet().forEach(city -> {
+                            List<Coordinate> coordinates = coordinatesMap.get(city);
                             Map<String, List<Coordinate>> elements = new HashMap<>();
                             elements.put("points", coordinates);
                             try {
-                                db.collection(coordinatesPath).document(key).set(elements).get();
+                                db.collection(coordinatesPath).document(city).set(elements).get();
                             } catch (InterruptedException e) {
                                 e.printStackTrace();
                             } catch (ExecutionException e) {
@@ -110,7 +111,7 @@ public class PlacesRepositoryImpl implements PlacesRepository {
 
         return Executors.newSingleThreadExecutor().submit(
                 () -> {
-                    Map<String, Place> p = places.stream().collect(Collectors.toMap(Place::getId, Function.identity()));
+                    Map<String, Object> p = places.stream().collect(Collectors.toMap(Place::getId, Function.identity()));
                     try {
                         db.collection(placesPath).document(city).set(p).get();
                     } catch (InterruptedException e) {
@@ -119,5 +120,24 @@ public class PlacesRepositoryImpl implements PlacesRepository {
                         e.printStackTrace();
                     }
                 });
+    }
+
+    @Override
+    public Future deleteCollection(String collection) {
+
+        return Executors.newSingleThreadExecutor().submit(
+                () -> {
+                    List<DocumentSnapshot> documents;
+                    try {
+                        documents = db.collection(collection).get().get().getDocuments();
+                        for (DocumentSnapshot document : documents)
+                            document.getReference().delete().get();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    } catch (ExecutionException e) {
+                        e.printStackTrace();
+                    }
+                }
+        );
     }
 }

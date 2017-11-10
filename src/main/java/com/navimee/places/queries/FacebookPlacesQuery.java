@@ -32,9 +32,9 @@ public class FacebookPlacesQuery extends Query<FacebookPlace, FacebookConfigurat
                         .queryString("q", "*")
                         .queryString("type", "place")
                         .queryString("center", params.lat + "," + params.lon)
-                        .queryString("distance", "2000")
+                        .queryString("distance", "1000")
                         .queryString("fields", "name,category,location")
-                        .queryString("limit", "200")
+                        .queryString("limit", "300")
                         .queryString("access_token", configuration.accessToken)
                         .asJsonAsync();
 
@@ -52,14 +52,13 @@ public class FacebookPlacesQuery extends Query<FacebookPlace, FacebookConfigurat
         JSONObject paging = object.getJSONObject("paging");
         String nextUrl = paging.getString("next");
 
-        while (list.size() < 2000) {
+        while (list.size() < 5000) {
             try {
                 JSONObject nextObj = Unirest.get(nextUrl).asJson().getBody().getObject();
                 list.addAll(convertNode(nextObj.getJSONArray("data")));
-                nextUrl = object.getJSONObject("paging").getString("next");
-                if (nextUrl == null || nextUrl == "") break;
+                if (!nextObj.has("paging")) break;
+                nextUrl = nextObj.getJSONObject("paging").getString("next");
             } catch (UnirestException e) {
-                e.printStackTrace();
                 break;
             }
         }
