@@ -12,6 +12,7 @@ import org.joda.time.DateTimeZone;
 import org.joda.time.LocalDateTime;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.springframework.scheduling.annotation.Async;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -29,6 +30,7 @@ public class FacebookEventsQuery extends Query<Event, FacebookConfiguration, Eve
         super(configuration);
     }
 
+    @Async
     @Override
     public Future<List<Event>> execute(EventsParams params) {
 
@@ -67,6 +69,9 @@ public class FacebookEventsQuery extends Query<Event, FacebookConfiguration, Eve
     @Override
     protected List<Event> map(JSONObject object, Class<Event> type) {
         List<Event> list = new ArrayList<>();
+
+        if (!object.has("events"))
+            return list;
 
         JSONObject obj = object.getJSONObject("events");
         list.addAll(convertNode(obj.getJSONArray("data"), type));

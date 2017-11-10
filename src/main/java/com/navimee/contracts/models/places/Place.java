@@ -1,6 +1,9 @@
 package com.navimee.contracts.models.places;
 
-public abstract class Place implements Comparable {
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+@JsonIgnoreProperties(ignoreUnknown = true)
+public class Place implements Comparable {
     public String name;
     public String id;
 

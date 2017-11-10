@@ -10,13 +10,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
 
 @Component
 public class AddPlacesTask {
@@ -39,17 +36,11 @@ public class AddPlacesTask {
         placesRepository.setCoordinates(coordinates).get();
         placesRepository.setAvailableCities(cities).get();
 
-        ExecutorService executor = Executors.newFixedThreadPool(15);
-
-        List<Future> futures = new ArrayList<>();
-
-        placesRepository.getAvailableCities().forEach(
-                city -> futures.add(executor.submit(() -> {
-                            List<Place> palces = placesService.getFacebookPlaces(placesRepository.getCoordinates(city.name));
-                            return placesRepository.setPlaces(palces, city.name);
-                        }
-                )));
-
-        for (Future f : futures) f.get();
+        placesRepository.getAvailableCities().forEach(city ->
+                Executors.newSingleThreadExecutor().submit(() -> {
+                    List<Place> palces = placesService.getFacebookPlaces(placesRepository.getCoordinates(city.name));
+                    placesRepository.setPlaces(palces, city.name);
+                }
+        ));
     }
 }
