@@ -45,9 +45,9 @@ public class AddPlacesTask {
 
         placesRepository.getAvailableCities().forEach(
                 city -> futures.add(executor.submit(() -> {
-                        List<Place> palces = placesService.getFacebookPlaces(placesRepository.getCoordinates(city.name));
-                        return placesRepository.setPlaces(palces, city.name);
-                    }
+                            List<Place> palces = placesService.getFacebookPlaces(placesRepository.getCoordinates(city.name));
+                            return placesRepository.setPlaces(palces, city.name);
+                        }
                 )));
 
         for (Future f : futures) f.get();

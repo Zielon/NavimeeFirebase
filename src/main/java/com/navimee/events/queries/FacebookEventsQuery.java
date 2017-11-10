@@ -11,7 +11,6 @@ import com.navimee.queries.Query;
 import org.joda.time.DateTimeZone;
 import org.joda.time.LocalDateTime;
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
@@ -68,11 +67,9 @@ public class FacebookEventsQuery extends Query<Event, FacebookConfiguration, Eve
     @Override
     protected List<Event> map(JSONObject object, Class<Event> type) {
         List<Event> list = new ArrayList<>();
-        try {
-            JSONObject obj = object.getJSONObject("events");
-            list.addAll(convertNode(obj.getJSONArray("data"), type));
-        } catch (JSONException e) {
-        }
+
+        JSONObject obj = object.getJSONObject("events");
+        list.addAll(convertNode(obj.getJSONArray("data"), type));
 
         return list
                 .stream()

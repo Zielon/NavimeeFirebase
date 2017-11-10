@@ -45,8 +45,13 @@ public class FacebookPlacesQuery extends Query<FacebookPlace, FacebookConfigurat
     protected List<FacebookPlace> map(JSONObject object, Class<FacebookPlace> type) {
         List<FacebookPlace> list = new ArrayList<>();
         list.addAll(convertNode(object.getJSONArray("data")));
+
+        if (!object.has("paging"))
+            return list;
+
         JSONObject paging = object.getJSONObject("paging");
         String nextUrl = paging.getString("next");
+
         while (list.size() < 2000) {
             try {
                 JSONObject nextObj = Unirest.get(nextUrl).asJson().getBody().getObject();
@@ -55,8 +60,10 @@ public class FacebookPlacesQuery extends Query<FacebookPlace, FacebookConfigurat
                 if (nextUrl == null || nextUrl == "") break;
             } catch (UnirestException e) {
                 e.printStackTrace();
+                break;
             }
         }
+
         return list;
     }
 
