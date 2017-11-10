@@ -12,6 +12,7 @@ import com.navimee.contracts.models.firestore.Coordinates;
 import com.navimee.contracts.models.places.Coordinate;
 import com.navimee.contracts.models.places.Place;
 import com.navimee.contracts.repositories.palces.PlacesRepository;
+import com.navimee.firestoreHelpers.TransactionSplit;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
@@ -111,9 +112,13 @@ public class PlacesRepositoryImpl implements PlacesRepository {
 
         return Executors.newSingleThreadExecutor().submit(
                 () -> {
-                    Map<String, Object> p = places.stream().collect(Collectors.toMap(Place::getId, Function.identity()));
                     try {
-                        db.collection(placesPath).document(city).set(p).get();
+                        Map<String, Place> p = places.stream().collect(Collectors.toMap(Place::getId, Function.identity()));
+                        if(p.size() > 6000)
+                            for (Map<String, Place> map: TransactionSplit.mapSplit(p, 6000))
+                                db.collection(placesPath).document(city).set(map, SetOptions.merge()).get();
+                        else
+                            db.collection(placesPath).document(city).set(p, SetOptions.merge()).get();
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     } catch (ExecutionException e) {
@@ -127,9 +132,8 @@ public class PlacesRepositoryImpl implements PlacesRepository {
 
         return Executors.newSingleThreadExecutor().submit(
                 () -> {
-                    List<DocumentSnapshot> documents;
                     try {
-                        documents = db.collection(collection).get().get().getDocuments();
+                        List<DocumentSnapshot> documents = db.collection(collection).get().get().getDocuments();
                         for (DocumentSnapshot document : documents)
                             document.getReference().delete().get();
                     } catch (InterruptedException e) {
