@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
@@ -24,7 +25,7 @@ public class AddPlacesTask {
     PlacesService placesService;
 
     // Once per 30 days.
-    @Scheduled(cron = "0 15 10 ? * 6")
+    @Scheduled(cron = "0 15 11 ? * *")
     public void addPlaces() throws ExecutionException, InterruptedException {
 
         // Mocked data.
@@ -43,7 +44,9 @@ public class AddPlacesTask {
         placesRepository.getAvailableCities().forEach(city -> {
                     String name = city.name;
                     Executors.newSingleThreadExecutor().submit(() -> {
+                        System.out.println("PLACES TASK STARTED " + city.name + " at " + new Date());
                         List<Place> places = placesService.getFacebookPlaces(placesRepository.getCoordinates(name));
+                        System.out.println("PLACES TASK STARTED " + city.name + " at " + new Date());
                         placesRepository.setPlaces(places, name);
                     });
                 }
