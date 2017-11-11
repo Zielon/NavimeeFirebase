@@ -9,7 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
-import java.util.Date;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executors;
@@ -35,7 +34,6 @@ public class EventsTask {
                 Executors.newSingleThreadExecutor().submit(() -> {
                             List<Place> places = placesRepository.getPlaces(city.name, Place.class);
                             List<Event> events = eventsService.getFacebookEvents(places);
-                            System.out.println("EVENT TASK ENDED " + city.name + " at " + new Date());
                             eventsRepository.updateEvents(events, city.name);
                         }
                 ));

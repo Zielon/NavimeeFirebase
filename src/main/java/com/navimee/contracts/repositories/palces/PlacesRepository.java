@@ -13,6 +13,7 @@ public interface PlacesRepository {
     String coordinatesPath = "coordinates";
     String availableCitiesPath = "availableCities";
     String placesPath = "places";
+    String eventsChunks = "eventsChunks";
 
     List<Coordinate> getCoordinates(String city);
 

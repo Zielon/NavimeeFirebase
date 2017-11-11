@@ -1,7 +1,5 @@
 package com.navimee.tasks;
 
-import com.navimee.contracts.models.firestore.City;
-import com.navimee.contracts.models.places.Coordinate;
 import com.navimee.contracts.models.places.Place;
 import com.navimee.contracts.repositories.palces.PlacesRepository;
 import com.navimee.contracts.services.places.PlacesService;
@@ -9,9 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
-import java.util.Date;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executors;
 
@@ -29,11 +25,11 @@ public class PlacesTask {
     public void addPlacesTask() throws ExecutionException, InterruptedException {
 
         // Mocked data.
-        com.navimee.mockups.NavimeeData navimeeData = new com.navimee.mockups.NavimeeData();
+/*        com.navimee.mockups.NavimeeData navimeeData = new com.navimee.mockups.NavimeeData();
         Map<String, List<Coordinate>> coordinates = navimeeData.getCoordinates();
         List<City> cities = navimeeData.getCities();
 
-/*        placesRepository.deleteCollection("places").get();
+        placesRepository.deleteCollection("places").get();
         placesRepository.deleteCollection("availableCities").get();
         placesRepository.deleteCollection("events").get();
         placesRepository.deleteCollection("coordinates").get();
@@ -45,7 +41,6 @@ public class PlacesTask {
                     String name = city.name;
                     Executors.newSingleThreadExecutor().submit(() -> {
                         List<Place> places = placesService.getFacebookPlaces(placesRepository.getCoordinates(name));
-                        System.out.println("PLACES TASK ENDED " + city.name + " at " + new Date());
                         placesRepository.setPlaces(places, name);
                     });
                 }

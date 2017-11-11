@@ -15,10 +15,7 @@ import com.navimee.contracts.repositories.palces.PlacesRepository;
 import com.navimee.firestoreHelpers.TransactionSplit;
 import org.springframework.stereotype.Repository;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -64,7 +61,12 @@ public class PlacesRepositoryImpl implements PlacesRepository {
         ApiFuture<DocumentSnapshot> documentSnapshot = db.collection(placesPath).document(city).get();
         ObjectMapper mapper = new ObjectMapper();
         try {
-            documentSnapshot.get().getData().forEach((k, v) -> places.add(mapper.convertValue(v, type)));
+            DocumentSnapshot snapshot = documentSnapshot.get();
+            QuerySnapshot chunks = snapshot.getReference().collection(eventsChunks).get().get();
+            if (!chunks.isEmpty())
+                chunks.getDocuments().forEach(d -> d.getData().forEach((k, v) -> places.add(mapper.convertValue(v, type))));
+            else
+                snapshot.getData().forEach((k, v) -> places.add(mapper.convertValue(v, type)));
         } catch (InterruptedException e) {
             e.printStackTrace();
         } catch (ExecutionException e) {
@@ -116,7 +118,9 @@ public class PlacesRepositoryImpl implements PlacesRepository {
                         Map<String, Place> p = places.stream().collect(Collectors.toMap(Place::getId, Function.identity()));
                         if (p.size() > 6000)
                             for (Map<String, Place> map : TransactionSplit.mapSplit(p, 6000))
-                                db.collection(placesPath).document(city).set(map, SetOptions.merge()).get();
+                                db.collection(placesPath).document(city)
+                                        .collection(eventsChunks)
+                                        .document().set(map, SetOptions.merge()).get();
                         else
                             db.collection(placesPath).document(city).set(p, SetOptions.merge()).get();
                     } catch (InterruptedException e) {
@@ -124,6 +128,7 @@ public class PlacesRepositoryImpl implements PlacesRepository {
                     } catch (ExecutionException e) {
                         e.printStackTrace();
                     }
+                    System.out.println("PLACES ADDED " + city + " at " + new Date());
                 });
     }
 
