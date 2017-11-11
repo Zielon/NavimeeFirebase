@@ -114,8 +114,8 @@ public class PlacesRepositoryImpl implements PlacesRepository {
                 () -> {
                     try {
                         Map<String, Place> p = places.stream().collect(Collectors.toMap(Place::getId, Function.identity()));
-                        if(p.size() > 6000)
-                            for (Map<String, Place> map: TransactionSplit.mapSplit(p, 6000))
+                        if (p.size() > 6000)
+                            for (Map<String, Place> map : TransactionSplit.mapSplit(p, 6000))
                                 db.collection(placesPath).document(city).set(map, SetOptions.merge()).get();
                         else
                             db.collection(placesPath).document(city).set(p, SetOptions.merge()).get();

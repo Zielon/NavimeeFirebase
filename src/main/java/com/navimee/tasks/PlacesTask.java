@@ -16,7 +16,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executors;
 
 @Component
-public class AddPlacesTask {
+public class PlacesTask {
 
     @Autowired
     PlacesRepository placesRepository;
@@ -25,8 +25,8 @@ public class AddPlacesTask {
     PlacesService placesService;
 
     // Once per 30 days.
-    @Scheduled(cron = "0 15 11 ? * *")
-    public void addPlaces() throws ExecutionException, InterruptedException {
+    @Scheduled(cron = "0 00 12 ? * *")
+    public void addPlacesTask() throws ExecutionException, InterruptedException {
 
         // Mocked data.
         com.navimee.mockups.NavimeeData navimeeData = new com.navimee.mockups.NavimeeData();
@@ -44,9 +44,8 @@ public class AddPlacesTask {
         placesRepository.getAvailableCities().forEach(city -> {
                     String name = city.name;
                     Executors.newSingleThreadExecutor().submit(() -> {
-                        System.out.println("PLACES TASK STARTED " + city.name + " at " + new Date());
                         List<Place> places = placesService.getFacebookPlaces(placesRepository.getCoordinates(name));
-                        System.out.println("PLACES TASK STARTED " + city.name + " at " + new Date());
+                        System.out.println("PLACES TASK ENDED " + city.name + " at " + new Date());
                         placesRepository.setPlaces(places, name);
                     });
                 }

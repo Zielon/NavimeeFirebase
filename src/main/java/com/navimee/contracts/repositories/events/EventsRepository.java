@@ -8,12 +8,13 @@ import java.util.concurrent.Future;
 public interface EventsRepository {
 
     String eventsPath = "events";
-    String todayEventsPath = "todayEvents";
-    String tomorrowEventsPath = "tomorrowEvents";
-    String dayAfterTomorrowEventsPath = "dayAfterTomorrowEvents";
-    String historicalEventsPath = "historicalEvents";
+    String segregatetEventsPath = "segregatedEvents";
+
+    List<Event> getEvents(String city);
 
     Future updateEvents(List<Event> events, String city);
+
+    Future sevenDaysSegregation(List<Event> events, String city);
 
     Future updateHistorical(List<Event> events);
 
