@@ -2,7 +2,6 @@ package com.navimee.asynchronous;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
 public class HelperMethods {
@@ -12,11 +11,7 @@ public class HelperMethods {
         futures.parallelStream().forEach(future -> {
             try {
                 output.addAll(future.get());
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            } catch (ExecutionException e) {
-                e.printStackTrace();
-            }
+            } catch (Exception e) {}
         });
 
         return output;

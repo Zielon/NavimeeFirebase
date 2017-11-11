@@ -50,7 +50,7 @@ public class FacebookEventsQuery extends Query<Event, FacebookConfiguration, Eve
 
         DateTimeZone zone = DateTimeZone.forID("Europe/Warsaw");
         LocalDateTime warsawCurrent = LocalDateTime.now(zone);
-        LocalDateTime warsaw1MonthLater = warsawCurrent.plusDays(14);
+        LocalDateTime warsawLater = warsawCurrent.plusDays(14);
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
 
         Future<HttpResponse<JsonNode>> response =
@@ -59,7 +59,7 @@ public class FacebookEventsQuery extends Query<Event, FacebookConfiguration, Eve
                         .queryString("fields", String.format("name,category,events.fields(%s).since(%s).until(%s)",
                                 joiner.toString(),
                                 sdf.format(warsawCurrent.toDate()),
-                                sdf.format(warsaw1MonthLater.toDate())))
+                                sdf.format(warsawLater.toDate())))
                         .queryString("access_token", configuration.accessToken)
                         .asJsonAsync();
 
@@ -68,17 +68,17 @@ public class FacebookEventsQuery extends Query<Event, FacebookConfiguration, Eve
 
     @Override
     protected List<Event> map(JSONObject object, Class<Event> type) {
-        List<Event> list = new ArrayList<>();
+        List<Event> events = new ArrayList<>();
 
         if (!object.has("events"))
-            return list;
+            return events;
 
         JSONObject obj = object.getJSONObject("events");
-        list.addAll(convertNode(obj.getJSONArray("data"), type));
+        events.addAll(convertNode(obj.getJSONArray("data"), type));
 
-        return list
+        return events
                 .stream()
-                .filter(e -> e.attending_count > 100)
+                .filter(e -> e.attending_count > 50)
                 .filter(e -> e.place != null)
                 .collect(Collectors.toList());
     }

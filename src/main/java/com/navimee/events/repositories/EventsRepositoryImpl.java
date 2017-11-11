@@ -58,7 +58,7 @@ public class EventsRepositoryImpl implements EventsRepository {
             } catch (ExecutionException e1) {
                 e1.printStackTrace();
             }
-            System.out.println("EVENTS ADDED " + city + " at " + new Date());
+            System.out.println("EVENTS ADDED " + events.size() + " " + city + " at " + new Date());
         });
     }
 
