@@ -24,7 +24,7 @@ public class PlacesTask {
     PlacesService placesService;
 
     // Once per 30 days.
-    @Scheduled(cron = "0 00 12 ? * *")
+    @Scheduled(cron = "0 0 0/1 * * ?")
     public void addPlacesTask() throws ExecutionException, InterruptedException {
 
         // Mocked data.

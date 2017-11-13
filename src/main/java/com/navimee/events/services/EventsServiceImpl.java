@@ -4,7 +4,7 @@ import com.navimee.configuration.specific.FacebookConfiguration;
 import com.navimee.contracts.models.events.Event;
 import com.navimee.contracts.models.places.Place;
 import com.navimee.contracts.services.events.EventsService;
-import com.navimee.events.queries.EventsParams;
+import com.navimee.events.queries.params.EventsParams;
 import com.navimee.events.queries.FacebookEventsQuery;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

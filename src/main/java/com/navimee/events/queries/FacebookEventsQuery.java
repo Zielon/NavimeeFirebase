@@ -8,6 +8,7 @@ import com.mashape.unirest.http.Unirest;
 import com.navimee.configuration.specific.FacebookConfiguration;
 import com.navimee.contracts.models.events.Event;
 import com.navimee.contracts.models.places.Place;
+import com.navimee.events.queries.params.EventsParams;
 import com.navimee.queries.Query;
 import org.joda.time.DateTimeZone;
 import org.joda.time.LocalDateTime;

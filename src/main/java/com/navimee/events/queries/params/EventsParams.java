@@ -1,4 +1,4 @@
-package com.navimee.events.queries;
+package com.navimee.events.queries.params;
 
 import com.navimee.contracts.models.places.Place;
 import com.navimee.queries.QueryParams;

@@ -7,6 +7,7 @@ import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
 import com.navimee.configuration.specific.FacebookConfiguration;
 import com.navimee.contracts.models.places.FacebookPlace;
+import com.navimee.places.queries.params.PlacesParams;
 import com.navimee.queries.Query;
 import org.json.JSONArray;
 import org.json.JSONObject;

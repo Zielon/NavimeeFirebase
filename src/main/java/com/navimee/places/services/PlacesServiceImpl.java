@@ -4,11 +4,12 @@ import com.navimee.configuration.specific.FacebookConfiguration;
 import com.navimee.configuration.specific.FoursquareConfiguration;
 import com.navimee.contracts.models.places.Coordinate;
 import com.navimee.contracts.models.places.FacebookPlace;
+import com.navimee.contracts.models.places.FoursquareHotPlace;
 import com.navimee.contracts.models.places.FoursquarePlace;
 import com.navimee.contracts.services.places.PlacesService;
 import com.navimee.places.queries.FacebookPlacesQuery;
 import com.navimee.places.queries.FoursquarePlacesQuery;
-import com.navimee.places.queries.PlacesParams;
+import com.navimee.places.queries.params.PlacesParams;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -52,6 +53,14 @@ public class PlacesServiceImpl implements PlacesService {
                 }
         ).collect(Collectors.toList());
 
-        return waitForAll(futures).stream().filter(distinctByKey(p -> p.id)).collect(Collectors.toList());
+        return waitForAll(futures).stream()
+                .filter(e -> e.facebook != null)
+                .filter(distinctByKey(p -> p.facebook))
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<FoursquareHotPlace> getFoursquareHotPlaces(List<Coordinate> coordinates) {
+        return null;
     }
 }
