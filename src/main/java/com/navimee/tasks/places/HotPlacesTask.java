@@ -1,4 +1,4 @@
-package com.navimee.tasks;
+package com.navimee.tasks.places;
 
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component;
 public class HotPlacesTask {
 
     @Scheduled(cron = "0 0 0/1 * * ?")
-    public void addHotPlacesTask(){
+    public void addHotPlacesTask() {
 
     }
 }

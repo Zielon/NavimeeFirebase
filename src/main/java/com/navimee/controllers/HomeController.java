@@ -1,11 +1,13 @@
 package com.navimee.controllers;
 
-import com.navimee.contracts.models.places.FacebookPlace;
+import com.navimee.contracts.models.places.Place;
 import com.navimee.contracts.repositories.palces.PlacesRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.StringJoiner;
 
 @RestController
 public class HomeController {
@@ -15,6 +17,11 @@ public class HomeController {
 
     @RequestMapping(value = "/", method = RequestMethod.GET, produces = "application/json")
     public String home() {
-        return Integer.toString(placesRepository.getPlaces("SOPOT", FacebookPlace.class).size());
+
+        StringJoiner joiner = new StringJoiner("\n");
+        placesRepository.getAvailableCities()
+                .forEach(c -> joiner.add(c.name + ": " + placesRepository.getPlaces(c.name, Place.class).size()));
+
+        return joiner.toString();
     }
 }

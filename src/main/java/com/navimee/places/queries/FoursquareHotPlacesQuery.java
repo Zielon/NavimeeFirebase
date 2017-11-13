@@ -11,7 +11,9 @@ import java.util.concurrent.Future;
 
 public class FoursquareHotPlacesQuery extends Query<FoursquareHotPlace, FoursquareConfiguration, PlacesParams> {
 
-    public FoursquareHotPlacesQuery(FoursquareConfiguration configuration) { super(configuration); }
+    public FoursquareHotPlacesQuery(FoursquareConfiguration configuration) {
+        super(configuration);
+    }
 
     @Override
     public Future<List<FoursquareHotPlace>> execute(PlacesParams params) {

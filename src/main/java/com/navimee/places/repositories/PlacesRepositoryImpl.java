@@ -21,6 +21,8 @@ import java.util.concurrent.Future;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import static com.navimee.firestoreHelpers.Distinct.distinctByKey;
+
 @Repository
 public class PlacesRepositoryImpl implements PlacesRepository {
 
@@ -114,14 +116,17 @@ public class PlacesRepositoryImpl implements PlacesRepository {
         return Executors.newSingleThreadExecutor().submit(
                 () -> {
                     try {
-                        Map<String, Place> p = places.stream().collect(Collectors.toMap(Place::getId, Function.identity()));
-                        if (p.size() > chunkSize)
-                            for (Map<String, Place> map : TransactionSplit.mapSplit(p, chunkSize))
+                        Map<String, Place> placesMap = places.stream()
+                                .filter(distinctByKey(p -> p.getId()))
+                                .collect(Collectors.toMap(Place::getId, Function.identity()));
+
+                        if (placesMap.size() > chunkSize)
+                            for (Map<String, Place> map : TransactionSplit.mapSplit(placesMap, chunkSize))
                                 db.collection(placesPath).document(city)
                                         .collection(eventsChunks)
                                         .document().set(map).get();
                         else
-                            db.collection(placesPath).document(city).set(p).get();
+                            db.collection(placesPath).document(city).set(placesMap).get();
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     } catch (ExecutionException e) {

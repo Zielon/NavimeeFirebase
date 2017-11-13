@@ -1,4 +1,4 @@
-package com.navimee.tasks;
+package com.navimee.tasks.places;
 
 import com.navimee.contracts.models.places.FacebookPlace;
 import com.navimee.contracts.models.places.FoursquarePlace;
@@ -24,7 +24,7 @@ public class PlacesTask {
     PlacesService placesService;
 
     // Once per 30 days.
-    @Scheduled(cron = "0 0 0/1 * * ?")
+    @Scheduled(cron = "0 00 12 ? * *")
     public void addPlacesTask() throws ExecutionException, InterruptedException {
 
         // Mocked data.

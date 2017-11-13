@@ -1,7 +1,6 @@
-package com.navimee.tasks;
+package com.navimee.tasks.events;
 
 import com.navimee.contracts.models.events.Event;
-import com.navimee.contracts.models.places.Place;
 import com.navimee.contracts.repositories.events.EventsRepository;
 import com.navimee.contracts.repositories.palces.PlacesRepository;
 import com.navimee.contracts.services.events.EventsService;
@@ -13,9 +12,8 @@ import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executors;
 
-
 @Component
-public class EventsTask {
+public class SegregationEventsTask {
 
     @Autowired
     PlacesRepository placesRepository;
@@ -28,13 +26,12 @@ public class EventsTask {
 
     // Once per 1 hour.
     @Scheduled(cron = "0 0 0/1 * * ?")
-    public void addEventsTask() throws ExecutionException, InterruptedException {
+    public void addSegregationTask() throws ExecutionException, InterruptedException {
 
         placesRepository.getAvailableCities().parallelStream().forEach(city ->
                 Executors.newSingleThreadExecutor().submit(() -> {
-                            List<Place> places = placesRepository.getPlaces(city.name, Place.class);
-                            List<Event> events = eventsService.getFacebookEvents(places);
-                            eventsRepository.updateEvents(events, city.name);
+                            List<Event> events = eventsRepository.getEvents(city.name);
+                            eventsRepository.sevenDaysSegregation(events, city.name);
                         }
                 ));
     }
