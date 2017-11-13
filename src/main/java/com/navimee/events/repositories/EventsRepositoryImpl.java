@@ -35,6 +35,7 @@ public class EventsRepositoryImpl implements EventsRepository {
         ApiFuture<DocumentSnapshot> documentSnapshot = db.collection(eventsPath).document(city).get();
         ObjectMapper mapper = new ObjectMapper();
         mapper.registerModule(new JodaModule());
+
         try {
             documentSnapshot.get().getData().forEach((k, v) -> events.add(mapper.convertValue(v, Event.class)));
         } catch (InterruptedException e) {

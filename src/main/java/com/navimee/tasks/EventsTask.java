@@ -27,7 +27,7 @@ public class EventsTask {
     EventsRepository eventsRepository;
 
     // Once per 1 hour.
-    @Scheduled(fixedRate = 1000 * 60 * 60)
+    @Scheduled(cron = "0 0 0/1 * * ?")
     public void addEventsTask() throws ExecutionException, InterruptedException {
 
         placesRepository.getAvailableCities().parallelStream().forEach(city ->

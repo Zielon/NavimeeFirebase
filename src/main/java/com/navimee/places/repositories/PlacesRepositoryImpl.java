@@ -5,7 +5,6 @@ import com.google.api.core.ApiFuture;
 import com.google.cloud.firestore.DocumentSnapshot;
 import com.google.cloud.firestore.Firestore;
 import com.google.cloud.firestore.QuerySnapshot;
-import com.google.cloud.firestore.SetOptions;
 import com.navimee.configuration.specific.FirebaseInitialization;
 import com.navimee.contracts.models.firestore.City;
 import com.navimee.contracts.models.firestore.Coordinates;
@@ -110,19 +109,19 @@ public class PlacesRepositoryImpl implements PlacesRepository {
     }
 
     @Override
-    public Future setPlaces(List<Place> places, String city) {
-
+    public Future setPlaces(List<? extends Place> places, String city) {
+        int chunkSize = 2000;
         return Executors.newSingleThreadExecutor().submit(
                 () -> {
                     try {
                         Map<String, Place> p = places.stream().collect(Collectors.toMap(Place::getId, Function.identity()));
-                        if (p.size() > 6000)
-                            for (Map<String, Place> map : TransactionSplit.mapSplit(p, 6000))
+                        if (p.size() > chunkSize)
+                            for (Map<String, Place> map : TransactionSplit.mapSplit(p, chunkSize))
                                 db.collection(placesPath).document(city)
                                         .collection(eventsChunks)
-                                        .document().set(map, SetOptions.merge()).get();
+                                        .document().set(map).get();
                         else
-                            db.collection(placesPath).document(city).set(p, SetOptions.merge()).get();
+                            db.collection(placesPath).document(city).set(p).get();
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     } catch (ExecutionException e) {

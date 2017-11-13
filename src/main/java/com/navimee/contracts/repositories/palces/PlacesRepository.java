@@ -25,7 +25,7 @@ public interface PlacesRepository {
 
     Future setAvailableCities(List<City> cities);
 
-    Future setPlaces(List<Place> places, String city);
+    Future setPlaces(List<? extends Place> places, String city);
 
     Future deleteCollection(String collection);
 }

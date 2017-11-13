@@ -7,8 +7,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.stream.Collectors;
-
 @RestController
 public class HomeController {
 
@@ -17,10 +15,6 @@ public class HomeController {
 
     @RequestMapping(value = "/", method = RequestMethod.GET, produces = "application/json")
     public String home() {
-
-        return placesRepository.getPlaces("SOPOT", FacebookPlace.class)
-                .stream()
-                .map(c -> String.format("%s", c.name))
-                .collect(Collectors.joining("\n"));
+        return Integer.toString(placesRepository.getPlaces("SOPOT", FacebookPlace.class).size());
     }
 }

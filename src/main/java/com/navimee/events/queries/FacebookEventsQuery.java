@@ -7,6 +7,7 @@ import com.mashape.unirest.http.JsonNode;
 import com.mashape.unirest.http.Unirest;
 import com.navimee.configuration.specific.FacebookConfiguration;
 import com.navimee.contracts.models.events.Event;
+import com.navimee.contracts.models.places.Place;
 import com.navimee.queries.Query;
 import org.joda.time.DateTimeZone;
 import org.joda.time.LocalDateTime;
@@ -30,12 +31,15 @@ public class FacebookEventsQuery extends Query<Event, FacebookConfiguration, Eve
         super(configuration);
     }
 
+    private Place searchPlace;
+
     @Async
     @Override
     public Future<List<Event>> execute(EventsParams params) {
 
         ExecutorService executor = Executors.newSingleThreadExecutor();
         StringJoiner joiner = new StringJoiner(",");
+        searchPlace = params.place;
 
         joiner.add("place.fields(id,name,location)");
         joiner.add("id");
@@ -55,7 +59,7 @@ public class FacebookEventsQuery extends Query<Event, FacebookConfiguration, Eve
 
         Future<HttpResponse<JsonNode>> response =
                 Unirest.get(configuration.apiUrl)
-                        .queryString("id", params.id)
+                        .queryString("id", searchPlace.id)
                         .queryString("fields", String.format("name,category,events.fields(%s).since(%s).until(%s)",
                                 joiner.toString(),
                                 sdf.format(warsawCurrent.toDate()),
@@ -78,8 +82,7 @@ public class FacebookEventsQuery extends Query<Event, FacebookConfiguration, Eve
 
         return events
                 .stream()
-                .filter(e -> e.attending_count > 0)
-                .filter(e -> e.place != null)
+                .filter(e -> e.attending_count > 50)
                 .collect(Collectors.toList());
     }
 
@@ -90,8 +93,9 @@ public class FacebookEventsQuery extends Query<Event, FacebookConfiguration, Eve
         for (int n = 0; n < array.length(); n++) {
             JSONObject eventJson = array.getJSONObject(n);
             try {
-                Event mapped = mapper.readValue(eventJson.toString(), Event.class);
-                list.add(mapped);
+                Event event = mapper.readValue(eventJson.toString(), Event.class);
+                event.searchPlace = searchPlace;
+                list.add(event);
             } catch (IOException e) {
             }
         }

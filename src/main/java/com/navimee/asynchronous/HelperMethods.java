@@ -11,7 +11,8 @@ public class HelperMethods {
         futures.parallelStream().forEach(future -> {
             try {
                 output.addAll(future.get());
-            } catch (Exception e) {}
+            } catch (Exception e) {
+            }
         });
 
         return output;

@@ -22,4 +22,9 @@ public class FoursquarePlace extends Place {
         city = json.get("city").toString();
         address = json.get("address").toString();
     }
+
+    @Override
+    public String getId() {
+        return facebook;
+    }
 }
