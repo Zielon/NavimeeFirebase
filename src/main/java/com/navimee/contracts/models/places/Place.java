@@ -7,6 +7,12 @@ public class Place implements Comparable {
     public String name;
     public String id;
 
+    // Location
+    public double lat;
+    public double lon;
+    public String city;
+    public String address;
+
     public String getId() {
         return id;
     }

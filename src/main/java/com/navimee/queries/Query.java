@@ -16,5 +16,5 @@ public abstract class Query<T, C extends Configuration, P extends QueryParams> {
 
     public abstract Future<List<T>> execute(P params);
 
-    protected abstract List<T> map(JSONObject object, Class<T> type);
+    protected abstract List<T> map(JSONObject object);
 }

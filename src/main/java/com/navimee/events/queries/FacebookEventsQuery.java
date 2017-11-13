@@ -63,34 +63,34 @@ public class FacebookEventsQuery extends Query<Event, FacebookConfiguration, Eve
                         .queryString("access_token", configuration.accessToken)
                         .asJsonAsync();
 
-        return executor.submit(() -> map(response.get().getBody().getObject(), Event.class));
+        return executor.submit(() -> map(response.get().getBody().getObject()));
     }
 
     @Override
-    protected List<Event> map(JSONObject object, Class<Event> type) {
+    protected List<Event> map(JSONObject object) {
         List<Event> events = new ArrayList<>();
 
         if (!object.has("events"))
             return events;
 
         JSONObject obj = object.getJSONObject("events");
-        events.addAll(convertNode(obj.getJSONArray("data"), type));
+        events.addAll(convertNode(obj.getJSONArray("data")));
 
         return events
                 .stream()
-                .filter(e -> e.attending_count > 50)
+                .filter(e -> e.attending_count > 0)
                 .filter(e -> e.place != null)
                 .collect(Collectors.toList());
     }
 
-    private List<Event> convertNode(JSONArray array, Class<Event> type) {
+    private List<Event> convertNode(JSONArray array) {
         List<Event> list = new ArrayList<>();
         ObjectMapper mapper = new ObjectMapper();
         mapper.registerModule(new JodaModule());
         for (int n = 0; n < array.length(); n++) {
             JSONObject eventJson = array.getJSONObject(n);
             try {
-                Event mapped = mapper.readValue(eventJson.toString(), type);
+                Event mapped = mapper.readValue(eventJson.toString(), Event.class);
                 list.add(mapped);
             } catch (IOException e) {
             }

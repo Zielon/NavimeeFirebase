@@ -1,5 +1,6 @@
 package com.navimee.places.queries;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.JsonNode;
 import com.mashape.unirest.http.Unirest;
@@ -11,6 +12,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.scheduling.annotation.Async;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
@@ -38,11 +40,11 @@ public class FacebookPlacesQuery extends Query<FacebookPlace, FacebookConfigurat
                         .queryString("access_token", configuration.accessToken)
                         .asJsonAsync();
 
-        return executor.submit(() -> map(response.get().getBody().getObject(), FacebookPlace.class));
+        return executor.submit(() -> map(response.get().getBody().getObject()));
     }
 
     @Override
-    protected List<FacebookPlace> map(JSONObject object, Class<FacebookPlace> type) {
+    protected List<FacebookPlace> map(JSONObject object) {
         List<FacebookPlace> list = new ArrayList<>();
         list.addAll(convertNode(object.getJSONArray("data")));
 
@@ -52,7 +54,7 @@ public class FacebookPlacesQuery extends Query<FacebookPlace, FacebookConfigurat
         JSONObject paging = object.getJSONObject("paging");
         String nextUrl = paging.getString("next");
 
-        while (list.size() < 5000) {
+        while (list.size() < 7000) {
             try {
                 JSONObject nextObj = Unirest.get(nextUrl).asJson().getBody().getObject();
                 list.addAll(convertNode(nextObj.getJSONArray("data")));
@@ -68,13 +70,15 @@ public class FacebookPlacesQuery extends Query<FacebookPlace, FacebookConfigurat
 
     private List<FacebookPlace> convertNode(JSONArray array) {
         List<FacebookPlace> list = new ArrayList<>();
+        ObjectMapper mapper = new ObjectMapper();
         for (int n = 0; n < array.length(); n++) {
             JSONObject placeJson = array.getJSONObject(n);
-            FacebookPlace place = new FacebookPlace();
-            place.id = placeJson.getString("id");
-            place.name = placeJson.getString("name");
-            place.category = placeJson.getString("category");
-            list.add(place);
+            try {
+                FacebookPlace mapped = mapper.readValue(placeJson.toString(), FacebookPlace.class);
+                list.add(mapped);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
         return list;
     }
