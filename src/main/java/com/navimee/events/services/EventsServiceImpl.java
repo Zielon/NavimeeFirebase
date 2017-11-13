@@ -26,10 +26,8 @@ public class EventsServiceImpl implements EventsService {
     @Override
     public List<Event> getFacebookEvents(List<Place> places) {
 
-        FacebookEventsQuery query = new FacebookEventsQuery(facebookConfiguration);
         List<Future<List<Event>>> events = new ArrayList<>();
-
-        places.forEach(p -> events.add(query.execute(new EventsParams(p))));
+        places.forEach(p -> events.add(new FacebookEventsQuery(facebookConfiguration).execute(new EventsParams(p))));
 
         return waitForAll(events).stream().filter(distinctByKey(e -> e.id)).collect(Collectors.toList());
     }
