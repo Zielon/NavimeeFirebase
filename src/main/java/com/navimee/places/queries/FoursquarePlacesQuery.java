@@ -36,7 +36,7 @@ public class FoursquarePlacesQuery extends Query<FoursquarePlace, FoursquareConf
         DateTimeFormatter fmt = DateTimeFormat.forPattern("yyyyddMM");
 
         Future<HttpResponse<JsonNode>> response =
-                Unirest.get(configuration.apiUrl + "/venues/search")
+                Unirest.get(configuration.apiUrl + params.type)
                         .queryString("v", fmt.print(warsawCurrent))
                         .queryString("client_id", configuration.clientId)
                         .queryString("client_secret", configuration.clientSecret)

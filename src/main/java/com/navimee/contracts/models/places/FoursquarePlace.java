@@ -9,6 +9,7 @@ import java.util.Map;
 public class FoursquarePlace extends Place {
 
     public String facebook;
+    public int hereNow;
 
     @JsonProperty("contact")
     private void getName(Map<String, String> json) {
@@ -21,6 +22,11 @@ public class FoursquarePlace extends Place {
         lon = Double.parseDouble(json.get("lng").toString());
         city = json.containsKey("city") ? json.get("city").toString() : null;
         address = json.containsKey("address") ? json.get("address").toString() : null;
+    }
+
+    @JsonProperty("hereNow")
+    private void gethereNow(Map<String, Object> json) {
+        hereNow = Integer.parseInt(json.get("count").toString());
     }
 
     @Override

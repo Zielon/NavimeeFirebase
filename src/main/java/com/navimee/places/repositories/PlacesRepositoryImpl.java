@@ -2,9 +2,7 @@ package com.navimee.places.repositories;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.api.core.ApiFuture;
-import com.google.cloud.firestore.DocumentSnapshot;
-import com.google.cloud.firestore.Firestore;
-import com.google.cloud.firestore.QuerySnapshot;
+import com.google.cloud.firestore.*;
 import com.navimee.configuration.specific.FirebaseInitialization;
 import com.navimee.contracts.models.firestore.City;
 import com.navimee.contracts.models.firestore.Coordinates;
@@ -56,14 +54,13 @@ public class PlacesRepositoryImpl implements PlacesRepository {
         return cities;
     }
 
-    @Override
-    public <T extends Place> List<T> getPlaces(String city, Class<T> type) {
+    private <T extends Place> List<T> getPlacesFromRepository(String city, Class<T> type, String path) {
         List<T> places = new ArrayList<>();
-        ApiFuture<DocumentSnapshot> documentSnapshot = db.collection(placesPath).document(city).get();
+        ApiFuture<DocumentSnapshot> documentSnapshot = db.collection(path).document(city).get();
         ObjectMapper mapper = new ObjectMapper();
         try {
             DocumentSnapshot snapshot = documentSnapshot.get();
-            QuerySnapshot chunks = snapshot.getReference().collection(eventsChunks).get().get();
+            QuerySnapshot chunks = snapshot.getReference().collection(placesChunks).get().get();
             if (!chunks.isEmpty())
                 chunks.getDocuments().forEach(d -> d.getData().forEach((k, v) -> places.add(mapper.convertValue(v, type))));
             else
@@ -74,6 +71,16 @@ public class PlacesRepositoryImpl implements PlacesRepository {
             e.printStackTrace();
         }
         return places;
+    }
+
+    @Override
+    public <T extends Place> List<T> getPlaces(String city, Class<T> type) {
+        return getPlacesFromRepository(city, type, placesPath);
+    }
+
+    @Override
+    public <T extends Place> List<T> getFoursquarePlaces(String city, Class<T> type) {
+        return getPlacesFromRepository(city, type, foursquarePlacesPath);
     }
 
     @Override
@@ -112,6 +119,15 @@ public class PlacesRepositoryImpl implements PlacesRepository {
 
     @Override
     public Future setPlaces(List<? extends Place> places, String city) {
+        return addPlacesToRepository(places, city, placesPath, "PLACES ADDED ");
+    }
+
+    @Override
+    public Future setFoursquarePlaces(List<? extends Place> places, String city) {
+        return addPlacesToRepository(places, city, foursquarePlacesPath, "FOURSQUARE PLACES ADDED ");
+    }
+
+    private Future addPlacesToRepository(List<? extends Place> places, String city, String path, String log) {
         int chunkSize = 2000;
         return Executors.newSingleThreadExecutor().submit(
                 () -> {
@@ -122,17 +138,15 @@ public class PlacesRepositoryImpl implements PlacesRepository {
 
                         if (placesMap.size() > chunkSize)
                             for (Map<String, Place> map : TransactionSplit.mapSplit(placesMap, chunkSize))
-                                db.collection(placesPath).document(city)
-                                        .collection(eventsChunks)
-                                        .document().set(map).get();
+                                db.collection(path).document(city).collection(placesChunks).document().set(map).get();
                         else
-                            db.collection(placesPath).document(city).set(placesMap).get();
+                            db.collection(path).document(city).set(placesMap).get();
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     } catch (ExecutionException e) {
                         e.printStackTrace();
                     }
-                    System.out.println("PLACES ADDED " + city + " at " + new Date());
+                    System.out.println(log + city + " at " + new Date());
                 });
     }
 
@@ -140,17 +154,31 @@ public class PlacesRepositoryImpl implements PlacesRepository {
     public Future deleteCollection(String collection) {
 
         return Executors.newSingleThreadExecutor().submit(
-                () -> {
-                    try {
-                        List<DocumentSnapshot> documents = db.collection(collection).get().get().getDocuments();
-                        for (DocumentSnapshot document : documents)
-                            document.getReference().delete().get();
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    } catch (ExecutionException e) {
-                        e.printStackTrace();
-                    }
-                }
+                () -> deleteCollection(db.collection(collection), 2)
         );
+    }
+
+    private void deleteCollection(CollectionReference collection, int batchSize) {
+        try {
+            // retrieve a small batch of documents to avoid out-of-memory errors
+            ApiFuture<QuerySnapshot> future = collection.limit(batchSize).get();
+            int deleted = 0;
+            // future.get() blocks on document retrieval
+            List<DocumentSnapshot> documents = future.get().getDocuments();
+            for (DocumentSnapshot document : documents) {
+                DocumentReference reference = document.getReference();
+                reference.getCollections().get().forEach(c -> {
+                    deleteCollection(c, 2);
+                });
+                reference.delete();
+                ++deleted;
+            }
+            if (deleted >= batchSize) {
+                // retrieve and delete another batch
+                deleteCollection(collection, batchSize);
+            }
+        } catch (Exception e) {
+            System.err.println("Error deleting collection : " + e.getMessage());
+        }
     }
 }

@@ -13,7 +13,8 @@ public interface PlacesRepository {
     String coordinatesPath = "coordinates";
     String availableCitiesPath = "availableCities";
     String placesPath = "places";
-    String eventsChunks = "eventsChunks";
+    String placesChunks = "placesChunks";
+    String foursquarePlacesPath = "foursquarePlaces";
 
     List<Coordinate> getCoordinates(String city);
 
@@ -21,11 +22,15 @@ public interface PlacesRepository {
 
     <T extends Place> List<T> getPlaces(String city, Class<T> type);
 
+    <T extends Place> List<T> getFoursquarePlaces(String city, Class<T> type);
+
     Future setCoordinates(Map<String, List<Coordinate>> coordinatesMap);
 
     Future setAvailableCities(List<City> cities);
 
     Future setPlaces(List<? extends Place> places, String city);
+
+    Future setFoursquarePlaces(List<? extends Place> places, String city);
 
     Future deleteCollection(String collection);
 }

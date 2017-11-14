@@ -13,6 +13,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executors;
+import java.util.stream.Collectors;
+
+import static com.navimee.firestoreHelpers.Distinct.distinctByKey;
 
 @Component
 public class PlacesTask {
@@ -24,7 +27,7 @@ public class PlacesTask {
     PlacesService placesService;
 
     // Once per 30 days.
-    @Scheduled(cron = "0 00 12 ? * *")
+    @Scheduled(fixedRate = 1000 * 60 * 60)
     public void addPlacesTask() throws ExecutionException, InterruptedException {
 
         // Mocked data.
@@ -39,6 +42,9 @@ public class PlacesTask {
         placesRepository.setCoordinates(coordinates).get();
         placesRepository.setAvailableCities(cities).get();*/
 
+        placesRepository.deleteCollection("places").get();
+        //placesRepository.deleteCollection("foursquarePlaces").get();
+
         placesRepository.getAvailableCities().forEach(city -> {
                     String name = city.name;
                     Executors.newSingleThreadExecutor().submit(() -> {
@@ -47,9 +53,16 @@ public class PlacesTask {
 
                         List<Place> places = new ArrayList<>();
                         places.addAll(facebookPlaces);
-                        places.addAll(foursquarePlaces);
+                        places.addAll(foursquarePlaces.stream()
+                                .filter(e -> e.facebook != null)
+                                .collect(Collectors.toList()));
 
-                        placesRepository.setPlaces(places, name);
+                        try {
+                            placesRepository.setFoursquarePlaces(foursquarePlaces, name).get();
+                            placesRepository.setPlaces(places, name);
+                        } catch (Exception e){
+                            e.printStackTrace();
+                        }
                     });
                 }
         );

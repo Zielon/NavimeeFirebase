@@ -19,8 +19,16 @@ public class HomeController {
     public String home() {
 
         StringJoiner joiner = new StringJoiner("\n");
+        joiner.add("All places");
+
         placesRepository.getAvailableCities()
                 .forEach(c -> joiner.add(c.name + ": " + placesRepository.getPlaces(c.name, Place.class).size()));
+
+        joiner.add("-----------------------");
+        joiner.add("Foursquare");
+
+        placesRepository.getAvailableCities()
+                .forEach(c -> joiner.add(c.name + ": " + placesRepository.getFoursquarePlaces(c.name, Place.class).size()));
 
         return joiner.toString();
     }

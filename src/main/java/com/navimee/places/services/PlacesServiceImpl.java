@@ -4,7 +4,6 @@ import com.navimee.configuration.specific.FacebookConfiguration;
 import com.navimee.configuration.specific.FoursquareConfiguration;
 import com.navimee.contracts.models.places.Coordinate;
 import com.navimee.contracts.models.places.FacebookPlace;
-import com.navimee.contracts.models.places.FoursquareHotPlace;
 import com.navimee.contracts.models.places.FoursquarePlace;
 import com.navimee.contracts.services.places.PlacesService;
 import com.navimee.places.queries.FacebookPlacesQuery;
@@ -47,20 +46,9 @@ public class PlacesServiceImpl implements PlacesService {
 
         FoursquarePlacesQuery foursquarePlacesQuery = new FoursquarePlacesQuery(foursquareConfiguration);
         List<Future<List<FoursquarePlace>>> futures = coordinates.stream().map(
-                c -> {
-                    PlacesParams params = new PlacesParams(c.latitude, c.longitude);
-                    return foursquarePlacesQuery.execute(params);
-                }
+                c -> foursquarePlacesQuery.execute(new PlacesParams(c.latitude, c.longitude, "/venues/search"))
         ).collect(Collectors.toList());
 
-        return waitForAll(futures).stream()
-                .filter(e -> e.facebook != null)
-                .filter(distinctByKey(p -> p.facebook))
-                .collect(Collectors.toList());
-    }
-
-    @Override
-    public List<FoursquareHotPlace> getFoursquareHotPlaces(List<Coordinate> coordinates) {
-        return null;
+        return waitForAll(futures);
     }
 }
