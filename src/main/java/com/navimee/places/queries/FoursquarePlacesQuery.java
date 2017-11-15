@@ -22,7 +22,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
-public class FoursquarePlacesQuery extends Query<FoursquarePlace, FoursquareConfiguration, PlacesParams> {
+public class FoursquarePlacesQuery extends Query<List<FoursquarePlace>, FoursquareConfiguration, PlacesParams> {
 
     public FoursquarePlacesQuery(FoursquareConfiguration configuration) {
         super(configuration);

@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.concurrent.Future;
 import java.util.stream.Collectors;
 
-import static com.navimee.asynchronous.HelperMethods.waitForAll;
+import static com.navimee.asynchronous.HelperMethods.waitForMany;
 import static com.navimee.firestoreHelpers.Distinct.distinctByKey;
 
 @Service
@@ -29,6 +29,6 @@ public class EventsServiceImpl implements EventsService {
         List<Future<List<Event>>> events = new ArrayList<>();
         places.forEach(p -> events.add(new FacebookEventsQuery(facebookConfiguration).execute(new EventsParams(p))));
 
-        return waitForAll(events).stream().filter(distinctByKey(e -> e.id)).collect(Collectors.toList());
+        return waitForMany(events).stream().filter(distinctByKey(e -> e.id)).collect(Collectors.toList());
     }
 }

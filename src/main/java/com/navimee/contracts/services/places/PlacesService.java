@@ -1,5 +1,6 @@
 package com.navimee.contracts.services.places;
 
+import com.navimee.contracts.models.placeDetails.FoursquarePlaceDetails;
 import com.navimee.contracts.models.places.Coordinate;
 import com.navimee.contracts.models.places.FacebookPlace;
 import com.navimee.contracts.models.places.FoursquarePlace;
@@ -10,4 +11,6 @@ public interface PlacesService {
     List<FacebookPlace> getFacebookPlaces(List<Coordinate> coordinates);
 
     List<FoursquarePlace> getFoursquarePlaces(List<Coordinate> coordinates);
+
+    List<FoursquarePlaceDetails> getFoursquarePlacesDetails(List<FoursquarePlace> places);
 }

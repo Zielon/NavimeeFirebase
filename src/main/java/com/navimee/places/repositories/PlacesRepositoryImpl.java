@@ -122,7 +122,7 @@ public class PlacesRepositoryImpl implements PlacesRepository {
 
     @Override
     public Future setPlaces(List<? extends Place> places, String city) {
-        return addPlacesToRepository(places, city, Place::getId, placesPath, "PLACES ADDED");
+        return addPlacesToRepository(places, city, p -> p.id, placesPath, "PLACES ADDED");
     }
 
     @Override

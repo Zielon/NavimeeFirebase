@@ -26,7 +26,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.stream.Collectors;
 
-public class FacebookEventsQuery extends Query<Event, FacebookConfiguration, EventsParams> {
+public class FacebookEventsQuery extends Query<List<Event>, FacebookConfiguration, EventsParams> {
 
     public FacebookEventsQuery(FacebookConfiguration configuration) {
         super(configuration);

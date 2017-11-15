@@ -13,10 +13,6 @@ public class Place implements Comparable {
     public String city;
     public String address;
 
-    public String getId() {
-        return id;
-    }
-
     @Override
     public boolean equals(Object obj) {
         Place place = (Place) obj;

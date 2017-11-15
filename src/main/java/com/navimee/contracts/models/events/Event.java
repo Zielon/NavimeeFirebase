@@ -6,7 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.joda.JodaModule;
 import com.navimee.contracts.models.Pojo;
 import com.navimee.contracts.models.places.Place;
-import com.navimee.contracts.models.pojos.EventPojo;
+import com.navimee.contracts.models.pojos.events.EventPojo;
 import org.joda.time.DateTime;
 
 import java.io.IOException;

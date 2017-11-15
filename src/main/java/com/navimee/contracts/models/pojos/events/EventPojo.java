@@ -1,4 +1,4 @@
-package com.navimee.contracts.models.pojos;
+package com.navimee.contracts.models.pojos.events;
 
 import com.navimee.contracts.models.events.Location;
 import com.navimee.contracts.models.places.Place;

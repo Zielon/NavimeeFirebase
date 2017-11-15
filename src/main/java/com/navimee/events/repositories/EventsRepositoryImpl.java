@@ -8,7 +8,7 @@ import com.google.cloud.firestore.Firestore;
 import com.google.cloud.firestore.SetOptions;
 import com.navimee.configuration.specific.FirebaseInitialization;
 import com.navimee.contracts.models.events.Event;
-import com.navimee.contracts.models.pojos.EventPojo;
+import com.navimee.contracts.models.pojos.events.EventPojo;
 import com.navimee.contracts.repositories.events.EventsRepository;
 import com.navimee.events.Events;
 import org.springframework.stereotype.Repository;

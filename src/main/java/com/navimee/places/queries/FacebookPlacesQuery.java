@@ -20,7 +20,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
-public class FacebookPlacesQuery extends Query<FacebookPlace, FacebookConfiguration, PlacesParams> {
+public class FacebookPlacesQuery extends Query<List<FacebookPlace>, FacebookConfiguration, PlacesParams> {
 
     public FacebookPlacesQuery(FacebookConfiguration configuration) {
         super(configuration);

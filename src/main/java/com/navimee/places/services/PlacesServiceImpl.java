@@ -2,6 +2,7 @@ package com.navimee.places.services;
 
 import com.navimee.configuration.specific.FacebookConfiguration;
 import com.navimee.configuration.specific.FoursquareConfiguration;
+import com.navimee.contracts.models.placeDetails.FoursquarePlaceDetails;
 import com.navimee.contracts.models.places.Coordinate;
 import com.navimee.contracts.models.places.FacebookPlace;
 import com.navimee.contracts.models.places.FoursquarePlace;
@@ -16,7 +17,7 @@ import java.util.List;
 import java.util.concurrent.Future;
 import java.util.stream.Collectors;
 
-import static com.navimee.asynchronous.HelperMethods.waitForAll;
+import static com.navimee.asynchronous.HelperMethods.waitForMany;
 import static com.navimee.firestoreHelpers.Distinct.distinctByKey;
 
 @Service
@@ -38,7 +39,7 @@ public class PlacesServiceImpl implements PlacesService {
                 }
         ).collect(Collectors.toList());
 
-        return waitForAll(futures).stream().filter(distinctByKey(p -> p.id)).collect(Collectors.toList());
+        return waitForMany(futures).stream().filter(distinctByKey(p -> p.id)).collect(Collectors.toList());
     }
 
     @Override
@@ -49,6 +50,11 @@ public class PlacesServiceImpl implements PlacesService {
                 c -> foursquarePlacesQuery.execute(new PlacesParams(c.latitude, c.longitude, "/venues/search"))
         ).collect(Collectors.toList());
 
-        return waitForAll(futures);
+        return waitForMany(futures).stream().filter(distinctByKey(p -> p.id)).collect(Collectors.toList());
+    }
+
+    @Override
+    public List<FoursquarePlaceDetails> getFoursquarePlacesDetails(List<FoursquarePlace> places) {
+        return null;
     }
 }
