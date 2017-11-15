@@ -2,7 +2,10 @@ package com.navimee.places.repositories;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.api.core.ApiFuture;
-import com.google.cloud.firestore.*;
+import com.google.cloud.firestore.CollectionReference;
+import com.google.cloud.firestore.DocumentSnapshot;
+import com.google.cloud.firestore.Firestore;
+import com.google.cloud.firestore.QuerySnapshot;
 import com.navimee.configuration.specific.FirebaseInitialization;
 import com.navimee.contracts.models.firestore.City;
 import com.navimee.contracts.models.firestore.Coordinates;
@@ -119,23 +122,20 @@ public class PlacesRepositoryImpl implements PlacesRepository {
 
     @Override
     public Future setPlaces(List<? extends Place> places, String city) {
-        return addPlacesToRepository(places, city, placesPath, "PLACES ADDED ");
+        return addPlacesToRepository(places, city, Place::getId, placesPath, "PLACES ADDED");
     }
 
     @Override
     public Future setFoursquarePlaces(List<? extends Place> places, String city) {
-        return addPlacesToRepository(places, city, foursquarePlacesPath, "FOURSQUARE PLACES ADDED ");
+        return addPlacesToRepository(places, city, p -> p.id, foursquarePlacesPath, "FOURSQUARE PLACES ADDED");
     }
 
-    private Future addPlacesToRepository(List<? extends Place> places, String city, String path, String log) {
+    private Future addPlacesToRepository(List<? extends Place> places, String city, Function<Place, String> func, String path, String log) {
         int chunkSize = 2000;
         return Executors.newSingleThreadExecutor().submit(
                 () -> {
                     try {
-                        Map<String, Place> placesMap = places.stream()
-                                .filter(distinctByKey(p -> p.getId()))
-                                .collect(Collectors.toMap(Place::getId, Function.identity()));
-
+                        Map<String, Place> placesMap = places.stream().filter(distinctByKey(func)).collect(Collectors.toMap(func, Function.identity()));
                         if (placesMap.size() > chunkSize)
                             for (Map<String, Place> map : TransactionSplit.mapSplit(placesMap, chunkSize))
                                 db.collection(path).document(city).collection(placesChunks).document().set(map).get();
@@ -146,39 +146,30 @@ public class PlacesRepositoryImpl implements PlacesRepository {
                     } catch (ExecutionException e) {
                         e.printStackTrace();
                     }
-                    System.out.println(log + city + " at " + new Date());
+                    System.out.println(log + " " + city + " -> " + new Date());
                 });
     }
 
     @Override
     public Future deleteCollection(String collection) {
-
-        return Executors.newSingleThreadExecutor().submit(
-                () -> deleteCollection(db.collection(collection), 2)
-        );
+        return Executors.newSingleThreadExecutor().submit(() -> deleteCollection(db.collection(collection)));
     }
 
-    private void deleteCollection(CollectionReference collection, int batchSize) {
-        try {
-            // retrieve a small batch of documents to avoid out-of-memory errors
-            ApiFuture<QuerySnapshot> future = collection.limit(batchSize).get();
-            int deleted = 0;
-            // future.get() blocks on document retrieval
-            List<DocumentSnapshot> documents = future.get().getDocuments();
-            for (DocumentSnapshot document : documents) {
-                DocumentReference reference = document.getReference();
-                reference.getCollections().get().forEach(c -> {
-                    deleteCollection(c, 2);
-                });
-                reference.delete();
-                ++deleted;
+    private void deleteCollection(CollectionReference collection) {
+        getAvailableCities().forEach(city -> {
+            ApiFuture<DocumentSnapshot> documentSnapshot = collection.document(city.name).get();
+            try {
+                DocumentSnapshot snapshot = documentSnapshot.get();
+                QuerySnapshot chunks = snapshot.getReference().collection(placesChunks).get().get();
+                if (!chunks.isEmpty())
+                    chunks.getDocuments().forEach(d -> d.getReference().delete());
+                else
+                    snapshot.getReference().delete();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            } catch (ExecutionException e) {
+                e.printStackTrace();
             }
-            if (deleted >= batchSize) {
-                // retrieve and delete another batch
-                deleteCollection(collection, batchSize);
-            }
-        } catch (Exception e) {
-            System.err.println("Error deleting collection : " + e.getMessage());
-        }
+        });
     }
 }
