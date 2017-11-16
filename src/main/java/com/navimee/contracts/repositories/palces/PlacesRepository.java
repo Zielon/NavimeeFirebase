@@ -1,6 +1,7 @@
 package com.navimee.contracts.repositories.palces;
 
 import com.navimee.contracts.models.firestore.City;
+import com.navimee.contracts.models.placeDetails.FoursquarePlaceDetails;
 import com.navimee.contracts.models.places.Coordinate;
 import com.navimee.contracts.models.places.Place;
 
@@ -15,6 +16,7 @@ public interface PlacesRepository {
     String placesPath = "places";
     String placesChunks = "placesChunks";
     String foursquarePlacesPath = "foursquarePlaces";
+    String foursquarePlacesDetailsPath = "foursquarePlacesDetails";
 
     List<Coordinate> getCoordinates(String city);
 
@@ -31,6 +33,8 @@ public interface PlacesRepository {
     Future setPlaces(List<? extends Place> places, String city);
 
     Future setFoursquarePlaces(List<? extends Place> places, String city);
+
+    Future setFoursquarePlacesDetails(List<FoursquarePlaceDetails> details, String city);
 
     Future deleteCollection(String collection);
 }

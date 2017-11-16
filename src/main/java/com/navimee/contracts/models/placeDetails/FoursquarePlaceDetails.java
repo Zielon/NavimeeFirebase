@@ -1,25 +1,19 @@
 package com.navimee.contracts.models.placeDetails;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.navimee.contracts.models.pojos.placeDetails.Popular;
+import com.navimee.contracts.models.placeDetails.pojo.*;
 
-import java.util.Map;
+import java.util.List;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class FoursquarePlaceDetails {
 
-    public int checkinsCount;
-    public int usersCount;
-    public int tipCount;
-    public int visitsCount;
+    public String id;
+    public String name;
+    public double rating;
+    public Location location;
+    public Stats stats;
     public Popular popular;
-
-    @JsonProperty("stats")
-    private void stats(Map<String, String> json) {
-        checkinsCount = Integer.parseInt(json.get("checkinsCount"));
-        usersCount = Integer.parseInt(json.get("usersCount"));
-        tipCount = Integer.parseInt(json.get("tipCount"));
-        visitsCount = Integer.parseInt(json.get("visitsCount"));
-    }
+    public Likes likes;
+    public List<Category> categories;
 }

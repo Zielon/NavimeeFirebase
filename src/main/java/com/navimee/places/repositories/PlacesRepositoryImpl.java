@@ -9,6 +9,7 @@ import com.google.cloud.firestore.QuerySnapshot;
 import com.navimee.configuration.specific.FirebaseInitialization;
 import com.navimee.contracts.models.firestore.City;
 import com.navimee.contracts.models.firestore.Coordinates;
+import com.navimee.contracts.models.placeDetails.FoursquarePlaceDetails;
 import com.navimee.contracts.models.places.Coordinate;
 import com.navimee.contracts.models.places.Place;
 import com.navimee.contracts.repositories.palces.PlacesRepository;
@@ -128,6 +129,21 @@ public class PlacesRepositoryImpl implements PlacesRepository {
     @Override
     public Future setFoursquarePlaces(List<? extends Place> places, String city) {
         return addPlacesToRepository(places, city, p -> p.id, foursquarePlacesPath, "FOURSQUARE PLACES ADDED");
+    }
+
+    @Override
+    public Future setFoursquarePlacesDetails(List<FoursquarePlaceDetails> details, String city) {
+        return Executors.newSingleThreadExecutor().submit(() -> {
+            Map<String, FoursquarePlaceDetails> detailsMap = details.stream().collect(Collectors.toMap(d -> d.id, Function.identity()));
+            try {
+                db.collection(foursquarePlacesDetailsPath).document(city).set(detailsMap).get();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            } catch (ExecutionException e) {
+                e.printStackTrace();
+            }
+            System.out.println("FOURSQUARE PLACES DETAILS ADDED " + city + " -> " + new Date());
+        });
     }
 
     private Future addPlacesToRepository(List<? extends Place> places, String city, Function<Place, String> func, String path, String log) {

@@ -1,9 +1,9 @@
-package com.navimee.contracts.models.pojos.events;
+package com.navimee.contracts.models.events.pojo;
 
 import com.navimee.contracts.models.events.Location;
 import com.navimee.contracts.models.places.Place;
 
-public class EventPojo {
+public class Event {
     public String name;
     public String id;
     public String category;

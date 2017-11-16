@@ -7,8 +7,7 @@ import com.google.cloud.firestore.DocumentSnapshot;
 import com.google.cloud.firestore.Firestore;
 import com.google.cloud.firestore.SetOptions;
 import com.navimee.configuration.specific.FirebaseInitialization;
-import com.navimee.contracts.models.events.Event;
-import com.navimee.contracts.models.pojos.events.EventPojo;
+import com.navimee.contracts.models.events.pojo.Event;
 import com.navimee.contracts.repositories.events.EventsRepository;
 import com.navimee.events.Events;
 import org.springframework.stereotype.Repository;
@@ -29,15 +28,15 @@ public class EventsRepositoryImpl implements EventsRepository {
     private Firestore db = FirebaseInitialization.getDatabaseReference();
 
     @Override
-    public List<Event> getEvents(String city) {
+    public List<com.navimee.contracts.models.events.Event> getEvents(String city) {
 
-        List<Event> events = new ArrayList<>();
+        List<com.navimee.contracts.models.events.Event> events = new ArrayList<>();
         ApiFuture<DocumentSnapshot> documentSnapshot = db.collection(eventsPath).document(city).get();
         ObjectMapper mapper = new ObjectMapper();
         mapper.registerModule(new JodaModule());
 
         try {
-            documentSnapshot.get().getData().forEach((k, v) -> events.add(mapper.convertValue(v, Event.class)));
+            documentSnapshot.get().getData().forEach((k, v) -> events.add(mapper.convertValue(v, com.navimee.contracts.models.events.Event.class)));
         } catch (InterruptedException e) {
             e.printStackTrace();
         } catch (ExecutionException e) {
@@ -48,11 +47,11 @@ public class EventsRepositoryImpl implements EventsRepository {
     }
 
     @Override
-    public Future updateEvents(List<Event> events, String city) {
+    public Future updateEvents(List<com.navimee.contracts.models.events.Event> events, String city) {
 
         return Executors.newSingleThreadExecutor().submit(() -> {
             try {
-                Map<String, EventPojo> pojos = events.stream().map(Event::toPojo).collect(Collectors.toMap(pojo -> pojo.id, Function.identity()));
+                Map<String, Event> pojos = events.stream().map(com.navimee.contracts.models.events.Event::toPojo).collect(Collectors.toMap(pojo -> pojo.id, Function.identity()));
                 db.collection(eventsPath).document(city).set(pojos, SetOptions.merge()).get();
             } catch (InterruptedException e1) {
                 e1.printStackTrace();
@@ -64,13 +63,13 @@ public class EventsRepositoryImpl implements EventsRepository {
     }
 
     @Override
-    public Future sevenDaysSegregation(List<Event> events, String city) {
+    public Future sevenDaysSegregation(List<com.navimee.contracts.models.events.Event> events, String city) {
 
         return Executors.newSingleThreadExecutor().submit(() -> {
-            Map<String, List<Event>> sevenDaysSegregation = Events.sevenDaysSegregation(events);
+            Map<String, List<com.navimee.contracts.models.events.Event>> sevenDaysSegregation = Events.sevenDaysSegregation(events);
 
             sevenDaysSegregation.forEach((key, segregatedEvents) -> {
-                Map<String, EventPojo> pojos = segregatedEvents.stream().map(Event::toPojo).collect(Collectors.toMap(pojo -> pojo.id, Function.identity()));
+                Map<String, Event> pojos = segregatedEvents.stream().map(com.navimee.contracts.models.events.Event::toPojo).collect(Collectors.toMap(pojo -> pojo.id, Function.identity()));
                 try {
                     db.collection(segregatetEventsPath).document(city).collection(key).document("events").set(pojos).get();
                 } catch (InterruptedException e) {
@@ -84,13 +83,13 @@ public class EventsRepositoryImpl implements EventsRepository {
     }
 
     @Override
-    public Future updateHistorical(List<Event> events) {
+    public Future updateHistorical(List<com.navimee.contracts.models.events.Event> events) {
         return Executors.newSingleThreadExecutor().submit(() -> {
         });
     }
 
     @Override
-    public Future removeEvents(List<Event> events, String city) {
+    public Future removeEvents(List<com.navimee.contracts.models.events.Event> events, String city) {
         return Executors.newSingleThreadExecutor().submit(() -> {
         });
     }

@@ -6,7 +6,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.joda.JodaModule;
 import com.navimee.contracts.models.Pojo;
 import com.navimee.contracts.models.places.Place;
-import com.navimee.contracts.models.pojos.events.EventPojo;
 import org.joda.time.DateTime;
 
 import java.io.IOException;
@@ -47,13 +46,13 @@ public class Event implements Comparable, Pojo {
         return event.id.compareTo(this.id);
     }
 
-    public EventPojo toPojo() {
+    public com.navimee.contracts.models.events.pojo.Event toPojo() {
         ObjectMapper mapper = new ObjectMapper();
         mapper.registerModule(new JodaModule());
         mapper.configure(com.fasterxml.jackson.databind.SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
-        EventPojo pojo = null;
+        com.navimee.contracts.models.events.pojo.Event pojo = null;
         try {
-            pojo = mapper.readValue(mapper.writeValueAsString(this), EventPojo.class);
+            pojo = mapper.readValue(mapper.writeValueAsString(this), com.navimee.contracts.models.events.pojo.Event.class);
         } catch (IOException e) {
             e.printStackTrace();
         }
