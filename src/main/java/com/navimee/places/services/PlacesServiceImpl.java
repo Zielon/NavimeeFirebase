@@ -36,10 +36,7 @@ public class PlacesServiceImpl implements PlacesService {
     public List<FacebookPlace> getFacebookPlaces(List<Coordinate> coordinates) {
         FacebookPlacesQuery facebookPlacesQuery = new FacebookPlacesQuery(facebookConfiguration);
         List<Future<List<FacebookPlace>>> futures = coordinates.stream().map(
-                c -> {
-                    PlacesParams params = new PlacesParams(c.latitude, c.longitude);
-                    return facebookPlacesQuery.execute(params);
-                }
+                c -> facebookPlacesQuery.execute(new PlacesParams(c.latitude, c.longitude))
         ).collect(Collectors.toList());
 
         return waitForMany(futures).stream().filter(distinctByKey(p -> p.id)).collect(Collectors.toList());
@@ -63,7 +60,7 @@ public class PlacesServiceImpl implements PlacesService {
 
         return waitForAll(futures).stream()
                 .filter(distinctByKey(d -> d.id))
-                .filter(d -> d.likes.count > 300)
+                .filter(d -> d.likes.count > 50)
                 .collect(Collectors.toList());
     }
 }

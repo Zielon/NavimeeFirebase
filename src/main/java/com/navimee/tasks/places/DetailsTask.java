@@ -21,7 +21,6 @@ public class DetailsTask {
     @Autowired
     PlacesService placesService;
 
-    @Scheduled(cron = "0 00 12 ? * *")
     //@Scheduled(fixedRate = 1000 * 60 * 60)
     public void addDetailsTask() throws ExecutionException, InterruptedException {
 

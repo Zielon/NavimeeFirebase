@@ -13,7 +13,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executors;
 
 @Component
-public class SegregationEventsTask {
+public class SegregationTask {
 
     @Autowired
     PlacesRepository placesRepository;

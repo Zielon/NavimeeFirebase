@@ -26,6 +26,8 @@ public interface PlacesRepository {
 
     <T extends Place> List<T> getFoursquarePlaces(String city, Class<T> type);
 
+    List<FoursquarePlaceDetails> getFoursquarePlacesDetails(String city);
+
     Future setCoordinates(Map<String, List<Coordinate>> coordinatesMap);
 
     Future setAvailableCities(List<City> cities);

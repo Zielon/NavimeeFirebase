@@ -88,6 +88,23 @@ public class PlacesRepositoryImpl implements PlacesRepository {
     }
 
     @Override
+    public List<FoursquarePlaceDetails> getFoursquarePlacesDetails(String city) {
+        List<FoursquarePlaceDetails> details = new ArrayList<>();
+        DocumentSnapshot snapshot = null;
+        try {
+            snapshot = db.collection(foursquarePlacesDetailsPath).document(city).get().get();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
+        ObjectMapper mapper = new ObjectMapper();
+        snapshot.getData().forEach((k, v) -> details.add(mapper.convertValue(v, FoursquarePlaceDetails.class)));
+
+        return details;
+    }
+
+    @Override
     public Future setCoordinates(Map<String, List<Coordinate>> coordinatesMap) {
 
         return Executors.newSingleThreadExecutor().submit(
