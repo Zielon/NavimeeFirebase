@@ -21,11 +21,11 @@ public class DetailsTask {
     @Autowired
     PlacesService placesService;
 
-    //@Scheduled(fixedRate = 1000 * 60 * 60)
+    @Scheduled(fixedRate = 1000 * 60 * 60)
     public void addDetailsTask() throws ExecutionException, InterruptedException {
 
         placesRepository.getAvailableCities().forEach(city -> {
-                    if (city.name.equals("SOPOT"))
+                    if (city.name.equals("GDANSK"))
                         Executors.newSingleThreadExecutor().submit(() -> {
                                     List<FoursquarePlace> foursquarePlaces = placesRepository.getFoursquarePlaces(city.name, FoursquarePlace.class);
                                     List<FoursquarePlaceDetails> details = placesService.getFoursquarePlacesDetails(foursquarePlaces);

@@ -1,4 +1,4 @@
-package com.navimee.asynchronous;
+package com.navimee.asyncCollectors;
 
 import java.util.ArrayList;
 import java.util.List;

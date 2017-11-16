@@ -19,8 +19,8 @@ import java.util.List;
 import java.util.concurrent.Future;
 import java.util.stream.Collectors;
 
-import static com.navimee.asynchronous.HelperMethods.waitForAll;
-import static com.navimee.asynchronous.HelperMethods.waitForMany;
+import static com.navimee.asyncCollectors.HelperMethods.waitForAll;
+import static com.navimee.asyncCollectors.HelperMethods.waitForMany;
 import static com.navimee.firestoreHelpers.Distinct.distinctByKey;
 
 @Service
