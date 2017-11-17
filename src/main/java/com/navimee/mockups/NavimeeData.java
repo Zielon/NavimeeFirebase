@@ -61,13 +61,12 @@ public class NavimeeData {
         Map<String, List<Coordinate>> coordinates = new HashMap<>();
         ObjectMapper mapper = new ObjectMapper();
         object.keySet().stream().forEach(e -> {
-            Coordinates c = null;
             try {
-                c = mapper.readValue(object.getJSONObject(e.toString()).toString(), Coordinates.class);
+                final Coordinates c = mapper.readValue(object.getJSONObject(e.toString()).toString(), Coordinates.class);
+                coordinates.put(e.toString(), c.points);
             } catch (IOException e1) {
                 e1.printStackTrace();
             }
-            coordinates.put(e.toString(), c.points);
         });
         return coordinates;
     }

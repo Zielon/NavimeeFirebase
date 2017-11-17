@@ -1,5 +1,5 @@
 {
-  "GDANSK" : {"name" : "GDANSK"},
-  "WARSAW" : {"name" : "WARSAW"},
-  "SOPOT" : {"name" : "SOPOT"}
+  "GDANSK" : {"id": "gda", "name" : "GDANSK"},
+  "WARSAW" : {"id": "waw", "name" : "WARSAW"},
+  "SOPOT" : {"id": "sp", "name" : "SOPOT"}
 }

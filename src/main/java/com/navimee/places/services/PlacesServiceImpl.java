@@ -60,7 +60,7 @@ public class PlacesServiceImpl implements PlacesService {
 
         return waitForAll(futures).stream()
                 .filter(distinctByKey(d -> d.id))
-                .filter(d -> d.likes.count > 50)
+                .filter(d -> d.stats.checkinsCount > 500)
                 .collect(Collectors.toList());
     }
 }

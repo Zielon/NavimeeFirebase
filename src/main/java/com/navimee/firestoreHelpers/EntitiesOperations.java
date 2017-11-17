@@ -49,6 +49,36 @@ public class EntitiesOperations {
         });
     }
 
+    public static <K, V> Future addToDocument(DocumentReference targetDocument, Map<K, V> entities) {
+        return addToDocument(targetDocument, entities, "", 2000);
+    }
+
+    public static <K, V> Future addToDocument(DocumentReference targetDocument, Map<K, V> entities, String chunkName) {
+        return addToDocument(targetDocument, entities, chunkName, 2000);
+    }
+
+    public static <K, V> Future addToDocument(DocumentReference targetDocument, Map<K, V> entities, String chunkName, int chunkSize) {
+        return Executors.newSingleThreadExecutor().submit(() -> {
+            try {
+                if (entities.size() > chunkSize && !chunkName.isEmpty())
+                    for (Map<K, V> map : TransactionSplit.mapSplit(entities, chunkSize))
+                        targetDocument.collection(chunkName).document().set(map).get();
+                else
+                    targetDocument.set(entities).get();
+
+                System.out.println("ENTITIES ADDED TO -> " + targetDocument.getPath().toUpperCase() + " | " + new Date());
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            } catch (ExecutionException e) {
+                e.printStackTrace();
+            }
+        });
+    }
+
+    public static <T> List<T> getFromDocument(DocumentReference targetDocument, Class<T> type) {
+        return getFromDocument(targetDocument, type, "");
+    }
+
     public static <T> List<T> getFromDocument(DocumentReference targetDocument, Class<T> type, String chunkName) {
         ObjectMapper mapper = new ObjectMapper();
         List<T> output = new ArrayList<>();

@@ -1,6 +1,8 @@
 package com.navimee.contracts.models.firestore;
 
 public class City {
+
+    public String id;
     public String name;
 
     public City() {

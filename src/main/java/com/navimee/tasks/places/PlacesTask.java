@@ -1,5 +1,7 @@
 package com.navimee.tasks.places;
 
+import com.navimee.contracts.models.firestore.City;
+import com.navimee.contracts.models.places.Coordinate;
 import com.navimee.contracts.models.places.FacebookPlace;
 import com.navimee.contracts.models.places.FoursquarePlace;
 import com.navimee.contracts.models.places.Place;
@@ -11,6 +13,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
@@ -29,16 +32,16 @@ public class PlacesTask {
     public void addPlacesTask() throws ExecutionException, InterruptedException {
 
         // Mocked data.
-/*        com.navimee.mockups.NavimeeData navimeeData = new com.navimee.mockups.NavimeeData();
+        com.navimee.mockups.NavimeeData navimeeData = new com.navimee.mockups.NavimeeData();
         Map<String, List<Coordinate>> coordinates = navimeeData.getCoordinates();
         List<City> cities = navimeeData.getCities();
 
-        placesRepository.deleteCollection("availableCities").get();
-        placesRepository.deleteCollection("events").get();
-        placesRepository.deleteCollection("coordinates").get();
+        //placesRepository.deleteCollection("availableCities").get();
+        //placesRepository.deleteCollection("events").get();
+        //placesRepository.deleteCollection("coordinates").get();
 
-        placesRepository.setCoordinates(coordinates).get();
-        placesRepository.setAvailableCities(cities).get();*/
+        //placesRepository.setCoordinates(coordinates).get();
+        //placesRepository.setAvailableCities(cities).get();
 
         placesRepository.deleteCollection("places").get();
         placesRepository.deleteCollection("foursquarePlaces").get();
