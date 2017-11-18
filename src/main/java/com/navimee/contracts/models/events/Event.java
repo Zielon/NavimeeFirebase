@@ -22,7 +22,7 @@ public class Event implements Comparable, Pojo {
     public String type;
     public Location place;
 
-    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    @JsonProperty(access = JsonProperty.Access.AUTO)
     public Place searchPlace;
 
     public String getId() {
