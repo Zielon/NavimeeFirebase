@@ -23,38 +23,21 @@ import static com.navimee.firestoreHelpers.Distinct.distinctByKey;
 public class EntitiesOperations {
 
     public static <T> Future addToDocument(DocumentReference targetDocument, List<T> entities, Function<T, String> func) {
-        return addToDocument(targetDocument, entities, func, "", 2000);
+        Map<String, T> entityMap = entities.stream().filter(distinctByKey(func)).collect(Collectors.toMap(func, Function.identity()));
+        return addToDocument(targetDocument, entityMap, "", 2000);
     }
 
     public static <T> Future addToDocument(DocumentReference targetDocument, List<T> entities, Function<T, String> func, String chunkName) {
-        return addToDocument(targetDocument, entities, func, chunkName, 2000);
-    }
-
-    public static <T> Future addToDocument(DocumentReference targetDocument, List<T> entities, Function<T, String> func, String chunkName, int chunkSize) {
-        return Executors.newSingleThreadExecutor().submit(() -> {
-            try {
-                Map<String, T> entityMap = entities.stream().filter(distinctByKey(func)).collect(Collectors.toMap(func, Function.identity()));
-                if (entityMap.size() > chunkSize && !chunkName.isEmpty())
-                    for (Map<String, T> map : TransactionSplit.mapSplit(entityMap, chunkSize))
-                        targetDocument.collection(chunkName).document().set(map).get();
-                else
-                    targetDocument.set(entityMap).get();
-
-                System.out.println("ENTITIES ADDED TO -> " + targetDocument.getPath().toUpperCase() + " | " + new Date());
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            } catch (ExecutionException e) {
-                e.printStackTrace();
-            }
-        });
-    }
-
-    public static <K, V> Future addToDocument(DocumentReference targetDocument, Map<K, V> entities) {
-        return addToDocument(targetDocument, entities, "", 2000);
+        Map<String, T> entityMap = entities.stream().filter(distinctByKey(func)).collect(Collectors.toMap(func, Function.identity()));
+        return addToDocument(targetDocument, entityMap, chunkName, 2000);
     }
 
     public static <K, V> Future addToDocument(DocumentReference targetDocument, Map<K, V> entities, String chunkName) {
         return addToDocument(targetDocument, entities, chunkName, 2000);
+    }
+
+    public static <K, V> Future addToDocument(DocumentReference targetDocument, Map<K, V> entities) {
+        return addToDocument(targetDocument, entities, "", 2000);
     }
 
     public static <K, V> Future addToDocument(DocumentReference targetDocument, Map<K, V> entities, String chunkName, int chunkSize) {
