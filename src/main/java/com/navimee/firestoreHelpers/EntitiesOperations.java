@@ -89,9 +89,11 @@ public class EntitiesOperations {
                 DocumentSnapshot snapshot = documentSnapshot.get();
                 QuerySnapshot chunks = snapshot.getReference().collection(chunkName).get().get();
                 if (!chunks.isEmpty())
-                    chunks.getDocuments().forEach(d -> d.getReference().delete());
+                    for(DocumentSnapshot d : chunks.getDocuments()) d.getReference().delete().get();
                 else
-                    snapshot.getReference().delete();
+                    snapshot.getReference().delete().get();
+
+                System.out.println("COLLECTION IS DELETED FROM -> " + collection.getPath().toUpperCase() + " | " + new Date());
             } catch (InterruptedException e) {
                 e.printStackTrace();
             } catch (ExecutionException e) {

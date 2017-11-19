@@ -56,7 +56,7 @@ public class FacebookEventsQuery extends Query<List<Event>, FacebookConfiguratio
         DateTimeZone zone = DateTimeZone.forID("Europe/Warsaw");
         LocalDateTime warsawCurrent = LocalDateTime.now(zone);
         LocalDateTime warsawLater = warsawCurrent.plusDays(14);
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 
         Future<HttpResponse<JsonNode>> response =
                 Unirest.get(configuration.apiUrl)
@@ -81,10 +81,7 @@ public class FacebookEventsQuery extends Query<List<Event>, FacebookConfiguratio
         JSONObject obj = object.getJSONObject("events");
         events.addAll(convertNode(obj.getJSONArray("data")));
 
-        return events
-                .stream()
-                .filter(e -> e.attending_count > 50)
-                .collect(Collectors.toList());
+        return events.stream().filter(e -> e.attending_count > 20).collect(Collectors.toList());
     }
 
     private List<Event> convertNode(JSONArray array) {

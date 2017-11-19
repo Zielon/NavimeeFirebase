@@ -10,7 +10,9 @@ public class HelperMethods {
         List<T> output = new ArrayList<>();
         futures.parallelStream().forEach(future -> {
             try {
-                output.addAll(future.get());
+                List<T> result = future.get();
+                if(result != null && result.size() > 0)
+                    output.addAll(result);
             } catch (Exception e) {
             }
         });
