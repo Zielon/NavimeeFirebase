@@ -1,7 +1,7 @@
 <%@page session="false"%>
 <html>
 <body>
-	<h1>Title : ${title}</h1>
-	<h1>Message : ${message}</h1>
+	<h3>Title : ${title}</h3>
+	<h3>Message : ${message}</h3>
 </body>
 </html>
