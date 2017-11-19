@@ -11,7 +11,7 @@ public class HelperMethods {
         futures.parallelStream().forEach(future -> {
             try {
                 List<T> result = future.get();
-                if(result != null && result.size() > 0)
+                if (result != null && result.size() > 0)
                     output.addAll(result);
             } catch (Exception e) {
             }

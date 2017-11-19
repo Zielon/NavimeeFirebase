@@ -89,7 +89,7 @@ public class EntitiesOperations {
                 DocumentSnapshot snapshot = documentSnapshot.get();
                 QuerySnapshot chunks = snapshot.getReference().collection(chunkName).get().get();
                 if (!chunks.isEmpty())
-                    for(DocumentSnapshot d : chunks.getDocuments()) d.getReference().delete().get();
+                    for (DocumentSnapshot d : chunks.getDocuments()) d.getReference().delete().get();
                 else
                     snapshot.getReference().delete().get();
 
