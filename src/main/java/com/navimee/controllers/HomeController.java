@@ -8,38 +8,25 @@ import org.springframework.web.servlet.ModelAndView;
 @Controller
 public class HomeController {
 
-    @RequestMapping(value = { "/", "/welcome**" }, method = RequestMethod.GET)
+    @RequestMapping(value = {"/", "/welcome**"}, method = RequestMethod.GET)
     public ModelAndView welcomePage() {
 
         ModelAndView model = new ModelAndView();
-        model.addObject("title", "Spring Security Hello World");
-        model.addObject("message", "This is welcome page!");
+        model.addObject("title", "Navimee");
+        model.addObject("message", "Navimee start...");
         model.setViewName("hello");
-        return model;
 
+        return model;
     }
 
     @RequestMapping(value = "/admin**", method = RequestMethod.GET)
     public ModelAndView adminPage() {
 
         ModelAndView model = new ModelAndView();
-        model.addObject("title", "Spring Security Hello World");
-        model.addObject("message", "This is protected page - Admin Page!");
+        model.addObject("title", "Admin");
+        model.addObject("message", "You are now logged in !");
         model.setViewName("admin");
 
         return model;
-
-    }
-
-    @RequestMapping(value = "/dba**", method = RequestMethod.GET)
-    public ModelAndView dbaPage() {
-
-        ModelAndView model = new ModelAndView();
-        model.addObject("title", "Spring Security Hello World");
-        model.addObject("message", "This is protected page - Database Page!");
-        model.setViewName("admin");
-
-        return model;
-
     }
 }

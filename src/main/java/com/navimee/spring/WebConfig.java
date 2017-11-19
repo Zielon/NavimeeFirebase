@@ -13,8 +13,8 @@ import org.springframework.web.servlet.view.JstlView;
 
 @EnableWebMvc
 @Configuration
-@ComponentScan({ "com.navimee.controllers.*" })
-@Import({ SecurityConfig.class })
+@ComponentScan({"com.navimee.controllers.*"})
+@Import({SecurityConfig.class})
 public class WebConfig extends WebMvcConfigurerAdapter {
 
     @Bean
