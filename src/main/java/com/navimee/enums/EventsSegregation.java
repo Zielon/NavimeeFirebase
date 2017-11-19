@@ -8,18 +8,22 @@ import org.joda.time.LocalDateTime;
 import java.util.function.Predicate;
 
 public enum EventsSegregation {
-    FIRST_DAY((Event event) -> event.start_time.getDayOfMonth() == getCurrentTime().getDayOfMonth()),
-    SECOND_DAY((Event event) -> event.start_time.getDayOfMonth() == getCurrentTime().plusDays(1).getDayOfMonth()),
-    THIRD_DAY((Event event) -> event.start_time.getDayOfMonth() == getCurrentTime().plusDays(2).getDayOfMonth()),
-    FOURTH_DAY((Event event) -> event.start_time.getDayOfMonth() == getCurrentTime().plusDays(3).getDayOfMonth()),
-    FIFTH_DAY((Event event) -> event.start_time.getDayOfMonth() == getCurrentTime().plusDays(4).getDayOfMonth()),
-    SIXTH_DAY((Event event) -> event.start_time.getDayOfMonth() == getCurrentTime().plusDays(5).getDayOfMonth()),
-    SEVENTH_DAY((Event event) -> event.start_time.getDayOfMonth() == getCurrentTime().plusDays(6).getDayOfMonth());
+    FIRST_DAY((Event event) -> compareDates(event.start_time, 0)),
+    SECOND_DAY((Event event) -> compareDates(event.start_time, 1)),
+    THIRD_DAY((Event event) -> compareDates(event.start_time, 2)),
+    FOURTH_DAY((Event event) -> compareDates(event.start_time, 3)),
+    FIFTH_DAY((Event event) -> compareDates(event.start_time, 4)),
+    SIXTH_DAY((Event event) -> compareDates(event.start_time, 5)),
+    SEVENTH_DAY((Event event) -> compareDates(event.start_time, 6));
 
     private final Predicate<Event> predicate;
 
     EventsSegregation(Predicate<Event> predicate) {
         this.predicate = predicate;
+    }
+
+    public Predicate<Event> getPredicate() {
+        return predicate;
     }
 
     private static DateTime getCurrentTime() {
@@ -28,8 +32,11 @@ public enum EventsSegregation {
         return warsawCurrent.toDateTime();
     }
 
-    public Predicate<Event> getPredicate() {
-        return predicate;
+    private static boolean compareDates(DateTime startTime, int addDays) {
+        DateTime currentTime = getCurrentTime().plusDays(addDays);
+
+        return startTime.getDayOfMonth() == currentTime.getDayOfMonth()
+                && startTime.getMonthOfYear() == currentTime.getMonthOfYear();
     }
 
     @Override

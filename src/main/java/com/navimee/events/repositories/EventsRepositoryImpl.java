@@ -6,10 +6,10 @@ import com.google.api.core.ApiFuture;
 import com.google.cloud.firestore.DocumentSnapshot;
 import com.google.cloud.firestore.Firestore;
 import com.google.cloud.firestore.SetOptions;
-import com.navimee.configuration.specific.FirebaseInitialization;
 import com.navimee.contracts.models.events.pojo.Event;
 import com.navimee.contracts.repositories.events.EventsRepository;
 import com.navimee.events.Events;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
@@ -25,7 +25,8 @@ import java.util.stream.Collectors;
 @Repository
 public class EventsRepositoryImpl implements EventsRepository {
 
-    private Firestore db = FirebaseInitialization.getDatabaseReference();
+    @Autowired
+    Firestore db;
 
     @Override
     public List<com.navimee.contracts.models.events.Event> getEvents(String city) {

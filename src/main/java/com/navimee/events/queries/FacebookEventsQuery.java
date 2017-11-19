@@ -24,7 +24,6 @@ import java.util.StringJoiner;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
-import java.util.stream.Collectors;
 
 public class FacebookEventsQuery extends Query<List<Event>, FacebookConfiguration, EventsParams> {
 
@@ -81,7 +80,7 @@ public class FacebookEventsQuery extends Query<List<Event>, FacebookConfiguratio
         JSONObject obj = object.getJSONObject("events");
         events.addAll(convertNode(obj.getJSONArray("data")));
 
-        return events.stream().filter(e -> e.attending_count > 20).collect(Collectors.toList());
+        return events;//.stream().filter(e -> e.attending_count > 20).collect(Collectors.toList());
     }
 
     private List<Event> convertNode(JSONArray array) {

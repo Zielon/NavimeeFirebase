@@ -1,11 +1,14 @@
 package com.navimee.configuration;
 
+import com.google.cloud.firestore.Firestore;
 import com.navimee.configuration.specific.FacebookConfiguration;
 import com.navimee.configuration.specific.FirebaseConfiguration;
+import com.navimee.configuration.specific.FirebaseInitialization;
 import com.navimee.configuration.specific.FoursquareConfiguration;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Scope;
 import org.springframework.core.io.Resource;
 
 import java.io.IOException;
@@ -35,5 +38,11 @@ public class Injections {
     @Bean
     FoursquareConfiguration providerFoursquareConfiguration() throws IOException {
         return new FoursquareConfiguration(foursquareConfig);
+    }
+
+    @Bean
+    @Scope("singleton")
+    public Firestore provideFirestore() {
+        return FirebaseInitialization.getDatabaseReference(firebaseConfig);
     }
 }

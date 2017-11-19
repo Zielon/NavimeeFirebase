@@ -5,43 +5,31 @@ import com.google.cloud.firestore.Firestore;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
 import com.google.firebase.cloud.FirestoreClient;
-import com.navimee.NavimeeApplication;
+import org.springframework.core.io.Resource;
 
-import java.io.*;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 
 public class FirebaseInitialization {
 
-    private static FirebaseApp firebaseApp;
-
     // Initialize the Firebase instance only once.
-    public static Firestore getDatabaseReference() {
-        synchronized (FirebaseInitialization.class) {
-            if (firebaseApp == null) {
-                InputStream serviceAccount = null;
-                try {
-                    ClassLoader classLoader = NavimeeApplication.class.getClassLoader();
-                    File configFile = new File(classLoader.getResource("google-services.json").getFile());
-                    serviceAccount = new FileInputStream(configFile);
-                } catch (FileNotFoundException e) {
-                    e.printStackTrace();
-                }
+    public static Firestore getDatabaseReference(Resource firebaseConfig) {
 
-                FirebaseOptions options = null;
+        FirebaseOptions options = null;
 
-                try {
-                    GoogleCredentials credentials = GoogleCredentials.fromStream(serviceAccount);
-                    options = new FirebaseOptions.Builder()
-                            .setCredentials(credentials)
-                            .setDatabaseUrl("https://navimeestore.firebaseio.com")
-                            .build();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-
-                firebaseApp = FirebaseApp.initializeApp(options);
-            }
-
-            return FirestoreClient.getFirestore();
+        try {
+            InputStream serviceAccount = new FileInputStream(firebaseConfig.getFile());
+            GoogleCredentials credentials = GoogleCredentials.fromStream(serviceAccount);
+            options = new FirebaseOptions.Builder()
+                    .setCredentials(credentials)
+                    .build();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
+
+        FirebaseApp.initializeApp(options);
+
+        return FirestoreClient.getFirestore();
     }
 }

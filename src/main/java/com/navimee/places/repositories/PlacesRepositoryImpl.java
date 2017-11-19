@@ -4,13 +4,13 @@ import com.google.api.core.ApiFuture;
 import com.google.cloud.firestore.DocumentReference;
 import com.google.cloud.firestore.Firestore;
 import com.google.cloud.firestore.QuerySnapshot;
-import com.navimee.configuration.specific.FirebaseInitialization;
 import com.navimee.contracts.models.firestore.City;
 import com.navimee.contracts.models.placeDetails.FoursquarePlaceDetails;
 import com.navimee.contracts.models.places.Coordinate;
 import com.navimee.contracts.models.places.Place;
 import com.navimee.contracts.repositories.palces.PlacesRepository;
 import com.navimee.firestoreHelpers.EntitiesOperations;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -26,7 +26,8 @@ import static java.util.stream.Collectors.toMap;
 @Repository
 public class PlacesRepositoryImpl implements PlacesRepository {
 
-    private Firestore db = FirebaseInitialization.getDatabaseReference();
+    @Autowired
+    Firestore db;
 
     @Override
     public <T extends Place> List<T> getPlaces(String city, Class<T> type) {
