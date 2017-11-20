@@ -1,0 +1,29 @@
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
+<head>
+    <div th:fragment="header-css">
+        <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" />
+    </div>
+</head>
+    <body>
+        <div th:fragment="header">
+            <nav class="navbar navbar-ligh">
+                <div class="container">
+                    <div id="navbar" class="collapse navbar-collapse">
+                        <div sec:authorize="isAuthenticated()">
+                            <ul class="nav navbar-nav navbar-right">
+                                <li><a href="/swagger-ui.html"><span class="glyphicon glyphicon-list-alt"></span> About API</a></li>
+                                <li><a href="/logout"><span class="glyphicon glyphicon-user"></span> Log out</a></li>
+                                <li><a href="/login"><span class="glyphicon glyphicon-log-in"></span> Log in</a></li>
+                            </ul>
+                        </div>
+                        <div sec:authorize="isAnonymous()">
+                            <ul class="nav navbar-nav navbar-right">
+                                <li><a href="/login"><span class="glyphicon glyphicon-log-in"></span> Log in</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </nav>
+        </div>
+    </body>
+</html>
