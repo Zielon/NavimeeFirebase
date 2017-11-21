@@ -1,6 +1,6 @@
 package com.navimee.enums;
 
-import com.navimee.contracts.models.events.Event;
+import com.navimee.contracts.models.bussinesObjects.Event;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.joda.time.LocalDateTime;

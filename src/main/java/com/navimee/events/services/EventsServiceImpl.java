@@ -1,9 +1,9 @@
 package com.navimee.events.services;
 
 import com.navimee.configuration.specific.FacebookConfiguration;
-import com.navimee.contracts.models.events.Event;
-import com.navimee.contracts.models.places.Coordinate;
-import com.navimee.contracts.models.places.Place;
+import com.navimee.contracts.models.bussinesObjects.Event;
+import com.navimee.contracts.models.dataTransferObjects.places.PlaceDto;
+import com.navimee.contracts.models.dataTransferObjects.places.subelement.CoordinateDto;
 import com.navimee.contracts.services.events.EventsService;
 import com.navimee.contracts.services.places.PlacesService;
 import com.navimee.events.queries.FacebookEventsQuery;
@@ -30,7 +30,7 @@ public class EventsServiceImpl implements EventsService {
     PlacesService placesService;
 
     @Override
-    public List<Event> getFacebookEvents(List<Place> places) {
+    public List<Event> getFacebookEvents(List<PlaceDto> places) {
 
         List<Future<List<Event>>> events = new ArrayList<>();
         places.forEach(place -> events.add(new FacebookEventsQuery(facebookConfiguration).execute(new EventsParams(place))));
@@ -41,8 +41,8 @@ public class EventsServiceImpl implements EventsService {
                 .parallel()
                 .filter(event ->
                         complement(event,
-                                event.place != null ? placesService.getReverseGeocoding(new Coordinate(event.place.lat, event.place.lon)) : null,
-                                placesService.getReverseGeocoding(new Coordinate(event.searchPlace.lat, event.searchPlace.lon))))
+                                event.place != null ? placesService.getReverseGeocoding(new CoordinateDto(event.place.lat, event.place.lon)) : null,
+                                placesService.getReverseGeocoding(new CoordinateDto(event.searchPlace.lat, event.searchPlace.lon))))
                 .collect(Collectors.toList());
     }
 }

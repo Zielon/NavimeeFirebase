@@ -5,7 +5,7 @@ import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.JsonNode;
 import com.mashape.unirest.http.Unirest;
 import com.navimee.configuration.specific.FoursquareConfiguration;
-import com.navimee.contracts.models.places.FoursquarePlace;
+import com.navimee.contracts.models.dataTransferObjects.places.FoursquarePlaceDto;
 import com.navimee.places.queries.params.PlaceDetailsParams;
 import com.navimee.queries.Query;
 import org.joda.time.DateTimeZone;
@@ -22,14 +22,14 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
-public class FoursquarePlacesQuery extends Query<List<FoursquarePlace>, FoursquareConfiguration, PlaceDetailsParams> {
+public class FoursquarePlacesQuery extends Query<List<FoursquarePlaceDto>, FoursquareConfiguration, PlaceDetailsParams> {
 
     public FoursquarePlacesQuery(FoursquareConfiguration configuration) {
         super(configuration);
     }
 
     @Override
-    public Future<List<FoursquarePlace>> execute(PlaceDetailsParams params) {
+    public Future<List<FoursquarePlaceDto>> execute(PlaceDetailsParams params) {
         ExecutorService executor = Executors.newSingleThreadExecutor();
         DateTimeZone zone = DateTimeZone.forID("Europe/Warsaw");
         LocalDateTime warsawCurrent = LocalDateTime.now(zone);
@@ -47,14 +47,14 @@ public class FoursquarePlacesQuery extends Query<List<FoursquarePlace>, Foursqua
     }
 
     @Override
-    protected List<FoursquarePlace> map(JSONObject object) {
+    protected List<FoursquarePlaceDto> map(JSONObject object) {
         JSONArray array = object.getJSONObject("response").getJSONArray("venues");
-        List<FoursquarePlace> list = new ArrayList<>();
+        List<FoursquarePlaceDto> list = new ArrayList<>();
         ObjectMapper mapper = new ObjectMapper();
         for (int n = 0; n < array.length(); n++) {
             JSONObject placeJson = array.getJSONObject(n);
             try {
-                FoursquarePlace mapped = mapper.readValue(placeJson.toString(), FoursquarePlace.class);
+                FoursquarePlaceDto mapped = mapper.readValue(placeJson.toString(), FoursquarePlaceDto.class);
                 list.add(mapped);
             } catch (IOException e) {
                 e.printStackTrace();

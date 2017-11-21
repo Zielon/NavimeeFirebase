@@ -1,6 +1,6 @@
 package com.navimee.contracts.repositories.events;
 
-import com.navimee.contracts.models.events.Event;
+import com.navimee.contracts.models.bussinesObjects.Event;
 
 import java.util.List;
 import java.util.concurrent.Future;

@@ -1,9 +1,9 @@
 package com.navimee.mockups;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.navimee.contracts.models.firestore.City;
-import com.navimee.contracts.models.firestore.Coordinates;
-import com.navimee.contracts.models.places.Coordinate;
+import com.navimee.contracts.models.dataTransferObjects.firestore.CityDto;
+import com.navimee.contracts.models.dataTransferObjects.firestore.CoordinatesDto;
+import com.navimee.contracts.models.dataTransferObjects.places.subelement.CoordinateDto;
 import org.json.JSONObject;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
@@ -39,14 +39,14 @@ public class NavimeeData {
         return new JSONObject(responseStrBuilder.toString());
     }
 
-    public List<City> getCities() {
+    public List<CityDto> getCities() {
         JSONObject object = getJsonObject(Mocks.Cities);
         ObjectMapper mapper = new ObjectMapper();
-        List<City> cities = new ArrayList<>();
+        List<CityDto> cities = new ArrayList<>();
         object.keySet().stream().forEach(e -> {
-            City c = null;
+            CityDto c = null;
             try {
-                c = mapper.readValue(object.getJSONObject(e.toString()).toString(), City.class);
+                c = mapper.readValue(object.getJSONObject(e.toString()).toString(), CityDto.class);
             } catch (IOException e1) {
                 e1.printStackTrace();
             }
@@ -56,13 +56,13 @@ public class NavimeeData {
         return cities;
     }
 
-    public Map<String, List<Coordinate>> getCoordinates() {
+    public Map<String, List<CoordinateDto>> getCoordinates() {
         JSONObject object = getJsonObject(Mocks.Coordinates);
-        Map<String, List<Coordinate>> coordinates = new HashMap<>();
+        Map<String, List<CoordinateDto>> coordinates = new HashMap<>();
         ObjectMapper mapper = new ObjectMapper();
         object.keySet().stream().forEach(e -> {
             try {
-                final Coordinates c = mapper.readValue(object.getJSONObject(e.toString()).toString(), Coordinates.class);
+                final CoordinatesDto c = mapper.readValue(object.getJSONObject(e.toString()).toString(), CoordinatesDto.class);
                 coordinates.put(e.toString(), c.points);
             } catch (IOException e1) {
                 e1.printStackTrace();

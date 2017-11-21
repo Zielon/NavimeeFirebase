@@ -1,4 +1,4 @@
-package com.navimee.contracts.models.places;
+package com.navimee.contracts.models.dataTransferObjects.places;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -6,7 +6,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.Map;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class FoursquarePlace extends Place {
+public class FoursquarePlaceDto extends PlaceDto {
 
     public String facebook;
 

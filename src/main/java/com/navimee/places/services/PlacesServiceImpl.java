@@ -3,11 +3,11 @@ package com.navimee.places.services;
 import com.navimee.configuration.specific.FacebookConfiguration;
 import com.navimee.configuration.specific.FoursquareConfiguration;
 import com.navimee.configuration.specific.GoogleConfiguration;
-import com.navimee.contracts.models.placeDetails.FoursquarePlaceDetails;
-import com.navimee.contracts.models.places.Coordinate;
-import com.navimee.contracts.models.places.FacebookPlace;
-import com.navimee.contracts.models.places.FoursquarePlace;
-import com.navimee.contracts.models.places.GooglePlace;
+import com.navimee.contracts.models.dataTransferObjects.placeDetails.FoursquarePlaceDetailsDto;
+import com.navimee.contracts.models.dataTransferObjects.places.FacebookPlaceDto;
+import com.navimee.contracts.models.dataTransferObjects.places.FoursquarePlaceDto;
+import com.navimee.contracts.models.dataTransferObjects.places.GooglePlaceDto;
+import com.navimee.contracts.models.dataTransferObjects.places.subelement.CoordinateDto;
 import com.navimee.contracts.services.places.PlacesService;
 import com.navimee.places.queries.FacebookPlacesQuery;
 import com.navimee.places.queries.FoursquareDetailsQuery;
@@ -39,9 +39,9 @@ public class PlacesServiceImpl implements PlacesService {
     GoogleConfiguration googleConfiguration;
 
     @Override
-    public List<FacebookPlace> getFacebookPlaces(List<Coordinate> coordinates) {
+    public List<FacebookPlaceDto> getFacebookPlaces(List<CoordinateDto> coordinates) {
         FacebookPlacesQuery facebookPlacesQuery = new FacebookPlacesQuery(facebookConfiguration);
-        List<Future<List<FacebookPlace>>> futures = coordinates.stream().map(
+        List<Future<List<FacebookPlaceDto>>> futures = coordinates.stream().map(
                 c -> facebookPlacesQuery.execute(new PlacesParams(c.latitude, c.longitude))
         ).collect(Collectors.toList());
 
@@ -49,9 +49,9 @@ public class PlacesServiceImpl implements PlacesService {
     }
 
     @Override
-    public List<FoursquarePlace> getFoursquarePlaces(List<Coordinate> coordinates) {
+    public List<FoursquarePlaceDto> getFoursquarePlaces(List<CoordinateDto> coordinates) {
         FoursquarePlacesQuery foursquarePlacesQuery = new FoursquarePlacesQuery(foursquareConfiguration);
-        List<Future<List<FoursquarePlace>>> futures = coordinates.stream().map(
+        List<Future<List<FoursquarePlaceDto>>> futures = coordinates.stream().map(
                 c -> foursquarePlacesQuery.execute(new PlaceDetailsParams(c.latitude, c.longitude, "/venues/search"))
         ).collect(Collectors.toList());
 
@@ -59,9 +59,9 @@ public class PlacesServiceImpl implements PlacesService {
     }
 
     @Override
-    public List<FoursquarePlaceDetails> getFoursquarePlacesDetails(List<FoursquarePlace> places) {
+    public List<FoursquarePlaceDetailsDto> getFoursquarePlacesDetails(List<FoursquarePlaceDto> places) {
         FoursquareDetailsQuery query = new FoursquareDetailsQuery(foursquareConfiguration);
-        List<Future<FoursquarePlaceDetails>> futures = new ArrayList<>();
+        List<Future<FoursquarePlaceDetailsDto>> futures = new ArrayList<>();
         places.forEach(p -> futures.add(query.execute(new PlaceDetailsParams("venues", p.id))));
 
         return waitForAll(futures).stream()
@@ -71,7 +71,7 @@ public class PlacesServiceImpl implements PlacesService {
     }
 
     @Override
-    public GooglePlace getReverseGeocoding(Coordinate coordinate) {
+    public GooglePlaceDto getReverseGeocoding(CoordinateDto coordinate) {
         GoogleGeocodingQuery query = new GoogleGeocodingQuery(googleConfiguration);
         return waitForSingle(query.execute(new PlacesParams(coordinate.latitude, coordinate.longitude)));
     }

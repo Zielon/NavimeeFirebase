@@ -1,13 +1,13 @@
-package com.navimee.contracts.models.placeDetails.pojo;
+package com.navimee.contracts.models.dataTransferObjects.placeDetails.subelements;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import java.util.List;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class PopularPojo {
+public class PopularDto {
     public String status;
     public boolean isOpen;
     public boolean isLocalHoliday;
-    public List<TimeFrames> timeframes;
+    public List<TimeFramesDto> timeframes;
 }

@@ -1,7 +1,7 @@
 package com.navimee.events;
 
-import com.navimee.contracts.models.events.Event;
-import com.navimee.contracts.models.places.GooglePlace;
+import com.navimee.contracts.models.bussinesObjects.Event;
+import com.navimee.contracts.models.dataTransferObjects.places.GooglePlaceDto;
 import com.navimee.enums.EventsSegregation;
 import com.navimee.places.googleGeocoding.enums.GeoType;
 
@@ -27,7 +27,7 @@ public class Events {
     }
 
 
-    public static boolean complement(Event event, GooglePlace place, GooglePlace searchPlace) {
+    public static boolean complement(Event event, GooglePlaceDto place, GooglePlaceDto searchPlace) {
 
         // A place from an event is the same as the search place.
         if (event.searchPlace.id != null

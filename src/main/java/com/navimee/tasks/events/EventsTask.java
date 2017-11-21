@@ -1,7 +1,7 @@
 package com.navimee.tasks.events;
 
-import com.navimee.contracts.models.events.Event;
-import com.navimee.contracts.models.places.Place;
+import com.navimee.contracts.models.bussinesObjects.Event;
+import com.navimee.contracts.models.dataTransferObjects.places.PlaceDto;
 import com.navimee.contracts.repositories.events.EventsRepository;
 import com.navimee.contracts.repositories.palces.PlacesRepository;
 import com.navimee.contracts.services.events.EventsService;
@@ -32,13 +32,13 @@ public class EventsTask {
     public void addEventsTask() throws ExecutionException, InterruptedException {
 
         placesRepository.getAvailableCities().parallelStream().forEach(city -> {
-         //   if (city.name.equals("GDANSK"))
-                Executors.newSingleThreadExecutor().submit(() -> {
-                            List<Place> places = placesRepository.getPlaces(city.name, Place.class);
-                            List<Event> events = eventsService.getFacebookEvents(places);
-                            eventsRepository.updateEvents(events, city.name);
-                        }
-                );
+            //   if (city.name.equals("GDANSK"))
+            Executors.newSingleThreadExecutor().submit(() -> {
+                        List<PlaceDto> places = placesRepository.getPlaces(city.name, PlaceDto.class);
+                        List<Event> events = eventsService.getFacebookEvents(places);
+                        eventsRepository.updateEvents(events, city.name);
+                    }
+            );
         });
     }
 }

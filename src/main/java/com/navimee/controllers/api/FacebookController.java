@@ -2,7 +2,7 @@ package com.navimee.controllers.api;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.navimee.contracts.models.places.Place;
+import com.navimee.contracts.models.dataTransferObjects.places.PlaceDto;
 import com.navimee.contracts.repositories.events.EventsRepository;
 import com.navimee.contracts.repositories.palces.PlacesRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,7 +27,7 @@ public class FacebookController {
 
     @RequestMapping(value = "places/{city}", method = RequestMethod.GET, produces = "application/json")
     public String allPlaces(@PathVariable("city") String city) throws JsonProcessingException {
-        return mapper.writeValueAsString(placesRepository.getPlaces(city.toUpperCase(), Place.class));
+        return mapper.writeValueAsString(placesRepository.getPlaces(city.toUpperCase(), PlaceDto.class));
     }
 
     @RequestMapping(value = "events/{city}", method = RequestMethod.GET, produces = "application/json")

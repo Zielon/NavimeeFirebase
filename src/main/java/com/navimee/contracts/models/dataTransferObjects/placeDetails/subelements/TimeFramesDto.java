@@ -1,11 +1,11 @@
-package com.navimee.contracts.models.placeDetails.pojo;
+package com.navimee.contracts.models.dataTransferObjects.placeDetails.subelements;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import java.util.List;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class TimeFrames {
+public class TimeFramesDto {
     public String days;
-    public List<OpenPojo> open;
+    public List<OpenDto> open;
 }

@@ -4,10 +4,10 @@ import com.google.api.core.ApiFuture;
 import com.google.cloud.firestore.DocumentReference;
 import com.google.cloud.firestore.Firestore;
 import com.google.cloud.firestore.QuerySnapshot;
-import com.navimee.contracts.models.firestore.City;
-import com.navimee.contracts.models.placeDetails.FoursquarePlaceDetails;
-import com.navimee.contracts.models.places.Coordinate;
-import com.navimee.contracts.models.places.Place;
+import com.navimee.contracts.models.dataTransferObjects.firestore.CityDto;
+import com.navimee.contracts.models.dataTransferObjects.placeDetails.FoursquarePlaceDetailsDto;
+import com.navimee.contracts.models.dataTransferObjects.places.PlaceDto;
+import com.navimee.contracts.models.dataTransferObjects.places.subelement.CoordinateDto;
 import com.navimee.contracts.repositories.palces.PlacesRepository;
 import com.navimee.firestoreHelpers.EntitiesOperations;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,34 +30,34 @@ public class PlacesRepositoryImpl implements PlacesRepository {
     Firestore db;
 
     @Override
-    public <T extends Place> List<T> getPlaces(String city, Class<T> type) {
+    public <T extends PlaceDto> List<T> getPlaces(String city, Class<T> type) {
         return EntitiesOperations.getFromDocument(db.collection(placesPath).document(city), type, placesChunks);
     }
 
     @Override
-    public <T extends Place> List<T> getFoursquarePlaces(String city, Class<T> type) {
+    public <T extends PlaceDto> List<T> getFoursquarePlaces(String city, Class<T> type) {
         return EntitiesOperations.getFromDocument(db.collection(foursquarePlacesPath).document(city), type, placesChunks);
     }
 
     @Override
-    public List<FoursquarePlaceDetails> getFoursquarePlacesDetails(String city) {
-        return EntitiesOperations.getFromDocument(db.collection(foursquarePlacesDetailsPath).document(city), FoursquarePlaceDetails.class, placesChunks);
+    public List<FoursquarePlaceDetailsDto> getFoursquarePlacesDetails(String city) {
+        return EntitiesOperations.getFromDocument(db.collection(foursquarePlacesDetailsPath).document(city), FoursquarePlaceDetailsDto.class, placesChunks);
     }
 
     @Override
-    public Future setPlaces(List<? extends Place> places, String city) {
+    public Future setPlaces(List<? extends PlaceDto> places, String city) {
         DocumentReference targetDocument = db.collection(placesPath).document(city);
         return EntitiesOperations.addToDocument(targetDocument, places, p -> p.id, placesChunks);
     }
 
     @Override
-    public Future setFoursquarePlaces(List<? extends Place> places, String city) {
+    public Future setFoursquarePlaces(List<? extends PlaceDto> places, String city) {
         DocumentReference targetDocument = db.collection(foursquarePlacesPath).document(city);
         return EntitiesOperations.addToDocument(targetDocument, places, p -> p.id, placesChunks);
     }
 
     @Override
-    public Future setFoursquarePlacesDetails(List<FoursquarePlaceDetails> details, String city) {
+    public Future setFoursquarePlacesDetails(List<FoursquarePlaceDetailsDto> details, String city) {
         DocumentReference targetDocument = db.collection(foursquarePlacesDetailsPath).document(city);
         return EntitiesOperations.addToDocument(targetDocument, details, p -> p.id, placesChunks);
     }
@@ -69,17 +69,17 @@ public class PlacesRepositoryImpl implements PlacesRepository {
     }
 
     @Override
-    public Future setAvailableCities(List<City> cities) {
+    public Future setAvailableCities(List<CityDto> cities) {
         return Executors.newSingleThreadExecutor()
                 .submit(() -> cities.forEach(city -> db.collection(availableCitiesPath).document(city.name).set(city)));
     }
 
     @Override
-    public List<City> getAvailableCities() {
-        List<City> cities = null;
+    public List<CityDto> getAvailableCities() {
+        List<CityDto> cities = null;
         ApiFuture<QuerySnapshot> query = db.collection(availableCitiesPath).get();
         try {
-            cities = query.get().getDocuments().stream().map(c -> c.toObject(City.class)).collect(Collectors.toList());
+            cities = query.get().getDocuments().stream().map(c -> c.toObject(CityDto.class)).collect(Collectors.toList());
         } catch (InterruptedException e) {
             e.printStackTrace();
         } catch (ExecutionException e) {
@@ -89,12 +89,12 @@ public class PlacesRepositoryImpl implements PlacesRepository {
     }
 
     @Override
-    public Future setCoordinates(Map<String, List<Coordinate>> coordinatesMap) {
+    public Future setCoordinates(Map<String, List<CoordinateDto>> coordinatesMap) {
         return Executors.newSingleThreadExecutor()
                 .submit(() -> coordinatesMap.keySet()
                         .forEach(city -> {
-                            List<Coordinate> coordinates = coordinatesMap.get(city);
-                            Map<String, Coordinate> map = IntStream.range(0, coordinates.size()).boxed().collect(toMap(i -> i.toString(), coordinates::get));
+                            List<CoordinateDto> coordinates = coordinatesMap.get(city);
+                            Map<String, CoordinateDto> map = IntStream.range(0, coordinates.size()).boxed().collect(toMap(i -> i.toString(), coordinates::get));
                             try {
                                 EntitiesOperations.addToDocument(db.collection(coordinatesPath).document(city), map).get();
                             } catch (Exception e) {
@@ -103,7 +103,7 @@ public class PlacesRepositoryImpl implements PlacesRepository {
     }
 
     @Override
-    public List<Coordinate> getCoordinates(String city) {
-        return EntitiesOperations.getFromDocument(db.collection(coordinatesPath).document(city), Coordinate.class);
+    public List<CoordinateDto> getCoordinates(String city) {
+        return EntitiesOperations.getFromDocument(db.collection(coordinatesPath).document(city), CoordinateDto.class);
     }
 }

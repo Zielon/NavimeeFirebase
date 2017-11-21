@@ -1,10 +1,10 @@
-package com.navimee.contracts.models.places.pojo;
+package com.navimee.contracts.models.dataTransferObjects.places.subelement;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.List;
 
-public class AddressComponents {
+public class AddressComponentsDto {
 
     @JsonProperty("long_name")
     public String longName;

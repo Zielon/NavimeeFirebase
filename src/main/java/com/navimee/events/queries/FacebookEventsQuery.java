@@ -6,8 +6,8 @@ import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.JsonNode;
 import com.mashape.unirest.http.Unirest;
 import com.navimee.configuration.specific.FacebookConfiguration;
-import com.navimee.contracts.models.events.Event;
-import com.navimee.contracts.models.places.Place;
+import com.navimee.contracts.models.bussinesObjects.Event;
+import com.navimee.contracts.models.dataTransferObjects.places.PlaceDto;
 import com.navimee.events.queries.params.EventsParams;
 import com.navimee.queries.Query;
 import org.joda.time.DateTimeZone;
@@ -32,7 +32,7 @@ public class FacebookEventsQuery extends Query<List<Event>, FacebookConfiguratio
         super(configuration);
     }
 
-    private Place searchPlace;
+    private PlaceDto searchPlace;
 
     @Async
     @Override

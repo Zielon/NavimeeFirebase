@@ -1,4 +1,4 @@
-package com.navimee.contracts.models.places.pojo;
+package com.navimee.contracts.models.dataTransferObjects.places.subelement;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -6,7 +6,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.Map;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class Geometry {
+public class GeometryDto {
 
     public double lat;
     public double lon;

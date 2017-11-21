@@ -1,7 +1,7 @@
 package com.navimee.tasks.places;
 
-import com.navimee.contracts.models.placeDetails.FoursquarePlaceDetails;
-import com.navimee.contracts.models.places.FoursquarePlace;
+import com.navimee.contracts.models.dataTransferObjects.placeDetails.FoursquarePlaceDetailsDto;
+import com.navimee.contracts.models.dataTransferObjects.places.FoursquarePlaceDto;
 import com.navimee.contracts.repositories.palces.PlacesRepository;
 import com.navimee.contracts.services.places.PlacesService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,8 +26,8 @@ public class DetailsTask {
         placesRepository.getAvailableCities().forEach(city -> {
                     if (city.name.equals("GDANSK"))
                         Executors.newSingleThreadExecutor().submit(() -> {
-                                    List<FoursquarePlace> foursquarePlaces = placesRepository.getFoursquarePlaces(city.name, FoursquarePlace.class);
-                                    List<FoursquarePlaceDetails> details = placesService.getFoursquarePlacesDetails(foursquarePlaces);
+                                    List<FoursquarePlaceDto> foursquarePlaces = placesRepository.getFoursquarePlaces(city.name, FoursquarePlaceDto.class);
+                                    List<FoursquarePlaceDetailsDto> details = placesService.getFoursquarePlacesDetails(foursquarePlaces);
                                     placesRepository.setFoursquarePlacesDetails(details, city.name);
                                 }
                         );

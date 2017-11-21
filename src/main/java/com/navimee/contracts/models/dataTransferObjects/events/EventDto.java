@@ -1,8 +1,8 @@
-package com.navimee.contracts.models.events.pojo;
+package com.navimee.contracts.models.dataTransferObjects.events;
 
-import com.navimee.contracts.models.places.Place;
+import com.navimee.contracts.models.dataTransferObjects.places.PlaceDto;
 
-public class EventPojo {
+public class EventDto {
     public String name;
     public String id;
     public String category;
@@ -11,5 +11,5 @@ public class EventPojo {
     public long attending_count;
     public long maybe_count;
     public String type;
-    public Place place;
+    public PlaceDto place;
 }

@@ -1,9 +1,9 @@
-package com.navimee.contracts.models.placeDetails.pojo;
+package com.navimee.contracts.models.dataTransferObjects.placeDetails.subelements;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class LocationPojo {
+public class LocationDto {
     public String address;
     public String crossStreet;
     public String postalCode;

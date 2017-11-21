@@ -1,9 +1,9 @@
 package com.navimee.contracts.repositories.palces;
 
-import com.navimee.contracts.models.firestore.City;
-import com.navimee.contracts.models.placeDetails.FoursquarePlaceDetails;
-import com.navimee.contracts.models.places.Coordinate;
-import com.navimee.contracts.models.places.Place;
+import com.navimee.contracts.models.dataTransferObjects.firestore.CityDto;
+import com.navimee.contracts.models.dataTransferObjects.placeDetails.FoursquarePlaceDetailsDto;
+import com.navimee.contracts.models.dataTransferObjects.places.PlaceDto;
+import com.navimee.contracts.models.dataTransferObjects.places.subelement.CoordinateDto;
 
 import java.util.List;
 import java.util.Map;
@@ -18,25 +18,25 @@ public interface PlacesRepository {
     String foursquarePlacesPath = "foursquarePlaces";
     String foursquarePlacesDetailsPath = "foursquarePlacesDetails";
 
-    List<Coordinate> getCoordinates(String city);
+    List<CoordinateDto> getCoordinates(String city);
 
-    List<City> getAvailableCities();
+    List<CityDto> getAvailableCities();
 
-    <T extends Place> List<T> getPlaces(String city, Class<T> type);
+    <T extends PlaceDto> List<T> getPlaces(String city, Class<T> type);
 
-    <T extends Place> List<T> getFoursquarePlaces(String city, Class<T> type);
+    <T extends PlaceDto> List<T> getFoursquarePlaces(String city, Class<T> type);
 
-    List<FoursquarePlaceDetails> getFoursquarePlacesDetails(String city);
+    List<FoursquarePlaceDetailsDto> getFoursquarePlacesDetails(String city);
 
-    Future setCoordinates(Map<String, List<Coordinate>> coordinatesMap);
+    Future setCoordinates(Map<String, List<CoordinateDto>> coordinatesMap);
 
-    Future setAvailableCities(List<City> cities);
+    Future setAvailableCities(List<CityDto> cities);
 
-    Future setPlaces(List<? extends Place> places, String city);
+    Future setPlaces(List<? extends PlaceDto> places, String city);
 
-    Future setFoursquarePlaces(List<? extends Place> places, String city);
+    Future setFoursquarePlaces(List<? extends PlaceDto> places, String city);
 
-    Future setFoursquarePlacesDetails(List<FoursquarePlaceDetails> details, String city);
+    Future setFoursquarePlacesDetails(List<FoursquarePlaceDetailsDto> details, String city);
 
     Future deleteCollection(String collection);
 }

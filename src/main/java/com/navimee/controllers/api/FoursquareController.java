@@ -2,7 +2,7 @@ package com.navimee.controllers.api;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.navimee.contracts.models.places.FoursquarePlace;
+import com.navimee.contracts.models.dataTransferObjects.places.FoursquarePlaceDto;
 import com.navimee.contracts.repositories.palces.PlacesRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -21,7 +21,7 @@ public class FoursquareController {
 
     @RequestMapping(value = "4s/places/{city}", method = RequestMethod.GET, produces = "application/json")
     public String foursquarePlaces(@PathVariable("city") String city) throws JsonProcessingException {
-        return mapper.writeValueAsString(placesRepository.getFoursquarePlaces(city.toUpperCase(), FoursquarePlace.class));
+        return mapper.writeValueAsString(placesRepository.getFoursquarePlaces(city.toUpperCase(), FoursquarePlaceDto.class));
     }
 
     @RequestMapping(value = "4s/details/{city}", method = RequestMethod.GET, produces = "application/json")

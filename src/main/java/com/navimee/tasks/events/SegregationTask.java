@@ -1,6 +1,6 @@
 package com.navimee.tasks.events;
 
-import com.navimee.contracts.models.events.Event;
+import com.navimee.contracts.models.bussinesObjects.Event;
 import com.navimee.contracts.repositories.events.EventsRepository;
 import com.navimee.contracts.repositories.palces.PlacesRepository;
 import com.navimee.contracts.services.events.EventsService;

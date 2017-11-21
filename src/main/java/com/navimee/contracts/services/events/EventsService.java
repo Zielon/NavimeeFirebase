@@ -1,10 +1,10 @@
 package com.navimee.contracts.services.events;
 
-import com.navimee.contracts.models.events.Event;
-import com.navimee.contracts.models.places.Place;
+import com.navimee.contracts.models.bussinesObjects.Event;
+import com.navimee.contracts.models.dataTransferObjects.places.PlaceDto;
 
 import java.util.List;
 
 public interface EventsService {
-    List<Event> getFacebookEvents(List<Place> places);
+    List<Event> getFacebookEvents(List<PlaceDto> places);
 }
