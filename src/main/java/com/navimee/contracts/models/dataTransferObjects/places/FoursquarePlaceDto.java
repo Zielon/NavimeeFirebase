@@ -7,7 +7,6 @@ import java.util.Map;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class FoursquarePlaceDto extends PlaceDto {
-
     public String facebook;
 
     @JsonProperty("contact")

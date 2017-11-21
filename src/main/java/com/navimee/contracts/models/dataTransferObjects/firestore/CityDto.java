@@ -1,6 +1,8 @@
 package com.navimee.contracts.models.dataTransferObjects.firestore;
 
-public class CityDto {
+import com.navimee.contracts.models.dataTransferObjects.BaseDto;
+
+public class CityDto extends BaseDto {
 
     public String id;
     public String name;

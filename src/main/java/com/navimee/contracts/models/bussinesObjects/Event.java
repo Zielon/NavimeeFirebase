@@ -1,7 +1,6 @@
 package com.navimee.contracts.models.bussinesObjects;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.joda.JodaModule;
 import com.navimee.contracts.models.dataTransferObjects.Pojo;
@@ -11,24 +10,19 @@ import org.joda.time.DateTime;
 
 import java.io.IOException;
 
-@JsonIgnoreProperties(ignoreUnknown = true)
 public class Event implements Comparable, Pojo {
-    public String name;
-    public String id;
-    public String category;
-    public DateTime start_time;
-    public DateTime end_time;
-    public long attending_count;
-    public long maybe_count;
-    public String type;
-    public PlaceDto place;
+    private String name;
+    private String id;
+    private String category;
+    private DateTime start_time;
+    private DateTime end_time;
+    private long attending_count;
+    private long maybe_count;
+    private String type;
+    private PlaceDto place;
 
     @JsonIgnore
     public PlaceDto searchPlace;
-
-    public String getId() {
-        return id;
-    }
 
     @Override
     public boolean equals(Object obj) {
@@ -59,5 +53,77 @@ public class Event implements Comparable, Pojo {
         }
 
         return pojo;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public String getCategory() {
+        return category;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
+    }
+
+    public DateTime getStart_time() {
+        return start_time;
+    }
+
+    public void setStart_time(DateTime start_time) {
+        this.start_time = start_time;
+    }
+
+    public DateTime getEnd_time() {
+        return end_time;
+    }
+
+    public void setEnd_time(DateTime end_time) {
+        this.end_time = end_time;
+    }
+
+    public long getAttending_count() {
+        return attending_count;
+    }
+
+    public void setAttending_count(long attending_count) {
+        this.attending_count = attending_count;
+    }
+
+    public long getMaybe_count() {
+        return maybe_count;
+    }
+
+    public void setMaybe_count(long maybe_count) {
+        this.maybe_count = maybe_count;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public PlaceDto getPlace() {
+        return place;
+    }
+
+    public void setPlace(PlaceDto place) {
+        this.place = place;
     }
 }

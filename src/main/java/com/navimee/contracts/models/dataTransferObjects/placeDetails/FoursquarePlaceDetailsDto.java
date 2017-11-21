@@ -1,13 +1,13 @@
 package com.navimee.contracts.models.dataTransferObjects.placeDetails;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.navimee.contracts.models.dataTransferObjects.BaseDto;
 import com.navimee.contracts.models.dataTransferObjects.placeDetails.subelements.*;
 
 import java.util.List;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class FoursquarePlaceDetailsDto {
-
+public class FoursquarePlaceDetailsDto extends BaseDto {
     public String id;
     public String name;
     public double rating;

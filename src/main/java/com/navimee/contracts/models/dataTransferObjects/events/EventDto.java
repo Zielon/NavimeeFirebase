@@ -1,8 +1,9 @@
 package com.navimee.contracts.models.dataTransferObjects.events;
 
+import com.navimee.contracts.models.dataTransferObjects.BaseDto;
 import com.navimee.contracts.models.dataTransferObjects.places.PlaceDto;
 
-public class EventDto {
+public class EventDto extends BaseDto {
     public String name;
     public String id;
     public String category;
