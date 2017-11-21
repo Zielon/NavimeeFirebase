@@ -6,7 +6,7 @@ import com.google.api.core.ApiFuture;
 import com.google.cloud.firestore.DocumentSnapshot;
 import com.google.cloud.firestore.Firestore;
 import com.google.cloud.firestore.SetOptions;
-import com.navimee.contracts.models.events.pojo.Event;
+import com.navimee.contracts.models.events.pojo.EventPojo;
 import com.navimee.contracts.repositories.events.EventsRepository;
 import com.navimee.events.Events;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,7 +52,7 @@ public class EventsRepositoryImpl implements EventsRepository {
 
         return Executors.newSingleThreadExecutor().submit(() -> {
             try {
-                Map<String, Event> pojos = events.stream().map(com.navimee.contracts.models.events.Event::toPojo).collect(Collectors.toMap(pojo -> pojo.id, Function.identity()));
+                Map<String, EventPojo> pojos = events.stream().map(com.navimee.contracts.models.events.Event::toPojo).collect(Collectors.toMap(pojo -> pojo.id, Function.identity()));
                 db.collection(eventsPath).document(city).set(pojos, SetOptions.merge()).get();
             } catch (InterruptedException e1) {
                 e1.printStackTrace();
@@ -70,7 +70,7 @@ public class EventsRepositoryImpl implements EventsRepository {
             Map<String, List<com.navimee.contracts.models.events.Event>> sevenDaysSegregation = Events.sevenDaysSegregation(events);
 
             sevenDaysSegregation.forEach((key, segregatedEvents) -> {
-                Map<String, Event> pojos = segregatedEvents.stream().map(com.navimee.contracts.models.events.Event::toPojo).collect(Collectors.toMap(pojo -> pojo.id, Function.identity()));
+                Map<String, EventPojo> pojos = segregatedEvents.stream().map(com.navimee.contracts.models.events.Event::toPojo).collect(Collectors.toMap(pojo -> pojo.id, Function.identity()));
                 try {
                     db.collection(segregatetEventsPath).document(city).collection(key).document("events").set(pojos).get();
                 } catch (InterruptedException e) {

@@ -6,7 +6,7 @@ import com.mashape.unirest.http.JsonNode;
 import com.mashape.unirest.http.Unirest;
 import com.navimee.configuration.specific.FoursquareConfiguration;
 import com.navimee.contracts.models.places.FoursquarePlace;
-import com.navimee.places.queries.params.PlacesParams;
+import com.navimee.places.queries.params.PlaceDetailsParams;
 import com.navimee.queries.Query;
 import org.joda.time.DateTimeZone;
 import org.joda.time.LocalDateTime;
@@ -22,14 +22,14 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
-public class FoursquarePlacesQuery extends Query<List<FoursquarePlace>, FoursquareConfiguration, PlacesParams> {
+public class FoursquarePlacesQuery extends Query<List<FoursquarePlace>, FoursquareConfiguration, PlaceDetailsParams> {
 
     public FoursquarePlacesQuery(FoursquareConfiguration configuration) {
         super(configuration);
     }
 
     @Override
-    public Future<List<FoursquarePlace>> execute(PlacesParams params) {
+    public Future<List<FoursquarePlace>> execute(PlaceDetailsParams params) {
         ExecutorService executor = Executors.newSingleThreadExecutor();
         DateTimeZone zone = DateTimeZone.forID("Europe/Warsaw");
         LocalDateTime warsawCurrent = LocalDateTime.now(zone);

@@ -1,10 +1,7 @@
 package com.navimee.configuration;
 
 import com.google.cloud.firestore.Firestore;
-import com.navimee.configuration.specific.FacebookConfiguration;
-import com.navimee.configuration.specific.FirebaseConfiguration;
-import com.navimee.configuration.specific.FirebaseInitialization;
-import com.navimee.configuration.specific.FoursquareConfiguration;
+import com.navimee.configuration.specific.*;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -25,6 +22,9 @@ public class Injections {
     @Value(value = "classpath:foursquare-services.json")
     private Resource foursquareConfig;
 
+    @Value(value = "classpath:google-geo-services.json")
+    private Resource googleGeoConfig;
+
     @Bean
     FirebaseConfiguration providerFirebaseConfiguration() throws IOException {
         return new FirebaseConfiguration(firebaseConfig);
@@ -38,6 +38,11 @@ public class Injections {
     @Bean
     FoursquareConfiguration providerFoursquareConfiguration() throws IOException {
         return new FoursquareConfiguration(foursquareConfig);
+    }
+
+    @Bean
+    GoogleConfiguration providerGoogleConfiguration() throws IOException {
+        return new GoogleConfiguration(googleGeoConfig);
     }
 
     @Bean

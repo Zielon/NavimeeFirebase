@@ -2,6 +2,7 @@ package com.navimee.asyncCollectors;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
 public class HelperMethods {
@@ -29,6 +30,18 @@ public class HelperMethods {
             }
         });
 
+        return output;
+    }
+
+    public static <T> T waitForSingle(Future<T> future) {
+        T output = null;
+        try {
+            output = future.get();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
         return output;
     }
 }

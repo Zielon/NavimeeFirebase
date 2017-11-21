@@ -1,5 +1,5 @@
 package com.navimee.contracts.models.placeDetails.pojo;
 
-public class Open {
+public class OpenPojo {
     public String renderedTime;
 }

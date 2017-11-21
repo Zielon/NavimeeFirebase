@@ -1,6 +1,6 @@
 package com.navimee.contracts.models.placeDetails.pojo;
 
-public class Stats {
+public class StatsPojo {
     public int checkinsCount;
     public int usersCount;
     public int tipCount;

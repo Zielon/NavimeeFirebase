@@ -1,9 +1,8 @@
 package com.navimee.contracts.models.events.pojo;
 
-import com.navimee.contracts.models.events.Location;
 import com.navimee.contracts.models.places.Place;
 
-public class Event {
+public class EventPojo {
     public String name;
     public String id;
     public String category;
@@ -12,6 +11,5 @@ public class Event {
     public long attending_count;
     public long maybe_count;
     public String type;
-    public Location place;
-    public Place searchPlace;
+    public Place place;
 }

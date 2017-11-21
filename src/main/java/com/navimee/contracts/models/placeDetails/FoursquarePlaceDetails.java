@@ -11,9 +11,9 @@ public class FoursquarePlaceDetails {
     public String id;
     public String name;
     public double rating;
-    public Location location;
-    public Stats stats;
-    public Popular popular;
-    public Likes likes;
-    public List<Category> categories;
+    public LocationPojo location;
+    public StatsPojo stats;
+    public PopularPojo popular;
+    public LikesPojo likes;
+    public List<CategoryPojo> categories;
 }

@@ -19,8 +19,8 @@ import java.util.Map;
 public class NavimeeData {
 
     private JSONObject getJsonObject(Mocks mocks) {
-        Resource seleted = mocks == Mocks.Cities ? new ClassPathResource("NavimeeData/availableCities.json")
-                : new ClassPathResource("NavimeeData/coordinates.json");
+        Resource seleted = mocks == Mocks.Cities ? new ClassPathResource("navimeeData/availableCities.json")
+                : new ClassPathResource("navimeeData/coordinates.json");
         BufferedReader streamReader = null;
         try {
             streamReader = new BufferedReader(

@@ -7,5 +7,5 @@ import java.util.List;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class TimeFrames {
     public String days;
-    public List<Open> open;
+    public List<OpenPojo> open;
 }

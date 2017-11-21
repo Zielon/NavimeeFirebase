@@ -1,4 +1,4 @@
-package com.navimee.firestoreHelpers;
+package com.navimee.linq;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;

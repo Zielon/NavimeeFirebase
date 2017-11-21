@@ -1,10 +1,11 @@
 package com.navimee.contracts.models.events;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.joda.JodaModule;
 import com.navimee.contracts.models.Pojo;
+import com.navimee.contracts.models.events.pojo.EventPojo;
 import com.navimee.contracts.models.places.Place;
 import org.joda.time.DateTime;
 
@@ -20,9 +21,9 @@ public class Event implements Comparable, Pojo {
     public long attending_count;
     public long maybe_count;
     public String type;
-    public Location place;
+    public Place place;
 
-    @JsonProperty(access = JsonProperty.Access.AUTO)
+    @JsonIgnore
     public Place searchPlace;
 
     public String getId() {
@@ -46,13 +47,13 @@ public class Event implements Comparable, Pojo {
         return event.id.compareTo(this.id);
     }
 
-    public com.navimee.contracts.models.events.pojo.Event toPojo() {
+    public EventPojo toPojo() {
         ObjectMapper mapper = new ObjectMapper();
         mapper.registerModule(new JodaModule());
         mapper.configure(com.fasterxml.jackson.databind.SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
-        com.navimee.contracts.models.events.pojo.Event pojo = null;
+        EventPojo pojo = null;
         try {
-            pojo = mapper.readValue(mapper.writeValueAsString(this), com.navimee.contracts.models.events.pojo.Event.class);
+            pojo = mapper.readValue(mapper.writeValueAsString(this), EventPojo.class);
         } catch (IOException e) {
             e.printStackTrace();
         }

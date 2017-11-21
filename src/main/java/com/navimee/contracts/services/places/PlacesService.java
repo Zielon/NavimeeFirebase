@@ -4,6 +4,7 @@ import com.navimee.contracts.models.placeDetails.FoursquarePlaceDetails;
 import com.navimee.contracts.models.places.Coordinate;
 import com.navimee.contracts.models.places.FacebookPlace;
 import com.navimee.contracts.models.places.FoursquarePlace;
+import com.navimee.contracts.models.places.GooglePlace;
 
 import java.util.List;
 
@@ -13,4 +14,6 @@ public interface PlacesService {
     List<FoursquarePlace> getFoursquarePlaces(List<Coordinate> coordinates);
 
     List<FoursquarePlaceDetails> getFoursquarePlacesDetails(List<FoursquarePlace> places);
+
+    GooglePlace getReverseGeocoding(Coordinate coordinate);
 }

@@ -18,7 +18,7 @@ import java.util.concurrent.Future;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import static com.navimee.firestoreHelpers.Distinct.distinctByKey;
+import static com.navimee.linq.Distinct.distinctByKey;
 
 public class EntitiesOperations {
 

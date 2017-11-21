@@ -28,14 +28,17 @@ public class EventsTask {
 
     // Once per 1 hour.
     @Scheduled(cron = "0 0 0/1 * * ?")
+    //@Scheduled(fixedRate = 1000 * 60 * 60)
     public void addEventsTask() throws ExecutionException, InterruptedException {
 
-        placesRepository.getAvailableCities().parallelStream().forEach(city ->
+        placesRepository.getAvailableCities().parallelStream().forEach(city -> {
+            if(city.name.equals("SOPOT"))
                 Executors.newSingleThreadExecutor().submit(() -> {
                             List<Place> places = placesRepository.getPlaces(city.name, Place.class);
                             List<Event> events = eventsService.getFacebookEvents(places);
                             eventsRepository.updateEvents(events, city.name);
                         }
-                ));
+                );
+        });
     }
 }

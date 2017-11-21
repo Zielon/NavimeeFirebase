@@ -7,7 +7,7 @@ public class Place implements Comparable {
     public String name;
     public String id;
 
-    // Location
+    // LocationPojo
     public double lat;
     public double lon;
     public String city;
