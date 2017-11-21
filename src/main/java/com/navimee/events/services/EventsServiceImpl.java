@@ -36,12 +36,12 @@ public class EventsServiceImpl implements EventsService {
         places.forEach(place -> events.add(new FacebookEventsQuery(facebookConfiguration).execute(new EventsParams(place))));
 
         return waitForMany(events)
-                .stream()
+                .parallelStream()
                 .filter(distinctByKey(e -> e.id))
                 .parallel()
                 .filter(event ->
                         complement(event,
-                                placesService.getReverseGeocoding(new Coordinate(event.place.lat, event.place.lon)),
+                                event.place != null ? placesService.getReverseGeocoding(new Coordinate(event.place.lat, event.place.lon)) : null,
                                 placesService.getReverseGeocoding(new Coordinate(event.searchPlace.lat, event.searchPlace.lon))))
                 .collect(Collectors.toList());
     }

@@ -32,7 +32,7 @@ public class EventsTask {
     public void addEventsTask() throws ExecutionException, InterruptedException {
 
         placesRepository.getAvailableCities().parallelStream().forEach(city -> {
-            if(city.name.equals("SOPOT"))
+         //   if (city.name.equals("GDANSK"))
                 Executors.newSingleThreadExecutor().submit(() -> {
                             List<Place> places = placesRepository.getPlaces(city.name, Place.class);
                             List<Event> events = eventsService.getFacebookEvents(places);
