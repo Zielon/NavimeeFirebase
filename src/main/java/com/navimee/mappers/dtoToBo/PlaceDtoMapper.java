@@ -9,7 +9,7 @@ import java.util.List;
 
 @Mapper
 public interface PlaceDtoMapper {
-    PlaceDtoMapper PLACE_DTO_MAPPER = Mappers.getMapper(PlaceDtoMapper.class);
+    PlaceDtoMapper INSTANCE = Mappers.getMapper(PlaceDtoMapper.class);
 
     PlaceBo toPlaceBo(PlaceDto placeDto);
 

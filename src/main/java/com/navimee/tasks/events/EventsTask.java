@@ -35,7 +35,7 @@ public class EventsTask {
         placesRepository.getAvailableCities().parallelStream().forEach(city -> {
             if (city.name.equals("SOPOT"))
                 Executors.newSingleThreadExecutor().submit(() -> {
-                            List<FbEvent> events = eventsService.downloadFacebookEvents(city.name).stream().map(EventBoMapper.EVENT_BO_MAPPER::toEvent).collect(toList());
+                            List<FbEvent> events = eventsService.downloadFacebookEvents(city.name).stream().map(EventBoMapper.INSTANCE::toEvent).collect(toList());
                             eventsRepository.updateEvents(events, city.name);
                         }
                 );

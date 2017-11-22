@@ -2,6 +2,7 @@ package com.navimee.configuration;
 
 import com.google.cloud.firestore.Firestore;
 import com.navimee.configuration.specific.*;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -43,6 +44,11 @@ public class Injections {
     @Bean
     GoogleConfiguration providerGoogleConfiguration() throws IOException {
         return new GoogleConfiguration(googleGeoConfig);
+    }
+
+    @Bean
+    public ModelMapper modelMapper() {
+        return new ModelMapper();
     }
 
     @Bean

@@ -7,7 +7,7 @@ import org.mapstruct.factory.Mappers;
 
 @Mapper
 public interface EventEntityMapper {
-    EventEntityMapper EVENT_ENTITY_MAPPER = Mappers.getMapper(EventEntityMapper.class);
+    EventEntityMapper INSTANCE = Mappers.getMapper(EventEntityMapper.class);
 
     FbEventBo toEvent(FbEvent fbEvent);
 }

@@ -5,9 +5,9 @@ import com.navimee.models.externalDto.places.FsPlaceDto;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
 
-@Mapper
+@Mapper(componentModel = "spring")
 public interface FsPlaceDtoMapper {
-    FsPlaceDtoMapper FS_PLACE_DTO_MAPPER = Mappers.getMapper(FsPlaceDtoMapper.class);
+    FsPlaceDtoMapper INSTANCE = Mappers.getMapper(FsPlaceDtoMapper.class);
 
     FsPlaceBo toFsPlaceBo(FsPlaceDto fsPlaceDto);
 }

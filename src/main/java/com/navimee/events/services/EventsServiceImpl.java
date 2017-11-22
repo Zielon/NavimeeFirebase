@@ -50,7 +50,7 @@ public class EventsServiceImpl implements EventsService {
 
         return waitForMany(events)
                 .parallelStream()
-                .map(EventDtoMapper.EVENT_DTO_MAPPER::toEventBo)
+                .map(EventDtoMapper.INSTANCE::toEventBo)
                 .filter(distinctByKey(FbEventBo::getId))
                 .parallel()
                 .filter(event ->
@@ -64,7 +64,7 @@ public class EventsServiceImpl implements EventsService {
     public Map<String, List<FbEventBo>> sevenDaysSegregation(String city) {
         List<FbEventBo> events = eventsRepository.getEvents(city)
                 .stream()
-                .map(EventEntityMapper.EVENT_ENTITY_MAPPER::toEvent)
+                .map(EventEntityMapper.INSTANCE::toEvent)
                 .collect(toList());
 
         return Events.sevenDaysSegregation(events);

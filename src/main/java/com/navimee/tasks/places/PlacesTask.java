@@ -58,10 +58,10 @@ public class PlacesTask {
                                 List<FsPlaceBo> foursquarePlaces = placesService.downloadFoursquarePlaces(name);
 
                                 List<Place> places = new ArrayList<>();
-                                places.addAll(facebookPlaces.stream().map(PlaceBoMapper.PLACE_BO_MAPPER::toPlace).collect(Collectors.toList()));
-                                places.addAll(foursquarePlaces.stream().filter(e -> e.getFacebookId() != null).map(FsPlaceBoMapper.FS_PLACE_BO_MAPPER::toPlace).collect(Collectors.toList()));
+                                places.addAll(facebookPlaces.stream().map(PlaceBoMapper.INSTANCE::toPlace).collect(Collectors.toList()));
+                                places.addAll(foursquarePlaces.stream().filter(e -> e.getFacebookId() != null).map(FsPlaceBoMapper.INSTANCE::toPlace).collect(Collectors.toList()));
 
-                                placesRepository.setFoursquarePlaces(foursquarePlaces.stream().map(FsPlaceBoMapper.FS_PLACE_BO_MAPPER::toPlace).collect(Collectors.toList()), name);
+                                placesRepository.setFoursquarePlaces(foursquarePlaces.stream().map(FsPlaceBoMapper.INSTANCE::toPlace).collect(Collectors.toList()), name);
                                 placesRepository.setPlaces(places, name);
                             } catch (Exception e) {
                                 e.printStackTrace();

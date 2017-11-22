@@ -7,7 +7,7 @@ import org.mapstruct.factory.Mappers;
 
 @Mapper
 public interface FsPlaceBoMapper {
-    FsPlaceBoMapper FS_PLACE_BO_MAPPER = Mappers.getMapper(FsPlaceBoMapper.class);
+    FsPlaceBoMapper INSTANCE = Mappers.getMapper(FsPlaceBoMapper.class);
 
     Place toPlace(FsPlaceBo fsPlaceBo);
 }

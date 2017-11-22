@@ -8,7 +8,7 @@ import org.mapstruct.factory.Mappers;
 
 @Mapper
 public interface EventDtoMapper {
-    EventDtoMapper EVENT_DTO_MAPPER = Mappers.getMapper(EventDtoMapper.class);
+    EventDtoMapper INSTANCE = Mappers.getMapper(EventDtoMapper.class);
 
     FbEventBo toEventBo(FbEventDto eventDto);
 }

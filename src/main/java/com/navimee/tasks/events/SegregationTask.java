@@ -39,7 +39,7 @@ public class SegregationTask {
                             eventsService.sevenDaysSegregation(city.name)
                                     .entrySet()
                                     .stream()
-                                    .map(entry -> sevenDaysSegregation.put(entry.getKey(), entry.getValue().stream().map(EventBoMapper.EVENT_BO_MAPPER::toEvent).collect(toList())));
+                                    .map(entry -> sevenDaysSegregation.put(entry.getKey(), entry.getValue().stream().map(EventBoMapper.INSTANCE::toEvent).collect(toList())));
 
                             eventsRepository.sevenDaysSegregation(sevenDaysSegregation, city.name);
                         }

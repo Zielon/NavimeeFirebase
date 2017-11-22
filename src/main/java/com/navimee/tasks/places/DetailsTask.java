@@ -31,7 +31,7 @@ public class DetailsTask {
                                     List<FsPlaceDetailsBo> details = placesService.downloadFoursquarePlacesDetails(city.name);
                                     placesRepository.setFoursquarePlacesDetails(
                                             details.stream()
-                                                    .map(FsPlaceDetailsEntityMapper.FS_PLACE_DETAILS_ENTITY_MAPPER::toFsPlaceDetails)
+                                                    .map(FsPlaceDetailsEntityMapper.INSTANCE::toFsPlaceDetails)
                                                     .collect(toList()),
                                             city.name);
                                 }

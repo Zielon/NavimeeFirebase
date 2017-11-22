@@ -10,7 +10,7 @@ import org.mapstruct.factory.Mappers;
 @Mapper
 public interface FsPlaceDetailsDtoMapper {
 
-    FsPlaceDetailsDtoMapper PLACE_DETAILS_DTO_MAPPER = Mappers.getMapper(FsPlaceDetailsDtoMapper.class);
+    FsPlaceDetailsDtoMapper INSTANCE = Mappers.getMapper(FsPlaceDetailsDtoMapper.class);
 
     @Mappings({
             // LOCATION

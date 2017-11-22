@@ -7,11 +7,11 @@ import org.mapstruct.factory.Mappers;
 
 import java.util.List;
 
-@Mapper
+@Mapper(componentModel = "spring")
 public interface FbPlaceDtoMapper {
-    FbPlaceDtoMapper FB_PLACE_DTO_MAPPER = Mappers.getMapper(FbPlaceDtoMapper.class);
+    FbPlaceDtoMapper INSTANCE = Mappers.getMapper(FbPlaceDtoMapper.class);
 
     PlaceBo toPlaceBo(FbPlaceDto placeDto);
 
-    PlaceBo [] toPlacesBoList(List<FbPlaceDto> placeDtoList);
+    List<PlaceBo> toPlacesBoList(List<FbPlaceDto> placeDtoList);
 }

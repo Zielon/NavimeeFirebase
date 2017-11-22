@@ -12,11 +12,14 @@ public class FsPlaceDetailsBo {
     private int likesCount;
     private String likesSummary;
 
+
+    // STATS
     private int statsCheckinsCount;
     private int statsUsersCount;
     private int statsTipCount;
     private int statsVisitsCount;
 
+    // LOCATION
     private String locationAddress;
     private String locationCrossStreet;
     private String locationPostalCode;
@@ -25,6 +28,7 @@ public class FsPlaceDetailsBo {
     private double locationLat;
     private double locationLng;
 
+    //
     private String popularStatus;
     private boolean popularIsOpen;
     private boolean popularIsLocalHoliday;

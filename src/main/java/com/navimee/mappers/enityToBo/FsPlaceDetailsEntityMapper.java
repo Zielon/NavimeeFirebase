@@ -7,7 +7,7 @@ import org.mapstruct.factory.Mappers;
 
 @Mapper
 public interface FsPlaceDetailsEntityMapper {
-    FsPlaceDetailsEntityMapper FS_PLACE_DETAILS_ENTITY_MAPPER = Mappers.getMapper(FsPlaceDetailsEntityMapper.class);
+    FsPlaceDetailsEntityMapper INSTANCE = Mappers.getMapper(FsPlaceDetailsEntityMapper.class);
 
     FsPlaceDetails toFsPlaceDetails(FsPlaceDetailsBo fbEvent);
 }

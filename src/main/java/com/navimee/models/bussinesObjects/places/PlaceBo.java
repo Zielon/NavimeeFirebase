@@ -8,15 +8,6 @@ public class PlaceBo {
     protected String city;
     protected String address;
 
-    public PlaceBo(String name,String id, double lat, double lon, String city, String address){
-        this.name = name;
-        this.id = id;
-        this.lat = lat;
-        this.lon = lon;
-        this.city = city;
-        this.address = address;
-    }
-
     public String getName() {
         return name;
     }
