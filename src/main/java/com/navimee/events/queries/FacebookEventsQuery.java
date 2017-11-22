@@ -6,9 +6,9 @@ import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.JsonNode;
 import com.mashape.unirest.http.Unirest;
 import com.navimee.configuration.specific.FacebookConfiguration;
-import com.navimee.contracts.models.bussinesObjects.Event;
-import com.navimee.contracts.models.dataTransferObjects.places.PlaceDto;
 import com.navimee.events.queries.params.EventsParams;
+import com.navimee.models.entities.places.Place;
+import com.navimee.models.externalDto.events.FbEventDto;
 import com.navimee.queries.Query;
 import org.joda.time.DateTimeZone;
 import org.joda.time.LocalDateTime;
@@ -26,17 +26,17 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.stream.Collectors;
 
-public class FacebookEventsQuery extends Query<List<Event>, FacebookConfiguration, EventsParams> {
+public class FacebookEventsQuery extends Query<List<FbEventDto>, FacebookConfiguration, EventsParams> {
 
     public FacebookEventsQuery(FacebookConfiguration configuration) {
         super(configuration);
     }
 
-    private PlaceDto searchPlace;
+    private Place searchPlace;
 
     @Async
     @Override
-    public Future<List<Event>> execute(EventsParams params) {
+    public Future<List<FbEventDto>> execute(EventsParams params) {
 
         ExecutorService executor = Executors.newSingleThreadExecutor();
         StringJoiner joiner = new StringJoiner(",");
@@ -72,8 +72,8 @@ public class FacebookEventsQuery extends Query<List<Event>, FacebookConfiguratio
     }
 
     @Override
-    protected List<Event> map(JSONObject object) {
-        List<Event> events = new ArrayList<>();
+    protected List<FbEventDto> map(JSONObject object) {
+        List<FbEventDto> events = new ArrayList<>();
 
         if (!object.has("events"))
             return events;
@@ -84,14 +84,14 @@ public class FacebookEventsQuery extends Query<List<Event>, FacebookConfiguratio
         return events.stream().filter(e -> e.attending_count > 20).collect(Collectors.toList());
     }
 
-    private List<Event> convertNode(JSONArray array) {
-        List<Event> list = new ArrayList<>();
+    private List<FbEventDto> convertNode(JSONArray array) {
+        List<FbEventDto> list = new ArrayList<>();
         ObjectMapper mapper = new ObjectMapper();
         mapper.registerModule(new JodaModule());
         for (int n = 0; n < array.length(); n++) {
             JSONObject eventJson = array.getJSONObject(n);
             try {
-                Event event = mapper.readValue(eventJson.toString(), Event.class);
+                FbEventDto event = mapper.readValue(eventJson.toString(), FbEventDto.class);
                 event.searchPlace = searchPlace;
                 list.add(event);
             } catch (IOException e) {

@@ -6,7 +6,7 @@ import com.google.cloud.firestore.CollectionReference;
 import com.google.cloud.firestore.DocumentReference;
 import com.google.cloud.firestore.DocumentSnapshot;
 import com.google.cloud.firestore.QuerySnapshot;
-import com.navimee.contracts.models.dataTransferObjects.firestore.CityDto;
+import com.navimee.models.entities.general.City;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -82,7 +82,7 @@ public class EntitiesOperations {
         return output;
     }
 
-    public static void deleteCollection(CollectionReference collection, List<CityDto> availableCities, String chunkName) {
+    public static void deleteCollection(CollectionReference collection, List<City> availableCities, String chunkName) {
         availableCities.forEach(city -> {
             ApiFuture<DocumentSnapshot> documentSnapshot = collection.document(city.name).get();
             try {

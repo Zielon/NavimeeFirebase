@@ -1,16 +1,21 @@
 package com.navimee.tasks.events;
 
-import com.navimee.contracts.models.bussinesObjects.Event;
 import com.navimee.contracts.repositories.events.EventsRepository;
 import com.navimee.contracts.repositories.palces.PlacesRepository;
 import com.navimee.contracts.services.events.EventsService;
+import com.navimee.mappers.boToEntity.EventBoMapper;
+import com.navimee.models.entities.events.FbEvent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executors;
+
+import static java.util.stream.Collectors.toList;
 
 @Component
 public class SegregationTask {
@@ -30,8 +35,13 @@ public class SegregationTask {
 
         placesRepository.getAvailableCities().parallelStream().forEach(city ->
                 Executors.newSingleThreadExecutor().submit(() -> {
-                            List<Event> events = eventsRepository.getEvents(city.name);
-                            eventsRepository.sevenDaysSegregation(events, city.name);
+                            Map<String, List<FbEvent>> sevenDaysSegregation = new HashMap<>();
+                            eventsService.sevenDaysSegregation(city.name)
+                                    .entrySet()
+                                    .stream()
+                                    .map(entry -> sevenDaysSegregation.put(entry.getKey(), entry.getValue().stream().map(EventBoMapper.EVENT_BO_MAPPER::toEvent).collect(toList())));
+
+                            eventsRepository.sevenDaysSegregation(sevenDaysSegregation, city.name);
                         }
                 ));
     }

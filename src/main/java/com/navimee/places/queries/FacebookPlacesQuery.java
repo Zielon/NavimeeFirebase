@@ -6,7 +6,7 @@ import com.mashape.unirest.http.JsonNode;
 import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
 import com.navimee.configuration.specific.FacebookConfiguration;
-import com.navimee.contracts.models.dataTransferObjects.places.FacebookPlaceDto;
+import com.navimee.models.externalDto.places.FbPlaceDto;
 import com.navimee.places.queries.params.PlacesParams;
 import com.navimee.queries.Query;
 import org.json.JSONArray;
@@ -20,7 +20,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
-public class FacebookPlacesQuery extends Query<List<FacebookPlaceDto>, FacebookConfiguration, PlacesParams> {
+public class FacebookPlacesQuery extends Query<List<FbPlaceDto>, FacebookConfiguration, PlacesParams> {
 
     public FacebookPlacesQuery(FacebookConfiguration configuration) {
         super(configuration);
@@ -28,7 +28,7 @@ public class FacebookPlacesQuery extends Query<List<FacebookPlaceDto>, FacebookC
 
     @Async
     @Override
-    public Future<List<FacebookPlaceDto>> execute(PlacesParams params) {
+    public Future<List<FbPlaceDto>> execute(PlacesParams params) {
         ExecutorService executor = Executors.newSingleThreadExecutor();
         Future<HttpResponse<JsonNode>> response =
                 Unirest.get(configuration.apiUrl + "/search")
@@ -45,8 +45,8 @@ public class FacebookPlacesQuery extends Query<List<FacebookPlaceDto>, FacebookC
     }
 
     @Override
-    protected List<FacebookPlaceDto> map(JSONObject object) {
-        List<FacebookPlaceDto> list = new ArrayList<>();
+    protected List<FbPlaceDto> map(JSONObject object) {
+        List<FbPlaceDto> list = new ArrayList<>();
         list.addAll(convertNode(object.getJSONArray("data")));
 
         if (!object.has("paging"))
@@ -69,13 +69,13 @@ public class FacebookPlacesQuery extends Query<List<FacebookPlaceDto>, FacebookC
         return list;
     }
 
-    private List<FacebookPlaceDto> convertNode(JSONArray array) {
-        List<FacebookPlaceDto> list = new ArrayList<>();
+    private List<FbPlaceDto> convertNode(JSONArray array) {
+        List<FbPlaceDto> list = new ArrayList<>();
         ObjectMapper mapper = new ObjectMapper();
         for (int n = 0; n < array.length(); n++) {
             JSONObject placeJson = array.getJSONObject(n);
             try {
-                FacebookPlaceDto mapped = mapper.readValue(placeJson.toString(), FacebookPlaceDto.class);
+                FbPlaceDto mapped = mapper.readValue(placeJson.toString(), FbPlaceDto.class);
                 list.add(mapped);
             } catch (IOException e) {
                 e.printStackTrace();

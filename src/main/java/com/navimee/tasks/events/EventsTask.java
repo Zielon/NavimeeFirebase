@@ -1,17 +1,18 @@
 package com.navimee.tasks.events;
 
-import com.navimee.contracts.models.bussinesObjects.Event;
-import com.navimee.contracts.models.dataTransferObjects.places.PlaceDto;
 import com.navimee.contracts.repositories.events.EventsRepository;
 import com.navimee.contracts.repositories.palces.PlacesRepository;
 import com.navimee.contracts.services.events.EventsService;
+import com.navimee.mappers.boToEntity.EventBoMapper;
+import com.navimee.models.entities.events.FbEvent;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executors;
+
+import static java.util.stream.Collectors.toList;
 
 
 @Component
@@ -27,18 +28,17 @@ public class EventsTask {
     EventsRepository eventsRepository;
 
     // Once per 1 hour.
-    @Scheduled(cron = "0 0 0/1 * * ?")
+    //@Scheduled(cron = "0 0 0/1 * * ?")
     //@Scheduled(fixedRate = 1000 * 60 * 60)
     public void addEventsTask() throws ExecutionException, InterruptedException {
 
         placesRepository.getAvailableCities().parallelStream().forEach(city -> {
-            //   if (city.name.equals("GDANSK"))
-            Executors.newSingleThreadExecutor().submit(() -> {
-                        List<PlaceDto> places = placesRepository.getPlaces(city.name, PlaceDto.class);
-                        List<Event> events = eventsService.getFacebookEvents(places);
-                        eventsRepository.updateEvents(events, city.name);
-                    }
-            );
+            if (city.name.equals("SOPOT"))
+                Executors.newSingleThreadExecutor().submit(() -> {
+                            List<FbEvent> events = eventsService.downloadFacebookEvents(city.name).stream().map(EventBoMapper.EVENT_BO_MAPPER::toEvent).collect(toList());
+                            eventsRepository.updateEvents(events, city.name);
+                        }
+                );
         });
     }
 }

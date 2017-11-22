@@ -5,7 +5,7 @@ import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.JsonNode;
 import com.mashape.unirest.http.Unirest;
 import com.navimee.configuration.specific.FoursquareConfiguration;
-import com.navimee.contracts.models.dataTransferObjects.placeDetails.FoursquarePlaceDetailsDto;
+import com.navimee.models.externalDto.placeDetails.FsPlaceDetailsDto;
 import com.navimee.places.queries.params.PlaceDetailsParams;
 import com.navimee.queries.Query;
 import org.joda.time.DateTimeZone;
@@ -19,14 +19,14 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
-public class FoursquareDetailsQuery extends Query<FoursquarePlaceDetailsDto, FoursquareConfiguration, PlaceDetailsParams> {
+public class FoursquareDetailsQuery extends Query<FsPlaceDetailsDto, FoursquareConfiguration, PlaceDetailsParams> {
 
     public FoursquareDetailsQuery(FoursquareConfiguration configuration) {
         super(configuration);
     }
 
     @Override
-    public Future<FoursquarePlaceDetailsDto> execute(PlaceDetailsParams params) {
+    public Future<FsPlaceDetailsDto> execute(PlaceDetailsParams params) {
         ExecutorService executor = Executors.newSingleThreadExecutor();
         DateTimeZone zone = DateTimeZone.forID("Europe/Warsaw");
         LocalDateTime warsawCurrent = LocalDateTime.now(zone);
@@ -45,12 +45,12 @@ public class FoursquareDetailsQuery extends Query<FoursquarePlaceDetailsDto, Fou
     }
 
     @Override
-    protected FoursquarePlaceDetailsDto map(JSONObject object) {
+    protected FsPlaceDetailsDto map(JSONObject object) {
         JSONObject details = object.getJSONObject("response").getJSONObject("venue");
         ObjectMapper mapper = new ObjectMapper();
-        FoursquarePlaceDetailsDto mapped = null;
+        FsPlaceDetailsDto mapped = null;
         try {
-            mapped = mapper.readValue(details.toString(), FoursquarePlaceDetailsDto.class);
+            mapped = mapper.readValue(details.toString(), FsPlaceDetailsDto.class);
         } catch (IOException e) {
             e.printStackTrace();
         }

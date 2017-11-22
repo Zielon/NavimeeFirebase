@@ -1,12 +1,12 @@
 package com.navimee.events.queries.params;
 
-import com.navimee.contracts.models.dataTransferObjects.places.PlaceDto;
+import com.navimee.models.entities.places.Place;
 import com.navimee.queries.QueryParams;
 
 public class EventsParams implements QueryParams {
-    public PlaceDto place;
+    public Place place;
 
-    public EventsParams(PlaceDto place) {
+    public EventsParams(Place place) {
         this.place = place;
     }
 }

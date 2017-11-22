@@ -1,15 +1,17 @@
 package com.navimee.tasks.places;
 
-import com.navimee.contracts.models.dataTransferObjects.placeDetails.FoursquarePlaceDetailsDto;
-import com.navimee.contracts.models.dataTransferObjects.places.FoursquarePlaceDto;
 import com.navimee.contracts.repositories.palces.PlacesRepository;
 import com.navimee.contracts.services.places.PlacesService;
+import com.navimee.mappers.enityToBo.FsPlaceDetailsEntityMapper;
+import com.navimee.models.bussinesObjects.places.FsPlaceDetailsBo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executors;
+
+import static java.util.stream.Collectors.toList;
 
 @Component
 public class DetailsTask {
@@ -26,9 +28,12 @@ public class DetailsTask {
         placesRepository.getAvailableCities().forEach(city -> {
                     if (city.name.equals("GDANSK"))
                         Executors.newSingleThreadExecutor().submit(() -> {
-                                    List<FoursquarePlaceDto> foursquarePlaces = placesRepository.getFoursquarePlaces(city.name, FoursquarePlaceDto.class);
-                                    List<FoursquarePlaceDetailsDto> details = placesService.getFoursquarePlacesDetails(foursquarePlaces);
-                                    placesRepository.setFoursquarePlacesDetails(details, city.name);
+                                    List<FsPlaceDetailsBo> details = placesService.downloadFoursquarePlacesDetails(city.name);
+                                    placesRepository.setFoursquarePlacesDetails(
+                                            details.stream()
+                                                    .map(FsPlaceDetailsEntityMapper.FS_PLACE_DETAILS_ENTITY_MAPPER::toFsPlaceDetails)
+                                                    .collect(toList()),
+                                            city.name);
                                 }
                         );
                 }

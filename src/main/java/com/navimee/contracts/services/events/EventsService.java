@@ -1,10 +1,12 @@
 package com.navimee.contracts.services.events;
 
-import com.navimee.contracts.models.bussinesObjects.Event;
-import com.navimee.contracts.models.dataTransferObjects.places.PlaceDto;
+import com.navimee.models.bussinesObjects.events.FbEventBo;
 
 import java.util.List;
+import java.util.Map;
 
 public interface EventsService {
-    List<Event> getFacebookEvents(List<PlaceDto> places);
+    List<FbEventBo> downloadFacebookEvents(String city);
+
+    Map<String, List<FbEventBo>> sevenDaysSegregation(String city);
 }

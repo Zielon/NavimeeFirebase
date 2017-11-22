@@ -1,19 +1,19 @@
 package com.navimee.contracts.services.places;
 
-import com.navimee.contracts.models.dataTransferObjects.placeDetails.FoursquarePlaceDetailsDto;
-import com.navimee.contracts.models.dataTransferObjects.places.FacebookPlaceDto;
-import com.navimee.contracts.models.dataTransferObjects.places.FoursquarePlaceDto;
-import com.navimee.contracts.models.dataTransferObjects.places.GooglePlaceDto;
-import com.navimee.contracts.models.dataTransferObjects.places.subelement.CoordinateDto;
+import com.navimee.models.bussinesObjects.general.CoordinateBo;
+import com.navimee.models.bussinesObjects.places.FsPlaceBo;
+import com.navimee.models.bussinesObjects.places.FsPlaceDetailsBo;
+import com.navimee.models.bussinesObjects.places.PlaceBo;
+import com.navimee.models.externalDto.geocoding.GooglePlaceDto;
 
 import java.util.List;
 
 public interface PlacesService {
-    List<FacebookPlaceDto> getFacebookPlaces(List<CoordinateDto> coordinates);
+    List<PlaceBo> downloadFacebookPlaces(String city);
 
-    List<FoursquarePlaceDto> getFoursquarePlaces(List<CoordinateDto> coordinates);
+    List<FsPlaceBo> downloadFoursquarePlaces(String city);
 
-    List<FoursquarePlaceDetailsDto> getFoursquarePlacesDetails(List<FoursquarePlaceDto> places);
+    List<FsPlaceDetailsBo> downloadFoursquarePlacesDetails(String city);
 
-    GooglePlaceDto getReverseGeocoding(CoordinateDto coordinate);
+    GooglePlaceDto downloadReverseGeocoding(CoordinateBo coordinate);
 }

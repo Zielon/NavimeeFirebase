@@ -1,6 +1,6 @@
 package com.navimee.enums;
 
-import com.navimee.contracts.models.bussinesObjects.Event;
+import com.navimee.models.bussinesObjects.events.FbEventBo;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.joda.time.LocalDateTime;
@@ -8,21 +8,21 @@ import org.joda.time.LocalDateTime;
 import java.util.function.Predicate;
 
 public enum EventsSegregation {
-    FIRST_DAY((Event event) -> compareDates(event.start_time, 0)),
-    SECOND_DAY((Event event) -> compareDates(event.start_time, 1)),
-    THIRD_DAY((Event event) -> compareDates(event.start_time, 2)),
-    FOURTH_DAY((Event event) -> compareDates(event.start_time, 3)),
-    FIFTH_DAY((Event event) -> compareDates(event.start_time, 4)),
-    SIXTH_DAY((Event event) -> compareDates(event.start_time, 5)),
-    SEVENTH_DAY((Event event) -> compareDates(event.start_time, 6));
+    FIRST_DAY((FbEventBo event) -> compareDates(event.getStartTime(), 0)),
+    SECOND_DAY((FbEventBo event) -> compareDates(event.getStartTime(), 1)),
+    THIRD_DAY((FbEventBo event) -> compareDates(event.getStartTime(), 2)),
+    FOURTH_DAY((FbEventBo event) -> compareDates(event.getStartTime(), 3)),
+    FIFTH_DAY((FbEventBo event) -> compareDates(event.getStartTime(), 4)),
+    SIXTH_DAY((FbEventBo event) -> compareDates(event.getStartTime(), 5)),
+    SEVENTH_DAY((FbEventBo event) -> compareDates(event.getStartTime(), 6));
 
-    private final Predicate<Event> predicate;
+    private final Predicate<FbEventBo> predicate;
 
-    EventsSegregation(Predicate<Event> predicate) {
+    EventsSegregation(Predicate<FbEventBo> predicate) {
         this.predicate = predicate;
     }
 
-    public Predicate<Event> getPredicate() {
+    public Predicate<FbEventBo> getPredicate() {
         return predicate;
     }
 

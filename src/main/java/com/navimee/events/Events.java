@@ -1,25 +1,25 @@
 package com.navimee.events;
 
-import com.navimee.contracts.models.bussinesObjects.Event;
-import com.navimee.contracts.models.dataTransferObjects.places.GooglePlaceDto;
 import com.navimee.enums.EventsSegregation;
+import com.navimee.models.bussinesObjects.events.FbEventBo;
+import com.navimee.models.externalDto.geocoding.GooglePlaceDto;
 import com.navimee.places.googleGeocoding.enums.GeoType;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import static com.navimee.places.googleGeocoding.GoogleGeoTypeGetter.getType;
+import static java.util.stream.Collectors.toList;
 
 public class Events {
 
-    public static Map<String, List<Event>> sevenDaysSegregation(List<Event> events) {
+    public static Map<String, List<FbEventBo>> sevenDaysSegregation(List<FbEventBo> events) {
 
-        Map<String, List<Event>> segregated = new HashMap<>();
+        Map<String, List<FbEventBo>> segregated = new HashMap<>();
 
         for (EventsSegregation eventsSegregation : EventsSegregation.values()) {
-            List<Event> filtered = events.stream().filter(eventsSegregation.getPredicate()).collect(Collectors.toList());
+            List<FbEventBo> filtered = events.stream().filter(eventsSegregation.getPredicate()).collect(toList());
             segregated.put(eventsSegregation.toString(), filtered);
         }
 
@@ -27,23 +27,22 @@ public class Events {
     }
 
 
-    public static boolean complement(Event event, GooglePlaceDto place, GooglePlaceDto searchPlace) {
+    public static boolean complement(FbEventBo event, GooglePlaceDto place, GooglePlaceDto searchPlace) {
 
         // A place from an event is the same as the search place.
-        if (event.searchPlace.id != null
-                && event.place != null
-                && event.place.id != null
-                && event.searchPlace.id.equals(event.place.id)) {
+        if (event.getSearchPlace().getId() != null
+                && event.getPlace() != null
+                && event.getPlace().getId() != null
+                && event.getSearchPlace().getId().equals(event.getPlace().getId())) {
 
-            event.place = event.searchPlace;
+            event.setPlace(event.getSearchPlace());
 
             if (searchPlace != null
-                    && event.place.address == null
-                    || (event.place.address != null && event.place.address.isEmpty())) {
+                    && event.getPlace().getAddress() == null
+                    || (event.getPlace().getAddress() != null && event.getPlace().getAddress().isEmpty())) {
 
-                event.place.city = getType(searchPlace, GeoType.administrative_area_level_1);
-                event.place.address =
-                        getType(searchPlace, GeoType.route) + " " + getType(searchPlace, GeoType.street_number);
+                event.getPlace().setCity(getType(searchPlace, GeoType.administrative_area_level_1));
+                event.getPlace().setAddress(getType(searchPlace, GeoType.route) + " " + getType(searchPlace, GeoType.street_number));
             }
 
             return true;
@@ -54,11 +53,11 @@ public class Events {
             return false;
 
         // A place is somewhere near to a searchPlace -> look at the similar function() the epsilon is equal 0.5
-        if (similar(event.searchPlace.lat, place.geometry.lat) && similar(event.searchPlace.lon, place.geometry.lon)) {
-            event.place.city = getType(place, GeoType.administrative_area_level_1);
-            event.place.address = getType(place, GeoType.route) + " " + getType(place, GeoType.street_number);
-            event.place.lat = place.geometry.lat;
-            event.place.lon = place.geometry.lon;
+        if (similar(event.getSearchPlace().getLat(), place.geometry.lat) && similar(event.getSearchPlace().getLon(), place.geometry.lon)) {
+            event.getPlace().setCity(getType(place, GeoType.administrative_area_level_1));
+            event.getPlace().setAddress(getType(place, GeoType.route) + " " + getType(place, GeoType.street_number));
+            event.getPlace().setLat(place.geometry.lat);
+            event.getPlace().setLon(place.geometry.lon);
         }
 
         return true;

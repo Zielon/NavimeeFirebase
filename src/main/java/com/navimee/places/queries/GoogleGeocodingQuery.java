@@ -5,7 +5,7 @@ import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.JsonNode;
 import com.mashape.unirest.http.Unirest;
 import com.navimee.configuration.specific.GoogleConfiguration;
-import com.navimee.contracts.models.dataTransferObjects.places.GooglePlaceDto;
+import com.navimee.models.externalDto.geocoding.GooglePlaceDto;
 import com.navimee.places.queries.params.PlacesParams;
 import com.navimee.queries.Query;
 import org.json.JSONArray;

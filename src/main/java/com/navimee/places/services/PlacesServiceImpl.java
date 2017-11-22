@@ -3,12 +3,23 @@ package com.navimee.places.services;
 import com.navimee.configuration.specific.FacebookConfiguration;
 import com.navimee.configuration.specific.FoursquareConfiguration;
 import com.navimee.configuration.specific.GoogleConfiguration;
-import com.navimee.contracts.models.dataTransferObjects.placeDetails.FoursquarePlaceDetailsDto;
-import com.navimee.contracts.models.dataTransferObjects.places.FacebookPlaceDto;
-import com.navimee.contracts.models.dataTransferObjects.places.FoursquarePlaceDto;
-import com.navimee.contracts.models.dataTransferObjects.places.GooglePlaceDto;
-import com.navimee.contracts.models.dataTransferObjects.places.subelement.CoordinateDto;
+import com.navimee.contracts.repositories.palces.PlacesRepository;
 import com.navimee.contracts.services.places.PlacesService;
+import com.navimee.mappers.dtoToBo.FbPlaceDtoMapper;
+import com.navimee.mappers.dtoToBo.FsPlaceDetailsDtoMapper;
+import com.navimee.mappers.dtoToBo.FsPlaceDtoMapper;
+import com.navimee.mappers.dtoToBo.PlaceDtoMapper;
+import com.navimee.models.bussinesObjects.general.CoordinateBo;
+import com.navimee.models.bussinesObjects.places.FsPlaceBo;
+import com.navimee.models.bussinesObjects.places.FsPlaceDetailsBo;
+import com.navimee.models.bussinesObjects.places.PlaceBo;
+import com.navimee.models.entities.general.Coordinate;
+import com.navimee.models.entities.places.Place;
+import com.navimee.models.externalDto.geocoding.GooglePlaceDto;
+import com.navimee.models.externalDto.placeDetails.FsPlaceDetailsDto;
+import com.navimee.models.externalDto.places.FbPlaceDto;
+import com.navimee.models.externalDto.places.FsPlaceDto;
+import com.navimee.models.externalDto.places.PlaceDto;
 import com.navimee.places.queries.FacebookPlacesQuery;
 import com.navimee.places.queries.FoursquareDetailsQuery;
 import com.navimee.places.queries.FoursquarePlacesQuery;
@@ -38,41 +49,59 @@ public class PlacesServiceImpl implements PlacesService {
     @Autowired
     GoogleConfiguration googleConfiguration;
 
+    @Autowired
+    PlacesRepository placesRepository;
+
     @Override
-    public List<FacebookPlaceDto> getFacebookPlaces(List<CoordinateDto> coordinates) {
+    public List<PlaceBo> downloadFacebookPlaces(String city) {
+        List<Coordinate> coordinates = placesRepository.getCoordinates(city);
         FacebookPlacesQuery facebookPlacesQuery = new FacebookPlacesQuery(facebookConfiguration);
-        List<Future<List<FacebookPlaceDto>>> futures = coordinates.stream().map(
+        List<Future<List<FbPlaceDto>>> futures = coordinates.stream().map(
                 c -> facebookPlacesQuery.execute(new PlacesParams(c.latitude, c.longitude))
         ).collect(Collectors.toList());
 
-        return waitForMany(futures).stream().filter(distinctByKey(p -> p.id)).collect(Collectors.toList());
+        List<FbPlaceDto> placeDtos = waitForMany(futures);
+
+        PlaceBo placeDto = FbPlaceDtoMapper.FB_PLACE_DTO_MAPPER.toPlaceBo(placeDtos.get(0));
+
+        return null;/* p
+                .stream()
+                .filter(distinctByKey(PlaceBo::getId))
+                .collect(Collectors.toList());*/
     }
 
     @Override
-    public List<FoursquarePlaceDto> getFoursquarePlaces(List<CoordinateDto> coordinates) {
+    public List<FsPlaceBo> downloadFoursquarePlaces(String city) {
+        List<Coordinate> coordinates = placesRepository.getCoordinates(city);
         FoursquarePlacesQuery foursquarePlacesQuery = new FoursquarePlacesQuery(foursquareConfiguration);
-        List<Future<List<FoursquarePlaceDto>>> futures = coordinates.stream().map(
+        List<Future<List<FsPlaceDto>>> futures = coordinates.stream().map(
                 c -> foursquarePlacesQuery.execute(new PlaceDetailsParams(c.latitude, c.longitude, "/venues/search"))
         ).collect(Collectors.toList());
 
-        return waitForMany(futures).stream().filter(distinctByKey(p -> p.id)).collect(Collectors.toList());
-    }
-
-    @Override
-    public List<FoursquarePlaceDetailsDto> getFoursquarePlacesDetails(List<FoursquarePlaceDto> places) {
-        FoursquareDetailsQuery query = new FoursquareDetailsQuery(foursquareConfiguration);
-        List<Future<FoursquarePlaceDetailsDto>> futures = new ArrayList<>();
-        places.forEach(p -> futures.add(query.execute(new PlaceDetailsParams("venues", p.id))));
-
-        return waitForAll(futures).stream()
-                .filter(distinctByKey(d -> d.id))
-                .filter(d -> d.stats.checkinsCount > 500)
+        return waitForMany(futures)
+                .stream()
+                .map(FsPlaceDtoMapper.FS_PLACE_DTO_MAPPER::toFsPlaceBo)
+                .filter(distinctByKey(PlaceBo::getId))
                 .collect(Collectors.toList());
     }
 
     @Override
-    public GooglePlaceDto getReverseGeocoding(CoordinateDto coordinate) {
+    public List<FsPlaceDetailsBo> downloadFoursquarePlacesDetails(String city) {
+        List<Place> places = placesRepository.getFoursquarePlaces(city);
+        FoursquareDetailsQuery query = new FoursquareDetailsQuery(foursquareConfiguration);
+        List<Future<FsPlaceDetailsDto>> futures = new ArrayList<>();
+        places.forEach(p -> futures.add(query.execute(new PlaceDetailsParams("venues", p.id))));
+
+        return waitForAll(futures).stream()
+                .map(FsPlaceDetailsDtoMapper.PLACE_DETAILS_DTO_MAPPER::toFsPlaceDetailsBo)
+                .filter(distinctByKey(FsPlaceDetailsBo::getId))
+                .filter(d -> d.getStatsCheckinsCount() > 500)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public GooglePlaceDto downloadReverseGeocoding(CoordinateBo coordinate) {
         GoogleGeocodingQuery query = new GoogleGeocodingQuery(googleConfiguration);
-        return waitForSingle(query.execute(new PlacesParams(coordinate.latitude, coordinate.longitude)));
+        return waitForSingle(query.execute(new PlacesParams(coordinate.getLatitude(), coordinate.getLongitude())));
     }
 }
