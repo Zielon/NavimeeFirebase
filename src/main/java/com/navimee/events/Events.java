@@ -1,7 +1,7 @@
 package com.navimee.events;
 
 import com.navimee.enums.EventsSegregation;
-import com.navimee.models.bussinesObjects.events.FbEventBo;
+import com.navimee.models.entities.events.FbEvent;
 import com.navimee.models.externalDto.geocoding.GooglePlaceDto;
 import com.navimee.places.googleGeocoding.enums.GeoType;
 
@@ -14,12 +14,12 @@ import static java.util.stream.Collectors.toList;
 
 public class Events {
 
-    public static Map<String, List<FbEventBo>> sevenDaysSegregation(List<FbEventBo> events) {
+    public static Map<String, List<FbEvent>> sevenDaysSegregation(List<FbEvent> events) {
 
-        Map<String, List<FbEventBo>> segregated = new HashMap<>();
+        Map<String, List<FbEvent>> segregated = new HashMap<>();
 
         for (EventsSegregation eventsSegregation : EventsSegregation.values()) {
-            List<FbEventBo> filtered = events.stream().filter(eventsSegregation.getPredicate()).collect(toList());
+            List<FbEvent> filtered = events.stream().filter(eventsSegregation.getPredicate()).collect(toList());
             segregated.put(eventsSegregation.toString(), filtered);
         }
 
@@ -27,7 +27,7 @@ public class Events {
     }
 
 
-    public static boolean complement(FbEventBo event, GooglePlaceDto place, GooglePlaceDto searchPlace) {
+    public static boolean complement(FbEvent event, GooglePlaceDto place, GooglePlaceDto searchPlace) {
 
         // A place from an event is the same as the search place.
         if (event.getSearchPlace().getId() != null

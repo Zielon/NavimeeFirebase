@@ -60,7 +60,7 @@ public class FacebookEventsQuery extends Query<List<FbEventDto>, FacebookConfigu
 
         Future<HttpResponse<JsonNode>> response =
                 Unirest.get(configuration.apiUrl)
-                        .queryString("id", searchPlace.id)
+                        .queryString("id", searchPlace.getId())
                         .queryString("fields", String.format("name,category,events.fields(%s).since(%s).until(%s)",
                                 joiner.toString(),
                                 sdf.format(warsawCurrent.toDate()),
@@ -81,7 +81,7 @@ public class FacebookEventsQuery extends Query<List<FbEventDto>, FacebookConfigu
         JSONObject obj = object.getJSONObject("events");
         events.addAll(convertNode(obj.getJSONArray("data")));
 
-        return events.stream().filter(e -> e.attending_count > 20).collect(Collectors.toList());
+        return events.stream().filter(e -> e.getAttendingCount() > 20).collect(Collectors.toList());
     }
 
     private List<FbEventDto> convertNode(JSONArray array) {
@@ -92,9 +92,10 @@ public class FacebookEventsQuery extends Query<List<FbEventDto>, FacebookConfigu
             JSONObject eventJson = array.getJSONObject(n);
             try {
                 FbEventDto event = mapper.readValue(eventJson.toString(), FbEventDto.class);
-                event.searchPlace = searchPlace;
+                event.setSearchPlace(searchPlace);
                 list.add(event);
             } catch (IOException e) {
+                e.printStackTrace();
             }
         }
 

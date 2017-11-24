@@ -12,16 +12,13 @@ public interface EventsRepository {
     String eventsPath = "events";
     String segregatetEventsPath = "segregatedEvents";
 
-    // GETTERS
     List<FbEvent> getEvents(String city);
 
-    // UPDATERS
-    Future updateEvents(List<FbEvent> events, String city);
+    Future setEvents(List<FbEvent> events, String city);
 
     Future updateHistorical(List<FbEvent> events);
 
     Future sevenDaysSegregation(Map<String, List<FbEvent>> events, String city);
 
-    // DELETE
     Future deleteEvents(List<FbEvent> events, String city);
 }

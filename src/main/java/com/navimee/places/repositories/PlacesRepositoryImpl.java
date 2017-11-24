@@ -1,6 +1,7 @@
 package com.navimee.places.repositories;
 
 import com.google.api.core.ApiFuture;
+import com.google.cloud.firestore.CollectionReference;
 import com.google.cloud.firestore.DocumentReference;
 import com.google.cloud.firestore.Firestore;
 import com.google.cloud.firestore.QuerySnapshot;
@@ -31,47 +32,46 @@ public class PlacesRepositoryImpl implements PlacesRepository {
 
     @Override
     public List<Place> getPlaces(String city) {
-        return EntitiesOperations.getFromDocument(db.collection(placesPath).document(city), Place.class, placesChunks);
+        return EntitiesOperations.getFromDocument(db.collection(placesPath).document(city), Place.class, placesPath);
     }
 
     @Override
     public List<Place> getFoursquarePlaces(String city) {
-        return EntitiesOperations.getFromDocument(db.collection(foursquarePlacesPath).document(city), Place.class, placesChunks);
+        return EntitiesOperations.getFromDocument(db.collection(foursquarePlacesPath).document(city), Place.class, placesPath);
     }
 
     @Override
     public List<FsPlaceDetails> getFoursquarePlacesDetails(String city) {
-        return EntitiesOperations.getFromDocument(db.collection(foursquarePlacesDetailsPath).document(city), FsPlaceDetails.class, placesChunks);
+        return EntitiesOperations.getFromDocument(db.collection(foursquarePlacesDetailsPath).document(city), FsPlaceDetails.class, placesPath);
     }
 
     @Override
     public Future setPlaces(List<Place> places, String city) {
-        DocumentReference targetDocument = db.collection(placesPath).document(city);
-        return EntitiesOperations.addToDocument(targetDocument, places, p -> p.id, placesChunks);
+        CollectionReference collectionReference = db.collection(placesPath).document("byCity").collection(city);
+        return EntitiesOperations.addToDocument(collectionReference, places, p -> p.getId());
     }
 
     @Override
     public Future setFoursquarePlaces(List<Place> places, String city) {
-        DocumentReference targetDocument = db.collection(foursquarePlacesPath).document(city);
-        return EntitiesOperations.addToDocument(targetDocument, places, p -> p.id, placesChunks);
+        CollectionReference collectionReference = db.collection(foursquarePlacesPath).document("byCity").collection(city);
+        return EntitiesOperations.addToDocument(collectionReference, places, p -> p.getId());
     }
 
     @Override
     public Future setFoursquarePlacesDetails(List<FsPlaceDetails> details, String city) {
-        DocumentReference targetDocument = db.collection(foursquarePlacesDetailsPath).document(city);
-        return EntitiesOperations.addToDocument(targetDocument, details, p -> p.id, placesChunks);
+        CollectionReference collectionReference = db.collection(foursquarePlacesDetailsPath).document("byCity").collection(city);
+        return EntitiesOperations.addToDocument(collectionReference, details, p -> p.getId());
     }
 
     @Override
     public Future deleteCollection(String collection) {
-        return Executors.newSingleThreadExecutor().submit(
-                () -> EntitiesOperations.deleteCollection(db.collection(collection), getAvailableCities(), placesChunks));
+        return Executors.newSingleThreadExecutor().submit(() -> EntitiesOperations.deleteCollection(db.collection(collection)));
     }
 
     @Override
     public Future setAvailableCities(List<City> cities) {
         return Executors.newSingleThreadExecutor()
-                .submit(() -> cities.forEach(city -> db.collection(availableCitiesPath).document(city.name).set(city)));
+                .submit(() -> cities.forEach(city -> db.collection(availableCitiesPath).document(city.getName()).set(city)));
     }
 
     @Override
@@ -96,7 +96,7 @@ public class PlacesRepositoryImpl implements PlacesRepository {
                             List<Coordinate> coordinates = coordinatesMap.get(city);
                             Map<String, Coordinate> map = IntStream.range(0, coordinates.size()).boxed().collect(toMap(i -> i.toString(), coordinates::get));
                             try {
-                                EntitiesOperations.addToDocument(db.collection(coordinatesPath).document(city), map).get();
+                             //   EntitiesOperations.addToDocument(db.collection(coordinatesPath).document(city), map).get();
                             } catch (Exception e) {
                             }
                         }));

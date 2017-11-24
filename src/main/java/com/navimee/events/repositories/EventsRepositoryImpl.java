@@ -47,12 +47,13 @@ public class EventsRepositoryImpl implements EventsRepository {
     }
 
     @Override
-    public Future updateEvents(List<FbEvent> events, String city) {
+    public Future setEvents(List<FbEvent> events, String city) {
 
         return Executors.newSingleThreadExecutor().submit(() -> {
             try {
-                Map<String, FbEvent> pojos = events.stream().collect(Collectors.toMap(pojo -> pojo.id, Function.identity()));
-                db.collection(eventsPath).document(city).set(pojos, SetOptions.merge()).get();
+                Map<String, FbEvent> entities = events.stream().collect(Collectors.toMap(pojo -> pojo.getId(), Function.identity()));
+                for (Map.Entry<String, FbEvent> entry : entities.entrySet())
+                    db.collection(eventsPath).document("byCity").collection(city).document(entry.getKey()).set(entry.getValue()).get();
             } catch (InterruptedException e1) {
                 e1.printStackTrace();
             } catch (ExecutionException e1) {
@@ -67,9 +68,9 @@ public class EventsRepositoryImpl implements EventsRepository {
 
         return Executors.newSingleThreadExecutor().submit(() -> {
             events.forEach((key, segregatedEvents) -> {
-                Map<String, FbEvent> pojos = segregatedEvents.stream().collect(Collectors.toMap(pojo -> pojo.id, Function.identity()));
+                Map<String, FbEvent> entities = segregatedEvents.stream().collect(Collectors.toMap(pojo -> pojo.getId(), Function.identity()));
                 try {
-                    db.collection(segregatetEventsPath).document(city).collection(key).document("events").set(pojos).get();
+                    db.collection(segregatetEventsPath).document(city).collection(key).document("events").set(entities).get();
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 } catch (ExecutionException e) {

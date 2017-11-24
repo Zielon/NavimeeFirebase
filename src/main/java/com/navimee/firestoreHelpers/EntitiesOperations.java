@@ -12,9 +12,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
+import java.util.concurrent.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -22,37 +20,23 @@ import static com.navimee.linq.Distinct.distinctByKey;
 
 public class EntitiesOperations {
 
-    public static <T> Future addToDocument(DocumentReference targetDocument, List<T> entities, Function<T, String> func) {
+    public static <T> Future addToDocument(CollectionReference collectionReference, List<T> entities, Function<T, String> func) {
         Map<String, T> entityMap = entities.stream().filter(distinctByKey(func)).collect(Collectors.toMap(func, Function.identity()));
-        return addToDocument(targetDocument, entityMap, "", 2000);
+        return addToDocument(collectionReference, entityMap);
     }
 
-    public static <T> Future addToDocument(DocumentReference targetDocument, List<T> entities, Function<T, String> func, String chunkName) {
-        Map<String, T> entityMap = entities.stream().filter(distinctByKey(func)).collect(Collectors.toMap(func, Function.identity()));
-        return addToDocument(targetDocument, entityMap, chunkName, 2000);
-    }
-
-    public static <K, V> Future addToDocument(DocumentReference targetDocument, Map<K, V> entities, String chunkName) {
-        return addToDocument(targetDocument, entities, chunkName, 2000);
-    }
-
-    public static <K, V> Future addToDocument(DocumentReference targetDocument, Map<K, V> entities) {
-        return addToDocument(targetDocument, entities, "", 2000);
-    }
-
-    public static <K, V> Future addToDocument(DocumentReference targetDocument, Map<K, V> entities, String chunkName, int chunkSize) {
+    public static <V> Future addToDocument(CollectionReference collectionReference, Map<String, V> entities) {
         return Executors.newSingleThreadExecutor().submit(() -> {
             try {
-                if (entities.size() > chunkSize && !chunkName.isEmpty())
-                    for (Map<K, V> map : TransactionSplit.mapSplit(entities, chunkSize))
-                        targetDocument.collection(chunkName).document().set(map).get();
-                else
-                    targetDocument.set(entities).get();
+                ExecutorService executor = Executors.newWorkStealingPool();
+                List<Callable<Object>> tasks = new ArrayList<>();
+                for (Map.Entry<String, V> entry : entities.entrySet())
+                    tasks.add(() -> collectionReference.document(entry.getKey()).set(entry.getValue()).get());
 
-                System.out.println("ENTITIES ADDED TO -> " + targetDocument.getPath().toUpperCase() + " | " + new Date());
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            } catch (ExecutionException e) {
+                // Wait for all tasks to finish.
+                executor.invokeAll(tasks);
+                System.out.println("ENTITIES ADDED TO -> " + collectionReference.getPath().toUpperCase() + " | " + new Date());
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         });
@@ -82,23 +66,22 @@ public class EntitiesOperations {
         return output;
     }
 
-    public static void deleteCollection(CollectionReference collection, List<City> availableCities, String chunkName) {
-        availableCities.forEach(city -> {
-            ApiFuture<DocumentSnapshot> documentSnapshot = collection.document(city.name).get();
-            try {
-                DocumentSnapshot snapshot = documentSnapshot.get();
-                QuerySnapshot chunks = snapshot.getReference().collection(chunkName).get().get();
-                if (!chunks.isEmpty())
-                    for (DocumentSnapshot d : chunks.getDocuments()) d.getReference().delete().get();
-                else
-                    snapshot.getReference().delete().get();
-
-                System.out.println("COLLECTION IS DELETED FROM -> " + collection.getPath().toUpperCase() + " | " + new Date());
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            } catch (ExecutionException e) {
-                e.printStackTrace();
+    public static void deleteCollection(CollectionReference collection) {
+        int batchSize = 1000;
+        try {
+            ApiFuture<QuerySnapshot> future = collection.limit(batchSize).get();
+            int deleted = 0;
+            future.get();
+            List<DocumentSnapshot> documents = future.get().getDocuments();
+            for (DocumentSnapshot document : documents) {
+                document.getReference().delete();
+                ++deleted;
             }
-        });
+            if (deleted >= batchSize) {
+                deleteCollection(collection);
+            }
+        } catch (Exception e) {
+            System.err.println("Error deleting collection : " + e.getMessage());
+        }
     }
 }

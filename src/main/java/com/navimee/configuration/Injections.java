@@ -48,7 +48,15 @@ public class Injections {
 
     @Bean
     public ModelMapper modelMapper() {
-        return new ModelMapper();
+        ModelMapper modalMapper = new ModelMapper();
+
+/*        modalMapper.addConverter((MappingContext<String, DateTime> context) -> {
+            if(context.getSource() == null) return null;
+            DateTimeFormatter formatter = DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ss.SSSZZ");
+            return formatter.parseDateTime(context.getSource().toString());
+        });*/
+
+        return modalMapper;
     }
 
     @Bean

@@ -15,7 +15,6 @@ public interface PlacesRepository {
     String coordinatesPath = "coordinates";
     String availableCitiesPath = "availableCities";
     String placesPath = "places";
-    String placesChunks = "placesChunks";
     String foursquarePlacesPath = "foursquarePlaces";
     String foursquarePlacesDetailsPath = "foursquarePlacesDetails";
 
