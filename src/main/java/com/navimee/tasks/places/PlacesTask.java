@@ -35,11 +35,11 @@ public class PlacesTask {
         Map<String, List<Coordinate>> coordinates = navimeeData.getCoordinates();
         List<City> cities = navimeeData.getCities();
 
-       // placesRepository.deleteCollection(COORDINATES_COLLECTION).get();
+        placesRepository.deleteCollection(COORDINATES_COLLECTION).get();
        // placesRepository.deleteCollection(FOURSQUARE_PLACES_COLLECTION).get();
        // placesRepository.deleteCollection(FACEBOOK_PLACES_COLLECTION).get();
 
-       // placesRepository.setCoordinates(coordinates).get();
+        placesRepository.setCoordinates(coordinates).get();
        // placesRepository.setAvailableCities(cities).get();
 
         placesRepository.getAvailableCities().forEach(city -> {

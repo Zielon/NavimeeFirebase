@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping(value = "api")
+@RequestMapping(value = "api/4s")
 public class FoursquareController {
 
     private ObjectMapper mapper = new ObjectMapper();
@@ -18,13 +18,13 @@ public class FoursquareController {
     @Autowired
     PlacesRepository placesRepository;
 
-    @RequestMapping(value = "4s/places/{city}", method = RequestMethod.GET, produces = "application/json")
-    public String foursquarePlaces(@PathVariable("city") String city) throws JsonProcessingException {
+    @RequestMapping(value = "places/{city}", method = RequestMethod.GET, produces = "application/json")
+    public String places(@PathVariable("city") String city) throws JsonProcessingException {
         return mapper.writeValueAsString(placesRepository.getFoursquarePlaces(city.toUpperCase()));
     }
 
-    @RequestMapping(value = "4s/details/{city}", method = RequestMethod.GET, produces = "application/json")
-    public String foursquareDetailsPlaces(@PathVariable("city") String city) throws JsonProcessingException {
+    @RequestMapping(value = "details/{city}", method = RequestMethod.GET, produces = "application/json")
+    public String details(@PathVariable("city") String city) throws JsonProcessingException {
         return mapper.writeValueAsString(placesRepository.getFoursquarePlacesDetails(city.toUpperCase()));
     }
 }

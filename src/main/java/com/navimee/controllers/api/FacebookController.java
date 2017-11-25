@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping(value = "api")
+@RequestMapping(value = "api/fb")
 public class FacebookController {
 
     private ObjectMapper mapper = new ObjectMapper();
@@ -23,7 +23,7 @@ public class FacebookController {
     EventsRepository eventsRepository;
 
     @RequestMapping(value = "places/{city}", method = RequestMethod.GET, produces = "application/json")
-    public String allPlaces(@PathVariable("city") String city) throws JsonProcessingException {
+    public String places(@PathVariable("city") String city) throws JsonProcessingException {
         return mapper.writeValueAsString(placesRepository.getFacebookPlaces(city.toUpperCase()));
     }
 

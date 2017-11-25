@@ -1,6 +1,7 @@
 package com.navimee.places.repositories;
 
 import com.google.cloud.firestore.Firestore;
+import com.navimee.firestore.AdditionEnum;
 import com.navimee.firestore.Database;
 import com.navimee.contracts.repositories.palces.PlacesRepository;
 import com.navimee.firestore.EntitiesOperations;
@@ -70,10 +71,23 @@ public class PlacesRepositoryImpl implements PlacesRepository {
     }
 
     @Override
+    public Future addCoordinates(Coordinate coordinate, String city) {
+        return EntitiesOperations.addToCollection(database.getCollection(COORDINATES, city), coordinate, AdditionEnum.MERGE);
+    }
+
+    // DELETE
+
+    @Override
     public Future deleteCollection(String collection) {
         return Executors.newSingleThreadExecutor().submit(() ->
                 getAvailableCities().forEach(city ->
                         EntitiesOperations.deleteCollection(db.collection(collection).document(BY_CITY).collection(city.getName()))));
+    }
+
+    @Override
+    public Future deleteCoordinates(String document, String city) {
+        return Executors.newSingleThreadExecutor().submit(() ->
+                EntitiesOperations.deleteDocument(database.getDocument(COORDINATES).collection(city).document(document)));
     }
 
     // GETTERS

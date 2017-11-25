@@ -2,10 +2,7 @@ package com.navimee.firestore;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.joda.JodaModule;
-import com.google.cloud.firestore.CollectionReference;
-import com.google.cloud.firestore.DocumentReference;
-import com.google.cloud.firestore.DocumentSnapshot;
-import com.google.cloud.firestore.QuerySnapshot;
+import com.google.cloud.firestore.*;
 import com.navimee.models.entities.Entity;
 
 import java.util.*;
@@ -22,23 +19,36 @@ public class EntitiesOperations {
 
     public static <T extends Entity> Future addToCollection(CollectionReference collectionReference, List<T> entities) {
         Map<String, T> entityMap = entities.stream().filter(distinctByKey(Entity::getId)).collect(Collectors.toMap(Entity::getId, Function.identity()));
-        return addToCollection(collectionReference, entityMap);
+        return addToCollection(collectionReference, entityMap, AdditionEnum.OVERWRITE);
     }
 
     public static <T extends Entity> Future addToCollection(CollectionReference collectionReference, T entity) {
         Map<String, T> entityMap = new HashMap<>();
         entityMap.put(entity.getId(), entity);
-        return addToCollection(collectionReference, entityMap);
+        return addToCollection(collectionReference, entityMap, AdditionEnum.OVERWRITE);
     }
 
-    public static <T extends Entity> Future addToCollection(CollectionReference collectionReference, Map<String, T> entities) {
+    public static <T extends Entity> Future addToCollection(CollectionReference collectionReference, T entity, AdditionEnum option) {
+        Map<String, T> entityMap = new HashMap<>();
+        entityMap.put(entity.getId(), entity);
+
+        if(option == AdditionEnum.OVERWRITE)
+            return addToCollection(collectionReference, entityMap, AdditionEnum.OVERWRITE);
+        else
+            return addToCollection(collectionReference, entityMap, AdditionEnum.MERGE);
+    }
+
+    public static <T extends Entity> Future addToCollection(CollectionReference collectionReference, Map<String, T> entities, AdditionEnum options) {
         return Executors.newSingleThreadExecutor().submit(() -> {
             if(entities.size() == 0) return;
             try {
                 ExecutorService executor = Executors.newWorkStealingPool();
                 List<Callable<Object>> tasks = new ArrayList<>();
                 for (Map.Entry<String, T> entry : entities.entrySet())
-                    tasks.add(() -> collectionReference.document(entry.getKey()).set(entry.getValue()));
+                    if(options == AdditionEnum.MERGE)
+                        tasks.add(() -> collectionReference.document(entry.getKey()).set(entry.getValue(), SetOptions.merge()));
+                    else
+                        tasks.add(() -> collectionReference.document(entry.getKey()).set(entry.getValue()));
 
                 // Wait for all tasks to finish.
                 executor.invokeAll(tasks);
@@ -92,7 +102,7 @@ public class EntitiesOperations {
             QuerySnapshot future = collection.limit(batchSize).get().get();
             List<DocumentSnapshot> documents = future.getDocuments();
             for (DocumentSnapshot document : documents) {
-                document.getReference().delete();
+                document.getReference().delete().get();
                 ++deleted;
             }
             if (deleted >= batchSize) {
@@ -100,6 +110,16 @@ public class EntitiesOperations {
             }
         } catch (Exception e) {
             System.err.println("Error deleting collection : " + e.getMessage());
+        }
+    }
+
+    public static void deleteDocument(DocumentReference document){
+        try{
+           for (CollectionReference collection : document.getCollections().get())
+               deleteCollection(collection);
+           document.delete().get();
+        }catch (Exception e){
+            System.err.println("Error deleting document : " + e.getMessage());
         }
     }
 }

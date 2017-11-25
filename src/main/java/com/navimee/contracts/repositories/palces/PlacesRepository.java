@@ -25,6 +25,8 @@ public interface PlacesRepository {
     // SETTERS
     Future setCoordinates(Map<String, List<Coordinate>> coordinatesMap);
 
+    Future addCoordinates(Coordinate coordinate, String city);
+
     Future setAvailableCities(List<City> cities);
 
     Future setFacebookPlaces(List<Place> places, String city);
@@ -35,4 +37,6 @@ public interface PlacesRepository {
 
     // DELETE
     Future deleteCollection(String collection);
+
+    Future deleteCoordinates(String document, String city);
 }
