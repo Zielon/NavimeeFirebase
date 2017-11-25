@@ -5,11 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com</groupId>
     <artifactId>navimee</artifactId>
-    <version>1.0.0</version>
-    <packaging>war</packaging>
-
-    <name>navimee</name>
-    <description>Navimee firebase database client</description>
+    <version>1.0</version>
 
     <parent>
         <groupId>org.springframework.boot</groupId>
@@ -17,6 +13,9 @@
         <version>1.5.8.RELEASE</version>
         <relativePath/>
     </parent>
+
+    <name>navimee</name>
+    <description>Navimee firebase database client</description>
 
     <properties>
         <java.version>1.8</java.version>
