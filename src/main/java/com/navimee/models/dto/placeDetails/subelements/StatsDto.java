@@ -1,4 +1,4 @@
-package com.navimee.models.externalDto.placeDetails.subelements;
+package com.navimee.models.dto.placeDetails.subelements;
 
 public class StatsDto {
     public int checkinsCount;

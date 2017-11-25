@@ -1,14 +1,14 @@
-package com.navimee.models.externalDto.events;
+package com.navimee.models.dto.events;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.navimee.models.entities.places.Place;
-import com.navimee.models.externalDto.BaseDto;
-import com.navimee.models.externalDto.places.PlaceDto;
+import com.navimee.models.dto.Dto;
+import com.navimee.models.dto.places.PlaceDto;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class FbEventDto implements BaseDto {
+public class FbEventDto implements Dto {
     private String name;
     private String id;
     private String category;

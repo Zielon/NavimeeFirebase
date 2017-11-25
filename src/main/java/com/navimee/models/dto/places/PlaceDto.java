@@ -1,10 +1,10 @@
-package com.navimee.models.externalDto.places;
+package com.navimee.models.dto.places;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.navimee.models.externalDto.BaseDto;
+import com.navimee.models.dto.Dto;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class PlaceDto implements BaseDto {
+public class PlaceDto implements Dto {
     protected String name;
     protected String id;
     protected double lat;

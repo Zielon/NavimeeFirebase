@@ -1,7 +1,7 @@
 package com.navimee.contracts.services.places;
 
 import com.navimee.models.entities.general.Coordinate;
-import com.navimee.models.externalDto.geocoding.GooglePlaceDto;
+import com.navimee.models.dto.geocoding.GooglePlaceDto;
 
 import java.util.concurrent.Future;
 

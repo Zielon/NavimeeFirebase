@@ -1,4 +1,4 @@
-package com.navimee.models.externalDto.places.subelement;
+package com.navimee.models.dto.places.subelement;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 

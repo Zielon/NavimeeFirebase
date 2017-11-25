@@ -5,7 +5,7 @@ import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.JsonNode;
 import com.mashape.unirest.http.Unirest;
 import com.navimee.configuration.specific.FoursquareConfiguration;
-import com.navimee.models.externalDto.placeDetails.FsPlaceDetailsDto;
+import com.navimee.models.dto.placeDetails.FsPlaceDetailsDto;
 import com.navimee.places.queries.params.PlaceDetailsParams;
 import com.navimee.queries.Query;
 import org.joda.time.DateTimeZone;

@@ -35,8 +35,13 @@ public class EntitiesOperations {
         return Executors.newSingleThreadExecutor().submit(() -> {
             if(entities.size() == 0) return;
             try {
+                ExecutorService executor = Executors.newWorkStealingPool();
+                List<Callable<Object>> tasks = new ArrayList<>();
                 for (Map.Entry<String, T> entry : entities.entrySet())
-                    collectionReference.document(entry.getKey()).set(entry.getValue()).get();
+                    tasks.add(() -> collectionReference.document(entry.getKey()).set(entry.getValue()));
+
+                // Wait for all tasks to finish.
+                executor.invokeAll(tasks);
 
                 String LOG = String.format("ENTITIES %d ADDED TO -> %s | %s", entities.size(), collectionReference.getPath().toUpperCase(), new Date());
                 System.out.println(LOG);

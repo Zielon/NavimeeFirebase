@@ -2,7 +2,7 @@ package com.navimee.configuration.mappers;
 
 import com.navimee.models.entities.places.FsPlaceDetails;
 import com.navimee.models.entities.places.FsTimeFrame;
-import com.navimee.models.externalDto.placeDetails.FsPlaceDetailsDto;
+import com.navimee.models.dto.placeDetails.FsPlaceDetailsDto;
 import org.modelmapper.Converter;
 import org.modelmapper.spi.MappingContext;
 

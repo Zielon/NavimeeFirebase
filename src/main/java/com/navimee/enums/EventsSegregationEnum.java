@@ -46,6 +46,6 @@ public enum EventsSegregationEnum {
 
     @Override
     public String toString() {
-        return super.toString().split("_")[0].toUpperCase() + "_DAY";
+        return super.toString();
     }
 }
