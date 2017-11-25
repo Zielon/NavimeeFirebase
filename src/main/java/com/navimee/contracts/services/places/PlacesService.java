@@ -3,12 +3,14 @@ package com.navimee.contracts.services.places;
 import com.navimee.models.entities.general.Coordinate;
 import com.navimee.models.externalDto.geocoding.GooglePlaceDto;
 
+import java.util.concurrent.Future;
+
 public interface PlacesService {
-    void saveFacebookPlaces(String city);
+    Future saveFacebookPlaces(String city);
 
-    void saveFoursquarePlaces(String city);
+    Future saveFoursquarePlaces(String city);
 
-    void saveFoursquarePlacesDetails(String city);
+    Future saveFoursquarePlacesDetails(String city);
 
     GooglePlaceDto downloadReverseGeocoding(Coordinate coordinate);
 }

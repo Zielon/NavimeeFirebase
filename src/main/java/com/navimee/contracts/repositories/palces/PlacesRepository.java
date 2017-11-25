@@ -11,19 +11,12 @@ import java.util.concurrent.Future;
 
 public interface PlacesRepository {
 
-    // FIRESTORE PATHS
-    String coordinatesPath = "coordinates";
-    String availableCitiesPath = "availableCities";
-    String placesPath = "places";
-    String foursquarePlacesPath = "foursquarePlaces";
-    String foursquarePlacesDetailsPath = "foursquarePlacesDetails";
-
     // GETTERS
     List<Coordinate> getCoordinates(String city);
 
     List<City> getAvailableCities();
 
-    List<Place> getPlaces(String city);
+    List<Place> getFacebookPlaces(String city);
 
     List<Place> getFoursquarePlaces(String city);
 
@@ -34,7 +27,7 @@ public interface PlacesRepository {
 
     Future setAvailableCities(List<City> cities);
 
-    Future setPlaces(List<Place> places, String city);
+    Future setFacebookPlaces(List<Place> places, String city);
 
     Future setFoursquarePlaces(List<Place> places, String city);
 

@@ -1,6 +1,6 @@
 package com.navimee.events;
 
-import com.navimee.enums.EventsSegregation;
+import com.navimee.enums.EventsSegregationEnum;
 import com.navimee.models.entities.events.FbEvent;
 import com.navimee.models.externalDto.geocoding.GooglePlaceDto;
 import com.navimee.places.googleGeocoding.enums.GeoType;
@@ -18,7 +18,7 @@ public class Events {
 
         Map<String, List<FbEvent>> segregated = new HashMap<>();
 
-        for (EventsSegregation eventsSegregation : EventsSegregation.values()) {
+        for (EventsSegregationEnum eventsSegregation : EventsSegregationEnum.values()) {
             List<FbEvent> filtered = events.stream().filter(eventsSegregation.getPredicate()).collect(toList());
             segregated.put(eventsSegregation.toString(), filtered);
         }

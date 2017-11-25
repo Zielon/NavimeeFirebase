@@ -1,6 +1,8 @@
 package com.navimee.models.entities.general;
 
-public class City {
+import com.navimee.models.entities.Entity;
+
+public class City implements Entity {
     private String id;
     private String name;
 

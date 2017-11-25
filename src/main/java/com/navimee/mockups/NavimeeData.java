@@ -11,10 +11,8 @@ import org.springframework.core.io.Resource;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 public class NavimeeData {
 
@@ -62,8 +60,9 @@ public class NavimeeData {
         ObjectMapper mapper = new ObjectMapper();
         object.keySet().stream().forEach(city -> {
             try {
-                final List<Coordinate> coords = mapper.readValue(object.getJSONObject(city.toString()).getJSONArray("points").toString(), new TypeReference<List<Coordinate>>() {
-                });
+                final List<Coordinate> coords = mapper.readValue(object.getJSONObject(city.toString()).getJSONArray("points").toString(), new TypeReference<List<Coordinate>>() {});
+                int i = 0;
+                for (Coordinate c: coords) c.setId(city + " " + new SimpleDateFormat("yyyy-MM-dd").format(new Date()) + " -> " + i++);
                 coordinates.put(city.toString(), coords);
             } catch (IOException e1) {
                 e1.printStackTrace();

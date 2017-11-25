@@ -3,6 +3,7 @@ package com.navimee.tasks.places;
 import com.navimee.contracts.repositories.palces.PlacesRepository;
 import com.navimee.contracts.services.places.PlacesService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import java.util.concurrent.ExecutionException;
@@ -17,11 +18,11 @@ public class DetailsTask {
     @Autowired
     PlacesService placesService;
 
-    //@Scheduled(fixedRate = 1000 * 60 * 60)
+    @Scheduled(fixedRate = 1000 * 60 * 60)
     public void addDetailsTask() throws ExecutionException, InterruptedException {
 
         placesRepository.getAvailableCities().forEach(city -> {
-                    if (city.getName().equals("GDANSK"))
+                    if (city.getName().equals("SOPOT"))
                         Executors.newSingleThreadExecutor().submit(() -> placesService.saveFoursquarePlacesDetails(city.getName()));
                 }
         );

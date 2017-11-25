@@ -49,7 +49,7 @@ public class PlacesServiceImpl implements PlacesService {
     ModelMapper modelMapper;
 
     @Override
-    public void saveFacebookPlaces(String city) {
+    public Future saveFacebookPlaces(String city) {
 
         // Get data from the external facebook API
         List<Coordinate> coordinates = placesRepository.getCoordinates(city);
@@ -66,11 +66,11 @@ public class PlacesServiceImpl implements PlacesService {
                 .collect(Collectors.toList());
 
         // Save data to the repository
-        placesRepository.setPlaces(entities, city);
+        return placesRepository.setFacebookPlaces(entities, city);
     }
 
     @Override
-    public void saveFoursquarePlaces(String city) {
+    public Future saveFoursquarePlaces(String city) {
 
         // Get data from the external foursquare API
         List<Coordinate> coordinates = placesRepository.getCoordinates(city);
@@ -87,11 +87,11 @@ public class PlacesServiceImpl implements PlacesService {
                 .collect(Collectors.toList());
 
         // Save data to the repository
-        placesRepository.setFoursquarePlaces(entities, city);
+        return placesRepository.setFoursquarePlaces(entities, city);
     }
 
     @Override
-    public void saveFoursquarePlacesDetails(String city) {
+    public Future saveFoursquarePlacesDetails(String city) {
 
         // Get data from the external foursquare API
         List<Place> places = placesRepository.getFoursquarePlaces(city);
@@ -99,14 +99,15 @@ public class PlacesServiceImpl implements PlacesService {
         List<Future<FsPlaceDetailsDto>> futures = new ArrayList<>();
         places.forEach(p -> futures.add(query.execute(new PlaceDetailsParams("venues", p.getId()))));
 
-        List<FsPlaceDetails> entities = waitForAll(futures).stream()
+        List<FsPlaceDetails> entities = waitForAll(futures)
+                .stream()
                 .map(dto -> modelMapper.map(dto, FsPlaceDetails.class))
                 .filter(distinctByKey(FsPlaceDetails::getId))
                 .filter(d -> d.getStatsCheckinsCount() > 500)
                 .collect(Collectors.toList());
 
         // Save data to the repository
-        placesRepository.setFoursquarePlacesDetails(entities, city);
+        return placesRepository.setFoursquarePlacesDetails(entities, city);
     }
 
     @Override

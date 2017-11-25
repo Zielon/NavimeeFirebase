@@ -1,6 +1,8 @@
 package com.navimee.models.entities.places;
 
-public class Place {
+import com.navimee.models.entities.Entity;
+
+public class Place implements Entity {
     private String name;
     private String id;
     private double lat;

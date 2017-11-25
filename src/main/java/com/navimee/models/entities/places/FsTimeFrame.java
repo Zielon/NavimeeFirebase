@@ -6,6 +6,13 @@ public class FsTimeFrame {
     private String days;
     private List<String> open;
 
+    public FsTimeFrame(){}
+
+    public FsTimeFrame(String days, List<String> open){
+        this.days = days;
+        this.open = open;
+    }
+
     public String getDays() {
         return days;
     }

@@ -1,8 +1,11 @@
 package com.navimee.models.entities.general;
 
-public class Coordinate {
+import com.navimee.models.entities.Entity;
+
+public class Coordinate implements Entity {
     private Double latitude;
     private Double longitude;
+    private String id;
 
     public Coordinate() {
     }
@@ -26,5 +29,13 @@ public class Coordinate {
 
     public void setLongitude(Double longitude) {
         this.longitude = longitude;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 }

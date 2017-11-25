@@ -25,7 +25,9 @@ public class HelperMethods {
         List<T> output = new ArrayList<>();
         futures.parallelStream().forEach(future -> {
             try {
-                output.add(future.get());
+                T result = future.get();
+                if(result != null)
+                    output.add(result);
             } catch (Exception e) {
             }
         });

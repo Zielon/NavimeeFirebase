@@ -1,8 +1,10 @@
 package com.navimee.configuration;
 
 import com.google.cloud.firestore.Firestore;
+import com.navimee.configuration.mappers.FsPlacesDetailsConverter;
 import com.navimee.configuration.specific.*;
 import org.modelmapper.ModelMapper;
+import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -47,15 +49,12 @@ public class Injections {
     }
 
     @Bean
-    public ModelMapper modelMapper() {
+    public ModelMapper modelMapperProvider() {
         ModelMapper modalMapper = new ModelMapper();
 
-/*        modalMapper.addConverter((MappingContext<String, DateTime> context) -> {
-            if(context.getSource() == null) return null;
-            DateTimeFormatter formatter = DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ss.SSSZZ");
-            return formatter.parseDateTime(context.getSource().toString());
-        });*/
+        modalMapper.addConverter(FsPlacesDetailsConverter.getConverter());
 
+        modalMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
         return modalMapper;
     }
 

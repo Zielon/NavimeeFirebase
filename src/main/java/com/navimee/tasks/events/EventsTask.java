@@ -25,8 +25,8 @@ public class EventsTask {
     //@Scheduled(fixedRate = 1000 * 60 * 60)
     public void addEventsTask() throws ExecutionException, InterruptedException {
 
-        placesRepository.getAvailableCities().parallelStream().forEach(city -> {
-            if (city.getName().equals("SOPOT"))
+        placesRepository.getAvailableCities().forEach(city -> {
+            //if (city.getName().equals("SOPOT"))
                 Executors.newSingleThreadExecutor().submit(() -> eventsService.saveFacebookEvents(city.getName()));
         });
     }

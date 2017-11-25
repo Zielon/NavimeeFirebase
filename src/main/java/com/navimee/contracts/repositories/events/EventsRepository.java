@@ -8,17 +8,15 @@ import java.util.concurrent.Future;
 
 public interface EventsRepository {
 
-    // FIRESTORE PATHS
-    String eventsPath = "events";
-    String segregatetEventsPath = "segregatedEvents";
-
+    // GETTERS
     List<FbEvent> getEvents(String city);
 
+    // SETTERS
     Future setEvents(List<FbEvent> events, String city);
 
-    Future updateHistorical(List<FbEvent> events);
-
     Future sevenDaysSegregation(Map<String, List<FbEvent>> events, String city);
+
+    Future updateHistorical(List<FbEvent> events);
 
     Future deleteEvents(List<FbEvent> events, String city);
 }

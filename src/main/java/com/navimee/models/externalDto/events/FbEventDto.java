@@ -6,7 +6,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.navimee.models.entities.places.Place;
 import com.navimee.models.externalDto.BaseDto;
 import com.navimee.models.externalDto.places.PlaceDto;
-import org.joda.time.DateTime;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class FbEventDto implements BaseDto {
@@ -17,10 +16,10 @@ public class FbEventDto implements BaseDto {
     private PlaceDto place;
 
     @JsonProperty("start_time")
-    private DateTime startTime;
+    private String startTime;
 
     @JsonProperty("end_time")
-    private DateTime endTime;
+    private String endTime;
 
     @JsonProperty("attending_count")
     private long attendingCount;
@@ -72,19 +71,19 @@ public class FbEventDto implements BaseDto {
         this.place = place;
     }
 
-    public DateTime getStartTime() {
+    public String getStartTime() {
         return startTime;
     }
 
-    public void setStartTime(DateTime startTime) {
+    public void setStartTime(String startTime) {
         this.startTime = startTime;
     }
 
-    public DateTime getEndTime() {
+    public String getEndTime() {
         return endTime;
     }
 
-    public void setEndTime(DateTime endTime) {
+    public void setEndTime(String endTime) {
         this.endTime = endTime;
     }
 

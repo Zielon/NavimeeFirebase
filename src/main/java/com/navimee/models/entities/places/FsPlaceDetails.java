@@ -1,8 +1,10 @@
 package com.navimee.models.entities.places;
 
+import com.navimee.models.entities.Entity;
+
 import java.util.List;
 
-public class FsPlaceDetails extends Place {
+public class FsPlaceDetails implements Entity {
     private String id;
     private String name;
     private double rating;
@@ -28,22 +30,20 @@ public class FsPlaceDetails extends Place {
     private boolean popularIsLocalHoliday;
     private List<FsTimeFrame> popularTimeframes;
 
-    @Override
+    private List<String> categories;
+
     public String getId() {
         return id;
     }
 
-    @Override
     public void setId(String id) {
         this.id = id;
     }
 
-    @Override
     public String getName() {
         return name;
     }
 
-    @Override
     public void setName(String name) {
         this.name = name;
     }
@@ -190,5 +190,13 @@ public class FsPlaceDetails extends Place {
 
     public void setPopularTimeframes(List<FsTimeFrame> popularTimeframes) {
         this.popularTimeframes = popularTimeframes;
+    }
+
+    public List<String> getCategories() {
+        return categories;
+    }
+
+    public void setCategories(List<String> categories) {
+        this.categories = categories;
     }
 }

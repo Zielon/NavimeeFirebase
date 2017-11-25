@@ -1,7 +1,9 @@
 package com.navimee.contracts.services.events;
 
-public interface EventsService {
-    void saveFacebookEvents(String city);
+import java.util.concurrent.Future;
 
-    void saveSevenDaysSegregation(String city);
+public interface EventsService {
+    Future saveFacebookEvents(String city);
+
+    Future saveSevenDaysSegregation(String city);
 }

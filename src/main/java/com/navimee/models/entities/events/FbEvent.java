@@ -1,18 +1,25 @@
 package com.navimee.models.entities.events;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.google.cloud.firestore.annotation.Exclude;
+import com.google.cloud.firestore.annotation.IgnoreExtraProperties;
+import com.navimee.models.entities.Entity;
 import com.navimee.models.entities.places.Place;
-import org.joda.time.DateTime;
 
-public class FbEvent {
+@IgnoreExtraProperties
+public class FbEvent implements Entity {
     private String name;
     private String id;
     private String category;
-    private DateTime startTime;
-    private DateTime endTime;
+    private String startTime;
+    private String endTime;
     private long attendingCount;
     private long maybeCount;
     private String type;
     private Place place;
+
+    @Exclude
+    @JsonIgnore
     private Place searchPlace;
 
     public String getName() {
@@ -37,22 +44,6 @@ public class FbEvent {
 
     public void setCategory(String category) {
         this.category = category;
-    }
-
-    public DateTime getStartTime() {
-        return startTime;
-    }
-
-    public void setStartTime(DateTime startTime) {
-        this.startTime = startTime;
-    }
-
-    public DateTime getEndTime() {
-        return endTime;
-    }
-
-    public void setEndTime(DateTime endTime) {
-        this.endTime = endTime;
     }
 
     public long getAttendingCount() {
@@ -93,5 +84,21 @@ public class FbEvent {
 
     public void setSearchPlace(Place searchPlace) {
         this.searchPlace = searchPlace;
+    }
+
+    public String getEndTime() {
+        return endTime;
+    }
+
+    public void setEndTime(String endTime) {
+        this.endTime = endTime;
+    }
+
+    public String getStartTime() {
+        return startTime;
+    }
+
+    public void setStartTime(String startTime) {
+        this.startTime = startTime;
     }
 }

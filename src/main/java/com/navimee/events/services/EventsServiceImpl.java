@@ -12,6 +12,8 @@ import com.navimee.models.entities.events.FbEvent;
 import com.navimee.models.entities.general.Coordinate;
 import com.navimee.models.entities.places.Place;
 import com.navimee.models.externalDto.events.FbEventDto;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -46,15 +48,18 @@ public class EventsServiceImpl implements EventsService {
     ModelMapper modelMapper;
 
     @Override
-    public void saveFacebookEvents(String city) {
+    public Future saveFacebookEvents(String city) {
+
+        List<Place> places = placesRepository.getFacebookPlaces(city);
 
         // Get data from the external facebook API
-        List<Place> places = placesRepository.getPlaces(city);
         List<Future<List<FbEventDto>>> events = new ArrayList<>();
         places.forEach(place -> events.add(new FacebookEventsQuery(facebookConfiguration).execute(new EventsParams(place))));
 
-        // TODO improve the geocoding code.
         Function<FbEvent, Boolean> func = event -> {
+
+            if(event.getPlace() == null || event.getSearchPlace() == null) return false;
+
             Coordinate place = new Coordinate(event.getPlace().getLat(), event.getPlace().getLon());
             Coordinate searchPlace = new Coordinate(event.getSearchPlace().getLat(), event.getSearchPlace().getLon());
 
@@ -71,13 +76,13 @@ public class EventsServiceImpl implements EventsService {
                 .collect(toList());
 
         // Save data
-        eventsRepository.setEvents(entities, city);
-
+        return eventsRepository.setEvents(entities, city);
     }
 
     @Override
-    public void saveSevenDaysSegregation(String city) {
+    public Future saveSevenDaysSegregation(String city) {
         Map<String, List<FbEvent>> segregation = Events.sevenDaysSegregation(eventsRepository.getEvents(city));
-        eventsRepository.sevenDaysSegregation(segregation, city);
+
+        return eventsRepository.sevenDaysSegregation(segregation, city);
     }
 }

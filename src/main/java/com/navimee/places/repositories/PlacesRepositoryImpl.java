@@ -1,12 +1,9 @@
 package com.navimee.places.repositories;
 
-import com.google.api.core.ApiFuture;
-import com.google.cloud.firestore.CollectionReference;
-import com.google.cloud.firestore.DocumentReference;
 import com.google.cloud.firestore.Firestore;
-import com.google.cloud.firestore.QuerySnapshot;
+import com.navimee.firestore.Database;
 import com.navimee.contracts.repositories.palces.PlacesRepository;
-import com.navimee.firestoreHelpers.EntitiesOperations;
+import com.navimee.firestore.EntitiesOperations;
 import com.navimee.models.entities.general.City;
 import com.navimee.models.entities.general.Coordinate;
 import com.navimee.models.entities.places.FsPlaceDetails;
@@ -16,13 +13,11 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
-import static java.util.stream.Collectors.toMap;
+import static com.navimee.enums.CollectionEnum.*;
+import static com.navimee.firestore.Paths.BY_CITY;
 
 @Repository
 public class PlacesRepositoryImpl implements PlacesRepository {
@@ -30,80 +25,81 @@ public class PlacesRepositoryImpl implements PlacesRepository {
     @Autowired
     Firestore db;
 
-    @Override
-    public List<Place> getPlaces(String city) {
-        return EntitiesOperations.getFromDocument(db.collection(placesPath).document(city), Place.class, placesPath);
-    }
+    @Autowired
+    Database database;
+
+    // SETTERS
 
     @Override
-    public List<Place> getFoursquarePlaces(String city) {
-        return EntitiesOperations.getFromDocument(db.collection(foursquarePlacesPath).document(city), Place.class, placesPath);
-    }
-
-    @Override
-    public List<FsPlaceDetails> getFoursquarePlacesDetails(String city) {
-        return EntitiesOperations.getFromDocument(db.collection(foursquarePlacesDetailsPath).document(city), FsPlaceDetails.class, placesPath);
-    }
-
-    @Override
-    public Future setPlaces(List<Place> places, String city) {
-        CollectionReference collectionReference = db.collection(placesPath).document("byCity").collection(city);
-        return EntitiesOperations.addToDocument(collectionReference, places, p -> p.getId());
+    public Future setFacebookPlaces(List<Place> places, String city) {
+        return EntitiesOperations.addToCollection(database.getCollection(FACEBOOK_PLACES, city), places);
     }
 
     @Override
     public Future setFoursquarePlaces(List<Place> places, String city) {
-        CollectionReference collectionReference = db.collection(foursquarePlacesPath).document("byCity").collection(city);
-        return EntitiesOperations.addToDocument(collectionReference, places, p -> p.getId());
+        return EntitiesOperations.addToCollection(database.getCollection(FOURSQUARE_PLACES, city), places);
     }
 
     @Override
     public Future setFoursquarePlacesDetails(List<FsPlaceDetails> details, String city) {
-        CollectionReference collectionReference = db.collection(foursquarePlacesDetailsPath).document("byCity").collection(city);
-        return EntitiesOperations.addToDocument(collectionReference, details, p -> p.getId());
-    }
-
-    @Override
-    public Future deleteCollection(String collection) {
-        return Executors.newSingleThreadExecutor().submit(() -> EntitiesOperations.deleteCollection(db.collection(collection)));
+        return EntitiesOperations.addToCollection(database.getCollection(FOURSQUARE_PLACES_DETAILS, city), details);
     }
 
     @Override
     public Future setAvailableCities(List<City> cities) {
         return Executors.newSingleThreadExecutor()
-                .submit(() -> cities.forEach(city -> db.collection(availableCitiesPath).document(city.getName()).set(city)));
-    }
-
-    @Override
-    public List<City> getAvailableCities() {
-        List<City> cities = null;
-        ApiFuture<QuerySnapshot> query = db.collection(availableCitiesPath).get();
-        try {
-            cities = query.get().getDocuments().stream().map(c -> c.toObject(City.class)).collect(Collectors.toList());
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        }
-        return cities;
+                .submit(() -> cities.forEach(city -> {
+                    try {
+                        EntitiesOperations.addToCollection(database.getCollection(AVAILABLE_CITIES, city.getName()), city).get();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }));
     }
 
     @Override
     public Future setCoordinates(Map<String, List<Coordinate>> coordinatesMap) {
-        return Executors.newSingleThreadExecutor()
-                .submit(() -> coordinatesMap.keySet()
-                        .forEach(city -> {
-                            List<Coordinate> coordinates = coordinatesMap.get(city);
-                            Map<String, Coordinate> map = IntStream.range(0, coordinates.size()).boxed().collect(toMap(i -> i.toString(), coordinates::get));
-                            try {
-                             //   EntitiesOperations.addToDocument(db.collection(coordinatesPath).document(city), map).get();
-                            } catch (Exception e) {
-                            }
-                        }));
+        return Executors.newSingleThreadExecutor().submit(() ->
+                coordinatesMap.forEach((k, v) -> {
+                    try {
+                        EntitiesOperations.addToCollection(database.getCollection(COORDINATES, k), v).get();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }));
+    }
+
+    @Override
+    public Future deleteCollection(String collection) {
+        return Executors.newSingleThreadExecutor().submit(() ->
+                getAvailableCities().forEach(city ->
+                        EntitiesOperations.deleteCollection(db.collection(collection).document(BY_CITY).collection(city.getName()))));
+    }
+
+    // GETTERS
+
+    @Override
+    public List<Place> getFacebookPlaces(String city) {
+        return EntitiesOperations.getFromCollection(database.getCollection(FACEBOOK_PLACES, city), Place.class);
+    }
+
+    @Override
+    public List<Place> getFoursquarePlaces(String city) {
+        return EntitiesOperations.getFromCollection(database.getCollection(FOURSQUARE_PLACES, city), Place.class);
+    }
+
+    @Override
+    public List<FsPlaceDetails> getFoursquarePlacesDetails(String city) {
+        return EntitiesOperations.getFromCollection(database.getCollection(FOURSQUARE_PLACES_DETAILS, city), FsPlaceDetails.class);
     }
 
     @Override
     public List<Coordinate> getCoordinates(String city) {
-        return EntitiesOperations.getFromDocument(db.collection(coordinatesPath).document(city), Coordinate.class);
+        return EntitiesOperations.getFromCollection(database.getCollection(COORDINATES, city), Coordinate.class);
+    }
+
+    @Override
+    public List<City> getAvailableCities() {
+       return EntitiesOperations.getFromDocument(database.getDocument(AVAILABLE_CITIES), City.class);
     }
 }

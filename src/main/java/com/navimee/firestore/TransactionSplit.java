@@ -1,4 +1,4 @@
-package com.navimee.firestoreHelpers;
+package com.navimee.firestore;
 
 import java.util.*;
 
