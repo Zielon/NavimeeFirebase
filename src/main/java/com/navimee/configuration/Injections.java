@@ -52,9 +52,10 @@ public class Injections {
     public ModelMapper modelMapperProvider() {
         ModelMapper modalMapper = new ModelMapper();
 
-        modalMapper.addConverter(FsPlacesDetailsConverter.getConverter());
+     //   modalMapper.addConverter(FsPlacesDetailsConverter.getConverter());
 
         modalMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
+
         return modalMapper;
     }
 
