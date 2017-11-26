@@ -24,12 +24,10 @@ public class SegregationTask {
 
     // Once per 1 hour.
     // @Scheduled(cron = "0 0 0/1 * * ?")
-    //@Scheduled(fixedRate = 1000 * 60 * 60)
+    // @Scheduled(fixedRate = 1000 * 60 * 60)
     public void addSegregationTask() throws ExecutionException, InterruptedException {
-
         placesRepository.getAvailableCities().forEach(city -> {
-                if(city.getName().equals("SOPOT"))
-                    Executors.newSingleThreadExecutor().submit(() -> eventsService.saveSevenDaysSegregation(city.getName()));
-            });
+                Executors.newSingleThreadExecutor().submit(() -> eventsService.saveSevenDaysSegregation(city.getName()));
+        });
     }
 }

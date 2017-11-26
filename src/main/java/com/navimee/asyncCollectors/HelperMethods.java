@@ -15,6 +15,7 @@ public class HelperMethods {
                 if (result != null && result.size() > 0)
                     output.addAll(result);
             } catch (Exception e) {
+                e.printStackTrace();
             }
         });
 
@@ -26,9 +27,10 @@ public class HelperMethods {
         futures.parallelStream().forEach(future -> {
             try {
                 T result = future.get();
-                if(result != null)
+                if (result != null)
                     output.add(result);
             } catch (Exception e) {
+                e.printStackTrace();
             }
         });
 

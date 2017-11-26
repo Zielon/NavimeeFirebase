@@ -3,9 +3,9 @@ package com.navimee.models.dto.events;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.navimee.models.entities.places.Place;
 import com.navimee.models.dto.Dto;
 import com.navimee.models.dto.places.PlaceDto;
+import com.navimee.models.entities.places.Place;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class FbEventDto implements Dto {

@@ -10,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
@@ -31,7 +32,7 @@ public class CoodrinatesController {
         return mapper.writeValueAsString(placesRepository.getCoordinates(city.toUpperCase()));
     }
 
-    @RequestMapping(value = "available", method = RequestMethod.GET, produces = "application/json")
+    @RequestMapping(value = "cities", method = RequestMethod.GET, produces = "application/json")
     public String availableCities() throws JsonProcessingException {
         return mapper.writeValueAsString(placesRepository.getAvailableCities());
     }
@@ -40,13 +41,8 @@ public class CoodrinatesController {
     public ResponseEntity<?> addCoordinate(@PathVariable String city, @RequestBody CoordinateDto dto) {
         try {
             Coordinate coordinate = new Coordinate(dto.getLatitude(), dto.getLongitude());
-            List<String> ids = placesRepository.getCoordinates(city.toUpperCase()).stream().map(c -> c.getId()).collect(toList());
-
-            // Find a unique id over the already used ids.
-            int uniqueId = 0;
-            while(ids.contains(Integer.toString(uniqueId))) uniqueId = random.nextInt(50000);
-            coordinate.setId(Integer.toString(uniqueId));
-
+            List<Integer> ids = placesRepository.getCoordinates(city.toUpperCase()).stream().map(c -> Integer.parseInt(c.getId())).collect(toList());
+            coordinate.setId(Integer.toString(Collections.max(ids) + 1));
             placesRepository.addCoordinates(coordinate, city.toUpperCase()).get();
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
@@ -56,9 +52,9 @@ public class CoodrinatesController {
 
     @RequestMapping(value = "delete/{city}/{id}", method = RequestMethod.POST)
     public ResponseEntity<?> addCoordinate(@PathVariable String city, @PathVariable String id) {
-        try{
-            placesRepository.deleteCoordinates(city, id).get();
-        }catch (Exception e){
+        try {
+            placesRepository.deleteCoordinates(id, city.toUpperCase()).get();
+        } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
         return new ResponseEntity<>(HttpStatus.OK);

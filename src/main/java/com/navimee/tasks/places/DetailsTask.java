@@ -18,11 +18,10 @@ public class DetailsTask {
     @Autowired
     PlacesService placesService;
 
-    //@Scheduled(fixedRate = 1000 * 60 * 60)
+    // @Scheduled(fixedRate = 1000 * 60 * 60)
     public void addDetailsTask() throws ExecutionException, InterruptedException {
-
         placesRepository.getAvailableCities().forEach(city -> {
-                    if (city.getName().equals("SOPOT"))
+                    //if (city.getName().equals("SOPOT"))
                         Executors.newSingleThreadExecutor().submit(() -> placesService.saveFoursquarePlacesDetails(city.getName()));
                 }
         );

@@ -1,9 +1,9 @@
 package com.navimee.places.repositories;
 
 import com.google.cloud.firestore.Firestore;
+import com.navimee.contracts.repositories.palces.PlacesRepository;
 import com.navimee.firestore.AdditionEnum;
 import com.navimee.firestore.Database;
-import com.navimee.contracts.repositories.palces.PlacesRepository;
 import com.navimee.firestore.EntitiesOperations;
 import com.navimee.models.entities.general.City;
 import com.navimee.models.entities.general.Coordinate;
@@ -114,6 +114,6 @@ public class PlacesRepositoryImpl implements PlacesRepository {
 
     @Override
     public List<City> getAvailableCities() {
-       return EntitiesOperations.getFromDocument(database.getDocument(AVAILABLE_CITIES), City.class);
+        return EntitiesOperations.getFromDocument(database.getDocument(AVAILABLE_CITIES), City.class);
     }
 }

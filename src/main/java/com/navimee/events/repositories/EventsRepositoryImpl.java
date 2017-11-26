@@ -1,8 +1,8 @@
 package com.navimee.events.repositories;
 
 import com.google.cloud.firestore.Firestore;
-import com.navimee.firestore.Database;
 import com.navimee.contracts.repositories.events.EventsRepository;
+import com.navimee.firestore.Database;
 import com.navimee.firestore.EntitiesOperations;
 import com.navimee.models.entities.events.FbEvent;
 import org.springframework.beans.factory.annotation.Autowired;

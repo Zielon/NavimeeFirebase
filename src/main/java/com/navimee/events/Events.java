@@ -1,8 +1,8 @@
 package com.navimee.events;
 
 import com.navimee.enums.EventsSegregationEnum;
-import com.navimee.models.entities.events.FbEvent;
 import com.navimee.models.dto.geocoding.GooglePlaceDto;
+import com.navimee.models.entities.events.FbEvent;
 import com.navimee.places.googleGeocoding.enums.GeoType;
 
 import java.util.HashMap;

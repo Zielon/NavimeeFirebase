@@ -29,9 +29,9 @@ public class OperationController {
 
     @RequestMapping(value = "update/places", method = RequestMethod.POST)
     public ResponseEntity<?> updatePlaces() {
-        try{
+        try {
             placesTask.addPlacesTask();
-        }catch (Exception e){
+        } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
         return new ResponseEntity<>(HttpStatus.OK);
@@ -39,9 +39,9 @@ public class OperationController {
 
     @RequestMapping(value = "update/events", method = RequestMethod.POST)
     public ResponseEntity<?> updateFbEvents() {
-        try{
+        try {
             eventsTask.addEventsTask();
-        }catch (Exception e){
+        } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
         return new ResponseEntity<>(HttpStatus.OK);
@@ -49,19 +49,19 @@ public class OperationController {
 
     @RequestMapping(value = "update/segregate", method = RequestMethod.POST)
     public ResponseEntity<?> segregateFbEvents() {
-        try{
+        try {
             segregationTask.addSegregationTask();
-        }catch (Exception e){
+        } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @RequestMapping(value = "update/4s/details", method = RequestMethod.POST)
+    @RequestMapping(value = "update/details", method = RequestMethod.POST)
     public ResponseEntity<?> fsPlacesDetails() {
-        try{
+        try {
             detailsTask.addDetailsTask();
-        }catch (Exception e){
+        } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
         return new ResponseEntity<>(HttpStatus.OK);

@@ -13,11 +13,11 @@ public class Database {
     @Autowired
     Firestore db;
 
-    public CollectionReference getCollection(CollectionEnum collection, String city){
+    public CollectionReference getCollection(CollectionEnum collection, String city) {
         return db.collection(collection.toString()).document(Paths.BY_CITY).collection(city);
     }
 
-    public DocumentReference getDocument(CollectionEnum collection){
+    public DocumentReference getDocument(CollectionEnum collection) {
         return db.collection(collection.toString()).document(Paths.BY_CITY);
     }
 }

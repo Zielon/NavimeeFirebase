@@ -8,10 +8,10 @@ import com.navimee.contracts.services.places.PlacesService;
 import com.navimee.events.Events;
 import com.navimee.events.queries.FacebookEventsQuery;
 import com.navimee.events.queries.params.EventsParams;
+import com.navimee.models.dto.events.FbEventDto;
 import com.navimee.models.entities.events.FbEvent;
 import com.navimee.models.entities.general.Coordinate;
 import com.navimee.models.entities.places.Place;
-import com.navimee.models.dto.events.FbEventDto;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -56,7 +56,7 @@ public class EventsServiceImpl implements EventsService {
 
         Function<FbEvent, Boolean> func = event -> {
 
-            if(event.getPlace() == null || event.getSearchPlace() == null) return false;
+            if (event.getPlace() == null || event.getSearchPlace() == null) return false;
 
             Coordinate place = new Coordinate(event.getPlace().getLat(), event.getPlace().getLon());
             Coordinate searchPlace = new Coordinate(event.getSearchPlace().getLat(), event.getSearchPlace().getLon());
