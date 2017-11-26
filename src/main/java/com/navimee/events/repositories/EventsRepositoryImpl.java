@@ -1,9 +1,9 @@
 package com.navimee.events.repositories;
 
-import com.google.cloud.firestore.Firestore;
 import com.navimee.contracts.repositories.events.EventsRepository;
 import com.navimee.firestore.Database;
-import com.navimee.firestore.EntitiesOperations;
+import com.navimee.firestore.operations.Add;
+import com.navimee.firestore.operations.Get;
 import com.navimee.models.entities.events.FbEvent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -24,19 +24,19 @@ public class EventsRepositoryImpl implements EventsRepository {
 
     @Override
     public List<FbEvent> getEvents(String city) {
-        return EntitiesOperations.getFromCollection(database.getCollection(EVENTS, city), FbEvent.class);
+        return Get.fromCollection(database.getCollection(EVENTS, city), FbEvent.class);
     }
 
     @Override
     public Future setEvents(List<FbEvent> events, String city) {
-        return EntitiesOperations.addToCollection(database.getCollection(EVENTS, city), events);
+        return Add.toCollection(database.getCollection(EVENTS, city), events);
     }
 
     @Override
     public Future sevenDaysSegregation(Map<String, List<FbEvent>> events, String city) {
         return Executors.newSingleThreadExecutor().submit(() ->
                 events.forEach((key, segregatedEvents) ->
-                        EntitiesOperations.addToCollection(database.getCollection(SEGREGATED_EVENTS, city).document(key).collection("EVENTS"), segregatedEvents)));
+                        Add.toCollection(database.getCollection(SEGREGATED_EVENTS, city).document(key).collection("EVENTS"), segregatedEvents)));
     }
 
     @Override
