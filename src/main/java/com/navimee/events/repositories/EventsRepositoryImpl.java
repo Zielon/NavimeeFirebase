@@ -23,23 +23,23 @@ public class EventsRepositoryImpl implements EventsRepository {
     Firestore db;
 
     @Autowired
-    Database factory;
+    Database database;
 
     @Override
     public List<FbEvent> getEvents(String city) {
-        return EntitiesOperations.getFromCollection(factory.getCollection(EVENTS, city), FbEvent.class);
+        return EntitiesOperations.getFromCollection(database.getCollection(EVENTS, city), FbEvent.class);
     }
 
     @Override
     public Future setEvents(List<FbEvent> events, String city) {
-        return EntitiesOperations.addToCollection(factory.getCollection(EVENTS, city), events);
+        return EntitiesOperations.addToCollection(database.getCollection(EVENTS, city), events);
     }
 
     @Override
     public Future sevenDaysSegregation(Map<String, List<FbEvent>> events, String city) {
         return Executors.newSingleThreadExecutor().submit(() ->
                 events.forEach((key, segregatedEvents) ->
-                        EntitiesOperations.addToCollection(factory.getCollection(SEGREGATED_EVENTS, city).document(key).collection("EVENTS"), segregatedEvents)));
+                        EntitiesOperations.addToCollection(database.getCollection(SEGREGATED_EVENTS, city).document(key).collection("EVENTS"), segregatedEvents)));
     }
 
     @Override
