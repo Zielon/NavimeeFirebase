@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping(value = "api/operation")
 public class OperationController {
 
-    @Autowired
+   /* @Autowired
     PlacesTask placesTask;
 
     @Autowired
@@ -65,5 +65,5 @@ public class OperationController {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
         return new ResponseEntity<>(HttpStatus.OK);
-    }
+    }*/
 }
