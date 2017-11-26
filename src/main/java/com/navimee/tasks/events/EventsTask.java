@@ -25,7 +25,7 @@ public class EventsTask {
     ExecutorService executorService;
 
     // Once per 1 hour.
-    // @Scheduled(cron = "0 0 0/1 * * ?")
+    //@Scheduled(cron = "0 0 0/1 * * ?")
     //@Scheduled(fixedRate = 1000 * 60 * 60)
     public void addEventsTask() throws ExecutionException, InterruptedException {
         placesRepository.getAvailableCities().forEach(city -> {
