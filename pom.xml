@@ -5,7 +5,9 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com</groupId>
     <artifactId>navimee</artifactId>
-    <version>1.0</version>
+    <packaging>war</packaging>
+    <version>1.0-SNAPSHOT</version>
+    <name>navimee</name>
 
     <parent>
         <groupId>org.springframework.boot</groupId>
@@ -14,11 +16,7 @@
         <relativePath/>
     </parent>
 
-    <name>navimee</name>
-    <description>Navimee firebase database client</description>
-
     <properties>
-        <java.version>1.8</java.version>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -139,18 +137,26 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+
+            <!-- HEROKU -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <version>2.3</version>
                 <executions>
                     <execution>
-                        <goals>
-                            <goal>build-info</goal>
-                        </goals>
+                        <phase>package</phase>
+                        <goals><goal>copy</goal></goals>
                         <configuration>
-                            <additionalProperties>
-                                <encoding.source>${project.build.sourceEncoding}</encoding.source>
-                                <encoding.reporting>${project.reporting.outputEncoding}</encoding.reporting>
-                                <java.source>${maven.compiler.source}</java.source>
-                                <java.target>${maven.compiler.target}</java.target>
-                            </additionalProperties>
+                            <artifactItems>
+                                <artifactItem>
+                                    <groupId>org.eclipse.jetty</groupId>
+                                    <artifactId>jetty-runner</artifactId>
+                                    <version>9.3.3.v20150827</version>
+                                    <destFileName>jetty-runner.jar</destFileName>
+                                </artifactItem>
+                            </artifactItems>
                         </configuration>
                     </execution>
                 </executions>

@@ -1,1 +1,1 @@
-web: java -jar target/navimee-1.0.jar
+web: java $JAVA_OPTS -jar target/dependency/jetty-runner.jar --port $PORT target/*.war
