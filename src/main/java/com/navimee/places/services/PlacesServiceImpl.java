@@ -26,6 +26,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 import java.util.stream.Collectors;
@@ -113,6 +114,7 @@ public class PlacesServiceImpl implements PlacesService {
         // Collect
         List<FsPlaceDetails> entities = waitForSingle(futures)
                 .stream()
+                .filter(Objects::nonNull)
                 .map(dto -> modelMapper.map(dto, FsPlaceDetails.class))
                 .filter(distinctByKey(FsPlaceDetails::getId))
                 .filter(d -> d.getStatsCheckinsCount() > 500)

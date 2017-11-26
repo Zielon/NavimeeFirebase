@@ -42,11 +42,13 @@ public class FoursquareDetailsQuery extends Query<FsPlaceDetailsDto, FoursquareC
 
     @Override
     protected FsPlaceDetailsDto map(Future<HttpResponse<JsonNode>> future) {
+        ObjectMapper mapper = new ObjectMapper();
         FsPlaceDetailsDto mapped = null;
         try {
             JSONObject object =  future.get().getBody().getObject();
-            JSONObject details = object.getJSONObject("response").getJSONObject("venue");
-            ObjectMapper mapper = new ObjectMapper();
+            JSONObject response = object.getJSONObject("response");
+            if(!response.has("venue")) return mapped;
+            JSONObject details = response.getJSONObject("venue");
             mapped = mapper.readValue(details.toString(), FsPlaceDetailsDto.class);
         } catch (Exception e) {
             e.printStackTrace();
