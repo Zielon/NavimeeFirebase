@@ -14,31 +14,26 @@ import org.joda.time.DateTimeZone;
 import org.joda.time.LocalDateTime;
 import org.json.JSONArray;
 import org.json.JSONObject;
-import org.springframework.scheduling.annotation.Async;
 
-import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.StringJoiner;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.stream.Collectors;
 
 public class FacebookEventsQuery extends Query<List<FbEventDto>, FacebookConfiguration, EventsParams> {
 
-    public FacebookEventsQuery(FacebookConfiguration configuration) {
-        super(configuration);
-    }
-
     private Place searchPlace;
 
-    @Async
+    public FacebookEventsQuery(FacebookConfiguration configuration, ExecutorService executorService) {
+        super(configuration, executorService);
+    }
+
     @Override
     public Future<List<FbEventDto>> execute(EventsParams params) {
 
-        ExecutorService executor = Executors.newSingleThreadExecutor();
         StringJoiner joiner = new StringJoiner(",");
         searchPlace = params.place;
 
@@ -68,18 +63,20 @@ public class FacebookEventsQuery extends Query<List<FbEventDto>, FacebookConfigu
                         .queryString("access_token", configuration.accessToken)
                         .asJsonAsync();
 
-        return executor.submit(() -> map(response.get().getBody().getObject()));
+        return executorService.submit(() -> map(response));
     }
 
     @Override
-    protected List<FbEventDto> map(JSONObject object) {
+    protected List<FbEventDto> map(Future<HttpResponse<JsonNode>> future) {
         List<FbEventDto> events = new ArrayList<>();
-
-        if (!object.has("events"))
-            return events;
-
-        JSONObject obj = object.getJSONObject("events");
-        events.addAll(convertNode(obj.getJSONArray("data")));
+        try{
+            JSONObject object = future.get().getBody().getObject();
+            if (!object.has("events")) return events;
+            JSONObject obj = object.getJSONObject("events");
+            events.addAll(convertNode(obj.getJSONArray("data")));
+        }catch (Exception e){
+            e.printStackTrace();
+        }
 
         return events.stream().filter(e -> e.getAttendingCount() > 20).collect(Collectors.toList());
     }
@@ -94,7 +91,7 @@ public class FacebookEventsQuery extends Query<List<FbEventDto>, FacebookConfigu
                 FbEventDto event = mapper.readValue(eventJson.toString(), FbEventDto.class);
                 event.setSearchPlace(searchPlace);
                 list.add(event);
-            } catch (IOException e) {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         }

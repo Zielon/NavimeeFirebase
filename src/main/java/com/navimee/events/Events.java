@@ -1,32 +1,14 @@
 package com.navimee.events;
 
-import com.navimee.enums.EventsSegregationEnum;
 import com.navimee.models.dto.geocoding.GooglePlaceDto;
 import com.navimee.models.entities.events.FbEvent;
 import com.navimee.places.googleGeocoding.enums.GeoType;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import java.util.concurrent.Future;
 
 import static com.navimee.places.googleGeocoding.GoogleGeoTypeGetter.getType;
-import static java.util.stream.Collectors.toList;
 
 public class Events {
-
-    public static Map<String, List<FbEvent>> sevenDaysSegregation(List<FbEvent> events) {
-
-        Map<String, List<FbEvent>> segregated = new HashMap<>();
-
-        for (EventsSegregationEnum eventsSegregation : EventsSegregationEnum.values()) {
-            List<FbEvent> filtered = events.stream().filter(eventsSegregation.getPredicate()).collect(toList());
-            segregated.put(eventsSegregation.toString(), filtered);
-        }
-
-        return segregated;
-    }
-
 
     public static boolean complement(FbEvent event, Future<GooglePlaceDto> placeDto, Future<GooglePlaceDto> searchPlaceDto) {
 

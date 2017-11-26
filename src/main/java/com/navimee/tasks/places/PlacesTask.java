@@ -12,6 +12,7 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import static com.navimee.firestore.Paths.FACEBOOK_PLACES_COLLECTION;
@@ -26,9 +27,12 @@ public class PlacesTask {
     @Autowired
     PlacesService placesService;
 
+    @Autowired
+    ExecutorService executorService;
+
     //Once per 30 days.
     //@Scheduled(cron = "0 00 12 ? * *")
-    //@Scheduled(fixedRate = 1000 * 60 * 60)
+    @Scheduled(fixedRate = 1000 * 60 * 60)
     public void addPlacesTask() throws ExecutionException, InterruptedException {
 
         // Mocked data.
@@ -44,8 +48,8 @@ public class PlacesTask {
         // placesRepository.setAvailableCities(cities).get();
 
         placesRepository.getAvailableCities().forEach(city -> {
-                    //     if (city.getName().equals("SOPOT"))
-                    Executors.newSingleThreadExecutor().submit(() -> {
+              //if (city.getName().equals("SOPOT"))
+                    executorService.submit(() -> {
                         placesService.saveFoursquarePlaces(city.getName());
                         placesService.saveFacebookPlaces(city.getName());
                     });

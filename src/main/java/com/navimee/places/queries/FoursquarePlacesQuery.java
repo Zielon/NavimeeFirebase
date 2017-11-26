@@ -17,19 +17,16 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
+import java.util.concurrent.*;
 
 public class FoursquarePlacesQuery extends Query<List<FsPlaceDto>, FoursquareConfiguration, PlaceDetailsParams> {
 
-    public FoursquarePlacesQuery(FoursquareConfiguration configuration) {
-        super(configuration);
+    public FoursquarePlacesQuery(FoursquareConfiguration configuration, ExecutorService executorService) {
+        super(configuration, executorService);
     }
 
     @Override
     public Future<List<FsPlaceDto>> execute(PlaceDetailsParams params) {
-        ExecutorService executor = Executors.newSingleThreadExecutor();
         DateTimeZone zone = DateTimeZone.forID("Europe/Warsaw");
         LocalDateTime warsawCurrent = LocalDateTime.now(zone);
         DateTimeFormatter fmt = DateTimeFormat.forPattern("yyyyddMM");
@@ -42,14 +39,15 @@ public class FoursquarePlacesQuery extends Query<List<FsPlaceDto>, FoursquareCon
                         .queryString("ll", params.lat + "," + params.lon)
                         .asJsonAsync();
 
-        return executor.submit(() -> map(response.get().getBody().getObject()));
+        return executorService.submit(() -> map(response));
     }
 
     @Override
-    protected List<FsPlaceDto> map(JSONObject object) {
+    protected List<FsPlaceDto> map(Future<HttpResponse<JsonNode>> future) {
         List<FsPlaceDto> list = new ArrayList<>();
         ObjectMapper mapper = new ObjectMapper();
         try {
+            JSONObject object =  future.get().getBody().getObject();
             JSONArray array = object.getJSONObject("response").getJSONArray("venues");
             for (int n = 0; n < array.length(); n++) {
                 JSONObject placeJson = array.getJSONObject(n);

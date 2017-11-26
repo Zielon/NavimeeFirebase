@@ -14,20 +14,16 @@ import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import org.json.JSONObject;
 
-import java.io.IOException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
+import java.util.concurrent.*;
 
 public class FoursquareDetailsQuery extends Query<FsPlaceDetailsDto, FoursquareConfiguration, PlaceDetailsParams> {
 
-    public FoursquareDetailsQuery(FoursquareConfiguration configuration) {
-        super(configuration);
+    public FoursquareDetailsQuery(FoursquareConfiguration configuration, ExecutorService executorService) {
+        super(configuration, executorService);
     }
 
     @Override
     public Future<FsPlaceDetailsDto> execute(PlaceDetailsParams params) {
-        ExecutorService executor = Executors.newSingleThreadExecutor();
         DateTimeZone zone = DateTimeZone.forID("Europe/Warsaw");
         LocalDateTime warsawCurrent = LocalDateTime.now(zone);
         DateTimeFormatter fmt = DateTimeFormat.forPattern("yyyyddMM");
@@ -41,13 +37,14 @@ public class FoursquareDetailsQuery extends Query<FsPlaceDetailsDto, FoursquareC
                         .queryString("client_secret", configuration.clientSecret)
                         .asJsonAsync();
 
-        return executor.submit(() -> map(response.get().getBody().getObject()));
+        return executorService.submit(() -> map(response));
     }
 
     @Override
-    protected FsPlaceDetailsDto map(JSONObject object) {
+    protected FsPlaceDetailsDto map(Future<HttpResponse<JsonNode>> future) {
         FsPlaceDetailsDto mapped = null;
         try {
+            JSONObject object =  future.get().getBody().getObject();
             JSONObject details = object.getJSONObject("response").getJSONObject("venue");
             ObjectMapper mapper = new ObjectMapper();
             mapped = mapper.readValue(details.toString(), FsPlaceDetailsDto.class);

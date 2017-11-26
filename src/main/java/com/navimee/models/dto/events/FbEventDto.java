@@ -4,8 +4,10 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.navimee.models.dto.Dto;
-import com.navimee.models.dto.places.PlaceDto;
+import com.navimee.models.dto.places.facebook.FbPlaceDto;
 import com.navimee.models.entities.places.Place;
+
+import java.util.Date;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class FbEventDto implements Dto {
@@ -13,13 +15,13 @@ public class FbEventDto implements Dto {
     private String id;
     private String category;
     private String type;
-    private PlaceDto place;
+    private FbPlaceDto place;
 
     @JsonProperty("start_time")
-    private String startTime;
+    private Date startTime;
 
     @JsonProperty("end_time")
-    private String endTime;
+    private Date endTime;
 
     @JsonProperty("attending_count")
     private long attendingCount;
@@ -63,27 +65,27 @@ public class FbEventDto implements Dto {
         this.type = type;
     }
 
-    public PlaceDto getPlace() {
+    public FbPlaceDto getPlace() {
         return place;
     }
 
-    public void setPlace(PlaceDto place) {
+    public void setPlace(FbPlaceDto place) {
         this.place = place;
     }
 
-    public String getStartTime() {
+    public Date getStartTime() {
         return startTime;
     }
 
-    public void setStartTime(String startTime) {
+    public void setStartTime(Date startTime) {
         this.startTime = startTime;
     }
 
-    public String getEndTime() {
+    public Date getEndTime() {
         return endTime;
     }
 
-    public void setEndTime(String endTime) {
+    public void setEndTime(Date endTime) {
         this.endTime = endTime;
     }
 

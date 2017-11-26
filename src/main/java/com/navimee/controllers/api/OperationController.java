@@ -1,7 +1,6 @@
 package com.navimee.controllers.api;
 
 import com.navimee.tasks.events.EventsTask;
-import com.navimee.tasks.events.SegregationTask;
 import com.navimee.tasks.places.DetailsTask;
 import com.navimee.tasks.places.PlacesTask;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,9 +21,6 @@ public class OperationController {
     EventsTask eventsTask;
 
     @Autowired
-    SegregationTask segregationTask;
-
-    @Autowired
     DetailsTask detailsTask;
 
     @RequestMapping(value = "update/places", method = RequestMethod.POST)
@@ -41,16 +37,6 @@ public class OperationController {
     public ResponseEntity<?> updateFbEvents() {
         try {
             eventsTask.addEventsTask();
-        } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-        return new ResponseEntity<>(HttpStatus.OK);
-    }
-
-    @RequestMapping(value = "update/segregate", method = RequestMethod.POST)
-    public ResponseEntity<?> segregateFbEvents() {
-        try {
-            segregationTask.addSegregationTask();
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }

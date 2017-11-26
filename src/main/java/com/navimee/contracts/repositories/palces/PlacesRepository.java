@@ -2,8 +2,10 @@ package com.navimee.contracts.repositories.palces;
 
 import com.navimee.models.entities.general.City;
 import com.navimee.models.entities.general.Coordinate;
-import com.navimee.models.entities.places.foursquare.FsPlaceDetails;
 import com.navimee.models.entities.places.Place;
+import com.navimee.models.entities.places.facebook.FbPlace;
+import com.navimee.models.entities.places.foursquare.FsPlace;
+import com.navimee.models.entities.places.foursquare.FsPlaceDetails;
 
 import java.util.List;
 import java.util.Map;
@@ -16,9 +18,9 @@ public interface PlacesRepository {
 
     List<City> getAvailableCities();
 
-    List<Place> getFacebookPlaces(String city);
+    List<FbPlace> getFacebookPlaces(String city);
 
-    List<Place> getFoursquarePlaces(String city);
+    List<FsPlace> getFoursquarePlaces(String city);
 
     List<FsPlaceDetails> getFoursquarePlacesDetails(String city);
 

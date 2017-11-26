@@ -11,36 +11,33 @@ import com.navimee.queries.Query;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
+import java.util.concurrent.*;
 
 public class GoogleGeocodingQuery extends Query<GooglePlaceDto, GoogleConfiguration, PlacesParams> {
 
-    public GoogleGeocodingQuery(GoogleConfiguration configuration) {
-        super(configuration);
+    public GoogleGeocodingQuery(GoogleConfiguration configuration, ExecutorService executorService) {
+        super(configuration, executorService);
     }
 
     @Override
     public Future<GooglePlaceDto> execute(PlacesParams params) {
-        ExecutorService executor = Executors.newSingleThreadExecutor();
         Future<HttpResponse<JsonNode>> response =
                 Unirest.get(configuration.apiUrl + "/geocode/json")
                         .queryString("latlng", params.lat + "," + params.lon)
                         .queryString("key", configuration.clientId)
                         .asJsonAsync();
 
-        return executor.submit(() -> map(response.get().getBody().getObject()));
+        return executorService.submit(() -> map(response));
     }
 
     @Override
-    protected GooglePlaceDto map(JSONObject object) {
+    protected GooglePlaceDto map(Future<HttpResponse<JsonNode>> future) {
         List<GooglePlaceDto> list = new ArrayList<>();
         ObjectMapper mapper = new ObjectMapper();
         try {
+            JSONObject object =  future.get().getBody().getObject();
             JSONArray array = object.getJSONArray("results");
             for (int n = 0; n < array.length(); n++) {
                 JSONObject placeJson = array.getJSONObject(n);

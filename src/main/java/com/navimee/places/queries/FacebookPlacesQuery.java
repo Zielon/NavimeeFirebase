@@ -16,20 +16,17 @@ import org.springframework.scheduling.annotation.Async;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
+import java.util.concurrent.*;
 
 public class FacebookPlacesQuery extends Query<List<FbPlaceDto>, FacebookConfiguration, PlacesParams> {
 
-    public FacebookPlacesQuery(FacebookConfiguration configuration) {
-        super(configuration);
+    public FacebookPlacesQuery(FacebookConfiguration configuration, ExecutorService executorService) {
+        super(configuration, executorService);
     }
 
-    @Async
     @Override
     public Future<List<FbPlaceDto>> execute(PlacesParams params) {
-        ExecutorService executor = Executors.newSingleThreadExecutor();
+
         Future<HttpResponse<JsonNode>> response =
                 Unirest.get(configuration.apiUrl + "/search")
                         .queryString("q", "*")
@@ -37,33 +34,38 @@ public class FacebookPlacesQuery extends Query<List<FbPlaceDto>, FacebookConfigu
                         .queryString("center", params.lat + "," + params.lon)
                         .queryString("distance", "1000")
                         .queryString("fields", "name,category,location")
-                        .queryString("limit", "300")
+                        .queryString("limit", "200")
                         .queryString("access_token", configuration.accessToken)
                         .asJsonAsync();
 
-        return executor.submit(() -> map(response.get().getBody().getObject()));
+        return executorService.submit(() -> map(response));
     }
 
     @Override
-    protected List<FbPlaceDto> map(JSONObject object) {
+    protected List<FbPlaceDto> map(Future<HttpResponse<JsonNode>> future) {
         List<FbPlaceDto> list = new ArrayList<>();
-        list.addAll(convertNode(object.getJSONArray("data")));
 
-        if (!object.has("paging"))
-            return list;
+        try{
+            JSONObject object =  future.get().getBody().getObject();
+            list.addAll(convertNode(object.getJSONArray("data")));
 
-        JSONObject paging = object.getJSONObject("paging");
-        String nextUrl = paging.getString("next");
+            if (!object.has("paging")) return list;
+            JSONObject paging = object.getJSONObject("paging");
+            String nextUrl = paging.getString("next");
 
-        while (list.size() < 7000) {
-            try {
-                JSONObject nextObj = Unirest.get(nextUrl).asJson().getBody().getObject();
-                list.addAll(convertNode(nextObj.getJSONArray("data")));
-                if (!nextObj.has("paging")) break;
-                nextUrl = nextObj.getJSONObject("paging").getString("next");
-            } catch (UnirestException e) {
-                break;
+            while (list.size() < 50000) {
+                try {
+                    JSONObject nextObj = Unirest.get(nextUrl).asJson().getBody().getObject();
+                    list.addAll(convertNode(nextObj.getJSONArray("data")));
+                    if (!nextObj.has("paging")) break;
+                    nextUrl = nextObj.getJSONObject("paging").getString("next");
+                } catch (UnirestException e) {
+                    e.printStackTrace();
+                    break;
+                }
             }
+        }catch (Exception e){
+            e.printStackTrace();
         }
 
         return list;

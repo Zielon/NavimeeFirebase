@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Future;
 
-import static com.navimee.asyncCollectors.HelperMethods.waitForAll;
+import static com.navimee.asyncCollectors.CompletionCollector.waitForSingle;
 
 public class Delete {
 
@@ -25,7 +25,7 @@ public class Delete {
             }
 
             // Wait for all tasks to finish.
-            waitForAll(tasks);
+            waitForSingle(tasks);
 
             if (deleted >= batchSize) {
                 collection(collection);

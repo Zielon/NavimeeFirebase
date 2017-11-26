@@ -4,23 +4,25 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.cloud.firestore.annotation.Exclude;
 import com.google.cloud.firestore.annotation.IgnoreExtraProperties;
 import com.navimee.models.entities.Entity;
-import com.navimee.models.entities.places.Place;
+import com.navimee.models.entities.places.facebook.FbPlace;
+
+import java.util.Date;
 
 @IgnoreExtraProperties
 public class FbEvent implements Entity {
     private String name;
     private String id;
     private String category;
-    private String startTime;
-    private String endTime;
+    private Date startTime;
+    private Date endTime;
     private long attendingCount;
     private long maybeCount;
     private String type;
-    private Place place;
+    private FbPlace place;
 
     @Exclude
     @JsonIgnore
-    private Place searchPlace;
+    private FbPlace searchPlace;
 
     public String getName() {
         return name;
@@ -70,35 +72,35 @@ public class FbEvent implements Entity {
         this.type = type;
     }
 
-    public Place getPlace() {
+    public FbPlace getPlace() {
         return place;
     }
 
-    public void setPlace(Place place) {
+    public void setPlace(FbPlace place) {
         this.place = place;
     }
 
-    public Place getSearchPlace() {
+    public FbPlace getSearchPlace() {
         return searchPlace;
     }
 
-    public void setSearchPlace(Place searchPlace) {
+    public void setSearchPlace(FbPlace searchPlace) {
         this.searchPlace = searchPlace;
     }
 
-    public String getEndTime() {
+    public Date getEndTime() {
         return endTime;
     }
 
-    public void setEndTime(String endTime) {
+    public void setEndTime(Date endTime) {
         this.endTime = endTime;
     }
 
-    public String getStartTime() {
+    public Date getStartTime() {
         return startTime;
     }
 
-    public void setStartTime(String startTime) {
+    public void setStartTime(Date startTime) {
         this.startTime = startTime;
     }
 }

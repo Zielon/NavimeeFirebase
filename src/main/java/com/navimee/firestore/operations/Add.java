@@ -11,7 +11,7 @@ import java.util.concurrent.Future;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import static com.navimee.asyncCollectors.HelperMethods.waitForAll;
+import static com.navimee.asyncCollectors.CompletionCollector.waitForSingle;
 import static com.navimee.linq.Distinct.distinctByKey;
 
 public class Add {
@@ -49,7 +49,7 @@ public class Add {
                         tasks.add(collectionReference.document(entry.getKey()).set(entry.getValue()));
 
                 // Wait for all tasks to finish.
-                waitForAll(tasks);
+                waitForSingle(tasks);
 
                 String LOG = String.format("ENTITIES %d ADDED TO -> %s | %s", entities.size(), collectionReference.getPath().toUpperCase(), new Date());
                 System.out.println(LOG);

@@ -10,7 +10,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.Executors;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 
 import static com.navimee.enums.CollectionEnum.EVENTS;
@@ -21,6 +21,9 @@ public class EventsRepositoryImpl implements EventsRepository {
 
     @Autowired
     Database database;
+
+    @Autowired
+    ExecutorService executorService;
 
     @Override
     public List<FbEvent> getEvents(String city) {
@@ -34,20 +37,20 @@ public class EventsRepositoryImpl implements EventsRepository {
 
     @Override
     public Future sevenDaysSegregation(Map<String, List<FbEvent>> events, String city) {
-        return Executors.newSingleThreadExecutor().submit(() ->
+        return executorService.submit(() ->
                 events.forEach((key, segregatedEvents) ->
                         Add.toCollection(database.getCollection(SEGREGATED_EVENTS, city).document(key).collection("EVENTS"), segregatedEvents)));
     }
 
     @Override
     public Future deleteEvents(List<FbEvent> events, String city) {
-        return Executors.newSingleThreadExecutor().submit(() -> {
+        return executorService.submit(() -> {
         });
     }
 
     @Override
     public Future updateHistorical(List<FbEvent> events) {
-        return Executors.newSingleThreadExecutor().submit(() -> {
+        return executorService.submit(() -> {
         });
     }
 }
