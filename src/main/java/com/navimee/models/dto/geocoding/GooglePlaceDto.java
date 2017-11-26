@@ -3,8 +3,8 @@ package com.navimee.models.dto.geocoding;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.navimee.models.dto.Dto;
-import com.navimee.models.dto.places.subelement.AddressComponentsDto;
-import com.navimee.models.dto.places.subelement.GeometryDto;
+import com.navimee.models.dto.geocoding.subelement.AddressComponentsDto;
+import com.navimee.models.dto.geocoding.subelement.GeometryDto;
 
 import java.util.List;
 

@@ -1,7 +1,7 @@
 package com.navimee.places.googleGeocoding;
 
 import com.navimee.models.dto.geocoding.GooglePlaceDto;
-import com.navimee.models.dto.places.subelement.AddressComponentsDto;
+import com.navimee.models.dto.geocoding.subelement.AddressComponentsDto;
 import com.navimee.places.googleGeocoding.enums.GeoNameType;
 import com.navimee.places.googleGeocoding.enums.GeoType;
 

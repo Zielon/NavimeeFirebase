@@ -6,7 +6,7 @@ import com.mashape.unirest.http.JsonNode;
 import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
 import com.navimee.configuration.specific.FacebookConfiguration;
-import com.navimee.models.dto.places.FbPlaceDto;
+import com.navimee.models.dto.places.facebook.FbPlaceDto;
 import com.navimee.places.queries.params.PlacesParams;
 import com.navimee.queries.Query;
 import org.json.JSONArray;

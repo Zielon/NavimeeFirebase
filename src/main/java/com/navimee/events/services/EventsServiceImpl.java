@@ -9,6 +9,7 @@ import com.navimee.events.Events;
 import com.navimee.events.queries.FacebookEventsQuery;
 import com.navimee.events.queries.params.EventsParams;
 import com.navimee.models.dto.events.FbEventDto;
+import com.navimee.models.dto.geocoding.GooglePlaceDto;
 import com.navimee.models.entities.events.FbEvent;
 import com.navimee.models.entities.general.Coordinate;
 import com.navimee.models.entities.places.Place;
@@ -54,23 +55,24 @@ public class EventsServiceImpl implements EventsService {
         List<Future<List<FbEventDto>>> events = new ArrayList<>();
         places.forEach(place -> events.add(new FacebookEventsQuery(facebookConfiguration).execute(new EventsParams(place))));
 
-        Function<FbEvent, Boolean> func = event -> {
+        Function<FbEvent, Boolean> complement = event -> {
 
-            if (event.getPlace() == null || event.getSearchPlace() == null) return false;
+            if (event.getPlace() == null) return false;
 
-            Coordinate place = new Coordinate(event.getPlace().getLat(), event.getPlace().getLon());
-            Coordinate searchPlace = new Coordinate(event.getSearchPlace().getLat(), event.getSearchPlace().getLon());
+            Future<GooglePlaceDto> place = placesService.
+                    downloadReverseGeocoding(new Coordinate(event.getPlace().getLat(), event.getPlace().getLon()));
 
-            return complement(event,
-                    event.getPlace() != null ? placesService.downloadReverseGeocoding(place) : null,
-                    placesService.downloadReverseGeocoding(searchPlace));
+            Future<GooglePlaceDto> searchPlace = placesService.
+                    downloadReverseGeocoding(new Coordinate(event.getSearchPlace().getLat(), event.getSearchPlace().getLon()));
+
+            return complement(event, place, searchPlace);
         };
 
         List<FbEvent> entities = waitForMany(events)
                 .parallelStream()
                 .map(dto -> modelMapper.map(dto, FbEvent.class))
                 .filter(distinctByKey(FbEvent::getId))
-                .filter(func::apply)
+                .filter(complement::apply)    // Complement event places
                 .collect(toList());
 
         // Save data

@@ -20,9 +20,6 @@ import static com.navimee.enums.CollectionEnum.SEGREGATED_EVENTS;
 public class EventsRepositoryImpl implements EventsRepository {
 
     @Autowired
-    Firestore db;
-
-    @Autowired
     Database database;
 
     @Override

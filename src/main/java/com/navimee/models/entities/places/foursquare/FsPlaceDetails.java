@@ -1,4 +1,4 @@
-package com.navimee.models.entities.places;
+package com.navimee.models.entities.places.foursquare;
 
 import com.navimee.models.entities.Entity;
 

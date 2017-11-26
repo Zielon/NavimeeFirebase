@@ -5,7 +5,7 @@ import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.JsonNode;
 import com.mashape.unirest.http.Unirest;
 import com.navimee.configuration.specific.FoursquareConfiguration;
-import com.navimee.models.dto.places.FsPlaceDto;
+import com.navimee.models.dto.places.foursquare.FsPlaceDto;
 import com.navimee.places.queries.params.PlaceDetailsParams;
 import com.navimee.queries.Query;
 import org.joda.time.DateTimeZone;
@@ -15,7 +15,6 @@ import org.joda.time.format.DateTimeFormatter;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
@@ -48,18 +47,19 @@ public class FoursquarePlacesQuery extends Query<List<FsPlaceDto>, FoursquareCon
 
     @Override
     protected List<FsPlaceDto> map(JSONObject object) {
-        JSONArray array = object.getJSONObject("response").getJSONArray("venues");
         List<FsPlaceDto> list = new ArrayList<>();
         ObjectMapper mapper = new ObjectMapper();
-        for (int n = 0; n < array.length(); n++) {
-            JSONObject placeJson = array.getJSONObject(n);
-            try {
+        try {
+            JSONArray array = object.getJSONObject("response").getJSONArray("venues");
+            for (int n = 0; n < array.length(); n++) {
+                JSONObject placeJson = array.getJSONObject(n);
                 FsPlaceDto mapped = mapper.readValue(placeJson.toString(), FsPlaceDto.class);
                 list.add(mapped);
-            } catch (IOException e) {
-                e.printStackTrace();
             }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
+
         return list;
     }
 }

@@ -26,9 +26,9 @@ public class PlacesTask {
     @Autowired
     PlacesService placesService;
 
-    // Once per 30 days.
-    // @Scheduled(cron = "0 00 12 ? * *")
-    // @Scheduled(fixedRate = 1000 * 60 * 60)
+    //Once per 30 days.
+    //@Scheduled(cron = "0 00 12 ? * *")
+    //@Scheduled(fixedRate = 1000 * 60 * 60)
     public void addPlacesTask() throws ExecutionException, InterruptedException {
 
         // Mocked data.

@@ -7,10 +7,12 @@ import com.navimee.contracts.repositories.palces.PlacesRepository;
 import com.navimee.contracts.services.places.PlacesService;
 import com.navimee.models.dto.geocoding.GooglePlaceDto;
 import com.navimee.models.dto.placeDetails.FsPlaceDetailsDto;
-import com.navimee.models.dto.places.FbPlaceDto;
-import com.navimee.models.dto.places.FsPlaceDto;
+import com.navimee.models.dto.places.facebook.FbPlaceDto;
+import com.navimee.models.dto.places.foursquare.FsPlaceDto;
 import com.navimee.models.entities.general.Coordinate;
-import com.navimee.models.entities.places.FsPlaceDetails;
+import com.navimee.models.entities.places.facebook.FbPlace;
+import com.navimee.models.entities.places.foursquare.FsPlace;
+import com.navimee.models.entities.places.foursquare.FsPlaceDetails;
 import com.navimee.models.entities.places.Place;
 import com.navimee.places.queries.FacebookPlacesQuery;
 import com.navimee.places.queries.FoursquareDetailsQuery;
@@ -61,7 +63,7 @@ public class PlacesServiceImpl implements PlacesService {
 
         List<Place> entities = waitForMany(futures)
                 .stream()
-                .map(dto -> modelMapper.map(dto, Place.class))
+                .map(dto -> modelMapper.map(dto, FbPlace.class))
                 .filter(distinctByKey(Place::getId))
                 .collect(Collectors.toList());
 
@@ -82,7 +84,7 @@ public class PlacesServiceImpl implements PlacesService {
 
         List<Place> entities = waitForMany(futures)
                 .stream()
-                .map(dto -> modelMapper.map(dto, Place.class))
+                .map(dto -> modelMapper.map(dto, FsPlace.class))
                 .filter(distinctByKey(Place::getId))
                 .collect(Collectors.toList());
 
@@ -111,8 +113,8 @@ public class PlacesServiceImpl implements PlacesService {
     }
 
     @Override
-    public GooglePlaceDto downloadReverseGeocoding(Coordinate coordinate) {
+    public Future<GooglePlaceDto> downloadReverseGeocoding(Coordinate coordinate) {
         GoogleGeocodingQuery query = new GoogleGeocodingQuery(googleConfiguration);
-        return waitForSingle(query.execute(new PlacesParams(coordinate.getLatitude(), coordinate.getLongitude())));
+        return query.execute(new PlacesParams(coordinate.getLatitude(), coordinate.getLongitude()));
     }
 }

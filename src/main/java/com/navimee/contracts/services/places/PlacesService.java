@@ -12,5 +12,5 @@ public interface PlacesService {
 
     Future saveFoursquarePlacesDetails(String city);
 
-    GooglePlaceDto downloadReverseGeocoding(Coordinate coordinate);
+    Future<GooglePlaceDto> downloadReverseGeocoding(Coordinate coordinate);
 }

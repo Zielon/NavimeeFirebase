@@ -2,7 +2,7 @@ package com.navimee.contracts.repositories.palces;
 
 import com.navimee.models.entities.general.City;
 import com.navimee.models.entities.general.Coordinate;
-import com.navimee.models.entities.places.FsPlaceDetails;
+import com.navimee.models.entities.places.foursquare.FsPlaceDetails;
 import com.navimee.models.entities.places.Place;
 
 import java.util.List;

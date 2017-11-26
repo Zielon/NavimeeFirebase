@@ -1,4 +1,4 @@
-package com.navimee.models.dto.places.subelement;
+package com.navimee.models.dto.geocoding.subelement;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 

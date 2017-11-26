@@ -38,18 +38,19 @@ public class GoogleGeocodingQuery extends Query<GooglePlaceDto, GoogleConfigurat
 
     @Override
     protected GooglePlaceDto map(JSONObject object) {
-        JSONArray array = object.getJSONArray("results");
         List<GooglePlaceDto> list = new ArrayList<>();
         ObjectMapper mapper = new ObjectMapper();
-        for (int n = 0; n < array.length(); n++) {
-            JSONObject placeJson = array.getJSONObject(n);
-            try {
+        try {
+            JSONArray array = object.getJSONArray("results");
+            for (int n = 0; n < array.length(); n++) {
+                JSONObject placeJson = array.getJSONObject(n);
                 GooglePlaceDto mapped = mapper.readValue(placeJson.toString(), GooglePlaceDto.class);
                 list.add(mapped);
-            } catch (IOException e) {
-                e.printStackTrace();
             }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
+
         return list.size() > 0 ? list.get(0) : null;
     }
 }

@@ -8,6 +8,7 @@ import com.navimee.places.googleGeocoding.enums.GeoType;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Future;
 
 import static com.navimee.places.googleGeocoding.GoogleGeoTypeGetter.getType;
 import static java.util.stream.Collectors.toList;
@@ -27,40 +28,49 @@ public class Events {
     }
 
 
-    public static boolean complement(FbEvent event, GooglePlaceDto place, GooglePlaceDto searchPlace) {
+    public static boolean complement(FbEvent event, Future<GooglePlaceDto> placeDto, Future<GooglePlaceDto> searchPlaceDto) {
 
-        // A place from an event is the same as the search place.
-        if (event.getSearchPlace().getId() != null
-                && event.getPlace() != null
-                && event.getPlace().getId() != null
-                && event.getSearchPlace().getId().equals(event.getPlace().getId())) {
+        try {
+            GooglePlaceDto searchPlace = searchPlaceDto.get();
+            GooglePlaceDto place = placeDto.get();
 
-            event.setPlace(event.getSearchPlace());
+            // A place from an event is the same as the search place.
+            if (event.getPlace() != null
+                    && event.getPlace().getId() != null
+                    && event.getSearchPlace().getId().equals(event.getPlace().getId())) {
 
-            if (searchPlace != null
-                    && event.getPlace().getAddress() == null
-                    || (event.getPlace().getAddress() != null && event.getPlace().getAddress().isEmpty())) {
+                event.setPlace(event.getSearchPlace());
 
-                event.getPlace().setCity(getType(searchPlace, GeoType.administrative_area_level_1));
-                event.getPlace().setAddress(getType(searchPlace, GeoType.route) + " " + getType(searchPlace, GeoType.street_number));
+                if (searchPlace != null
+                        && event.getPlace().getAddress() == null
+                        || (event.getPlace().getAddress() != null && event.getPlace().getAddress().isEmpty())) {
+
+                    event.getPlace().setCity(getType(searchPlace, GeoType.administrative_area_level_1));
+                    event.getPlace().setAddress(getType(searchPlace, GeoType.route) + " " + getType(searchPlace, GeoType.street_number));
+                }
+
+                return true;
+            }
+
+            // Ignore all places which do not have a lat and lon.
+            if (place == null)
+                return false;
+
+            // A place is somewhere near to a searchPlace -> look at the similar function() the epsilon is equal 0.5
+            if (similar(event.getSearchPlace().getLat(), place.geometry.lat) && similar(event.getSearchPlace().getLon(), place.geometry.lon)) {
+                event.getPlace().setCity(getType(place, GeoType.administrative_area_level_1));
+                event.getPlace().setAddress(getType(place, GeoType.route) + " " + getType(place, GeoType.street_number));
+                event.getPlace().setLat(place.geometry.lat);
+                event.getPlace().setLon(place.geometry.lon);
             }
 
             return true;
+
+        } catch (Exception e) {
+            e.printStackTrace();
         }
 
-        // Ignore all places which do not have a lat and lon.
-        if (place == null)
-            return false;
-
-        // A place is somewhere near to a searchPlace -> look at the similar function() the epsilon is equal 0.5
-        if (similar(event.getSearchPlace().getLat(), place.geometry.lat) && similar(event.getSearchPlace().getLon(), place.geometry.lon)) {
-            event.getPlace().setCity(getType(place, GeoType.administrative_area_level_1));
-            event.getPlace().setAddress(getType(place, GeoType.route) + " " + getType(place, GeoType.street_number));
-            event.getPlace().setLat(place.geometry.lat);
-            event.getPlace().setLon(place.geometry.lon);
-        }
-
-        return true;
+        return false;
     }
 
     private static boolean similar(double a, double b) {
