@@ -1,4 +1,4 @@
-package com.navimee.firestore.operations;
+package com.navimee.firestore.operations.enums;
 
 public enum AdditionEnum {
     OVERWRITE,

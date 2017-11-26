@@ -8,7 +8,7 @@ import java.util.concurrent.Future;
 
 import static com.navimee.asyncCollectors.CompletionCollector.waitForSingle;
 
-public class Delete {
+public class Delete extends BaseOperation {
 
     public static void collection(CollectionReference collection) {
         int batchSize = 1000;

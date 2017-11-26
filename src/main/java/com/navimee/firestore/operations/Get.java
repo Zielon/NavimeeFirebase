@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public class Get {
+public class Get extends BaseOperation {
 
     public static <T> List<T> fromDocument(DocumentReference documentReference, Class<T> type) {
         List<T> output = new ArrayList<>();

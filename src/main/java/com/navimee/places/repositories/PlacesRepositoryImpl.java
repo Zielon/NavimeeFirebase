@@ -4,7 +4,7 @@ import com.google.cloud.firestore.Firestore;
 import com.navimee.contracts.repositories.palces.PlacesRepository;
 import com.navimee.firestore.Database;
 import com.navimee.firestore.operations.Add;
-import com.navimee.firestore.operations.AdditionEnum;
+import com.navimee.firestore.operations.enums.AdditionEnum;
 import com.navimee.firestore.operations.Delete;
 import com.navimee.firestore.operations.Get;
 import com.navimee.models.entities.general.City;
@@ -19,7 +19,6 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
 import static com.navimee.enums.CollectionEnum.*;

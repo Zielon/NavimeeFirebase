@@ -3,9 +3,11 @@ package com.navimee.firestore.operations;
 import com.google.cloud.firestore.CollectionReference;
 import com.google.cloud.firestore.SetOptions;
 import com.google.cloud.firestore.WriteResult;
+import com.navimee.firestore.operations.enums.AdditionEnum;
 import com.navimee.models.entities.Entity;
 
 import java.util.*;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.function.Function;
@@ -14,7 +16,7 @@ import java.util.stream.Collectors;
 import static com.navimee.asyncCollectors.CompletionCollector.waitForSingle;
 import static com.navimee.linq.Distinct.distinctByKey;
 
-public class Add {
+public class Add extends BaseOperation {
 
     public static <T extends Entity> Future toCollection(CollectionReference collectionReference, List<T> entities) {
         Map<String, T> entityMap = entities.stream().filter(distinctByKey(Entity::getId)).collect(Collectors.toMap(Entity::getId, Function.identity()));
@@ -38,7 +40,7 @@ public class Add {
     }
 
     public static <T extends Entity> Future toCollection(CollectionReference collectionReference, Map<String, T> entities, AdditionEnum options) {
-        return Executors.newSingleThreadExecutor().submit(() -> {
+        return executorService.submit(() -> {
             if (entities.size() == 0) return;
             try {
                 List<Future<WriteResult>> tasks = new ArrayList<>();
@@ -58,5 +60,4 @@ public class Add {
             }
         });
     }
-
 }
