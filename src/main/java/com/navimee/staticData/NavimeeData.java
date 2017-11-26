@@ -1,4 +1,4 @@
-package com.navimee.mockups;
+package com.navimee.staticData;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -11,13 +11,12 @@ import org.springframework.core.io.Resource;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.text.SimpleDateFormat;
 import java.util.*;
 
 public class NavimeeData {
 
-    private JSONObject getJsonObject(Mocks mocks) {
-        Resource seleted = mocks == Mocks.Cities ? new ClassPathResource("navimeeData/availableCities.json")
+    private JSONObject getJsonObject(StaticDataEnum mocks) {
+        Resource seleted = mocks == StaticDataEnum.Cities ? new ClassPathResource("navimeeData/availableCities.json")
                 : new ClassPathResource("navimeeData/coordinates.json");
         BufferedReader streamReader = null;
         try {
@@ -38,7 +37,7 @@ public class NavimeeData {
     }
 
     public List<City> getCities() {
-        JSONObject object = getJsonObject(Mocks.Cities);
+        JSONObject object = getJsonObject(StaticDataEnum.Cities);
         ObjectMapper mapper = new ObjectMapper();
         List<City> cities = new ArrayList<>();
         object.keySet().stream().forEach(e -> {
@@ -55,7 +54,7 @@ public class NavimeeData {
     }
 
     public Map<String, List<Coordinate>> getCoordinates() {
-        JSONObject object = getJsonObject(Mocks.Coordinates);
+        JSONObject object = getJsonObject(StaticDataEnum.Coordinates);
         Map<String, List<Coordinate>> coordinates = new HashMap<>();
         ObjectMapper mapper = new ObjectMapper();
         object.keySet().stream().forEach(city -> {

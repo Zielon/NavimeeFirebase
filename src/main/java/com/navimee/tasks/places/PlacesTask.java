@@ -2,11 +2,10 @@ package com.navimee.tasks.places;
 
 import com.navimee.contracts.repositories.palces.PlacesRepository;
 import com.navimee.contracts.services.places.PlacesService;
-import com.navimee.mockups.NavimeeData;
+import com.navimee.staticData.NavimeeData;
 import com.navimee.models.entities.general.City;
 import com.navimee.models.entities.general.Coordinate;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
