@@ -4,6 +4,8 @@ import com.navimee.models.entities.places.Place;
 
 public class FsPlace extends Place {
     private String facebook;
+    private double lat;
+    private double lon;
 
     public String getFacebook() {
         return facebook;
@@ -11,5 +13,21 @@ public class FsPlace extends Place {
 
     public void setFacebook(String facebook) {
         this.facebook = facebook;
+    }
+
+    public double getLat() {
+        return lat;
+    }
+
+    public void setLat(double lat) {
+        this.lat = lat;
+    }
+
+    public double getLon() {
+        return lon;
+    }
+
+    public void setLon(double lon) {
+        this.lon = lon;
     }
 }

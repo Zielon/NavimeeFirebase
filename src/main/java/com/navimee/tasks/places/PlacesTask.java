@@ -13,10 +13,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 import static com.navimee.firestore.Paths.FACEBOOK_PLACES_COLLECTION;
-import static com.navimee.firestore.Paths.FOURSQUARE_PLACES_COLLECTION;
 
 @Component
 public class PlacesTask {
@@ -48,11 +46,10 @@ public class PlacesTask {
         // placesRepository.setAvailableCities(cities).get();
 
         placesRepository.getAvailableCities().forEach(city -> {
-              //if (city.getName().equals("SOPOT"))
-                    executorService.submit(() -> {
+                    //if (city.getName().equals("SOPOT")){
                         placesService.saveFoursquarePlaces(city.getName());
                         placesService.saveFacebookPlaces(city.getName());
-                    });
+                    //};
                 }
         );
     }

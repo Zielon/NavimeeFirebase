@@ -1,12 +1,12 @@
 package com.navimee.events.queries.params;
 
-import com.navimee.models.entities.places.Place;
+import com.navimee.models.entities.places.facebook.FbPlace;
 import com.navimee.queries.QueryParams;
 
 public class EventsParams implements QueryParams {
-    public Place place;
+    public FbPlace place;
 
-    public EventsParams(Place place) {
+    public EventsParams(FbPlace place) {
         this.place = place;
     }
 }

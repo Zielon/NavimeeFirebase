@@ -9,7 +9,6 @@ import org.springframework.stereotype.Component;
 
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 
 @Component
@@ -25,11 +24,11 @@ public class EventsTask {
     ExecutorService executorService;
 
     // Once per 1 hour.
-    //@Scheduled(cron = "0 0 0/1 * * ?")
     //@Scheduled(fixedRate = 1000 * 60 * 60)
+    @Scheduled(cron = "0 0 0/1 * * ?")
     public void addEventsTask() throws ExecutionException, InterruptedException {
         placesRepository.getAvailableCities().forEach(city -> {
-           // if (city.getName().equals("SOPOT"))
+            //if (city.getName().equals("SOPOT"))
             executorService.submit(() -> eventsService.saveFacebookEvents(city.getName()));
         });
     }

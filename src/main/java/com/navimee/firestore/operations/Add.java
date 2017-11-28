@@ -7,16 +7,14 @@ import com.navimee.firestore.operations.enums.AdditionEnum;
 import com.navimee.models.entities.Entity;
 
 import java.util.*;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import static com.navimee.asyncCollectors.CompletionCollector.waitForSingle;
+import static com.navimee.asyncCollectors.CompletionCollector.waitForSingleFuture;
 import static com.navimee.linq.Distinct.distinctByKey;
 
-public class Add extends BaseOperation {
+public class Add extends Base {
 
     public static <T extends Entity> Future toCollection(CollectionReference collectionReference, List<T> entities) {
         Map<String, T> entityMap = entities.stream().filter(distinctByKey(Entity::getId)).collect(Collectors.toMap(Entity::getId, Function.identity()));
@@ -51,7 +49,7 @@ public class Add extends BaseOperation {
                         tasks.add(collectionReference.document(entry.getKey()).set(entry.getValue()));
 
                 // Wait for all tasks to finish.
-                waitForSingle(tasks);
+                waitForSingleFuture(executorService, tasks);
 
                 String LOG = String.format("ENTITIES %d ADDED TO -> %s | %s", entities.size(), collectionReference.getPath().toUpperCase(), new Date());
                 System.out.println(LOG);

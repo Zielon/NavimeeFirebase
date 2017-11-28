@@ -3,28 +3,27 @@ package com.navimee.events.services;
 import com.navimee.configuration.specific.FacebookConfiguration;
 import com.navimee.contracts.repositories.events.EventsRepository;
 import com.navimee.contracts.repositories.palces.PlacesRepository;
+import com.navimee.contracts.services.HttpClient;
 import com.navimee.contracts.services.events.EventsService;
 import com.navimee.contracts.services.places.PlacesService;
+import com.navimee.events.Events;
 import com.navimee.events.queries.FacebookEventsQuery;
 import com.navimee.events.queries.params.EventsParams;
 import com.navimee.models.dto.events.FbEventDto;
-import com.navimee.models.dto.geocoding.GooglePlaceDto;
 import com.navimee.models.entities.events.FbEvent;
-import com.navimee.models.entities.general.Coordinate;
 import com.navimee.models.entities.places.facebook.FbPlace;
+import com.navimee.services.HttpClientImpl;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
-import java.util.function.Function;
 
-import static com.navimee.asyncCollectors.CompletionCollector.waitForMany;
-import static com.navimee.events.Events.complement;
+import static com.navimee.asyncCollectors.CompletionCollector.waitForTasks;
 import static com.navimee.linq.Distinct.distinctByKey;
 import static java.util.stream.Collectors.toList;
 
@@ -49,36 +48,30 @@ public class EventsServiceImpl implements EventsService {
     @Autowired
     ExecutorService executorService;
 
+    // Starts a new connection with the Facebook api.
+    HttpClient httpClient;
+
+    public EventsServiceImpl() {
+        httpClient = new HttpClientImpl();
+    }
+
     @Override
     public Future saveFacebookEvents(String city) {
 
         List<FbPlace> places = placesRepository.getFacebookPlaces(city);
 
         // Get data from the external facebook API
-        List<Future<List<FbEventDto>>> events = new ArrayList<>();
-        places.forEach(place -> events.add(new FacebookEventsQuery(facebookConfiguration, executorService).execute(new EventsParams(place))));
+        List<Callable<List<FbEventDto>>> events = new ArrayList<>();
+        FacebookEventsQuery query = new FacebookEventsQuery(facebookConfiguration, executorService, httpClient);
+        places.forEach(place -> events.add(query.execute(new EventsParams(place))));
 
-        Function<FbEvent, Boolean> complement = event -> {
-
-            if (event.getPlace() == null) return false;
-
-            Future<GooglePlaceDto> place = placesService.
-                    downloadReverseGeocoding(new Coordinate(event.getPlace().getLat(), event.getPlace().getLon()));
-
-            Future<GooglePlaceDto> searchPlace = placesService.
-                    downloadReverseGeocoding(new Coordinate(event.getSearchPlace().getLat(), event.getSearchPlace().getLon()));
-
-            return complement(event, place, searchPlace);
-        };
-
-        List<FbEvent> entities = waitForMany(events)
+        List<FbEvent> entities = waitForTasks(executorService, events)
                 .parallelStream()
                 .map(dto -> modelMapper.map(dto, FbEvent.class))
                 .filter(distinctByKey(FbEvent::getId))
-                .filter(complement::apply)    // Complement event places
+                .filter(Events.getCompelmentFunction(placesService)::apply)    // Complement event places
                 .collect(toList());
 
-        // Save data
         return eventsRepository.setEvents(entities, city);
     }
 }

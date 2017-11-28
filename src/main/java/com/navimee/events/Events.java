@@ -1,14 +1,39 @@
 package com.navimee.events;
 
+import com.google.cloud.firestore.GeoPoint;
+import com.navimee.contracts.services.places.PlacesService;
 import com.navimee.models.dto.geocoding.GooglePlaceDto;
 import com.navimee.models.entities.events.FbEvent;
+import com.navimee.models.entities.general.Coordinate;
 import com.navimee.places.googleGeocoding.enums.GeoType;
 
 import java.util.concurrent.Future;
+import java.util.function.Function;
 
 import static com.navimee.places.googleGeocoding.GoogleGeoTypeGetter.getType;
 
 public class Events {
+
+    public static Function<FbEvent, Boolean> getCompelmentFunction(PlacesService service) {
+        PlacesService placesService = service;
+        return event -> {
+
+            if (event.getPlace() == null || event.getPlace().getGeoPoint() == null) return false;
+            if (event.getSearchPlace() == null || event.getSearchPlace().getGeoPoint() == null) return false;
+
+            Future<GooglePlaceDto> place = placesService.
+                    downloadReverseGeocoding(new Coordinate(
+                            event.getPlace().getGeoPoint().getLatitude(),
+                            event.getPlace().getGeoPoint().getLongitude()));
+
+            Future<GooglePlaceDto> searchPlace = placesService.
+                    downloadReverseGeocoding(new Coordinate(
+                            event.getSearchPlace().getGeoPoint().getLatitude(),
+                            event.getSearchPlace().getGeoPoint().getLongitude()));
+
+            return complement(event, place, searchPlace);
+        };
+    }
 
     public static boolean complement(FbEvent event, Future<GooglePlaceDto> placeDto, Future<GooglePlaceDto> searchPlaceDto) {
 
@@ -39,11 +64,10 @@ public class Events {
                 return false;
 
             // A place is somewhere near to a searchPlace -> look at the similar function() the epsilon is equal 0.5
-            if (similar(event.getSearchPlace().getLat(), place.geometry.lat) && similar(event.getSearchPlace().getLon(), place.geometry.lon)) {
+            if (similar(event.getSearchPlace().getGeoPoint().getLatitude(), place.geometry.lat) && similar(event.getSearchPlace().getGeoPoint().getLongitude(), place.geometry.lon)) {
                 event.getPlace().setCity(getType(place, GeoType.administrative_area_level_1));
                 event.getPlace().setAddress(getType(place, GeoType.route) + " " + getType(place, GeoType.street_number));
-                event.getPlace().setLat(place.geometry.lat);
-                event.getPlace().setLon(place.geometry.lon);
+                event.getPlace().setGeoPoint(new GeoPoint(place.geometry.lat, place.geometry.lon));
             }
 
             return true;

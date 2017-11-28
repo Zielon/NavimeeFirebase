@@ -1,26 +1,26 @@
 package com.navimee.queries;
 
-import com.mashape.unirest.http.HttpResponse;
-import com.mashape.unirest.http.JsonNode;
 import com.navimee.configuration.Configuration;
+import com.navimee.contracts.services.HttpClient;
 import org.json.JSONObject;
 
+import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.ForkJoinTask;
-import java.util.concurrent.Future;
+import java.util.function.Consumer;
 
 public abstract class Query<T, C extends Configuration, P extends QueryParams> {
 
     protected C configuration;
-
     protected ExecutorService executorService;
+    protected HttpClient httpClient;
 
-    public Query(C configuration, ExecutorService executorService) {
+    public Query(C configuration, ExecutorService executorService, HttpClient httpClient) {
         this.configuration = configuration;
         this.executorService = executorService;
+        this.httpClient = httpClient;
     }
 
-    public abstract Future<T> execute(P params);
+    public abstract Callable<T> execute(P params);
 
-    protected abstract T map(Future<HttpResponse<JsonNode>> object);
+    protected abstract T map(Callable<JSONObject> object, Consumer<T> consumer);
 }

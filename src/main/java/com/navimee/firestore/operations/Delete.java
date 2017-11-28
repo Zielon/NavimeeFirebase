@@ -6,9 +6,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Future;
 
-import static com.navimee.asyncCollectors.CompletionCollector.waitForSingle;
+import static com.navimee.asyncCollectors.CompletionCollector.waitForSingleFuture;
 
-public class Delete extends BaseOperation {
+public class Delete extends Base {
 
     public static void collection(CollectionReference collection) {
         int batchSize = 1000;
@@ -25,7 +25,7 @@ public class Delete extends BaseOperation {
             }
 
             // Wait for all tasks to finish.
-            waitForSingle(tasks);
+            waitForSingleFuture(executorService, tasks);
 
             if (deleted >= batchSize) {
                 collection(collection);

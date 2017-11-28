@@ -5,7 +5,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.navimee.models.dto.Dto;
 import com.navimee.models.dto.places.facebook.FbPlaceDto;
-import com.navimee.models.entities.places.Place;
+import com.navimee.models.entities.places.facebook.FbPlace;
 
 import java.util.Date;
 
@@ -31,7 +31,7 @@ public class FbEventDto implements Dto {
 
     // REMEMBER THE SEARCH PLACE
     @JsonIgnore
-    private Place searchPlace;
+    private FbPlace searchPlace;
 
     public String getName() {
         return name;
@@ -105,11 +105,11 @@ public class FbEventDto implements Dto {
         this.maybeCount = maybeCount;
     }
 
-    public Place getSearchPlace() {
+    public FbPlace getSearchPlace() {
         return searchPlace;
     }
 
-    public void setSearchPlace(Place searchPlace) {
+    public void setSearchPlace(FbPlace searchPlace) {
         this.searchPlace = searchPlace;
     }
 }

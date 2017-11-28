@@ -2,41 +2,41 @@ package com.navimee.events.queries;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.joda.JodaModule;
-import com.mashape.unirest.http.HttpResponse;
-import com.mashape.unirest.http.JsonNode;
-import com.mashape.unirest.http.Unirest;
 import com.navimee.configuration.specific.FacebookConfiguration;
+import com.navimee.contracts.services.HttpClient;
 import com.navimee.events.queries.params.EventsParams;
 import com.navimee.models.dto.events.FbEventDto;
-import com.navimee.models.entities.places.Place;
 import com.navimee.queries.Query;
+import org.apache.http.client.utils.URIBuilder;
 import org.joda.time.DateTimeZone;
 import org.joda.time.LocalDateTime;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.StringJoiner;
+import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Future;
-import java.util.stream.Collectors;
+import java.util.function.Consumer;
+
+import static java.util.stream.Collectors.toList;
 
 public class FacebookEventsQuery extends Query<List<FbEventDto>, FacebookConfiguration, EventsParams> {
 
-    private Place searchPlace;
-
-    public FacebookEventsQuery(FacebookConfiguration configuration, ExecutorService executorService) {
-        super(configuration, executorService);
+    public FacebookEventsQuery(FacebookConfiguration configuration,
+                               ExecutorService executorService,
+                               HttpClient httpClient) {
+        super(configuration, executorService, httpClient);
     }
 
     @Override
-    public Future<List<FbEventDto>> execute(EventsParams params) {
+    public Callable<List<FbEventDto>> execute(EventsParams params) {
 
         StringJoiner joiner = new StringJoiner(",");
-        searchPlace = params.place;
-
         joiner.add("place.fields(id,name,location)");
         joiner.add("id");
         joiner.add("name");
@@ -48,37 +48,49 @@ public class FacebookEventsQuery extends Query<List<FbEventDto>, FacebookConfigu
         joiner.add("maybe_count");
         joiner.add("picture.type(large)");
 
-        DateTimeZone zone = DateTimeZone.forID("Europe/Warsaw");
-        LocalDateTime warsawCurrent = LocalDateTime.now(zone);
+        LocalDateTime warsawCurrent = LocalDateTime.now(DateTimeZone.forID("Europe/Warsaw"));
         LocalDateTime warsawLater = warsawCurrent.plusDays(14);
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 
-        Future<HttpResponse<JsonNode>> response =
-                Unirest.get(configuration.apiUrl)
-                        .queryString("id", searchPlace.getId())
-                        .queryString("fields", String.format("name,category,events.fields(%s).since(%s).until(%s)",
-                                joiner.toString(),
-                                sdf.format(warsawCurrent.toDate()),
-                                sdf.format(warsawLater.toDate())))
-                        .queryString("access_token", configuration.accessToken)
-                        .asJsonAsync();
+        String fields =
+                String.format("name,category,events.fields(%s).since(%s).until(%s)",
+                        joiner.toString(),
+                        sdf.format(warsawCurrent.toDate()),
+                        sdf.format(warsawLater.toDate()));
 
-        return executorService.submit(() -> map(response));
-    }
+        URI uri = null;
 
-    @Override
-    protected List<FbEventDto> map(Future<HttpResponse<JsonNode>> future) {
-        List<FbEventDto> events = new ArrayList<>();
-        try{
-            JSONObject object = future.get().getBody().getObject();
-            if (!object.has("events")) return events;
-            JSONObject obj = object.getJSONObject("events");
-            events.addAll(convertNode(obj.getJSONArray("data")));
-        }catch (Exception e){
+        try {
+            URIBuilder builder = new URIBuilder(configuration.apiUrl);
+            builder.setPath("v2.10");
+            builder.setParameter("id", params.place.getId());
+            builder.setParameter("fields", fields);
+            builder.setParameter("access_token", configuration.accessToken);
+            uri = builder.build();
+        } catch (URISyntaxException e) {
             e.printStackTrace();
         }
 
-        return events.stream().filter(e -> e.getAttendingCount() > 20).collect(Collectors.toList());
+        URI finalUri = uri;
+        return () -> map(httpClient.GET(finalUri), events -> events.forEach(event -> event.setSearchPlace(params.place)));
+    }
+
+    @Override
+    protected List<FbEventDto> map(Callable<JSONObject> task, Consumer<List<FbEventDto>> consumer) {
+        List<FbEventDto> events = new ArrayList<>();
+
+        try {
+            JSONObject object = task.call();
+            if (!object.has("events")) return events;
+            JSONObject obj = object.getJSONObject("events");
+            events.addAll(convertNode(obj.getJSONArray("data")));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        consumer.accept(events);
+
+        return events.stream().filter(e -> e.getAttendingCount() > 20).collect(toList());
     }
 
     private List<FbEventDto> convertNode(JSONArray array) {
@@ -89,7 +101,6 @@ public class FacebookEventsQuery extends Query<List<FbEventDto>, FacebookConfigu
             JSONObject eventJson = array.getJSONObject(n);
             try {
                 FbEventDto event = mapper.readValue(eventJson.toString(), FbEventDto.class);
-                event.setSearchPlace(searchPlace);
                 list.add(event);
             } catch (Exception e) {
                 e.printStackTrace();

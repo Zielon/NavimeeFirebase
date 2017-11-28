@@ -1,53 +1,64 @@
 package com.navimee.services;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.mashape.unirest.http.HttpResponse;
-import com.mashape.unirest.http.JsonNode;
-import com.mashape.unirest.http.Unirest;
-import com.navimee.configuration.specific.FirebaseConfiguration;
 import com.navimee.contracts.services.HttpClient;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.DefaultConnectionKeepAliveStrategy;
+import org.apache.http.impl.nio.client.CloseableHttpAsyncClient;
+import org.apache.http.impl.nio.client.HttpAsyncClientBuilder;
+import org.apache.http.impl.nio.client.HttpAsyncClients;
+import org.apache.http.impl.nio.reactor.IOReactorConfig;
+import org.apache.http.util.EntityUtils;
+import org.json.JSONObject;
 
 import java.io.IOException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.net.URI;
+import java.util.concurrent.Callable;
 import java.util.concurrent.Future;
 
-@Service
 public class HttpClientImpl implements HttpClient {
 
-    @Value("${firebase.database-url}")
-    private String databaseUrl;
+    CloseableHttpAsyncClient client;
 
-    @Autowired
-    FirebaseConfiguration firebaseConfiguration;
-
-    @Override
-    public <T> Future<T> getFromFirestore(TypeReference<T> type, String child) {
-
-        ExecutorService executor = Executors.newSingleThreadExecutor();
-
-        Future<HttpResponse<JsonNode>> response = Unirest.get(String.format("%s/{child}{end}", databaseUrl))
-                .header("accept", "application/json")
-                .routeParam("child", child)
-                .routeParam("end", ".json")
-                .queryString("access_token", firebaseConfiguration.accessToken)
-                .asJsonAsync();
-
-        return executor.submit(() -> map(response.get().getBody(), type));
+    public HttpClientImpl(){
+        client = createClient();
     }
 
-    private <T> T map(JsonNode json, TypeReference<T> type) {
-        ObjectMapper mapper = new ObjectMapper();
-        T output = null;
+    @Override
+    public Callable<JSONObject> GET(URI uri) {
+        return () -> {
+            HttpGet request = new HttpGet(uri);
+            Future<HttpResponse> future = client.execute(request, null);
+            HttpEntity entity = future.get().getEntity();
+            String json = EntityUtils.toString(entity, "UTF-16");
+            return new JSONObject(json);
+        };
+    }
+
+    @Override
+    public void close() {
         try {
-            output = mapper.readValue(json.toString(), type);
+            client.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return output;
+    }
+
+    private CloseableHttpAsyncClient createClient() {
+        IOReactorConfig ioReactor = IOReactorConfig.custom().setIoThreadCount(10).build();
+        HttpAsyncClientBuilder httpClientBuilder =
+                HttpAsyncClients.custom()
+                        .setMaxConnTotal(10)
+                        .setMaxConnPerRoute(1000)
+                        .setDefaultIOReactorConfig(ioReactor)
+                        .setKeepAliveStrategy(new DefaultConnectionKeepAliveStrategy());
+
+        CloseableHttpAsyncClient httpClient = httpClientBuilder.build();
+        //CloseableHttpAsyncClient httpClient = HttpAsyncClients.createDefault();
+
+        httpClient.start();
+
+        return httpClient;
     }
 }

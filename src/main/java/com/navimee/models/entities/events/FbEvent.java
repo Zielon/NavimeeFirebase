@@ -1,7 +1,5 @@
 package com.navimee.models.entities.events;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.google.cloud.firestore.annotation.Exclude;
 import com.google.cloud.firestore.annotation.IgnoreExtraProperties;
 import com.navimee.models.entities.Entity;
 import com.navimee.models.entities.places.facebook.FbPlace;
@@ -19,9 +17,6 @@ public class FbEvent implements Entity {
     private long maybeCount;
     private String type;
     private FbPlace place;
-
-    @Exclude
-    @JsonIgnore
     private FbPlace searchPlace;
 
     public String getName() {

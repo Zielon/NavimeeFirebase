@@ -66,7 +66,7 @@ public class Injections {
 
     @Bean
     @Scope("singleton")
-    public ExecutorService providerExecutorService(){
+    public ExecutorService providerExecutorService() {
         return Executors.newWorkStealingPool();
     }
 }

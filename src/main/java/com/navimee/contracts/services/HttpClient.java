@@ -1,11 +1,12 @@
 package com.navimee.contracts.services;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import org.springframework.stereotype.Service;
+import org.json.JSONObject;
 
-import java.util.concurrent.Future;
+import java.net.URI;
+import java.util.concurrent.Callable;
 
-@Service
 public interface HttpClient {
-    <T> Future<T> getFromFirestore(TypeReference<T> type, String path);
+    Callable<JSONObject> GET(URI uri);
+
+    void close();
 }

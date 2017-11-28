@@ -1,70 +1,88 @@
 package com.navimee.places.queries;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.mashape.unirest.http.HttpResponse;
-import com.mashape.unirest.http.JsonNode;
-import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
 import com.navimee.configuration.specific.FacebookConfiguration;
+import com.navimee.contracts.services.HttpClient;
 import com.navimee.models.dto.places.facebook.FbPlaceDto;
 import com.navimee.places.queries.params.PlacesParams;
 import com.navimee.queries.Query;
+import org.apache.http.client.utils.URIBuilder;
 import org.json.JSONArray;
 import org.json.JSONObject;
-import org.springframework.scheduling.annotation.Async;
 
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.*;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.function.Consumer;
 
 public class FacebookPlacesQuery extends Query<List<FbPlaceDto>, FacebookConfiguration, PlacesParams> {
 
-    public FacebookPlacesQuery(FacebookConfiguration configuration, ExecutorService executorService) {
-        super(configuration, executorService);
+    public FacebookPlacesQuery(FacebookConfiguration configuration,
+                               ExecutorService executorService,
+                               HttpClient httpClient) {
+        super(configuration, executorService, httpClient);
     }
 
     @Override
-    public Future<List<FbPlaceDto>> execute(PlacesParams params) {
+    public Callable<List<FbPlaceDto>> execute(PlacesParams params) {
 
-        Future<HttpResponse<JsonNode>> response =
-                Unirest.get(configuration.apiUrl + "/search")
-                        .queryString("q", "*")
-                        .queryString("type", "place")
-                        .queryString("center", params.lat + "," + params.lon)
-                        .queryString("distance", "1000")
-                        .queryString("fields", "name,category,location")
-                        .queryString("limit", "200")
-                        .queryString("access_token", configuration.accessToken)
-                        .asJsonAsync();
+        URI uri = null;
 
-        return executorService.submit(() -> map(response));
+        try {
+            URIBuilder builder = new URIBuilder(configuration.apiUrl);
+            builder.setPath("v2.10/search");
+            builder.setParameter("type", "place");
+            builder.setParameter("center", params.lat + "," + params.lon);
+            builder.setParameter("distance", "1000");
+            builder.setParameter("fields", "name,category,location");
+            builder.setParameter("limit", "500");
+            builder.setParameter("access_token", configuration.accessToken);
+            uri = builder.build();
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+        }
+
+        URI finalUri = uri;
+        return () -> map(httpClient.GET(finalUri), null);
     }
 
     @Override
-    protected List<FbPlaceDto> map(Future<HttpResponse<JsonNode>> future) {
+    protected List<FbPlaceDto> map(Callable<JSONObject> task, Consumer<List<FbPlaceDto>> consumer) {
         List<FbPlaceDto> list = new ArrayList<>();
 
-        try{
-            JSONObject object =  future.get().getBody().getObject();
+        try {
+            JSONObject object = task.call();
             list.addAll(convertNode(object.getJSONArray("data")));
 
             if (!object.has("paging")) return list;
             JSONObject paging = object.getJSONObject("paging");
+
+            if (!paging.has("next")) return list;
             String nextUrl = paging.getString("next");
 
-            while (list.size() < 50000) {
+            // Read all places from paging
+            while (true) {
                 try {
-                    JSONObject nextObj = Unirest.get(nextUrl).asJson().getBody().getObject();
+                    JSONObject nextObj = httpClient.GET(new URI(nextUrl)).call();
                     list.addAll(convertNode(nextObj.getJSONArray("data")));
+
                     if (!nextObj.has("paging")) break;
-                    nextUrl = nextObj.getJSONObject("paging").getString("next");
+                    paging = nextObj.getJSONObject("paging");
+
+                    if (!paging.has("next")) break;
+                    nextUrl = paging.getString("next");
+
                 } catch (UnirestException e) {
                     e.printStackTrace();
                     break;
                 }
             }
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
