@@ -6,7 +6,6 @@ import org.json.JSONObject;
 
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
-import java.util.function.Consumer;
 
 public abstract class Query<T, C extends Configuration, P extends QueryParams> {
 
@@ -22,5 +21,5 @@ public abstract class Query<T, C extends Configuration, P extends QueryParams> {
 
     public abstract Callable<T> execute(P params);
 
-    protected abstract T map(Callable<JSONObject> object, Consumer<T> consumer);
+    protected abstract T map(Callable<JSONObject> object, P params);
 }

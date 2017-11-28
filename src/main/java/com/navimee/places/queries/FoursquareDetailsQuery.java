@@ -17,7 +17,6 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
-import java.util.function.Consumer;
 
 public class FoursquareDetailsQuery extends Query<FsPlaceDetailsDto, FoursquareConfiguration, PlaceDetailsParams> {
 
@@ -48,11 +47,11 @@ public class FoursquareDetailsQuery extends Query<FsPlaceDetailsDto, FoursquareC
         }
 
         URI finalUri = uri;
-        return () -> map(httpClient.GET(finalUri), null);
+        return () -> map(httpClient.GET(finalUri), params);
     }
 
     @Override
-    protected FsPlaceDetailsDto map(Callable<JSONObject> task, Consumer<FsPlaceDetailsDto> consumer) {
+    protected FsPlaceDetailsDto map(Callable<JSONObject> task, PlaceDetailsParams params) {
         ObjectMapper mapper = new ObjectMapper();
         FsPlaceDetailsDto mapped = null;
         try {

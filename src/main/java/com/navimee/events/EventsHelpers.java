@@ -12,7 +12,7 @@ import java.util.function.Function;
 
 import static com.navimee.places.googleGeocoding.GoogleGeoTypeGetter.getType;
 
-public class Events {
+public class EventsHelpers {
 
     public static Function<FbEvent, Boolean> getCompelmentFunction(PlacesService service) {
         PlacesService placesService = service;
@@ -52,7 +52,7 @@ public class Events {
                         && event.getPlace().getAddress() == null
                         || (event.getPlace().getAddress() != null && event.getPlace().getAddress().isEmpty())) {
 
-                    event.getPlace().setCity(getType(searchPlace, GeoType.administrative_area_level_1));
+                    event.getPlace().setCity(getType(searchPlace, GeoType.administrative_area_level_2));
                     event.getPlace().setAddress(getType(searchPlace, GeoType.route) + " " + getType(searchPlace, GeoType.street_number));
                 }
 
@@ -64,13 +64,15 @@ public class Events {
                 return false;
 
             // A place is somewhere near to a searchPlace -> look at the similar function() the epsilon is equal 0.5
-            if (similar(event.getSearchPlace().getGeoPoint().getLatitude(), place.geometry.lat) && similar(event.getSearchPlace().getGeoPoint().getLongitude(), place.geometry.lon)) {
-                event.getPlace().setCity(getType(place, GeoType.administrative_area_level_1));
+            if (similar(event.getSearchPlace().getGeoPoint().getLatitude(), place.geometry.lat)
+                    && similar(event.getSearchPlace().getGeoPoint().getLongitude(), place.geometry.lon)) {
+
+                event.getPlace().setCity(getType(place, GeoType.administrative_area_level_2));
                 event.getPlace().setAddress(getType(place, GeoType.route) + " " + getType(place, GeoType.street_number));
                 event.getPlace().setGeoPoint(new GeoPoint(place.geometry.lat, place.geometry.lon));
-            }
 
-            return true;
+                return true;
+            }
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -80,10 +82,10 @@ public class Events {
     }
 
     private static boolean similar(double a, double b) {
-        return similar(a, b, 0.5);
+        return similar(a, b, 0.25);
     }
 
     private static boolean similar(double a, double b, double epsilon) {
-        return Math.abs(a / b - 1) < epsilon;
+        return Math.abs(a - b) < epsilon;
     }
 }

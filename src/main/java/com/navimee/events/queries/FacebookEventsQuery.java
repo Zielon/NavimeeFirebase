@@ -6,22 +6,25 @@ import com.navimee.configuration.specific.FacebookConfiguration;
 import com.navimee.contracts.services.HttpClient;
 import com.navimee.events.queries.params.EventsParams;
 import com.navimee.models.dto.events.FbEventDto;
+import com.navimee.models.entities.places.Place;
+import com.navimee.models.entities.places.facebook.FbPlace;
 import com.navimee.queries.Query;
 import org.apache.http.client.utils.URIBuilder;
 import org.joda.time.DateTimeZone;
 import org.joda.time.LocalDateTime;
+import org.joda.time.format.DateTimeFormatter;
+import org.joda.time.format.ISODateTimeFormat;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.StringJoiner;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
-import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toList;
 
@@ -48,22 +51,21 @@ public class FacebookEventsQuery extends Query<List<FbEventDto>, FacebookConfigu
         joiner.add("maybe_count");
         joiner.add("picture.type(large)");
 
-        LocalDateTime warsawCurrent = LocalDateTime.now(DateTimeZone.forID("Europe/Warsaw"));
+        LocalDateTime warsawCurrent = LocalDateTime.now(DateTimeZone.forID("GMT"));
         LocalDateTime warsawLater = warsawCurrent.plusDays(14);
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        DateTimeFormatter dtf = ISODateTimeFormat.dateTime();
 
         String fields =
                 String.format("name,category,events.fields(%s).since(%s).until(%s)",
                         joiner.toString(),
-                        sdf.format(warsawCurrent.toDate()),
-                        sdf.format(warsawLater.toDate()));
+                        dtf.print(warsawCurrent),
+                        dtf.print(warsawLater));
 
         URI uri = null;
-
+        String ids = params.places.stream().map(Place::getId).collect(Collectors.joining(","));
         try {
             URIBuilder builder = new URIBuilder(configuration.apiUrl);
-            builder.setPath("v2.10");
-            builder.setParameter("id", params.place.getId());
+            builder.setParameter("ids", ids);
             builder.setParameter("fields", fields);
             builder.setParameter("access_token", configuration.accessToken);
             uri = builder.build();
@@ -72,27 +74,31 @@ public class FacebookEventsQuery extends Query<List<FbEventDto>, FacebookConfigu
         }
 
         URI finalUri = uri;
-        return () -> map(httpClient.GET(finalUri), events -> events.forEach(event -> event.setSearchPlace(params.place)));
+        return () -> map(httpClient.GET(finalUri), params);
     }
 
     @Override
-    protected List<FbEventDto> map(Callable<JSONObject> task, Consumer<List<FbEventDto>> consumer) {
+    protected List<FbEventDto> map(Callable<JSONObject> task, EventsParams params) {
         List<FbEventDto> events = new ArrayList<>();
 
         try {
             JSONObject object = task.call();
-            if (!object.has("events")) return events;
-            JSONObject obj = object.getJSONObject("events");
-            events.addAll(convertNode(obj.getJSONArray("data")));
+            for (Object key : object.keySet()) {
+                JSONObject event = object.getJSONObject(key.toString());
+                if (!event.has("events")) continue;
+                List<FbEventDto> dto = convertNode(event.getJSONObject("events").getJSONArray("data"));
+                FbPlace searchPlace = params.places.stream().filter(p -> p.getId().equals(key.toString())).findFirst().get();
+                dto.forEach(d -> d.setSearchPlace(searchPlace));
+                events.addAll(dto);
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
 
-        consumer.accept(events);
-
-        return events.stream().filter(e -> e.getAttendingCount() > 20).collect(toList());
+        return events.stream().filter(e -> e.getAttendingCount() > 100).collect(toList());
     }
 
+    // Helper method
     private List<FbEventDto> convertNode(JSONArray array) {
         List<FbEventDto> list = new ArrayList<>();
         ObjectMapper mapper = new ObjectMapper();

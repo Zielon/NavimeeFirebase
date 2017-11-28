@@ -6,7 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
 
 @Component
 public class DetailsTask {
@@ -16,9 +15,6 @@ public class DetailsTask {
 
     @Autowired
     PlacesService placesService;
-
-    @Autowired
-    ExecutorService executorService;
 
     //@Scheduled(fixedRate = 1000 * 60 * 60)
     public void addDetailsTask() throws ExecutionException, InterruptedException {

@@ -6,9 +6,10 @@ import com.navimee.contracts.repositories.palces.PlacesRepository;
 import com.navimee.contracts.services.HttpClient;
 import com.navimee.contracts.services.events.EventsService;
 import com.navimee.contracts.services.places.PlacesService;
-import com.navimee.events.Events;
+import com.navimee.events.EventsHelpers;
 import com.navimee.events.queries.FacebookEventsQuery;
 import com.navimee.events.queries.params.EventsParams;
+import com.navimee.general.Collections;
 import com.navimee.models.dto.events.FbEventDto;
 import com.navimee.models.entities.events.FbEvent;
 import com.navimee.models.entities.places.facebook.FbPlace;
@@ -57,21 +58,22 @@ public class EventsServiceImpl implements EventsService {
 
     @Override
     public Future saveFacebookEvents(String city) {
+        return executorService.submit(() -> {
+            List<FbPlace> fbPlaces = placesRepository.getFacebookPlaces(city);
 
-        List<FbPlace> places = placesRepository.getFacebookPlaces(city);
+            // Get data from the external facebook API
+            List<Callable<List<FbEventDto>>> events = new ArrayList<>();
+            FacebookEventsQuery query = new FacebookEventsQuery(facebookConfiguration, executorService, httpClient);
+            Collections.spliter(fbPlaces, 50).forEach(places -> events.add(query.execute(new EventsParams(places))));
 
-        // Get data from the external facebook API
-        List<Callable<List<FbEventDto>>> events = new ArrayList<>();
-        FacebookEventsQuery query = new FacebookEventsQuery(facebookConfiguration, executorService, httpClient);
-        places.forEach(place -> events.add(query.execute(new EventsParams(place))));
+            List<FbEvent> entities = waitForTasks(executorService, events)
+                    .parallelStream()
+                    .map(dto -> modelMapper.map(dto, FbEvent.class))
+                    .filter(distinctByKey(FbEvent::getId))
+                    .filter(EventsHelpers.getCompelmentFunction(placesService)::apply)    // Complement event places
+                    .collect(toList());
 
-        List<FbEvent> entities = waitForTasks(executorService, events)
-                .parallelStream()
-                .map(dto -> modelMapper.map(dto, FbEvent.class))
-                .filter(distinctByKey(FbEvent::getId))
-                .filter(Events.getCompelmentFunction(placesService)::apply)    // Complement event places
-                .collect(toList());
-
-        return eventsRepository.setEvents(entities, city);
+            eventsRepository.setEvents(entities, city);
+        });
     }
 }

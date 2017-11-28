@@ -20,7 +20,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
-import java.util.function.Consumer;
 
 public class FoursquarePlacesQuery extends Query<List<FsPlaceDto>, FoursquareConfiguration, PlaceDetailsParams> {
 
@@ -51,11 +50,11 @@ public class FoursquarePlacesQuery extends Query<List<FsPlaceDto>, FoursquareCon
         }
 
         URI finalUri = uri;
-        return () -> map(httpClient.GET(finalUri), null);
+        return () -> map(httpClient.GET(finalUri), params);
     }
 
     @Override
-    protected List<FsPlaceDto> map(Callable<JSONObject> task, Consumer<List<FsPlaceDto>> consumer) {
+    protected List<FsPlaceDto> map(Callable<JSONObject> task, PlaceDetailsParams params) {
         List<FsPlaceDto> list = new ArrayList<>();
         ObjectMapper mapper = new ObjectMapper();
         try {

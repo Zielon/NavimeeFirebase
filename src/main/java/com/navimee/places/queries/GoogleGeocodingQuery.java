@@ -16,7 +16,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
-import java.util.function.Consumer;
 
 public class GoogleGeocodingQuery extends Query<GooglePlaceDto, GoogleConfiguration, PlacesParams> {
 
@@ -41,11 +40,11 @@ public class GoogleGeocodingQuery extends Query<GooglePlaceDto, GoogleConfigurat
         }
 
         URI finalUri = uri;
-        return () -> map(httpClient.GET(finalUri), null);
+        return () -> map(httpClient.GET(finalUri), params);
     }
 
     @Override
-    protected GooglePlaceDto map(Callable<JSONObject> task, Consumer<GooglePlaceDto> consumer) {
+    protected GooglePlaceDto map(Callable<JSONObject> task, PlacesParams params) {
         List<GooglePlaceDto> list = new ArrayList<>();
         ObjectMapper mapper = new ObjectMapper();
         try {

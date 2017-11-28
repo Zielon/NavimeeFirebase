@@ -59,13 +59,13 @@ public class PlacesServiceImpl implements PlacesService {
     @Autowired
     ExecutorService executorService;
 
-    // Starts a new connection with the Facebook api.
+    // Starts a new client for the Facebook api.
     HttpClient httpClientFacebook;
 
-    // Starts a new connection with the Foursquare api.
+    // Starts a new client for the Foursquare api.
     HttpClient httpClientFoursquare;
 
-    // Starts a new connection with the Foursquare api.
+    // Starts a new client for the Google api.
     HttpClient httpClientGoogle;
 
     public PlacesServiceImpl() {
@@ -77,71 +77,77 @@ public class PlacesServiceImpl implements PlacesService {
     @Override
     public Future saveFacebookPlaces(String city) {
 
-        List<Coordinate> coordinates = placesRepository.getCoordinates(city);
+        return executorService.submit(() -> {
+            List<Coordinate> coordinates = placesRepository.getCoordinates(city);
 
-        // Get data from the external facebook API
-        FacebookPlacesQuery facebookPlacesQuery =
-                new FacebookPlacesQuery(facebookConfiguration, executorService, httpClientFacebook);
+            // Get data from the external facebook API
+            FacebookPlacesQuery facebookPlacesQuery =
+                    new FacebookPlacesQuery(facebookConfiguration, executorService, httpClientFacebook);
 
-        List<Callable<List<FbPlaceDto>>> tasks =
-                coordinates.stream()
-                        .map(c -> facebookPlacesQuery.execute(new PlacesParams(c.getLatitude(), c.getLongitude())))
-                        .collect(Collectors.toList());
+            List<Callable<List<FbPlaceDto>>> tasks =
+                    coordinates.stream()
+                            .map(c -> facebookPlacesQuery.execute(new PlacesParams(c.getLatitude(), c.getLongitude())))
+                            .collect(Collectors.toList());
 
-        List<Place> entities = waitForTasks(executorService, tasks)
-                .stream()
-                .map(dto -> modelMapper.map(dto, FbPlace.class))
-                .filter(distinctByKey(Place::getId))
-                .collect(Collectors.toList());
+            List<Place> entities = waitForTasks(executorService, tasks)
+                    .stream()
+                    .map(dto -> modelMapper.map(dto, FbPlace.class))
+                    .filter(distinctByKey(Place::getId))
+                    .collect(Collectors.toList());
 
-        return placesRepository.setFacebookPlaces(entities, city);
+            placesRepository.setFacebookPlaces(entities, city);
+        });
     }
 
     @Override
     public Future saveFoursquarePlaces(String city) {
 
-        List<Coordinate> coordinates = placesRepository.getCoordinates(city);
+        return executorService.submit(() -> {
+            List<Coordinate> coordinates = placesRepository.getCoordinates(city);
 
-        // Get data from the external foursquare API
-        FoursquarePlacesQuery foursquarePlacesQuery =
-                new FoursquarePlacesQuery(foursquareConfiguration, executorService, httpClientFoursquare);
+            // Get data from the external foursquare API
+            FoursquarePlacesQuery foursquarePlacesQuery =
+                    new FoursquarePlacesQuery(foursquareConfiguration, executorService, httpClientFoursquare);
 
-        List<Callable<List<FsPlaceDto>>> tasks =
-                coordinates.stream()
-                        .map(c -> foursquarePlacesQuery.execute(new PlaceDetailsParams(c.getLatitude(), c.getLongitude(), "/venues/search")))
-                        .collect(Collectors.toList());
+            List<Callable<List<FsPlaceDto>>> tasks =
+                    coordinates.stream()
+                            .map(c -> foursquarePlacesQuery.execute(new PlaceDetailsParams(c.getLatitude(), c.getLongitude(), "/venues/search")))
+                            .collect(Collectors.toList());
 
-        List<Place> entities = waitForTasks(executorService, tasks)
-                .stream()
-                .map(dto -> modelMapper.map(dto, FsPlace.class))
-                .filter(distinctByKey(Place::getId))
-                .collect(Collectors.toList());
+            List<Place> entities = waitForTasks(executorService, tasks)
+                    .stream()
+                    .map(dto -> modelMapper.map(dto, FsPlace.class))
+                    .filter(distinctByKey(Place::getId))
+                    .collect(Collectors.toList());
 
-        return placesRepository.setFoursquarePlaces(entities, city);
+            placesRepository.setFoursquarePlaces(entities, city);
+        });
     }
 
     @Override
     public Future saveFoursquarePlacesDetails(String city) {
 
-        List<FsPlace> places = placesRepository.getFoursquarePlaces(city);
+        return executorService.submit(() -> {
+            List<FsPlace> places = placesRepository.getFoursquarePlaces(city);
 
-        // Get data from the external foursquare API
-        FoursquareDetailsQuery query =
-                new FoursquareDetailsQuery(foursquareConfiguration, executorService, httpClientFoursquare);
+            // Get data from the external foursquare API
+            FoursquareDetailsQuery query =
+                    new FoursquareDetailsQuery(foursquareConfiguration, executorService, httpClientFoursquare);
 
-        List<Callable<FsPlaceDetailsDto>> tasks = new ArrayList<>();
-        places.forEach(p -> tasks.add(query.execute(new PlaceDetailsParams("venues", p.getId()))));
+            List<Callable<FsPlaceDetailsDto>> tasks = new ArrayList<>();
+            places.forEach(p -> tasks.add(query.execute(new PlaceDetailsParams("venues", p.getId()))));
 
 
-        List<FsPlaceDetails> entities = waitForSingleTask(executorService, tasks)
-                .stream()
-                .filter(Objects::nonNull)
-                .map(dto -> modelMapper.map(dto, FsPlaceDetails.class))
-                .filter(distinctByKey(FsPlaceDetails::getId))
-                .filter(d -> d.getStatsCheckinsCount() > 500)
-                .collect(Collectors.toList());
+            List<FsPlaceDetails> entities = waitForSingleTask(executorService, tasks)
+                    .stream()
+                    .filter(Objects::nonNull)
+                    .map(dto -> modelMapper.map(dto, FsPlaceDetails.class))
+                    .filter(distinctByKey(FsPlaceDetails::getId))
+                    .filter(d -> d.getStatsCheckinsCount() > 500)
+                    .collect(Collectors.toList());
 
-        return placesRepository.setFoursquarePlacesDetails(entities, city);
+            placesRepository.setFoursquarePlacesDetails(entities, city);
+        });
     }
 
     @Override

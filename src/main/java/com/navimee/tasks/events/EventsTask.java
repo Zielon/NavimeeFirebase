@@ -8,8 +8,8 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
 
+import static com.navimee.firestore.Paths.EVENTS_COLLECTION;
 
 @Component
 public class EventsTask {
@@ -20,16 +20,16 @@ public class EventsTask {
     @Autowired
     EventsService eventsService;
 
-    @Autowired
-    ExecutorService executorService;
-
     // Once per 1 hour.
     //@Scheduled(fixedRate = 1000 * 60 * 60)
-    @Scheduled(cron = "0 0 0/1 * * ?")
+    //@Scheduled(cron = "0 0 0/1 * * ?")
     public void addEventsTask() throws ExecutionException, InterruptedException {
+
+        //placesRepository.deleteCollection(EVENTS_COLLECTION).get();
+
         placesRepository.getAvailableCities().forEach(city -> {
-            //if (city.getName().equals("SOPOT"))
-            executorService.submit(() -> eventsService.saveFacebookEvents(city.getName()));
+            //if (city.getName().equals("GDANSK"))
+            eventsService.saveFacebookEvents(city.getName());
         });
     }
 }

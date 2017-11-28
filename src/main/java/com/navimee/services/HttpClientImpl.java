@@ -21,7 +21,7 @@ public class HttpClientImpl implements HttpClient {
 
     CloseableHttpAsyncClient client;
 
-    public HttpClientImpl(){
+    public HttpClientImpl() {
         client = createClient();
     }
 

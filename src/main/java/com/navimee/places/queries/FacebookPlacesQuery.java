@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mashape.unirest.http.exceptions.UnirestException;
 import com.navimee.configuration.specific.FacebookConfiguration;
 import com.navimee.contracts.services.HttpClient;
+import com.navimee.general.JSON;
 import com.navimee.models.dto.places.facebook.FbPlaceDto;
 import com.navimee.places.queries.params.PlacesParams;
 import com.navimee.queries.Query;
@@ -18,7 +19,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
-import java.util.function.Consumer;
 
 public class FacebookPlacesQuery extends Query<List<FbPlaceDto>, FacebookConfiguration, PlacesParams> {
 
@@ -48,22 +48,19 @@ public class FacebookPlacesQuery extends Query<List<FbPlaceDto>, FacebookConfigu
         }
 
         URI finalUri = uri;
-        return () -> map(httpClient.GET(finalUri), null);
+        return () -> map(httpClient.GET(finalUri), params);
     }
 
     @Override
-    protected List<FbPlaceDto> map(Callable<JSONObject> task, Consumer<List<FbPlaceDto>> consumer) {
+    protected List<FbPlaceDto> map(Callable<JSONObject> task, PlacesParams params) {
         List<FbPlaceDto> list = new ArrayList<>();
 
         try {
             JSONObject object = task.call();
             list.addAll(convertNode(object.getJSONArray("data")));
 
-            if (!object.has("paging")) return list;
-            JSONObject paging = object.getJSONObject("paging");
-
-            if (!paging.has("next")) return list;
-            String nextUrl = paging.getString("next");
+            if (!JSON.hasPaging(object)) return list;
+            String nextUrl = object.getJSONObject("paging").getString("next");
 
             // Read all places from paging
             while (true) {
@@ -71,11 +68,7 @@ public class FacebookPlacesQuery extends Query<List<FbPlaceDto>, FacebookConfigu
                     JSONObject nextObj = httpClient.GET(new URI(nextUrl)).call();
                     list.addAll(convertNode(nextObj.getJSONArray("data")));
 
-                    if (!nextObj.has("paging")) break;
-                    paging = nextObj.getJSONObject("paging");
-
-                    if (!paging.has("next")) break;
-                    nextUrl = paging.getString("next");
+                    if (!JSON.hasPaging(object)) break;
 
                 } catch (UnirestException e) {
                     e.printStackTrace();
@@ -89,6 +82,7 @@ public class FacebookPlacesQuery extends Query<List<FbPlaceDto>, FacebookConfigu
         return list;
     }
 
+    // Helper method
     private List<FbPlaceDto> convertNode(JSONArray array) {
         List<FbPlaceDto> list = new ArrayList<>();
         ObjectMapper mapper = new ObjectMapper();

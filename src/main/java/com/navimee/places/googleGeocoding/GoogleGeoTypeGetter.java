@@ -5,6 +5,8 @@ import com.navimee.models.dto.geocoding.subelement.AddressComponentsDto;
 import com.navimee.places.googleGeocoding.enums.GeoNameType;
 import com.navimee.places.googleGeocoding.enums.GeoType;
 
+import java.util.NoSuchElementException;
+
 public class GoogleGeoTypeGetter {
 
     public static String getType(GooglePlaceDto place, GeoType type) {
@@ -12,9 +14,14 @@ public class GoogleGeoTypeGetter {
     }
 
     public static String getType(GooglePlaceDto place, GeoType type, GeoNameType nameType) {
-        AddressComponentsDto addressComponents =
-                place.addressComponents.stream().peek(address -> address.types.contains(type.toString())).findFirst().get();
+        String returnType = "";
 
-        return nameType == GeoNameType.long_name ? addressComponents.longName : addressComponents.shortName;
+        try {
+            AddressComponentsDto addressComponents = place.addressComponents.stream().filter(address -> address.types.contains(type.toString())).findFirst().get();
+            returnType = nameType == GeoNameType.long_name ? addressComponents.longName : addressComponents.shortName;
+        } catch (NoSuchElementException ignore) {
+        }
+
+        return returnType;
     }
 }
