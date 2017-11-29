@@ -119,12 +119,6 @@
             <version>0.7.5</version>
         </dependency>
 
-        <dependency>
-            <groupId>com.zenjava</groupId>
-            <artifactId>javafx-maven-plugin</artifactId>
-            <version>8.8.3</version>
-        </dependency>
-
     </dependencies>
 
     <build>
@@ -138,6 +132,12 @@
         </resources>
 
         <plugins>
+
+            <plugin>
+                <groupId>com.zenjava</groupId>
+                <artifactId>javafx-maven-plugin</artifactId>
+                <version>8.8.3</version>
+            </plugin>
 
             <!-- SPRING -->
             <plugin>
