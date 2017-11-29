@@ -5,9 +5,11 @@ import com.fasterxml.jackson.datatype.joda.JodaModule;
 import com.google.cloud.firestore.CollectionReference;
 import com.google.cloud.firestore.DocumentReference;
 import com.google.cloud.firestore.DocumentSnapshot;
+import com.navimee.logger.Log;
+import com.navimee.logger.LogEnum;
+import com.navimee.logger.Logger;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 public class Get extends Base {
@@ -26,7 +28,7 @@ public class Get extends Base {
     }
 
     public static <T> List<T> fromCollection(CollectionReference collectionReference, Class<T> type) {
-        return getFromCollection(collectionReference, type, true);
+        return getFromCollection(collectionReference, type, false);
     }
 
     public static <T> List<T> getFromCollection(CollectionReference collectionReference, Class<T> type, boolean logging) {
@@ -37,8 +39,8 @@ public class Get extends Base {
             for (DocumentSnapshot document : collectionReference.get().get().getDocuments())
                 output.add(mapper.convertValue(document.getData(), type));
 
-            String LOG = String.format("ENTITIES %d RETRIEVED FROM -> %s | %s", output.size(), collectionReference.getPath().toUpperCase(), new Date());
-            if (logging) System.out.println(LOG);
+            if (logging)
+                Logger.LOG(new Log(LogEnum.RETRIEVAL, collectionReference.getPath(), output.size()));
         } catch (Exception e) {
             e.printStackTrace();
         }

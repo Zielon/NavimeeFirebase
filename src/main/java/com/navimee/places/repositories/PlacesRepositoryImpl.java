@@ -88,7 +88,7 @@ public class PlacesRepositoryImpl implements PlacesRepository {
     public Future deleteCollection(String collection) {
         return executorService.submit(() ->
                 getAvailableCities().forEach(city ->
-                        Delete.collection(db.collection(collection).document(BY_CITY).collection(city.getName()))));
+                        Delete.collection(db.collection(collection).document(BY_CITY).collection(city.getName()), 0)));
     }
 
     @Override

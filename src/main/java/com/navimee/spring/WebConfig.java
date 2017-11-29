@@ -3,6 +3,8 @@ package com.navimee.spring;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
+import org.springframework.web.servlet.resource.ContentVersionStrategy;
+import org.springframework.web.servlet.resource.VersionResourceResolver;
 
 @Configuration
 public class WebConfig extends WebMvcConfigurerAdapter {

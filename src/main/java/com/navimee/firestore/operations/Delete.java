@@ -1,6 +1,9 @@
 package com.navimee.firestore.operations;
 
 import com.google.cloud.firestore.*;
+import com.navimee.logger.Log;
+import com.navimee.logger.LogEnum;
+import com.navimee.logger.Logger;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,7 +13,7 @@ import static com.navimee.asyncCollectors.CompletionCollector.waitForSingleFutur
 
 public class Delete extends Base {
 
-    public static void collection(CollectionReference collection) {
+    public static void collection(CollectionReference collection, int deletedAll) {
         int batchSize = 1000;
         try {
             int deleted = 0;
@@ -28,17 +31,20 @@ public class Delete extends Base {
             waitForSingleFuture(executorService, tasks);
 
             if (deleted >= batchSize) {
-                collection(collection);
+                deletedAll += deleted;
+                collection(collection, deletedAll);
             }
         } catch (Exception e) {
             System.err.println("Error deleting collection : " + e.getMessage());
         }
+
+        Logger.LOG(new Log(LogEnum.DELETION, collection.getPath(), deletedAll));
     }
 
     public static void document(DocumentReference document) {
         try {
             for (CollectionReference collection : document.getCollections().get())
-                collection(collection);
+                collection(collection, 0);
             document.delete().get();
         } catch (Exception e) {
             System.err.println("Error deleting document : " + e.getMessage());

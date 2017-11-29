@@ -18,4 +18,7 @@ public class Paths {
 
     // Path
     public static final String BY_CITY = "BY_CITY";
+
+    // Logger
+    public static final String LOGS = "EXECUTION_LOGS";
 }
