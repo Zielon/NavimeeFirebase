@@ -18,7 +18,7 @@ public class FirebaseInitialization {
     // Initialize the Firebase instance only once.
     public static Firestore getDatabaseReference(Resource firebaseConfig) {
 
-        if(firestore == null) {
+        if (firestore == null) {
             FirebaseOptions options = null;
             try {
                 InputStream serviceAccount = new FileInputStream(firebaseConfig.getFile());

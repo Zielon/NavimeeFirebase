@@ -50,5 +50,4 @@ public class Delete extends Base {
             System.err.println("Error deleting document : " + e.getMessage());
         }
     }
-
 }

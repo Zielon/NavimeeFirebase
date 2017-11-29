@@ -11,7 +11,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 public class NavimeeApplication extends SpringBootServletInitializer {
 
     @Override
-    protected SpringApplicationBuilder configure(SpringApplicationBuilder  application) {
+    protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {
         return application.sources(NavimeeApplication.class);
     }
 

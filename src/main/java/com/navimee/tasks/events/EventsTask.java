@@ -7,12 +7,9 @@ import com.navimee.logger.Log;
 import com.navimee.logger.LogEnum;
 import com.navimee.logger.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import java.util.concurrent.ExecutionException;
-
-import static com.navimee.firestore.Paths.EVENTS_COLLECTION;
 
 @Component
 public class EventsTask {

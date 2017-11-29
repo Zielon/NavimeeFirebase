@@ -16,11 +16,11 @@ public class Logger {
     private static List<Log> list = new ArrayList<>();
     private static ObservableList<Log> observableList = FXCollections.observableList(list);
 
-    static{
+    static {
         observableList.addListener((ListChangeListener.Change<? extends Log> c) -> {
             while (c.next()) {
                 for (Log added : c.getAddedSubList()) {
-                    if(db != null)
+                    if (db != null)
                         try {
                             db.collection(Paths.LOGS).document().set(added).get();
                         } catch (Exception ignore) {
@@ -31,10 +31,10 @@ public class Logger {
         });
     }
 
-    public static void LOG(Log log){
+    public static void LOG(Log log) {
         observableList.add(log);
-        if(observableList.size() > 10000)
-            for(int i = 0; i < observableList.size(); i++)
+        if (observableList.size() > 10000)
+            for (int i = 0; i < observableList.size(); i++)
                 observableList.remove(i);
     }
 }

@@ -7,9 +7,10 @@ import org.joda.time.format.ISODateTimeFormat;
 
 public class Log {
 
-    public Log(){}
+    public Log() {
+    }
 
-    public Log(LogEnum type, String collection, int count){
+    public Log(LogEnum type, String collection, int count) {
         this.type = type;
         this.collection = collection;
         this.count = count;

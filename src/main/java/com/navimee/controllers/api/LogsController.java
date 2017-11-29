@@ -23,13 +23,13 @@ public class LogsController {
     @RequestMapping(value = "all", method = RequestMethod.GET, produces = "application/json")
     public String places() throws Exception {
         List<Log> logs = db.collection(Paths.LOGS).get().get()
-                            .getDocuments()
-                            .stream()
-                            .map(document -> {
-                                    Log log = mapper.convertValue(document.getData(), Log.class);
-                                    log.setId(document.getId());
-                                    return log;
-                            }).collect(toList());
+                .getDocuments()
+                .stream()
+                .map(document -> {
+                    Log log = mapper.convertValue(document.getData(), Log.class);
+                    log.setId(document.getId());
+                    return log;
+                }).collect(toList());
 
         return mapper.writeValueAsString(logs);
     }
