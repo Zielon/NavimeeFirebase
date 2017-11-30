@@ -1,8 +1,13 @@
 package com.navimee.models.entities;
 
+import com.navimee.models.entities.events.FbEvent;
+
+import java.util.List;
+
 public class User implements Entity {
     private String token;
     private String email;
+    private List<FbEvent> events;
 
     public String getEmail() {
         return email;
@@ -23,5 +28,13 @@ public class User implements Entity {
     @Override
     public String getId() {
         return token;
+    }
+
+    public List<FbEvent> getEvents() {
+        return events;
+    }
+
+    public void setEvents(List<FbEvent> events) {
+        this.events = events;
     }
 }

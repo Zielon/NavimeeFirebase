@@ -16,6 +16,11 @@ public class Paths {
     // Documents
     public static final String PLACES_DOCUMENT = "PLACES";
 
+    // Users
+    public static final String USERS_COLLECTION = "USERS";
+    public static final String USERS_EVENTS_COLLECTION = "USER_EVENTS";
+
+
     // Path
     public static final String BY_CITY = "BY_CITY";
 

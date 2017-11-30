@@ -11,6 +11,8 @@ import com.navimee.logger.Logger;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.BiFunction;
+import java.util.function.Function;
 
 public class Get extends Base {
 
@@ -18,7 +20,7 @@ public class Get extends Base {
         List<T> output = new ArrayList<>();
         try {
             for (CollectionReference collectionReference : documentReference.getCollections().get())
-                output.addAll(getFromCollection(collectionReference, type, false));
+                output.addAll(fromCollection(collectionReference, type, false));
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -28,10 +30,10 @@ public class Get extends Base {
     }
 
     public static <T> List<T> fromCollection(CollectionReference collectionReference, Class<T> type) {
-        return getFromCollection(collectionReference, type, false);
+        return fromCollection(collectionReference, type, false);
     }
 
-    public static <T> List<T> getFromCollection(CollectionReference collectionReference, Class<T> type, boolean logging) {
+    public static <T> List<T> fromCollection(CollectionReference collectionReference, Class<T> type, boolean logging) {
         ObjectMapper mapper = new ObjectMapper();
         mapper.registerModule(new JodaModule());
         List<T> output = new ArrayList<>();

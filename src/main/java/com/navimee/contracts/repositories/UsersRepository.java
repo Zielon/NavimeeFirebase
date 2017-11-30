@@ -4,6 +4,6 @@ import com.navimee.models.entities.User;
 
 import java.util.List;
 
-public interface Users {
+public interface UsersRepository {
     List<User> getUsers();
 }

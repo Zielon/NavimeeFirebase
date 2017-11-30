@@ -6,6 +6,9 @@ import com.navimee.models.dto.geocoding.GooglePlaceDto;
 import com.navimee.models.entities.events.FbEvent;
 import com.navimee.models.entities.coordinates.Coordinate;
 import com.navimee.places.googleGeocoding.enums.GeoType;
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
+import org.joda.time.LocalDateTime;
 
 import java.util.concurrent.Future;
 import java.util.function.Function;
@@ -79,6 +82,16 @@ public class EventsHelpers {
         }
 
         return false;
+    }
+
+
+    public static boolean sendNotification(FbEvent event){
+        DateTimeZone zone = DateTimeZone.forID("Europe/Warsaw");
+        DateTime warsaw = LocalDateTime.now(zone).toDateTime();
+        DateTime eventTime = new DateTime(event.getStartTime());
+
+        return false;
+
     }
 
     private static boolean similar(double a, double b) {
