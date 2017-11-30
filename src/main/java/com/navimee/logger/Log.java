@@ -2,8 +2,8 @@ package com.navimee.logger;
 
 import org.joda.time.DateTimeZone;
 import org.joda.time.LocalDateTime;
-import org.joda.time.format.DateTimeFormatter;
-import org.joda.time.format.ISODateTimeFormat;
+
+import java.util.Date;
 
 public class Log {
 
@@ -17,13 +17,12 @@ public class Log {
 
         DateTimeZone zone = DateTimeZone.forID("Europe/Warsaw");
         LocalDateTime warsaw = LocalDateTime.now(zone);
-        DateTimeFormatter dtf = ISODateTimeFormat.dateTime();
 
-        this.time = dtf.print(warsaw);
+        this.time = warsaw.toDate();
     }
 
     private LogEnum type;
-    private String time;
+    private Date time;
     private String collection;
     private int count;
     private String id;
@@ -36,9 +35,11 @@ public class Log {
         this.type = type;
     }
 
-    public String getTime() {
+    public Date getTime() {
         return time;
     }
+
+    public void setTime(Date time){this.time = time;}
 
     public String getCollection() {
         return collection;

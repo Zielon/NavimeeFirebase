@@ -12,9 +12,11 @@
         </div>
         <div sec:authorize="isAuthenticated()">
             <h3 class="text-center bg-primary">Navimee...</h3>
-            <div class="btn-group" style="margin-bottom: 5px;">
-                <button type="button" class="btn btn-default" onclick="start()">Start</button>
-                <button type="button" class="btn btn-default" onclick="reset()">Reset</button>
+            <div class="input-group" style="margin-bottom: 5px; font-family: Consolas;">
+                 <span class="input-group-btn">
+                    <button type="button" class="btn btn-default" onclick="start()">   Start   </button>
+                  </span>
+                <input type="text" class="form-control" placeholder="Start date... example -> 1970-12-24"/>
             </div>
             <div>
                 <table style="width:100%" id="logs"></table>
