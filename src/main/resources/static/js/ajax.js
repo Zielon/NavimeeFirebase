@@ -1,6 +1,7 @@
 var logs = {};
 
 function start(){
+    document.getElementsByClassName("loader")[0].style.display = "block";
     setInterval(function(){ loadDoc();}, 500)
 }
 
@@ -12,6 +13,7 @@ function loadDoc() {
       var xhttp = new XMLHttpRequest();
       xhttp.onreadystatechange = function() {
             if (this.readyState == 4 && this.status == 200) {
+                document.getElementsByClassName("loader")[0].style.display = "none";
                 addLogs(JSON.parse(this.responseText));
             }
       };
