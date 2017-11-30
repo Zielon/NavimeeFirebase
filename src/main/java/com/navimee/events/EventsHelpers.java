@@ -4,7 +4,7 @@ import com.google.cloud.firestore.GeoPoint;
 import com.navimee.contracts.services.places.PlacesService;
 import com.navimee.models.dto.geocoding.GooglePlaceDto;
 import com.navimee.models.entities.events.FbEvent;
-import com.navimee.models.entities.general.Coordinate;
+import com.navimee.models.entities.coordinates.Coordinate;
 import com.navimee.places.googleGeocoding.enums.GeoType;
 
 import java.util.concurrent.Future;

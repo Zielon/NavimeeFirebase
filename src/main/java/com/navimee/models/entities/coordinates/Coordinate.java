@@ -1,4 +1,4 @@
-package com.navimee.models.entities.general;
+package com.navimee.models.entities.coordinates;
 
 import com.navimee.models.entities.Entity;
 

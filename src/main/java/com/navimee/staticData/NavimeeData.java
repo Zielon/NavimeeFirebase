@@ -2,8 +2,8 @@ package com.navimee.staticData;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.navimee.models.entities.general.City;
-import com.navimee.models.entities.general.Coordinate;
+import com.navimee.models.entities.coordinates.City;
+import com.navimee.models.entities.coordinates.Coordinate;
 import org.json.JSONObject;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;

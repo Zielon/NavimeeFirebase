@@ -4,7 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.navimee.contracts.repositories.palces.PlacesRepository;
 import com.navimee.controllers.dto.CoordinateDto;
-import com.navimee.models.entities.general.Coordinate;
+import com.navimee.models.entities.coordinates.Coordinate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

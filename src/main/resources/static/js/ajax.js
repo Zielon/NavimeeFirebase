@@ -27,7 +27,7 @@ function addLogs(newLogs){
         var tr = document.createElement('tr');
         Object.keys(log).forEach(key => {
             var td = document.createElement('td');
-            td.appendChild(document.createTextNode(log[key]))
+            td.appendChild(document.createTextNode(key === "time" ? new Date(log[key]).toISOString() : log[key]))
             tr.appendChild(td)
         });
         document.getElementById("logs").appendChild(tr);

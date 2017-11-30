@@ -10,7 +10,7 @@ import com.navimee.models.dto.geocoding.GooglePlaceDto;
 import com.navimee.models.dto.placeDetails.FsPlaceDetailsDto;
 import com.navimee.models.dto.places.facebook.FbPlaceDto;
 import com.navimee.models.dto.places.foursquare.FsPlaceDto;
-import com.navimee.models.entities.general.Coordinate;
+import com.navimee.models.entities.coordinates.Coordinate;
 import com.navimee.models.entities.places.Place;
 import com.navimee.models.entities.places.facebook.FbPlace;
 import com.navimee.models.entities.places.foursquare.FsPlace;
