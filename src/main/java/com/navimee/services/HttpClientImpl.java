@@ -28,6 +28,7 @@ public class HttpClientImpl implements HttpClient {
     @Override
     public Callable<JSONObject> GET(URI uri) {
         return () -> {
+            if(!client.isRunning()) client.start();
             HttpGet request = new HttpGet(uri);
             Future<HttpResponse> future = client.execute(request, null);
             HttpEntity entity = future.get().getEntity();
