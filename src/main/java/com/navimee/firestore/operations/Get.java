@@ -20,7 +20,7 @@ public class Get extends Base {
         List<T> output = new ArrayList<>();
         try {
             for (CollectionReference collectionReference : documentReference.getCollections().get())
-                output.addAll(fromCollection(collectionReference, type, false));
+                output.addAll(fromCollection(collectionReference, type, true));
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -30,7 +30,7 @@ public class Get extends Base {
     }
 
     public static <T> List<T> fromCollection(CollectionReference collectionReference, Class<T> type) {
-        return fromCollection(collectionReference, type, false);
+        return fromCollection(collectionReference, type, true);
     }
 
     public static <T> List<T> fromCollection(CollectionReference collectionReference, Class<T> type, boolean logging) {

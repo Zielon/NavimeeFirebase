@@ -54,8 +54,8 @@ public class HttpClientImpl implements HttpClient {
                         .setDefaultIOReactorConfig(ioReactor)
                         .setKeepAliveStrategy(new DefaultConnectionKeepAliveStrategy());
 
-        CloseableHttpAsyncClient httpClient = httpClientBuilder.build();
-        //CloseableHttpAsyncClient httpClient = HttpAsyncClients.createDefault();
+        //CloseableHttpAsyncClient httpClient = httpClientBuilder.build();
+        CloseableHttpAsyncClient httpClient = HttpAsyncClients.createDefault();
 
         httpClient.start();
 
