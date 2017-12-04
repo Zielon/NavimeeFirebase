@@ -24,16 +24,21 @@ function loadDoc() {
 function addLogs(newLogs){
 
     var arrayLogs = Object.keys(logs).map(key => { return logs[key]; });
-
+    var lastLog = "";
     newLogs.filter(newLog => arrayLogs.every(log => newLog.id != log.id)).forEach(log => {
+        lastLog = log.id;
         var tr = document.createElement('tr');
+        tr.setAttribute("id", lastLog)
         Object.keys(log).forEach(key => {
             var td = document.createElement('td');
-            td.appendChild(document.createTextNode(key === "time" ? new Date(log[key]).toISOString() : log[key]))
+            td.appendChild()
             tr.appendChild(td)
         });
         document.getElementById("logs").appendChild(tr);
     });
+
+    if(lastLog != "")
+        $(`#${lastLog}`).eq(-1).focus()
 
     newLogs.forEach(log =>{
         logs[log.id] = log;

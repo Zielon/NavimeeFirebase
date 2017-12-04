@@ -31,9 +31,9 @@ public interface PlacesRepository {
 
     Future setAvailableCities(List<City> cities);
 
-    Future setFacebookPlaces(List<Place> places, String city);
+    Future setFacebookPlaces(List<FbPlace> places, String city);
 
-    Future setFoursquarePlaces(List<Place> places, String city);
+    Future setFoursquarePlaces(List<FsPlace> places, String city);
 
     Future setFoursquarePlacesDetails(List<FsPlaceDetails> details, String city);
 

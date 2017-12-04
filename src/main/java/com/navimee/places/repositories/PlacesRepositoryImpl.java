@@ -9,13 +9,13 @@ import com.navimee.firestore.operations.Get;
 import com.navimee.firestore.operations.enums.AdditionEnum;
 import com.navimee.models.entities.coordinates.City;
 import com.navimee.models.entities.coordinates.Coordinate;
-import com.navimee.models.entities.places.Place;
 import com.navimee.models.entities.places.facebook.FbPlace;
 import com.navimee.models.entities.places.foursquare.FsPlace;
 import com.navimee.models.entities.places.foursquare.FsPlaceDetails;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
@@ -36,15 +36,19 @@ public class PlacesRepositoryImpl implements PlacesRepository {
     @Autowired
     ExecutorService executorService;
 
+    // Facebook places stored in memory.
+    private static Map<String, List<FbPlace>> FacebookPlaces = new HashMap<>();
+
     // SETTERS
 
     @Override
-    public Future setFacebookPlaces(List<Place> places, String city) {
+    public Future setFacebookPlaces(List<FbPlace> places, String city) {
+        FacebookPlaces.put(city, places);
         return Add.toCollection(database.getCollection(FACEBOOK_PLACES, city), places);
     }
 
     @Override
-    public Future setFoursquarePlaces(List<Place> places, String city) {
+    public Future setFoursquarePlaces(List<FsPlace> places, String city) {
         return Add.toCollection(database.getCollection(FOURSQUARE_PLACES, city), places);
     }
 
@@ -100,7 +104,10 @@ public class PlacesRepositoryImpl implements PlacesRepository {
 
     @Override
     public List<FbPlace> getFacebookPlaces(String city) {
-        return Get.fromCollection(database.getCollection(FACEBOOK_PLACES, city), FbPlace.class);
+        if(!FacebookPlaces.containsKey(city))
+            FacebookPlaces.put(city, Get.fromCollection(database.getCollection(FACEBOOK_PLACES, city), FbPlace.class));
+
+        return FacebookPlaces.get(city);
     }
 
     @Override

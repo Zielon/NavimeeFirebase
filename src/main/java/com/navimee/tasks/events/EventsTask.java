@@ -7,6 +7,7 @@ import com.navimee.logger.Log;
 import com.navimee.logger.LogEnum;
 import com.navimee.logger.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import java.util.concurrent.ExecutionException;
@@ -22,7 +23,7 @@ public class EventsTask {
 
     // Once per 1 hour.
     //@Scheduled(fixedRate = 1000 * 60 * 60)
-    //@Scheduled(cron = "0 0 0/1 * * ?")
+    @Scheduled(cron = "0 0 0/1 * * ?")
     public void addEventsTask() throws ExecutionException, InterruptedException {
 
         Logger.LOG(new Log(LogEnum.TASK, "Events update", 0));

@@ -58,7 +58,7 @@ public class HttpClientImpl implements HttpClient {
     }
 
     private CloseableHttpAsyncClient createClient() {
-        IOReactorConfig ioReactor = IOReactorConfig.custom().setIoThreadCount(10).build();
+        IOReactorConfig ioReactor = IOReactorConfig.custom().setIoThreadCount(2).build();
         HttpAsyncClientBuilder httpClientBuilder =
                 HttpAsyncClients.custom()
                         .setMaxConnTotal(1000)

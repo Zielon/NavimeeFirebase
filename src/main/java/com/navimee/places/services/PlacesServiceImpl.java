@@ -77,7 +77,7 @@ public class PlacesServiceImpl implements PlacesService {
                             .map(c -> facebookPlacesQuery.execute(new PlacesParams(c.getLatitude(), c.getLongitude())))
                             .collect(Collectors.toList());
 
-            List<Place> entities = waitForTasks(executorService, tasks)
+            List<FbPlace> entities = waitForTasks(executorService, tasks)
                     .stream()
                     .map(dto -> modelMapper.map(dto, FbPlace.class))
                     .filter(distinctByKey(Place::getId))
@@ -102,7 +102,7 @@ public class PlacesServiceImpl implements PlacesService {
                             .map(c -> foursquarePlacesQuery.execute(new PlaceDetailsParams(c.getLatitude(), c.getLongitude(), "/venues/search")))
                             .collect(Collectors.toList());
 
-            List<Place> entities = waitForTasks(executorService, tasks)
+            List<FsPlace> entities = waitForTasks(executorService, tasks)
                     .stream()
                     .map(dto -> modelMapper.map(dto, FsPlace.class))
                     .filter(distinctByKey(Place::getId))
