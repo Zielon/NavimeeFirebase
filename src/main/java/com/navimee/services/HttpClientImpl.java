@@ -14,6 +14,7 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.net.URI;
+import java.nio.charset.Charset;
 import java.util.concurrent.Callable;
 import java.util.concurrent.Future;
 
@@ -30,10 +31,14 @@ public class HttpClientImpl implements HttpClient {
         return () -> {
             if(!client.isRunning()) client.start();
             HttpGet request = new HttpGet(uri);
-            Future<HttpResponse> future = client.execute(request, null);
-            HttpEntity entity = future.get().getEntity();
-            String json = EntityUtils.toString(entity, "UTF-16");
-            return new JSONObject(json);
+            try{
+                Future<HttpResponse> future = client.execute(request, null);
+                HttpEntity entity = future.get().getEntity();
+                String json = EntityUtils.toString(entity, Charset.defaultCharset());
+                return new JSONObject(json);
+            }finally {
+                request.releaseConnection();
+            }
         };
     }
 
@@ -50,13 +55,13 @@ public class HttpClientImpl implements HttpClient {
         IOReactorConfig ioReactor = IOReactorConfig.custom().setIoThreadCount(10).build();
         HttpAsyncClientBuilder httpClientBuilder =
                 HttpAsyncClients.custom()
-                        .setMaxConnTotal(10)
+                        .setMaxConnTotal(1000)
                         .setMaxConnPerRoute(1000)
                         .setDefaultIOReactorConfig(ioReactor)
                         .setKeepAliveStrategy(new DefaultConnectionKeepAliveStrategy());
 
-        //CloseableHttpAsyncClient httpClient = httpClientBuilder.build();
-        CloseableHttpAsyncClient httpClient = HttpAsyncClients.createDefault();
+        CloseableHttpAsyncClient httpClient = httpClientBuilder.build();
+        //CloseableHttpAsyncClient httpClient = HttpAsyncClients.createDefault();
 
         httpClient.start();
 

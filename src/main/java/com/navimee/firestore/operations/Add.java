@@ -36,11 +36,7 @@ public class Add extends Base {
     public static <T extends Entity> Future toCollection(CollectionReference collectionReference, T entity, AdditionEnum option) {
         Map<String, T> entityMap = new HashMap<>();
         entityMap.put(entity.getId(), entity);
-
-        if (option == AdditionEnum.OVERWRITE)
-            return toCollection(collectionReference, entityMap, AdditionEnum.OVERWRITE);
-        else
-            return toCollection(collectionReference, entityMap, AdditionEnum.MERGE);
+        return toCollection(collectionReference, entityMap, option);
     }
 
     public static <T extends Entity> Future toCollection(CollectionReference collectionReference, Map<String, T> entities, AdditionEnum options) {
