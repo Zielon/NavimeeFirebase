@@ -1,10 +1,9 @@
 package com.navimee.events.queries;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.joda.JodaModule;
 import com.navimee.configuration.specific.FacebookConfiguration;
 import com.navimee.contracts.services.HttpClient;
 import com.navimee.events.queries.params.EventsParams;
+import com.navimee.general.JSON;
 import com.navimee.models.dto.events.FbEventDto;
 import com.navimee.models.entities.places.Place;
 import com.navimee.models.entities.places.facebook.FbPlace;
@@ -14,7 +13,6 @@ import org.joda.time.DateTimeZone;
 import org.joda.time.LocalDateTime;
 import org.joda.time.format.DateTimeFormatter;
 import org.joda.time.format.ISODateTimeFormat;
-import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.net.URI;
@@ -86,7 +84,7 @@ public class FacebookEventsQuery extends Query<List<FbEventDto>, FacebookConfigu
             for (Object key : object.keySet()) {
                 JSONObject event = object.getJSONObject(key.toString());
                 if (!event.has("events")) continue;
-                List<FbEventDto> dto = convertNode(event.getJSONObject("events").getJSONArray("data"));
+                List<FbEventDto> dto = JSON.arrayMapper(event.getJSONObject("events").getJSONArray("data"), FbEventDto.class);
                 FbPlace searchPlace = params.places.stream().filter(p -> p.getId().equals(key.toString())).findFirst().get();
                 dto.forEach(d -> d.setSearchPlace(searchPlace));
                 events.addAll(dto);
@@ -96,23 +94,5 @@ public class FacebookEventsQuery extends Query<List<FbEventDto>, FacebookConfigu
         }
 
         return events.stream().filter(e -> e.getAttendingCount() > 100).collect(toList());
-    }
-
-    // Helper method
-    private List<FbEventDto> convertNode(JSONArray array) {
-        List<FbEventDto> list = new ArrayList<>();
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.registerModule(new JodaModule());
-        for (int n = 0; n < array.length(); n++) {
-            JSONObject eventJson = array.getJSONObject(n);
-            try {
-                FbEventDto event = mapper.readValue(eventJson.toString(), FbEventDto.class);
-                list.add(event);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-
-        return list;
     }
 }

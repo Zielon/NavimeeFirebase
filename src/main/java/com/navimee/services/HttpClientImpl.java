@@ -35,6 +35,7 @@ public class HttpClientImpl implements HttpClient {
                 Future<HttpResponse> future = client.execute(request, null);
                 HttpEntity entity = future.get().getEntity();
                 String json = EntityUtils.toString(entity, Charset.defaultCharset());
+                EntityUtils.consume(entity);
                 return new JSONObject(json);
             }finally {
                 request.releaseConnection();
