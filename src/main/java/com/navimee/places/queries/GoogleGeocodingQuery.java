@@ -1,18 +1,16 @@
 package com.navimee.places.queries;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.navimee.configuration.specific.GoogleConfiguration;
 import com.navimee.contracts.services.HttpClient;
+import com.navimee.general.JSON;
 import com.navimee.models.dto.geocoding.GooglePlaceDto;
 import com.navimee.places.queries.params.PlacesParams;
 import com.navimee.queries.Query;
 import org.apache.http.client.utils.URIBuilder;
-import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
@@ -45,20 +43,13 @@ public class GoogleGeocodingQuery extends Query<GooglePlaceDto, GoogleConfigurat
 
     @Override
     protected GooglePlaceDto map(Callable<JSONObject> task, PlacesParams params) {
-        List<GooglePlaceDto> list = new ArrayList<>();
-        ObjectMapper mapper = new ObjectMapper();
+        List<GooglePlaceDto> output = null;
         try {
             JSONObject object = task.call();
-            JSONArray array = object.getJSONArray("results");
-            for (int n = 0; n < array.length(); n++) {
-                JSONObject placeJson = array.getJSONObject(n);
-                GooglePlaceDto mapped = mapper.readValue(placeJson.toString(), GooglePlaceDto.class);
-                list.add(mapped);
-            }
+            output = JSON.arrayMapper(object.getJSONArray("results"), GooglePlaceDto.class);
         } catch (Exception e) {
             e.printStackTrace();
         }
-
-        return list.size() > 0 ? list.get(0) : null;
+        return output != null && output.size() > 0 ? output.get(0) : null;
     }
 }

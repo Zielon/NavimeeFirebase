@@ -1,6 +1,5 @@
 package com.navimee.places.queries;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mashape.unirest.http.exceptions.UnirestException;
 import com.navimee.configuration.specific.FacebookConfiguration;
 import com.navimee.contracts.services.HttpClient;
@@ -9,10 +8,8 @@ import com.navimee.models.dto.places.facebook.FbPlaceDto;
 import com.navimee.places.queries.params.PlacesParams;
 import com.navimee.queries.Query;
 import org.apache.http.client.utils.URIBuilder;
-import org.json.JSONArray;
 import org.json.JSONObject;
 
-import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
@@ -57,7 +54,7 @@ public class FacebookPlacesQuery extends Query<List<FbPlaceDto>, FacebookConfigu
 
         try {
             JSONObject object = task.call();
-            list.addAll(convertNode(object.getJSONArray("data")));
+            list.addAll(JSON.arrayMapper(object.getJSONArray("data"), FbPlaceDto.class));
 
             if (!JSON.hasPaging(object)) return list;
             String nextUrl = object.getJSONObject("paging").getString("next");
@@ -66,7 +63,7 @@ public class FacebookPlacesQuery extends Query<List<FbPlaceDto>, FacebookConfigu
             while (true) {
                 try {
                     JSONObject nextObj = httpClient.GET(new URI(nextUrl)).call();
-                    list.addAll(convertNode(nextObj.getJSONArray("data")));
+                    list.addAll(JSON.arrayMapper(nextObj.getJSONArray("data"), FbPlaceDto.class));
 
                     if (!JSON.hasPaging(object)) break;
 
@@ -79,22 +76,6 @@ public class FacebookPlacesQuery extends Query<List<FbPlaceDto>, FacebookConfigu
             e.printStackTrace();
         }
 
-        return list;
-    }
-
-    // Helper method
-    private List<FbPlaceDto> convertNode(JSONArray array) {
-        List<FbPlaceDto> list = new ArrayList<>();
-        ObjectMapper mapper = new ObjectMapper();
-        for (int n = 0; n < array.length(); n++) {
-            JSONObject placeJson = array.getJSONObject(n);
-            try {
-                FbPlaceDto mapped = mapper.readValue(placeJson.toString(), FbPlaceDto.class);
-                list.add(mapped);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
         return list;
     }
 }

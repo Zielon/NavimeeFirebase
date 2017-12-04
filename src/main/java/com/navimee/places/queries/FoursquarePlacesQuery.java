@@ -1,8 +1,8 @@
 package com.navimee.places.queries;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.navimee.configuration.specific.FoursquareConfiguration;
 import com.navimee.contracts.services.HttpClient;
+import com.navimee.general.JSON;
 import com.navimee.models.dto.places.foursquare.FsPlaceDto;
 import com.navimee.places.queries.params.PlaceDetailsParams;
 import com.navimee.queries.Query;
@@ -11,12 +11,10 @@ import org.joda.time.DateTimeZone;
 import org.joda.time.LocalDateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
-import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
@@ -55,20 +53,14 @@ public class FoursquarePlacesQuery extends Query<List<FsPlaceDto>, FoursquareCon
 
     @Override
     protected List<FsPlaceDto> map(Callable<JSONObject> task, PlaceDetailsParams params) {
-        List<FsPlaceDto> list = new ArrayList<>();
-        ObjectMapper mapper = new ObjectMapper();
+
+        List<FsPlaceDto> output = null;
         try {
             JSONObject object = task.call();
-            JSONArray array = object.getJSONObject("response").getJSONArray("venues");
-            for (int n = 0; n < array.length(); n++) {
-                JSONObject placeJson = array.getJSONObject(n);
-                FsPlaceDto mapped = mapper.readValue(placeJson.toString(), FsPlaceDto.class);
-                list.add(mapped);
-            }
+            output = JSON.arrayMapper(object.getJSONObject("response").getJSONArray("venues"), FsPlaceDto.class);
         } catch (Exception e) {
             e.printStackTrace();
         }
-
-        return list;
+        return output;
     }
 }
