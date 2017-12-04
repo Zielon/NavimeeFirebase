@@ -4,8 +4,6 @@ table {
     font-size: 12px;
 	font-style: normal;
 	width: 100%;
-    height: 800px;
-    overflow: scroll;
 }
 
 table, th, td {
