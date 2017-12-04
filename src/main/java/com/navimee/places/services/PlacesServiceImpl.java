@@ -59,20 +59,8 @@ public class PlacesServiceImpl implements PlacesService {
     @Autowired
     ExecutorService executorService;
 
-    // Starts a new client for the Facebook api.
-    HttpClient httpClientFacebook;
-
-    // Starts a new client for the Foursquare api.
-    HttpClient httpClientFoursquare;
-
-    // Starts a new client for the Google api.
-    HttpClient httpClientGoogle;
-
-    public PlacesServiceImpl() {
-        httpClientFacebook = new HttpClientImpl();
-        httpClientFoursquare = new HttpClientImpl();
-        httpClientGoogle = new HttpClientImpl();
-    }
+    @Autowired
+    HttpClient httpClient;
 
     @Override
     public Future saveFacebookPlaces(String city) {
@@ -82,7 +70,7 @@ public class PlacesServiceImpl implements PlacesService {
 
             // Get data from the external facebook API
             FacebookPlacesQuery facebookPlacesQuery =
-                    new FacebookPlacesQuery(facebookConfiguration, executorService, httpClientFacebook);
+                    new FacebookPlacesQuery(facebookConfiguration, executorService, httpClient);
 
             List<Callable<List<FbPlaceDto>>> tasks =
                     coordinates.stream()
@@ -107,7 +95,7 @@ public class PlacesServiceImpl implements PlacesService {
 
             // Get data from the external foursquare API
             FoursquarePlacesQuery foursquarePlacesQuery =
-                    new FoursquarePlacesQuery(foursquareConfiguration, executorService, httpClientFoursquare);
+                    new FoursquarePlacesQuery(foursquareConfiguration, executorService, httpClient);
 
             List<Callable<List<FsPlaceDto>>> tasks =
                     coordinates.stream()
@@ -132,7 +120,7 @@ public class PlacesServiceImpl implements PlacesService {
 
             // Get data from the external foursquare API
             FoursquareDetailsQuery query =
-                    new FoursquareDetailsQuery(foursquareConfiguration, executorService, httpClientFoursquare);
+                    new FoursquareDetailsQuery(foursquareConfiguration, executorService, httpClient);
 
             List<Callable<FsPlaceDetailsDto>> tasks = new ArrayList<>();
             places.forEach(p -> tasks.add(query.execute(new PlaceDetailsParams("venues", p.getId()))));
@@ -152,7 +140,7 @@ public class PlacesServiceImpl implements PlacesService {
 
     @Override
     public Future<GooglePlaceDto> downloadReverseGeocoding(Coordinate coordinate) {
-        GoogleGeocodingQuery query = new GoogleGeocodingQuery(googleConfiguration, executorService, httpClientGoogle);
+        GoogleGeocodingQuery query = new GoogleGeocodingQuery(googleConfiguration, executorService, httpClient);
         return executorService.submit(() -> query.execute(new PlacesParams(coordinate.getLatitude(), coordinate.getLongitude())).call());
     }
 }

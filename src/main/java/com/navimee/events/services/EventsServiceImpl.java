@@ -49,12 +49,8 @@ public class EventsServiceImpl implements EventsService {
     @Autowired
     ExecutorService executorService;
 
-    // Starts a new connection with the Facebook api.
+    @Autowired
     HttpClient httpClient;
-
-    public EventsServiceImpl() {
-        httpClient = new HttpClientImpl();
-    }
 
     @Override
     public Future saveFacebookEvents(String city) {

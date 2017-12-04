@@ -62,7 +62,7 @@ public class CompletionCollector {
         while (received < tasks.size()) {
             try {
                 List<T> result = completionService.take().get();
-                if (result.size() > 0)
+                if (result != null && result.size() > 0)
                     output.addAll(result);
                 received++;
             } catch (Exception e) {
@@ -84,7 +84,7 @@ public class CompletionCollector {
         while (received < futures.size()) {
             try {
                 List<T> result = completionService.take().get();
-                if (result.size() > 0)
+                if (result != null && result.size() > 0)
                     output.addAll(result);
                 received++;
             } catch (Exception e) {
