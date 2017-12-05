@@ -5,14 +5,12 @@ import com.fasterxml.jackson.datatype.joda.JodaModule;
 import com.google.cloud.firestore.CollectionReference;
 import com.google.cloud.firestore.DocumentReference;
 import com.google.cloud.firestore.DocumentSnapshot;
-import com.navimee.logger.Log;
 import com.navimee.logger.LogEnum;
 import com.navimee.logger.Logger;
+import com.navimee.models.entities.Log;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.BiFunction;
-import java.util.function.Function;
 
 public class Get extends Base {
 
@@ -20,7 +18,7 @@ public class Get extends Base {
         List<T> output = new ArrayList<>();
         try {
             for (CollectionReference collectionReference : documentReference.getCollections().get())
-                output.addAll(fromCollection(collectionReference, type, false));
+                output.addAll(fromCollection(collectionReference, type, true));
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -30,7 +28,7 @@ public class Get extends Base {
     }
 
     public static <T> List<T> fromCollection(CollectionReference collectionReference, Class<T> type) {
-        return fromCollection(collectionReference, type, false);
+        return fromCollection(collectionReference, type, true);
     }
 
     public static <T> List<T> fromCollection(CollectionReference collectionReference, Class<T> type, boolean logging) {

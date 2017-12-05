@@ -2,12 +2,11 @@ package com.navimee.tasks;
 
 import com.navimee.contracts.repositories.UsersRepository;
 import com.navimee.contracts.services.NotificationsService;
-import com.navimee.logger.Log;
 import com.navimee.logger.LogEnum;
 import com.navimee.logger.Logger;
+import com.navimee.models.entities.Log;
 import com.navimee.models.entities.User;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import java.util.List;

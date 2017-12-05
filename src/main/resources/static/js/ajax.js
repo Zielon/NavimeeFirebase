@@ -31,14 +31,16 @@ function addLogs(newLogs){
         tr.setAttribute("id", lastLog)
         Object.keys(log).forEach(key => {
             var td = document.createElement('td');
-            td.appendChild(document.createTextNode(key === "time" ? new Date(log[key]).toISOString() : log[key]))
+            var div = document.createElement('div');
+            div.appendChild(document.createTextNode(key === "time" ? new Date(log[key]).toISOString() : log[key]))
+            td.appendChild(div);
             tr.appendChild(td)
         });
         document.getElementById("logs").appendChild(tr);
     });
 
     if(lastLog != "")
-        $(`#${lastLog}`).eq(-1).focus()
+        $(`#${lastLog}`).eq(-1).attr("tabindex",-1).focus();
 
     newLogs.forEach(log =>{
         logs[log.id] = log;

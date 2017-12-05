@@ -2,13 +2,14 @@ package com.navimee.tasks.places;
 
 import com.navimee.contracts.repositories.palces.PlacesRepository;
 import com.navimee.contracts.services.places.PlacesService;
-import com.navimee.logger.Log;
 import com.navimee.logger.LogEnum;
 import com.navimee.logger.Logger;
+import com.navimee.models.entities.Log;
 import com.navimee.models.entities.coordinates.City;
 import com.navimee.models.entities.coordinates.Coordinate;
 import com.navimee.staticData.NavimeeData;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -24,9 +25,6 @@ public class PlacesTask {
     @Autowired
     PlacesService placesService;
 
-    //Once per 30 days.
-    //@Scheduled(cron = "0 00 12 ? * *")
-    //@Scheduled(fixedRate = 1000 * 60 * 60)
     public void addPlacesTask() throws ExecutionException, InterruptedException {
 
         // Mocked data.
@@ -51,5 +49,11 @@ public class PlacesTask {
                     //};
                 }
         );
+    }
+
+    //Once per 30 days.
+    @Scheduled(cron = "0 00 12 ? * *")
+    public void task() throws ExecutionException, InterruptedException {
+        this.addPlacesTask();
     }
 }

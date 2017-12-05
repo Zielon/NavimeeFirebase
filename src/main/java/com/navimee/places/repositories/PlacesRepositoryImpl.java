@@ -104,7 +104,7 @@ public class PlacesRepositoryImpl implements PlacesRepository {
 
     @Override
     public List<FbPlace> getFacebookPlaces(String city) {
-        if(!FacebookPlaces.containsKey(city))
+        if (!FacebookPlaces.containsKey(city))
             FacebookPlaces.put(city, Get.fromCollection(database.getCollection(FACEBOOK_PLACES, city), FbPlace.class));
 
         return FacebookPlaces.get(city);

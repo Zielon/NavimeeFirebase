@@ -1,9 +1,9 @@
 package com.navimee.firestore.operations;
 
 import com.google.cloud.firestore.*;
-import com.navimee.logger.Log;
 import com.navimee.logger.LogEnum;
 import com.navimee.logger.Logger;
+import com.navimee.models.entities.Log;
 
 import java.util.ArrayList;
 import java.util.List;

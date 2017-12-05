@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.cloud.firestore.Firestore;
 import com.navimee.configuration.specific.FirebaseInitialization;
 import com.navimee.firestore.Paths;
-import com.navimee.logger.Log;
+import com.navimee.models.entities.Log;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -32,13 +32,15 @@ public class LogsController {
                     Log log = mapper.convertValue(document.getData(), Log.class);
                     log.setId(document.getId());
                     return log;
-                }).collect(toList());
+                })
+                .sorted()
+                .collect(toList());
 
         return mapper.writeValueAsString(logs);
     }
 
     @RequestMapping(value = "period", method = RequestMethod.GET, produces = "application/json")
-    public String specificLogs(@RequestParam("startDate") @DateTimeFormat(pattern="yyyy-MM-dd") Date startDate) throws Exception {
+    public String specificLogs(@RequestParam("startDate") @DateTimeFormat(pattern = "yyyy-MM-dd") Date startDate) throws Exception {
         List<Log> logs = db.collection(Paths.LOGS)
                 .whereGreaterThan("time", startDate)
                 .get().get().getDocuments()
@@ -47,7 +49,9 @@ public class LogsController {
                     Log log = mapper.convertValue(document.getData(), Log.class);
                     log.setId(document.getId());
                     return log;
-                }).collect(toList());
+                })
+                .sorted()
+                .collect(toList());
 
         return mapper.writeValueAsString(logs);
     }

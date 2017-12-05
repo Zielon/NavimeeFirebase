@@ -2,7 +2,6 @@ package com.navimee.contracts.repositories.palces;
 
 import com.navimee.models.entities.coordinates.City;
 import com.navimee.models.entities.coordinates.Coordinate;
-import com.navimee.models.entities.places.Place;
 import com.navimee.models.entities.places.facebook.FbPlace;
 import com.navimee.models.entities.places.foursquare.FsPlace;
 import com.navimee.models.entities.places.foursquare.FsPlaceDetails;

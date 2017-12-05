@@ -21,7 +21,6 @@ import com.navimee.places.queries.FoursquarePlacesQuery;
 import com.navimee.places.queries.GoogleGeocodingQuery;
 import com.navimee.places.queries.params.PlaceDetailsParams;
 import com.navimee.places.queries.params.PlacesParams;
-import com.navimee.services.HttpClientImpl;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

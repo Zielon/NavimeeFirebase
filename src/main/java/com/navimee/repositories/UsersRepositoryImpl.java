@@ -27,7 +27,7 @@ public class UsersRepositoryImpl implements UsersRepository {
         ObjectMapper mapper = new ObjectMapper();
         List<User> users = new ArrayList<>();
         try {
-            for(DocumentSnapshot document : db.collection(USERS_COLLECTION).get().get().getDocuments()) {
+            for (DocumentSnapshot document : db.collection(USERS_COLLECTION).get().get().getDocuments()) {
                 User user = mapper.convertValue(document.getData(), User.class);
                 user.setEvents(Get.fromCollection(document.getReference().collection(USERS_EVENTS_COLLECTION), FbEvent.class));
                 users.add(user);

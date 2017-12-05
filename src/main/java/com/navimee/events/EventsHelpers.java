@@ -3,8 +3,8 @@ package com.navimee.events;
 import com.google.cloud.firestore.GeoPoint;
 import com.navimee.contracts.services.places.PlacesService;
 import com.navimee.models.dto.geocoding.GooglePlaceDto;
-import com.navimee.models.entities.events.FbEvent;
 import com.navimee.models.entities.coordinates.Coordinate;
+import com.navimee.models.entities.events.FbEvent;
 import com.navimee.places.googleGeocoding.enums.GeoType;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
@@ -85,7 +85,7 @@ public class EventsHelpers {
     }
 
 
-    public static boolean sendNotification(FbEvent event){
+    public static boolean sendNotification(FbEvent event) {
         DateTimeZone zone = DateTimeZone.forID("Europe/Warsaw");
         DateTime warsaw = LocalDateTime.now(zone).toDateTime();
         DateTime eventTime = new DateTime(event.getStartTime());

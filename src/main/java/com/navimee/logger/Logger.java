@@ -3,6 +3,7 @@ package com.navimee.logger;
 import com.google.cloud.firestore.Firestore;
 import com.navimee.configuration.specific.FirebaseInitialization;
 import com.navimee.firestore.Paths;
+import com.navimee.models.entities.Log;
 
 import java.util.concurrent.Future;
 

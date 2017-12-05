@@ -13,7 +13,6 @@ import com.navimee.general.Collections;
 import com.navimee.models.dto.events.FbEventDto;
 import com.navimee.models.entities.events.FbEvent;
 import com.navimee.models.entities.places.facebook.FbPlace;
-import com.navimee.services.HttpClientImpl;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

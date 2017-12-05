@@ -4,10 +4,10 @@ import com.google.cloud.firestore.CollectionReference;
 import com.google.cloud.firestore.SetOptions;
 import com.google.cloud.firestore.WriteResult;
 import com.navimee.firestore.operations.enums.AdditionEnum;
-import com.navimee.logger.Log;
 import com.navimee.logger.LogEnum;
 import com.navimee.logger.Logger;
 import com.navimee.models.entities.Entity;
+import com.navimee.models.entities.Log;
 
 import java.util.ArrayList;
 import java.util.HashMap;

@@ -8,7 +8,6 @@ import org.apache.http.impl.client.DefaultConnectionKeepAliveStrategy;
 import org.apache.http.impl.nio.client.CloseableHttpAsyncClient;
 import org.apache.http.impl.nio.client.HttpAsyncClientBuilder;
 import org.apache.http.impl.nio.client.HttpAsyncClients;
-import org.apache.http.impl.nio.reactor.IOReactorConfig;
 import org.apache.http.util.EntityUtils;
 import org.json.JSONObject;
 import org.springframework.stereotype.Service;
@@ -31,7 +30,6 @@ public class HttpClientImpl implements HttpClient {
     @Override
     public Callable<JSONObject> GET(URI uri) {
         return () -> {
-            if(!client.isRunning()) client.start();
             HttpGet request = new HttpGet(uri);
             try {
                 Future<HttpResponse> future = client.execute(request, null);
@@ -39,10 +37,10 @@ public class HttpClientImpl implements HttpClient {
                 String json = EntityUtils.toString(entity, Charset.defaultCharset());
                 EntityUtils.consume(entity);
                 return new JSONObject(json);
-            }catch (Exception e){
+            } catch (Exception e) {
                 e.printStackTrace();
                 return new JSONObject();
-            }finally {
+            } finally {
                 request.releaseConnection();
             }
         };
@@ -58,16 +56,14 @@ public class HttpClientImpl implements HttpClient {
     }
 
     private CloseableHttpAsyncClient createClient() {
-        IOReactorConfig ioReactor = IOReactorConfig.custom().setIoThreadCount(2).build();
         HttpAsyncClientBuilder httpClientBuilder =
                 HttpAsyncClients.custom()
-                        .setMaxConnTotal(1000)
-                        .setMaxConnPerRoute(1000)
-                        .setDefaultIOReactorConfig(ioReactor)
+                        .setMaxConnTotal(100)
+                        .setMaxConnPerRoute(100)
                         .setKeepAliveStrategy(new DefaultConnectionKeepAliveStrategy());
 
-        CloseableHttpAsyncClient httpClient = httpClientBuilder.build();
-        //CloseableHttpAsyncClient httpClient = HttpAsyncClients.createDefault();
+        //CloseableHttpAsyncClient httpClient = httpClientBuilder.build();
+        CloseableHttpAsyncClient httpClient = HttpAsyncClients.createDefault();
 
         httpClient.start();
 

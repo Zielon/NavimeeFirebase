@@ -1,11 +1,12 @@
-package com.navimee.logger;
+package com.navimee.models.entities;
 
+import com.navimee.logger.LogEnum;
 import org.joda.time.DateTimeZone;
 import org.joda.time.LocalDateTime;
 
 import java.util.Date;
 
-public class Log {
+public class Log implements Comparable<Log>, Entity {
 
     public Log() {
     }
@@ -39,7 +40,9 @@ public class Log {
         return time;
     }
 
-    public void setTime(Date time){this.time = time;}
+    public void setTime(Date time) {
+        this.time = time;
+    }
 
     public String getCollection() {
         return collection;
@@ -63,5 +66,10 @@ public class Log {
 
     public void setId(String id) {
         this.id = id;
+    }
+
+    @Override
+    public int compareTo(Log o) {
+        return time.compareTo(o.time);
     }
 }
