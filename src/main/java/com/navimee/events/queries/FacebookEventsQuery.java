@@ -93,6 +93,6 @@ public class FacebookEventsQuery extends Query<List<FbEventDto>, FacebookConfigu
             e.printStackTrace();
         }
 
-        return events.stream().filter(e -> e.getAttendingCount() > 100).collect(toList());
+        return events.stream().filter(e -> e.getAttendingCount() > 50).collect(toList());
     }
 }
