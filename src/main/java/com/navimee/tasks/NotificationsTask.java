@@ -7,6 +7,7 @@ import com.navimee.logger.Logger;
 import com.navimee.models.entities.Log;
 import com.navimee.models.entities.User;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -21,7 +22,8 @@ public class NotificationsTask {
     @Autowired
     UsersRepository usersRepository;
 
-    //@Scheduled(fixedRate = 1000 * 60 * 60)
+    // Once per 1 hour.
+    @Scheduled(fixedRate = 1000 * 60 * 60)
     public void sendNotification() throws ExecutionException, InterruptedException {
         Logger.LOG(new Log(LogEnum.TASK, "Send notifications", 0));
         List<User> users = usersRepository.getUsers();

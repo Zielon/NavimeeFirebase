@@ -25,9 +25,8 @@ public class DetailsTask {
         Logger.LOG(new Log(LogEnum.TASK, "Foursquare details update", 0));
 
         placesRepository.getAvailableCities().forEach(city -> {
-                    //if (city.getName().equals("SOPOT"))
-                    placesService.saveFoursquarePlacesDetails(city.getName());
-                }
+                placesService.saveFoursquarePlacesDetails(city.getName());
+            }
         );
     }
 

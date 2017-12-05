@@ -28,7 +28,6 @@ public class EventsTask {
         //placesRepository.deleteCollection(EVENTS_COLLECTION).get();
 
         placesRepository.getAvailableCities().forEach(city -> {
-            //if (city.getName().equals("GDANSK"))
             eventsService.saveFacebookEvents(city.getName());
         });
     }
