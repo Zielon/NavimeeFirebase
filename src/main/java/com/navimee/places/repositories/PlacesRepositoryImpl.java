@@ -36,14 +36,11 @@ public class PlacesRepositoryImpl implements PlacesRepository {
     @Autowired
     ExecutorService executorService;
 
-    // Facebook places stored in memory.
-    private static Map<String, List<FbPlace>> FacebookPlaces = new HashMap<>();
-
     // SETTERS
 
     @Override
     public Future setFacebookPlaces(List<FbPlace> places, String city) {
-        FacebookPlaces.put(city, places);
+        InMemoryPlaces.SET(city, places);
         return Add.toCollection(database.getCollection(FACEBOOK_PLACES, city), places);
     }
 
@@ -104,10 +101,10 @@ public class PlacesRepositoryImpl implements PlacesRepository {
 
     @Override
     public List<FbPlace> getFacebookPlaces(String city) {
-        if (!FacebookPlaces.containsKey(city))
-            FacebookPlaces.put(city, Get.fromCollection(database.getCollection(FACEBOOK_PLACES, city), FbPlace.class));
+        if (InMemoryPlaces.GET(city) == null)
+            InMemoryPlaces.SET(city, Get.fromCollection(database.getCollection(FACEBOOK_PLACES, city), FbPlace.class));
 
-        return FacebookPlaces.get(city);
+        return InMemoryPlaces.GET(city);
     }
 
     @Override

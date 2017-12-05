@@ -32,6 +32,8 @@ function addLogs(newLogs){
         Object.keys(log).forEach(key => {
             var td = document.createElement('td');
             var div = document.createElement('div');
+            if(log.type === "TASK")
+                div.style.backgroundColor = 'lavender';
             div.appendChild(document.createTextNode(key === "time" ? new Date(log[key]).toISOString() : log[key]))
             td.appendChild(div);
             tr.appendChild(td)
