@@ -14,17 +14,22 @@ public class InMemoryPlaces {
     // Facebook places stored in memory.
     private static Map<String, List<FbPlace>> FacebookPlaces = new HashMap<>();
 
-    public static List<FbPlace> GET(String city){
+    public static List<FbPlace> GET(String city) {
         if (FacebookPlaces.containsKey(city)) {
-            Logger.LOG(new Log(LogEnum.RETRIEVAL_IN_MEMORY, "GET FACEBOOK PLACES [IN-MEMORY]", FacebookPlaces.get(city).size()));
+            Logger.LOG(new Log(LogEnum.RETRIEVAL_IN_MEMORY,
+                    String.format("GET %s FACEBOOK PLACES [IN-MEMORY]", city.toUpperCase()),
+                    FacebookPlaces.get(city).size()));
+
             return FacebookPlaces.get(city);
-        }
-        else return null;
+        } else return null;
     }
 
-    public static void SET(String city, List<FbPlace> places){
+    public static void SET(String city, List<FbPlace> places) {
         if (!FacebookPlaces.containsKey(city)) {
-            Logger.LOG(new Log(LogEnum.ADDITION_IN_MEMORY, "SET FACEBOOK PLACES [IN-MEMORY]", places.size()));
+            Logger.LOG(new Log(LogEnum.ADDITION_IN_MEMORY,
+                    String.format("SET %s FACEBOOK PLACES [IN-MEMORY]", city.toUpperCase()),
+                    places.size()));
+
             FacebookPlaces.put(city, places);
         }
     }

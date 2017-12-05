@@ -1,13 +1,16 @@
 package com.navimee.models.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.navimee.models.entities.events.FbEvent;
 
 import java.util.List;
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class User implements Entity {
     private String token;
     private String email;
     private List<FbEvent> events;
+    private String reference;
 
     public String getEmail() {
         return email;
@@ -36,5 +39,14 @@ public class User implements Entity {
 
     public void setEvents(List<FbEvent> events) {
         this.events = events;
+    }
+
+    @Override
+    public String getReference() {
+        return reference;
+    }
+
+    public void setReference(String reference) {
+        this.reference = reference;
     }
 }

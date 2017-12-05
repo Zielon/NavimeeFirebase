@@ -7,6 +7,7 @@ public class Place implements Entity {
     private String id;
     private String city;
     private String address;
+    private String reference;
 
     public String getName() {
         return name;
@@ -38,5 +39,14 @@ public class Place implements Entity {
 
     public void setAddress(String address) {
         this.address = address;
+    }
+
+    @Override
+    public String getReference() {
+        return reference;
+    }
+
+    public void setReference(String reference) {
+        this.reference = reference;
     }
 }

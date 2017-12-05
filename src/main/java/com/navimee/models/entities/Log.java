@@ -45,6 +45,8 @@ public class Log implements Comparable<Log>, Entity {
     }
 
     public String getCollection() {
+        if (collection.contains("DOCUMENTS"))
+            return collection.split("DOCUMENTS")[1];
         return collection;
     }
 
@@ -62,6 +64,15 @@ public class Log implements Comparable<Log>, Entity {
 
     public String getId() {
         return id;
+    }
+
+    @Override
+    public String getReference() {
+        return null;
+    }
+
+    @Override
+    public void setReference(String reference) {
     }
 
     public void setId(String id) {

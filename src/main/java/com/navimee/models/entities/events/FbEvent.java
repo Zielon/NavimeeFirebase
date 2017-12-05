@@ -18,6 +18,7 @@ public class FbEvent implements Entity {
     private String type;
     private FbPlace place;
     private FbPlace searchPlace;
+    private String reference;
 
     public String getName() {
         return name;
@@ -97,5 +98,14 @@ public class FbEvent implements Entity {
 
     public void setStartTime(Date startTime) {
         this.startTime = startTime;
+    }
+
+    @Override
+    public String getReference() {
+        return reference;
+    }
+
+    public void setReference(String reference) {
+        this.reference = reference;
     }
 }

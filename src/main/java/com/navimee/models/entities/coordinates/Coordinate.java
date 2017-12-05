@@ -6,6 +6,7 @@ public class Coordinate implements Entity {
     private Double latitude;
     private Double longitude;
     private String id;
+    private String reference;
 
     public Coordinate() {
     }
@@ -37,5 +38,14 @@ public class Coordinate implements Entity {
 
     public void setId(String id) {
         this.id = id;
+    }
+
+    @Override
+    public String getReference() {
+        return reference;
+    }
+
+    public void setReference(String reference) {
+        this.reference = reference;
     }
 }

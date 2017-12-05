@@ -3,6 +3,7 @@ package com.navimee.firestore.operations;
 import com.google.cloud.firestore.CollectionReference;
 import com.google.cloud.firestore.SetOptions;
 import com.google.cloud.firestore.WriteResult;
+import com.navimee.firestore.Paths;
 import com.navimee.firestore.operations.enums.AdditionEnum;
 import com.navimee.logger.LogEnum;
 import com.navimee.logger.Logger;
@@ -44,12 +45,14 @@ public class Add extends Base {
             if (entities.size() == 0) return;
             try {
                 List<Future<WriteResult>> tasks = new ArrayList<>();
-                for (Map.Entry<String, T> entry : entities.entrySet())
+                for (Map.Entry<String, T> entry : entities.entrySet()) {
+                    if(!collectionReference.getPath().contains(Paths.HOTSPOT))
+                        entry.getValue().setReference(Paths.get(collectionReference));
                     if (options == AdditionEnum.MERGE)
                         tasks.add(collectionReference.document(entry.getKey()).set(entry.getValue(), SetOptions.merge()));
                     else
                         tasks.add(collectionReference.document(entry.getKey()).set(entry.getValue()));
-
+                }
                 // Wait for all tasks to finish.
                 waitForSingleFuture(executorService, tasks);
 

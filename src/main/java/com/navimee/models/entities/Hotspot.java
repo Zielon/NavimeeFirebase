@@ -1,10 +1,8 @@
-package com.navimee.models.entities.coordinates;
+package com.navimee.models.entities;
 
-import com.navimee.models.entities.Entity;
+public class Hotspot implements Entity {
 
-public class City implements Entity {
     private String id;
-    private String name;
     private String reference;
 
     public String getId() {
@@ -15,15 +13,6 @@ public class City implements Entity {
         this.id = id;
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    @Override
     public String getReference() {
         return reference;
     }

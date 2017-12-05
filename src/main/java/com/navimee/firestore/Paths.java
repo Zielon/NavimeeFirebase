@@ -1,5 +1,7 @@
 package com.navimee.firestore;
 
+import com.google.cloud.firestore.CollectionReference;
+
 public class Paths {
 
     // Collections places
@@ -20,10 +22,17 @@ public class Paths {
     public static final String USERS_COLLECTION = "USERS";
     public static final String USERS_EVENTS_COLLECTION = "USER_EVENTS";
 
-
     // Path
     public static final String BY_CITY = "BY_CITY";
 
     // Logger
     public static final String LOGS = "EXECUTION_LOGS";
+
+    // Hotspot
+    public static final String HOTSPOT = "HOTSPOT";
+
+    public static String get(CollectionReference collectionReference) {
+        String path = collectionReference.getPath();
+        return path.toUpperCase().split("DOCUMENTS")[1];
+    }
 }

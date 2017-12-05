@@ -1,6 +1,8 @@
 package com.navimee.configuration;
 
 import com.google.cloud.firestore.Firestore;
+import com.google.firebase.database.FirebaseDatabase;
+import com.navimee.configuration.mappers.FbEventToHotspotConverter;
 import com.navimee.configuration.mappers.FsPlacesDetailsConverter;
 import com.navimee.configuration.specific.*;
 import org.modelmapper.ModelMapper;
@@ -18,7 +20,7 @@ import java.util.concurrent.Executors;
 @Configuration
 public class Injections {
 
-    @Value(value = "classpath:google-services.json")
+    @Value(value = "classpath:firestore-services.json")
     private Resource firebaseConfig;
 
     @Value(value = "classpath:facebook-services.json")
@@ -53,7 +55,11 @@ public class Injections {
     @Bean
     public ModelMapper modelMapperProvider() {
         ModelMapper modalMapper = new ModelMapper();
+
+        // Converters
         modalMapper.addConverter(FsPlacesDetailsConverter.getConverter());
+        modalMapper.addConverter(FbEventToHotspotConverter.getConverter());
+
         modalMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
         return modalMapper;
     }
@@ -61,7 +67,13 @@ public class Injections {
     @Bean
     @Scope("singleton")
     public Firestore providerFirestore() {
-        return FirebaseInitialization.getDatabaseReference(firebaseConfig);
+        return FirebaseInitialization.getFirestoreReference(firebaseConfig);
+    }
+
+    @Bean
+    @Scope("singleton")
+    public FirebaseDatabase providerFirebase() {
+        return FirebaseInitialization.getFirebaseReference(firebaseConfig);
     }
 
     @Bean

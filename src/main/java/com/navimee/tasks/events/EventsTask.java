@@ -12,6 +12,9 @@ import org.springframework.stereotype.Component;
 
 import java.util.concurrent.ExecutionException;
 
+import static com.navimee.firestore.Paths.EVENTS_COLLECTION;
+import static com.navimee.firestore.Paths.HOTSPOT;
+
 @Component
 public class EventsTask {
 
@@ -25,7 +28,8 @@ public class EventsTask {
 
         Logger.LOG(new Log(LogEnum.TASK, "Events update", 0));
 
-        //placesRepository.deleteCollection(EVENTS_COLLECTION).get();
+        // placesRepository.deleteCollection(EVENTS_COLLECTION).get();
+        // placesRepository.deleteCollection(HOTSPOT).get();
 
         placesRepository.getAvailableCities().forEach(city -> {
             eventsService.saveFacebookEvents(city.getName());

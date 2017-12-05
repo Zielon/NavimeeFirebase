@@ -30,6 +30,7 @@ function addLogs(newLogs){
         var tr = document.createElement('tr');
         tr.setAttribute("id", lastLog)
         Object.keys(log).forEach(key => {
+
             var td = document.createElement('td');
             var div = document.createElement('div');
 
@@ -40,10 +41,14 @@ function addLogs(newLogs){
                 div.style.backgroundColor = 'LightYellow';
             else if(log.type === "RETRIEVAL")
                 div.style.backgroundColor = 'LightSteelBlue';
+            else if(log.type === "DELETION")
+                div.style.backgroundColor = 'IndianRed';
 
-            div.appendChild(document.createTextNode(key === "time" ? new Date(log[key]).toISOString() : log[key]))
-            td.appendChild(div);
-            tr.appendChild(td)
+            if(key !== "reference"){
+                div.appendChild(document.createTextNode(key === "time" ? new Date(log[key]).toISOString() : log[key]))
+                td.appendChild(div);
+                tr.appendChild(td)
+            }
         });
         document.getElementById("logs").appendChild(tr);
     });

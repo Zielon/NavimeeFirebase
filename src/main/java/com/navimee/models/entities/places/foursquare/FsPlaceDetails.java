@@ -32,6 +32,8 @@ public class FsPlaceDetails implements Entity {
 
     private List<String> categories;
 
+    private String reference;
+
     public String getId() {
         return id;
     }
@@ -198,5 +200,15 @@ public class FsPlaceDetails implements Entity {
 
     public void setCategories(List<String> categories) {
         this.categories = categories;
+    }
+
+    @Override
+    public String getReference() {
+        return reference;
+    }
+
+    @Override
+    public void setReference(String reference) {
+        this.reference = reference;
     }
 }

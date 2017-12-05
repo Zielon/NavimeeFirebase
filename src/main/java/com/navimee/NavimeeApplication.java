@@ -1,5 +1,6 @@
 package com.navimee;
 
+import com.navimee.logger.Logger;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
@@ -17,5 +18,8 @@ public class NavimeeApplication extends SpringBootServletInitializer {
 
     public static void main(String[] args) throws Exception {
         SpringApplication.run(NavimeeApplication.class, args);
+
+        // Disable logging for the whole application.
+        Logger.IsRunning = true;
     }
 }

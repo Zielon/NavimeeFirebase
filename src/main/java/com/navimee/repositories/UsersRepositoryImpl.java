@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.cloud.firestore.DocumentSnapshot;
 import com.google.cloud.firestore.Firestore;
 import com.navimee.contracts.repositories.UsersRepository;
+import com.navimee.firestore.Paths;
 import com.navimee.firestore.operations.Get;
 import com.navimee.models.entities.User;
 import com.navimee.models.entities.events.FbEvent;
@@ -29,6 +30,7 @@ public class UsersRepositoryImpl implements UsersRepository {
         try {
             for (DocumentSnapshot document : db.collection(USERS_COLLECTION).get().get().getDocuments()) {
                 User user = mapper.convertValue(document.getData(), User.class);
+                user.setReference(Paths.get(db.collection(USERS_COLLECTION)));
                 user.setEvents(Get.fromCollection(document.getReference().collection(USERS_EVENTS_COLLECTION), FbEvent.class));
                 users.add(user);
             }

@@ -42,9 +42,9 @@ public class PlacesTask {
         Logger.LOG(new Log(LogEnum.TASK, "Places update", 0));
 
         placesRepository.getAvailableCities().forEach(city -> {
-                placesService.saveFoursquarePlaces(city.getName());
-                placesService.saveFacebookPlaces(city.getName());
-            }
+                    placesService.saveFoursquarePlaces(city.getName());
+                    placesService.saveFacebookPlaces(city.getName());
+                }
         );
     }
 

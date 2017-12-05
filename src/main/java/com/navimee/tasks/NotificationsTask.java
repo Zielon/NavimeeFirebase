@@ -23,8 +23,9 @@ public class NotificationsTask {
     UsersRepository usersRepository;
 
     // Once per 1 hour.
-    @Scheduled(fixedRate = 1000 * 60 * 60)
+    @Scheduled(cron = "0 0 0/1 * * ?")
     public void sendNotification() throws ExecutionException, InterruptedException {
+
         Logger.LOG(new Log(LogEnum.TASK, "Send notifications", 0));
         List<User> users = usersRepository.getUsers();
         notifications.send(users);
