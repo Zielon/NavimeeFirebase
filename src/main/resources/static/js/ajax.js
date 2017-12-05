@@ -32,8 +32,15 @@ function addLogs(newLogs){
         Object.keys(log).forEach(key => {
             var td = document.createElement('td');
             var div = document.createElement('div');
+
+            // Background colors based on a type.
             if(log.type === "TASK")
-                div.style.backgroundColor = 'lavender';
+                div.style.backgroundColor = 'Lavender';
+            else if(log.type === "ADDITION")
+                div.style.backgroundColor = 'LightYellow';
+            else if(log.type === "RETRIEVAL")
+                div.style.backgroundColor = 'LightSteelBlue';
+
             div.appendChild(document.createTextNode(key === "time" ? new Date(log[key]).toISOString() : log[key]))
             td.appendChild(div);
             tr.appendChild(td)
