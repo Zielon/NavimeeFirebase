@@ -32,7 +32,11 @@ public class DetailsTask {
 
     // Once per 5 hour.
     @Scheduled(cron = "0 0 0/5 * * ?")
-    public void task() throws ExecutionException, InterruptedException {
-        this.addDetailsTask();
+    public void task() {
+        try {
+            this.addDetailsTask();
+        } catch (Exception e) {
+            Logger.LOG(new Log(LogEnum.EXCEPTION, e));
+        }
     }
 }

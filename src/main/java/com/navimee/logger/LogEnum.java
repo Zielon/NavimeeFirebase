@@ -6,5 +6,6 @@ public enum LogEnum {
     DELETION,
     TASK,
     RETRIEVAL_IN_MEMORY,
-    ADDITION_IN_MEMORY
+    ADDITION_IN_MEMORY,
+    EXCEPTION
 }

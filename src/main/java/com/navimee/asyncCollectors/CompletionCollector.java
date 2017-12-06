@@ -1,5 +1,9 @@
 package com.navimee.asyncCollectors;
 
+import com.navimee.logger.LogEnum;
+import com.navimee.logger.Logger;
+import com.navimee.models.entities.Log;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -22,7 +26,7 @@ public class CompletionCollector {
                     output.add(result);
                 received++;
             } catch (Exception e) {
-                e.printStackTrace();
+                Logger.LOG(new Log(LogEnum.EXCEPTION, e));
             }
         }
 
@@ -44,7 +48,7 @@ public class CompletionCollector {
                     output.addAll(result);
                 received++;
             } catch (Exception e) {
-                e.printStackTrace();
+                Logger.LOG(new Log(LogEnum.EXCEPTION, e));
             }
         }
 
@@ -66,7 +70,7 @@ public class CompletionCollector {
                     output.add(result);
                 received++;
             } catch (Exception e) {
-                e.printStackTrace();
+                Logger.LOG(new Log(LogEnum.EXCEPTION, e));
             }
         }
 
@@ -88,7 +92,7 @@ public class CompletionCollector {
                     output.addAll(result);
                 received++;
             } catch (Exception e) {
-                e.printStackTrace();
+                Logger.LOG(new Log(LogEnum.EXCEPTION, e));
             }
         }
 

@@ -42,7 +42,7 @@ public class Delete {
                 collection(collection, deletedAll);
             }
         } catch (Exception e) {
-            System.err.println("Error deleting collection : " + e.getMessage());
+            Logger.LOG(new Log(LogEnum.EXCEPTION, e));
         }
 
         Logger.LOG(new Log(LogEnum.DELETION, collection.getPath(), deletedAll));
@@ -54,7 +54,7 @@ public class Delete {
                 collection(collection, 1);
             document.delete().get();
         } catch (Exception e) {
-            System.err.println("Error deleting document : " + e.getMessage());
+            Logger.LOG(new Log(LogEnum.EXCEPTION, e));
         }
     }
 }

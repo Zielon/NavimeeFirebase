@@ -5,6 +5,8 @@ import com.navimee.logger.LogEnum;
 import org.joda.time.DateTimeZone;
 import org.joda.time.LocalDateTime;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.Date;
 
 public class Log implements Comparable<Log>, Entity {
@@ -19,14 +21,25 @@ public class Log implements Comparable<Log>, Entity {
     }
 
     public Log(LogEnum type, String reference, Integer count) {
-        this.type = type;
-        this.reference = Paths.get(reference);
-        this.count = count;
-
         DateTimeZone zone = DateTimeZone.forID("Europe/Warsaw");
         LocalDateTime warsaw = LocalDateTime.now(zone);
 
+        this.type = type;
+        this.reference = Paths.get(reference);
+        this.count = count;
         this.time = warsaw.toDate();
+    }
+
+    public Log(LogEnum type, Exception exception) {
+        StringWriter sw = new StringWriter();
+        exception.printStackTrace(new PrintWriter(sw));
+        DateTimeZone zone = DateTimeZone.forID("Europe/Warsaw");
+        LocalDateTime warsaw = LocalDateTime.now(zone);
+
+        this.type = type;
+        this.reference = sw.toString();
+        this.time = warsaw.toDate();
+        this.count = null;
     }
 
     public Log(LogEnum type, String reference) {
@@ -72,7 +85,7 @@ public class Log implements Comparable<Log>, Entity {
 
     @Override
     public void setReference(String reference) {
-        this.reference = reference != null ? reference.toUpperCase() : null;
+        this.reference = reference;
     }
 
     @Override

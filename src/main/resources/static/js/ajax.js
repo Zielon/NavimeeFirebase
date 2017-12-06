@@ -5,9 +5,7 @@ function start(){
     setInterval(function(){ loadDoc();}, 500)
 }
 
-function reset(){
-
-}
+function reset(){}
 
 function loadDoc() {
       var xhttp = new XMLHttpRequest();
@@ -36,17 +34,22 @@ function addLogs(newLogs){
 
             // Background colors based on a type.
             if(log.type === "TASK")
-                div.style.backgroundColor = 'Lavender';
+                td.style.backgroundColor = 'Lavender';
             else if(log.type === "ADDITION")
-                div.style.backgroundColor = 'LightYellow';
+                td.style.backgroundColor = 'LightYellow';
             else if(log.type === "RETRIEVAL")
-                div.style.backgroundColor = 'LightSteelBlue';
+                td.style.backgroundColor = 'LightSteelBlue';
             else if(log.type === "DELETION")
-                div.style.backgroundColor = 'IndianRed';
+                td.style.backgroundColor = 'IndianRed';
+            else if(log.type === "EXCEPTION"){
+                td.style.backgroundColor = 'Crimson';
+                if(key === "reference")
+                    div.className = "exception";
+            }
 
             div.appendChild(document.createTextNode(key === "time" ? new Date(log[key]).toISOString() : !log[key] ? " - " : log[key]))
             td.appendChild(div);
-            tr.appendChild(td)
+            tr.appendChild(td);
         });
         document.getElementById("logs").appendChild(tr);
     });
@@ -54,7 +57,7 @@ function addLogs(newLogs){
     if(lastLog != "")
         $(`#${lastLog}`).eq(-1).attr("tabindex",-1).focus();
 
-    newLogs.forEach(log =>{
+    newLogs.forEach(log => {
         logs[log.id] = log;
     });
 };

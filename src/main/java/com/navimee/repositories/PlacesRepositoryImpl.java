@@ -6,6 +6,9 @@ import com.navimee.firestore.operations.Add;
 import com.navimee.firestore.operations.Delete;
 import com.navimee.firestore.operations.Get;
 import com.navimee.firestore.operations.enums.AdditionEnum;
+import com.navimee.logger.LogEnum;
+import com.navimee.logger.Logger;
+import com.navimee.models.entities.Log;
 import com.navimee.models.entities.coordinates.City;
 import com.navimee.models.entities.coordinates.Coordinate;
 import com.navimee.models.entities.places.facebook.FbPlace;
@@ -64,7 +67,7 @@ public class PlacesRepositoryImpl implements PlacesRepository {
                     try {
                         add.toCollection(database.getCollection(AVAILABLE_CITIES, city.getName()), city).get();
                     } catch (Exception e) {
-                        e.printStackTrace();
+                        Logger.LOG(new Log(LogEnum.EXCEPTION, e));
                     }
                 }));
     }
@@ -76,7 +79,7 @@ public class PlacesRepositoryImpl implements PlacesRepository {
                     try {
                         add.toCollection(database.getCollection(COORDINATES, k), v).get();
                     } catch (Exception e) {
-                        e.printStackTrace();
+                        Logger.LOG(new Log(LogEnum.EXCEPTION, e));
                     }
                 }));
     }

@@ -50,7 +50,11 @@ public class PlacesTask {
 
     //Once per 30 days.
     @Scheduled(cron = "0 00 12 ? * *")
-    public void task() throws ExecutionException, InterruptedException {
-        this.addPlacesTask();
+    public void task() {
+        try {
+            this.addPlacesTask();
+        } catch (Exception e) {
+            Logger.LOG(new Log(LogEnum.EXCEPTION, e));
+        }
     }
 }

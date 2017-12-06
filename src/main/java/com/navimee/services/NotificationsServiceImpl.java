@@ -1,6 +1,9 @@
 package com.navimee.services;
 
 import com.navimee.contracts.services.NotificationsService;
+import com.navimee.logger.LogEnum;
+import com.navimee.logger.Logger;
+import com.navimee.models.entities.Log;
 import com.navimee.models.entities.User;
 import com.navimee.models.entities.events.FbEvent;
 import de.bytefish.fcmjava.client.FcmClient;
@@ -51,7 +54,7 @@ public class NotificationsServiceImpl implements NotificationsService {
                     });
                 }
             } catch (Exception e) {
-                e.printStackTrace();
+                Logger.LOG(new Log(LogEnum.EXCEPTION, e));
             }
         });
     }

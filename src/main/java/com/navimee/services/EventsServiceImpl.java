@@ -1,11 +1,11 @@
 package com.navimee.services;
 
 import com.navimee.configuration.specific.FacebookConfiguration;
-import com.navimee.contracts.repositories.HotspotRepository;
 import com.navimee.contracts.repositories.EventsRepository;
+import com.navimee.contracts.repositories.HotspotRepository;
 import com.navimee.contracts.repositories.PlacesRepository;
-import com.navimee.contracts.services.HttpClient;
 import com.navimee.contracts.services.EventsService;
+import com.navimee.contracts.services.HttpClient;
 import com.navimee.contracts.services.PlacesService;
 import com.navimee.events.EventsHelpers;
 import com.navimee.events.queries.FacebookEventsQuery;
@@ -73,13 +73,8 @@ public class EventsServiceImpl implements EventsService {
                     .filter(EventsHelpers.getCompelmentFunction(placesService)::apply)    // Complement event places
                     .collect(toList());
 
-            try {
-                eventsRepository.setEvents(entities, city).get();
-            } catch (Exception ignore) {
-            }
-
-            List<Hotspot> hotspots = entities.stream().map(entity -> modelMapper.map(entity, Hotspot.class)).collect(toList());
-            hotspotRepository.setHotspot(hotspots);
+            eventsRepository.setEvents(entities, city);
+            hotspotRepository.setHotspot(entities.stream().map(entity -> modelMapper.map(entity, Hotspot.class)).collect(toList()));
         });
     }
 }

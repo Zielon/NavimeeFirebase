@@ -2,7 +2,10 @@ package com.navimee.events;
 
 import com.google.cloud.firestore.GeoPoint;
 import com.navimee.contracts.services.PlacesService;
+import com.navimee.logger.LogEnum;
+import com.navimee.logger.Logger;
 import com.navimee.models.dto.geocoding.GooglePlaceDto;
+import com.navimee.models.entities.Log;
 import com.navimee.models.entities.coordinates.Coordinate;
 import com.navimee.models.entities.events.FbEvent;
 import com.navimee.places.googleGeocoding.enums.GeoType;
@@ -78,7 +81,7 @@ public class EventsHelpers {
             }
 
         } catch (Exception e) {
-            e.printStackTrace();
+            Logger.LOG(new Log(LogEnum.EXCEPTION, e));
         }
 
         return false;
@@ -91,7 +94,6 @@ public class EventsHelpers {
         DateTime eventTime = new DateTime(event.getStartTime());
 
         return false;
-
     }
 
     private static boolean similar(double a, double b) {

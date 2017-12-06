@@ -24,6 +24,10 @@ tr:nth-child(even) {background-color: #f2f2f2;}
     margin: 0 auto;
 }
 
+.exception {
+    word-wrap: break-word;
+}
+
 @keyframes spin {
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }

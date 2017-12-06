@@ -35,7 +35,11 @@ public class EventsTask {
 
     // Once per 30 minutes.
     @Scheduled(cron = "0 0/30 * * * ?")
-    public void task() throws ExecutionException, InterruptedException {
-        this.addEventsTask();
+    public void task() {
+        try {
+            this.addEventsTask();
+        } catch (Exception e) {
+            Logger.LOG(new Log(LogEnum.EXCEPTION, e));
+        }
     }
 }

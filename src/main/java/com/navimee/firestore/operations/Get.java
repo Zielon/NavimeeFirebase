@@ -30,7 +30,7 @@ public class Get {
                 output.addAll(fromCollection(collectionReference, type, false));
 
         } catch (Exception e) {
-            e.printStackTrace();
+            Logger.LOG(new Log(LogEnum.EXCEPTION, e));
         }
 
         return output;
@@ -53,7 +53,7 @@ public class Get {
             if (logging)
                 Logger.LOG(new Log(LogEnum.RETRIEVAL, collectionReference.getPath(), output.size()));
         } catch (Exception e) {
-            e.printStackTrace();
+            Logger.LOG(new Log(LogEnum.EXCEPTION, e));
         }
 
         return output;

@@ -66,7 +66,7 @@ public class Add {
                 Logger.LOG(new Log(LogEnum.ADDITION, collectionReference.getPath(), entities.size()));
 
             } catch (Exception e) {
-                e.printStackTrace();
+                Logger.LOG(new Log(LogEnum.EXCEPTION, e));
             }
         });
     }
