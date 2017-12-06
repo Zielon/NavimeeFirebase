@@ -29,6 +29,28 @@ public class CompletionCollector {
         return output;
     }
 
+    public static <T> List<T> waitForFutures(ExecutorService executorService, Collection<? extends Future<List<T>>> futures) {
+        List<T> output = new ArrayList<>();
+        CompletionService<List<T>> completionService = new ExecutorCompletionService<>(executorService);
+
+        // Create callable tasks
+        futures.forEach(future -> completionService.submit(() -> future.get()));
+
+        int received = 0;
+        while (received < futures.size()) {
+            try {
+                List<T> result = completionService.take().get();
+                if (result != null && result.size() > 0)
+                    output.addAll(result);
+                received++;
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+        return output;
+    }
+
     public static <T> List<T> waitForSingleTask(ExecutorService executorService, Collection<Callable<T>> tasks) {
         List<T> output = new ArrayList<>();
         CompletionService<T> completionService = new ExecutorCompletionService<>(executorService);
@@ -60,28 +82,6 @@ public class CompletionCollector {
 
         int received = 0;
         while (received < tasks.size()) {
-            try {
-                List<T> result = completionService.take().get();
-                if (result != null && result.size() > 0)
-                    output.addAll(result);
-                received++;
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-
-        return output;
-    }
-
-    public static <T> List<T> waitForFutures(ExecutorService executorService, Collection<? extends Future<List<T>>> futures) {
-        List<T> output = new ArrayList<>();
-        CompletionService<List<T>> completionService = new ExecutorCompletionService<>(executorService);
-
-        // Create callable tasks
-        futures.forEach(future -> completionService.submit(() -> future.get()));
-
-        int received = 0;
-        while (received < futures.size()) {
             try {
                 List<T> result = completionService.take().get();
                 if (result != null && result.size() > 0)

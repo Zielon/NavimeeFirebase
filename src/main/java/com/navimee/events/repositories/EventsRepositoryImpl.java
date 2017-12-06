@@ -25,21 +25,27 @@ public class EventsRepositoryImpl implements EventsRepository {
     @Autowired
     ExecutorService executorService;
 
+    @Autowired
+    Add add;
+
+    @Autowired
+    Get get;
+
     @Override
     public List<FbEvent> getEvents(String city) {
-        return Get.fromCollection(database.getCollection(EVENTS, city), FbEvent.class);
+        return get.fromCollection(database.getCollection(EVENTS, city), FbEvent.class);
     }
 
     @Override
     public Future setEvents(List<FbEvent> events, String city) {
-        return Add.toCollection(database.getCollection(EVENTS, city), events);
+        return add.toCollection(database.getCollection(EVENTS, city), events);
     }
 
     @Override
     public Future sevenDaysSegregation(Map<String, List<FbEvent>> events, String city) {
         return executorService.submit(() ->
                 events.forEach((key, segregatedEvents) ->
-                        Add.toCollection(database.getCollection(SEGREGATED_EVENTS, city).document(key).collection("EVENTS"), segregatedEvents)));
+                        add.toCollection(database.getCollection(SEGREGATED_EVENTS, city).document(key).collection("EVENTS"), segregatedEvents)));
     }
 
     @Override

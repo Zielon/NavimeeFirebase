@@ -1,8 +1,10 @@
 package com.navimee.tasks.events;
 
 
+import com.navimee.contracts.repositories.FirestoreRepository;
 import com.navimee.contracts.repositories.palces.PlacesRepository;
 import com.navimee.contracts.services.events.EventsService;
+import com.navimee.firestore.Paths;
 import com.navimee.logger.LogEnum;
 import com.navimee.logger.Logger;
 import com.navimee.models.entities.Log;
@@ -11,9 +13,6 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import java.util.concurrent.ExecutionException;
-
-import static com.navimee.firestore.Paths.EVENTS_COLLECTION;
-import static com.navimee.firestore.Paths.HOTSPOT;
 
 @Component
 public class EventsTask {
@@ -24,20 +23,23 @@ public class EventsTask {
     @Autowired
     EventsService eventsService;
 
+    @Autowired
+    FirestoreRepository firestoreRepository;
+
     public void addEventsTask() throws ExecutionException, InterruptedException {
 
-        Logger.LOG(new Log(LogEnum.TASK, "Events update", 0));
+        Logger.LOG(new Log(LogEnum.TASK, "Events update"));
 
-        // placesRepository.deleteCollection(EVENTS_COLLECTION).get();
-        // placesRepository.deleteCollection(HOTSPOT).get();
+        // placesRepository.deleteCollection(Paths.EVENTS_COLLECTION).get();
+        // placesRepository.deleteCollection(Paths.HOTSPOT).get();
 
         placesRepository.getAvailableCities().forEach(city -> {
             eventsService.saveFacebookEvents(city.getName());
         });
     }
 
-    // Once per 1 hour.
-    @Scheduled(cron = "0 0 0/1 * * ?")
+    // Once per 30 minutes.
+    @Scheduled(cron = "0 0/30 * * * ?")
     public void task() throws ExecutionException, InterruptedException {
         this.addEventsTask();
     }

@@ -39,7 +39,7 @@ public class PlacesTask {
         // placesRepository.setCoordinates(coordinates).get();
         // placesRepository.setAvailableCities(cities).get();
 
-        Logger.LOG(new Log(LogEnum.TASK, "Places update", 0));
+        Logger.LOG(new Log(LogEnum.TASK, "Places update"));
 
         placesRepository.getAvailableCities().forEach(city -> {
                     placesService.saveFoursquarePlaces(city.getName());

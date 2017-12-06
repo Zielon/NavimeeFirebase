@@ -35,4 +35,10 @@ public class Paths {
         String path = collectionReference.getPath();
         return path.toUpperCase().split("DOCUMENTS")[1];
     }
+
+    public static String get(String collectionReference) {
+        return collectionReference.contains("DOCUMENTS") ?
+                collectionReference.toUpperCase().split("DOCUMENTS")[1] :
+                collectionReference;
+    }
 }

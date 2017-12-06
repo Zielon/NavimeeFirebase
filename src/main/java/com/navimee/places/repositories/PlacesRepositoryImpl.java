@@ -1,6 +1,5 @@
 package com.navimee.places.repositories;
 
-import com.google.cloud.firestore.Firestore;
 import com.navimee.contracts.repositories.palces.PlacesRepository;
 import com.navimee.firestore.Database;
 import com.navimee.firestore.operations.Add;
@@ -21,13 +20,9 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 
 import static com.navimee.enums.CollectionEnum.*;
-import static com.navimee.firestore.Paths.BY_CITY;
 
 @Repository
 public class PlacesRepositoryImpl implements PlacesRepository {
-
-    @Autowired
-    Firestore db;
 
     @Autowired
     Database database;
@@ -35,22 +30,30 @@ public class PlacesRepositoryImpl implements PlacesRepository {
     @Autowired
     ExecutorService executorService;
 
-    // SETTERS
+    @Autowired
+    Add add;
 
+    @Autowired
+    Get get;
+
+    @Autowired
+    Delete delete;
+
+    // SETTERS
     @Override
     public Future setFacebookPlaces(List<FbPlace> places, String city) {
-        InMemoryPlaces.SET(city, places);
-        return Add.toCollection(database.getCollection(FACEBOOK_PLACES, city), places);
+        InMemoryRepository.SET(city, places);
+        return add.toCollection(database.getCollection(FACEBOOK_PLACES, city), places);
     }
 
     @Override
     public Future setFoursquarePlaces(List<FsPlace> places, String city) {
-        return Add.toCollection(database.getCollection(FOURSQUARE_PLACES, city), places);
+        return add.toCollection(database.getCollection(FOURSQUARE_PLACES, city), places);
     }
 
     @Override
     public Future setFoursquarePlacesDetails(List<FsPlaceDetails> details, String city) {
-        return Add.toCollection(database.getCollection(FOURSQUARE_PLACES_DETAILS, city), details);
+        return add.toCollection(database.getCollection(FOURSQUARE_PLACES_DETAILS, city), details);
     }
 
     @Override
@@ -58,7 +61,7 @@ public class PlacesRepositoryImpl implements PlacesRepository {
         return executorService.submit(() ->
                 cities.forEach(city -> {
                     try {
-                        Add.toCollection(database.getCollection(AVAILABLE_CITIES, city.getName()), city).get();
+                        add.toCollection(database.getCollection(AVAILABLE_CITIES, city.getName()), city).get();
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -70,7 +73,7 @@ public class PlacesRepositoryImpl implements PlacesRepository {
         return executorService.submit(() ->
                 coordinatesMap.forEach((k, v) -> {
                     try {
-                        Add.toCollection(database.getCollection(COORDINATES, k), v).get();
+                        add.toCollection(database.getCollection(COORDINATES, k), v).get();
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -79,50 +82,42 @@ public class PlacesRepositoryImpl implements PlacesRepository {
 
     @Override
     public Future addCoordinates(Coordinate coordinate, String city) {
-        return Add.toCollection(database.getCollection(COORDINATES, city), coordinate, AdditionEnum.MERGE);
+        return add.toCollection(database.getCollection(COORDINATES, city), coordinate, AdditionEnum.MERGE);
     }
 
     // DELETE
-
-    @Override
-    public Future deleteCollection(String collection) {
-        return executorService.submit(() ->
-                getAvailableCities().forEach(city ->
-                        Delete.collection(db.collection(collection).document(BY_CITY).collection(city.getName()), 0)));
-    }
-
     @Override
     public Future deleteCoordinates(String document, String city) {
-        return executorService.submit(() -> Delete.document(database.getDocument(COORDINATES).collection(city).document(document)));
+        return executorService.submit(() -> delete.document(database.getDocument(COORDINATES).collection(city).document(document)));
     }
 
     // GETTERS
-
     @Override
     public List<FbPlace> getFacebookPlaces(String city) {
-        if (InMemoryPlaces.GET(city) == null)
-            InMemoryPlaces.SET(city, Get.fromCollection(database.getCollection(FACEBOOK_PLACES, city), FbPlace.class));
-
-        return InMemoryPlaces.GET(city);
+        if (InMemoryRepository.GET(city) == null) {
+            List<FbPlace> places = get.fromCollection(database.getCollection(FACEBOOK_PLACES, city), FbPlace.class);
+            InMemoryRepository.SET(city, places);
+        }
+        return InMemoryRepository.GET(city);
     }
 
     @Override
     public List<FsPlace> getFoursquarePlaces(String city) {
-        return Get.fromCollection(database.getCollection(FOURSQUARE_PLACES, city), FsPlace.class);
+        return get.fromCollection(database.getCollection(FOURSQUARE_PLACES, city), FsPlace.class);
     }
 
     @Override
     public List<FsPlaceDetails> getFoursquarePlacesDetails(String city) {
-        return Get.fromCollection(database.getCollection(FOURSQUARE_PLACES_DETAILS, city), FsPlaceDetails.class);
+        return get.fromCollection(database.getCollection(FOURSQUARE_PLACES_DETAILS, city), FsPlaceDetails.class);
     }
 
     @Override
     public List<Coordinate> getCoordinates(String city) {
-        return Get.fromCollection(database.getCollection(COORDINATES, city), Coordinate.class);
+        return get.fromCollection(database.getCollection(COORDINATES, city), Coordinate.class);
     }
 
     @Override
     public List<City> getAvailableCities() {
-        return Get.fromDocument(database.getDocument(AVAILABLE_CITIES), City.class);
+        return get.fromDocument(database.getDocument(AVAILABLE_CITIES), City.class);
     }
 }

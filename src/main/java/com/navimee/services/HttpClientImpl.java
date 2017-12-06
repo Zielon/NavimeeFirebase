@@ -21,7 +21,7 @@ import java.util.concurrent.Future;
 @Service
 public class HttpClientImpl implements HttpClient {
 
-    CloseableHttpAsyncClient client;
+    private CloseableHttpAsyncClient client;
 
     public HttpClientImpl() {
         client = createClient();

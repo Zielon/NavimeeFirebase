@@ -37,7 +37,5 @@ public interface PlacesRepository {
     Future setFoursquarePlacesDetails(List<FsPlaceDetails> details, String city);
 
     // DELETE
-    Future deleteCollection(String collection);
-
     Future deleteCoordinates(String document, String city);
 }

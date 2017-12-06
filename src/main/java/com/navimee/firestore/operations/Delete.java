@@ -4,16 +4,23 @@ import com.google.cloud.firestore.*;
 import com.navimee.logger.LogEnum;
 import com.navimee.logger.Logger;
 import com.navimee.models.entities.Log;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 
 import static com.navimee.asyncCollectors.CompletionCollector.waitForSingleFuture;
 
-public class Delete extends Base {
+@Component
+public class Delete {
 
-    public static void collection(CollectionReference collection, int deletedAll) {
+    @Autowired
+    ExecutorService executorService;
+
+    public void collection(CollectionReference collection, int deletedAll) {
         int batchSize = 1000;
         try {
             int deleted = 0;
@@ -41,10 +48,10 @@ public class Delete extends Base {
         Logger.LOG(new Log(LogEnum.DELETION, collection.getPath(), deletedAll));
     }
 
-    public static void document(DocumentReference document) {
+    public void document(DocumentReference document) {
         try {
             for (CollectionReference collection : document.getCollections().get())
-                collection(collection, 0);
+                collection(collection, 1);
             document.delete().get();
         } catch (Exception e) {
             System.err.println("Error deleting document : " + e.getMessage());

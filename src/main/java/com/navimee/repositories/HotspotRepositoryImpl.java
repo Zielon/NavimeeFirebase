@@ -17,8 +17,11 @@ public class HotspotRepositoryImpl implements HotspotRepository {
     @Autowired
     Firestore db;
 
+    @Autowired
+    Add add;
+
     @Override
     public Future setHotspot(List<Hotspot> hotspots) {
-        return Add.toCollection(db.collection(Paths.HOTSPOT), hotspots);
+        return add.toCollection(db.collection(Paths.HOTSPOT), hotspots);
     }
 }

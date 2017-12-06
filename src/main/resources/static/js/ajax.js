@@ -44,11 +44,9 @@ function addLogs(newLogs){
             else if(log.type === "DELETION")
                 div.style.backgroundColor = 'IndianRed';
 
-            if(key !== "reference"){
-                div.appendChild(document.createTextNode(key === "time" ? new Date(log[key]).toISOString() : log[key]))
-                td.appendChild(div);
-                tr.appendChild(td)
-            }
+            div.appendChild(document.createTextNode(key === "time" ? new Date(log[key]).toISOString() : !log[key] ? " - " : log[key]))
+            td.appendChild(div);
+            tr.appendChild(td)
         });
         document.getElementById("logs").appendChild(tr);
     });

@@ -22,7 +22,6 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 
@@ -76,7 +75,8 @@ public class EventsServiceImpl implements EventsService {
 
             try {
                 eventsRepository.setEvents(entities, city).get();
-            } catch (Exception ignore) {}
+            } catch (Exception ignore) {
+            }
 
             List<Hotspot> hotspots = entities.stream().map(entity -> modelMapper.map(entity, Hotspot.class)).collect(toList());
             hotspotRepository.setHotspot(hotspots);

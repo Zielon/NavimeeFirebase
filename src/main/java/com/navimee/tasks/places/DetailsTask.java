@@ -22,7 +22,7 @@ public class DetailsTask {
 
     public void addDetailsTask() throws ExecutionException, InterruptedException {
 
-        Logger.LOG(new Log(LogEnum.TASK, "Foursquare details update", 0));
+        Logger.LOG(new Log(LogEnum.TASK, "Foursquare details update"));
 
         placesRepository.getAvailableCities().forEach(city -> {
                 placesService.saveFoursquarePlacesDetails(city.getName());

@@ -10,17 +10,24 @@ import com.navimee.logger.LogEnum;
 import com.navimee.logger.Logger;
 import com.navimee.models.entities.Entity;
 import com.navimee.models.entities.Log;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
 
-public class Get extends Base {
+@Component
+public class Get {
 
-    public static <T extends Entity> List<T> fromDocument(DocumentReference documentReference, Class<T> type) {
+    @Autowired
+    ExecutorService executorService;
+
+    public <T extends Entity> List<T> fromDocument(DocumentReference documentReference, Class<T> type) {
         List<T> output = new ArrayList<>();
         try {
             for (CollectionReference collectionReference : documentReference.getCollections().get())
-                output.addAll(fromCollection(collectionReference, type, true));
+                output.addAll(fromCollection(collectionReference, type, false));
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -29,11 +36,11 @@ public class Get extends Base {
         return output;
     }
 
-    public static <T extends Entity> List<T> fromCollection(CollectionReference collectionReference, Class<T> type) {
+    public <T extends Entity> List<T> fromCollection(CollectionReference collectionReference, Class<T> type) {
         return fromCollection(collectionReference, type, true);
     }
 
-    public static <T extends Entity> List<T> fromCollection(CollectionReference collectionReference, Class<T> type, boolean logging) {
+    public <T extends Entity> List<T> fromCollection(CollectionReference collectionReference, Class<T> type, boolean logging) {
         ObjectMapper mapper = new ObjectMapper();
         mapper.registerModule(new JodaModule());
         List<T> output = new ArrayList<>();

@@ -23,6 +23,9 @@ public class UsersRepositoryImpl implements UsersRepository {
     @Autowired
     Firestore db;
 
+    @Autowired
+    Get get;
+
     @Override
     public List<User> getUsers() {
         ObjectMapper mapper = new ObjectMapper();
@@ -31,7 +34,7 @@ public class UsersRepositoryImpl implements UsersRepository {
             for (DocumentSnapshot document : db.collection(USERS_COLLECTION).get().get().getDocuments()) {
                 User user = mapper.convertValue(document.getData(), User.class);
                 user.setReference(Paths.get(db.collection(USERS_COLLECTION)));
-                user.setEvents(Get.fromCollection(document.getReference().collection(USERS_EVENTS_COLLECTION), FbEvent.class));
+                user.setEvents(get.fromCollection(document.getReference().collection(USERS_EVENTS_COLLECTION), FbEvent.class));
                 users.add(user);
             }
         } catch (Exception e) {

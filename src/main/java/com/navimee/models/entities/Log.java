@@ -1,5 +1,6 @@
 package com.navimee.models.entities;
 
+import com.navimee.firestore.Paths;
 import com.navimee.logger.LogEnum;
 import org.joda.time.DateTimeZone;
 import org.joda.time.LocalDateTime;
@@ -8,12 +9,18 @@ import java.util.Date;
 
 public class Log implements Comparable<Log>, Entity {
 
+    private LogEnum type;
+    private Date time;
+    private String reference;
+    private Integer count;
+    private String id;
+
     public Log() {
     }
 
-    public Log(LogEnum type, String collection, int count) {
+    public Log(LogEnum type, String reference, Integer count) {
         this.type = type;
-        this.collection = collection;
+        this.reference = Paths.get(reference);
         this.count = count;
 
         DateTimeZone zone = DateTimeZone.forID("Europe/Warsaw");
@@ -22,11 +29,9 @@ public class Log implements Comparable<Log>, Entity {
         this.time = warsaw.toDate();
     }
 
-    private LogEnum type;
-    private Date time;
-    private String collection;
-    private int count;
-    private String id;
+    public Log(LogEnum type, String reference) {
+        this(type, reference, null);
+    }
 
     public LogEnum getType() {
         return type;
@@ -44,21 +49,11 @@ public class Log implements Comparable<Log>, Entity {
         this.time = time;
     }
 
-    public String getCollection() {
-        if (collection.contains("DOCUMENTS"))
-            return collection.split("DOCUMENTS")[1];
-        return collection;
-    }
-
-    public void setCollection(String collection) {
-        this.collection = collection.toUpperCase();
-    }
-
-    public int getCount() {
+    public Integer getCount() {
         return count;
     }
 
-    public void setCount(int count) {
+    public void setCount(Integer count) {
         this.count = count;
     }
 
@@ -66,17 +61,18 @@ public class Log implements Comparable<Log>, Entity {
         return id;
     }
 
+    public void setId(String id) {
+        this.id = id;
+    }
+
     @Override
     public String getReference() {
-        return null;
+        return reference;
     }
 
     @Override
     public void setReference(String reference) {
-    }
-
-    public void setId(String id) {
-        this.id = id;
+        this.reference = reference != null ? reference.toUpperCase() : null;
     }
 
     @Override
