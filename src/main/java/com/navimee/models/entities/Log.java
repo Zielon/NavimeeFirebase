@@ -33,8 +33,11 @@ public class Log implements Comparable<Log>, Entity {
     public Log(LogEnum type, Exception exception) {
         StringWriter sw = new StringWriter();
         exception.printStackTrace(new PrintWriter(sw));
+
         DateTimeZone zone = DateTimeZone.forID("Europe/Warsaw");
         LocalDateTime warsaw = LocalDateTime.now(zone);
+
+        exception.printStackTrace();
 
         this.type = type;
         this.reference = sw.toString();
