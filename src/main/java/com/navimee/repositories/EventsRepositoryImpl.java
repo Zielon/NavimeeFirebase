@@ -1,6 +1,6 @@
-package com.navimee.events.repositories;
+package com.navimee.repositories;
 
-import com.navimee.contracts.repositories.events.EventsRepository;
+import com.navimee.contracts.repositories.EventsRepository;
 import com.navimee.firestore.Database;
 import com.navimee.firestore.operations.Add;
 import com.navimee.firestore.operations.Get;

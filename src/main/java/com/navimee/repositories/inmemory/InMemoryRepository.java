@@ -1,4 +1,4 @@
-package com.navimee.places.repositories;
+package com.navimee.repositories.inmemory;
 
 import com.navimee.logger.LogEnum;
 import com.navimee.logger.Logger;

@@ -1,6 +1,6 @@
-package com.navimee.places.repositories;
+package com.navimee.repositories;
 
-import com.navimee.contracts.repositories.palces.PlacesRepository;
+import com.navimee.contracts.repositories.PlacesRepository;
 import com.navimee.firestore.Database;
 import com.navimee.firestore.operations.Add;
 import com.navimee.firestore.operations.Delete;
@@ -11,6 +11,7 @@ import com.navimee.models.entities.coordinates.Coordinate;
 import com.navimee.models.entities.places.facebook.FbPlace;
 import com.navimee.models.entities.places.foursquare.FsPlace;
 import com.navimee.models.entities.places.foursquare.FsPlaceDetails;
+import com.navimee.repositories.inmemory.InMemoryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 

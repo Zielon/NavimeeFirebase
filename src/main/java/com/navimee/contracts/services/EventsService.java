@@ -1,4 +1,4 @@
-package com.navimee.contracts.services.events;
+package com.navimee.contracts.services;
 
 import java.util.concurrent.Future;
 

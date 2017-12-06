@@ -2,7 +2,7 @@ package com.navimee.controllers.api;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.navimee.contracts.repositories.palces.PlacesRepository;
+import com.navimee.contracts.repositories.PlacesRepository;
 import com.navimee.controllers.dto.CoordinateDto;
 import com.navimee.models.entities.coordinates.Coordinate;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -1,7 +1,7 @@
 package com.navimee.tasks.places;
 
-import com.navimee.contracts.repositories.palces.PlacesRepository;
-import com.navimee.contracts.services.places.PlacesService;
+import com.navimee.contracts.repositories.PlacesRepository;
+import com.navimee.contracts.services.PlacesService;
 import com.navimee.logger.LogEnum;
 import com.navimee.logger.Logger;
 import com.navimee.models.entities.Log;
@@ -25,8 +25,8 @@ public class DetailsTask {
         Logger.LOG(new Log(LogEnum.TASK, "Foursquare details update"));
 
         placesRepository.getAvailableCities().forEach(city -> {
-                placesService.saveFoursquarePlacesDetails(city.getName());
-            }
+                    placesService.saveFoursquarePlacesDetails(city.getName());
+                }
         );
     }
 

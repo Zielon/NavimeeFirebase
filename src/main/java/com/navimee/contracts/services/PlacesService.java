@@ -1,4 +1,4 @@
-package com.navimee.contracts.services.places;
+package com.navimee.contracts.services;
 
 import com.navimee.models.dto.geocoding.GooglePlaceDto;
 import com.navimee.models.entities.coordinates.Coordinate;

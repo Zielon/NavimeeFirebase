@@ -1,4 +1,4 @@
-package com.navimee.contracts.repositories.palces;
+package com.navimee.contracts.repositories;
 
 import com.navimee.models.entities.coordinates.City;
 import com.navimee.models.entities.coordinates.Coordinate;

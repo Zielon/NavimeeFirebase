@@ -1,11 +1,11 @@
-package com.navimee.places.services;
+package com.navimee.services;
 
 import com.navimee.configuration.specific.FacebookConfiguration;
 import com.navimee.configuration.specific.FoursquareConfiguration;
 import com.navimee.configuration.specific.GoogleConfiguration;
-import com.navimee.contracts.repositories.palces.PlacesRepository;
+import com.navimee.contracts.repositories.PlacesRepository;
 import com.navimee.contracts.services.HttpClient;
-import com.navimee.contracts.services.places.PlacesService;
+import com.navimee.contracts.services.PlacesService;
 import com.navimee.models.dto.geocoding.GooglePlaceDto;
 import com.navimee.models.dto.placeDetails.FsPlaceDetailsDto;
 import com.navimee.models.dto.places.facebook.FbPlaceDto;

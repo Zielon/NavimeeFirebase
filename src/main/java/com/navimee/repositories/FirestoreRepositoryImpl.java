@@ -2,7 +2,7 @@ package com.navimee.repositories;
 
 import com.google.cloud.firestore.Firestore;
 import com.navimee.contracts.repositories.FirestoreRepository;
-import com.navimee.contracts.repositories.palces.PlacesRepository;
+import com.navimee.contracts.repositories.PlacesRepository;
 import com.navimee.firestore.operations.Delete;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;

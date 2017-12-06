@@ -1,4 +1,4 @@
-package com.navimee.contracts.repositories.events;
+package com.navimee.contracts.repositories;
 
 import com.navimee.models.entities.events.FbEvent;
 

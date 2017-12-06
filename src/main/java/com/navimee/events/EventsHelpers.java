@@ -1,7 +1,7 @@
 package com.navimee.events;
 
 import com.google.cloud.firestore.GeoPoint;
-import com.navimee.contracts.services.places.PlacesService;
+import com.navimee.contracts.services.PlacesService;
 import com.navimee.models.dto.geocoding.GooglePlaceDto;
 import com.navimee.models.entities.coordinates.Coordinate;
 import com.navimee.models.entities.events.FbEvent;
