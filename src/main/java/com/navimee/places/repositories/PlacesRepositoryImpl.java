@@ -94,11 +94,12 @@ public class PlacesRepositoryImpl implements PlacesRepository {
     // GETTERS
     @Override
     public List<FbPlace> getFacebookPlaces(String city) {
-        if (InMemoryRepository.GET(city) == null) {
-            List<FbPlace> places = get.fromCollection(database.getCollection(FACEBOOK_PLACES, city), FbPlace.class);
+        List<FbPlace> places = InMemoryRepository.GET(city);
+        if (places == null) {
+            places = get.fromCollection(database.getCollection(FACEBOOK_PLACES, city), FbPlace.class);
             InMemoryRepository.SET(city, places);
         }
-        return InMemoryRepository.GET(city);
+        return places;
     }
 
     @Override
