@@ -18,8 +18,8 @@ public class AppConfig implements SchedulingConfigurer {
         taskRegistrar.setScheduler(taskScheduler());
     }
 
-    @Bean(destroyMethod="shutdown")
+    @Bean(destroyMethod = "shutdown")
     public Executor taskScheduler() {
-        return Executors.newScheduledThreadPool(42);
+        return Executors.newScheduledThreadPool(8);
     }
 }

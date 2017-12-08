@@ -46,12 +46,13 @@ public class PlacesRepositoryImpl implements PlacesRepository {
     // SETTERS
     @Override
     public Future setFacebookPlaces(List<FbPlace> places, String city) {
-        InMemoryRepository.SET(city, places);
+        InMemoryRepository.SET_FACEBOOK(city, places);
         return add.toCollection(database.getCollection(FACEBOOK_PLACES, city), places);
     }
 
     @Override
     public Future setFoursquarePlaces(List<FsPlace> places, String city) {
+        InMemoryRepository.SET_FOURSQUARE(city, places);
         return add.toCollection(database.getCollection(FOURSQUARE_PLACES, city), places);
     }
 
@@ -98,17 +99,22 @@ public class PlacesRepositoryImpl implements PlacesRepository {
     // GETTERS
     @Override
     public List<FbPlace> getFacebookPlaces(String city) {
-        List<FbPlace> places = InMemoryRepository.GET(city);
+        List<FbPlace> places = InMemoryRepository.GET_FACEBOOK(city);
         if (places == null) {
             places = get.fromCollection(database.getCollection(FACEBOOK_PLACES, city), FbPlace.class);
-            InMemoryRepository.SET(city, places);
+            InMemoryRepository.SET_FACEBOOK(city, places);
         }
         return places;
     }
 
     @Override
     public List<FsPlace> getFoursquarePlaces(String city) {
-        return get.fromCollection(database.getCollection(FOURSQUARE_PLACES, city), FsPlace.class);
+        List<FsPlace> places = InMemoryRepository.GET_FOURSQUARE(city);
+        if (places == null) {
+            places = get.fromCollection(database.getCollection(FOURSQUARE_PLACES, city), FsPlace.class);
+            InMemoryRepository.SET_FOURSQUARE(city, places);
+        }
+        return places;
     }
 
     @Override

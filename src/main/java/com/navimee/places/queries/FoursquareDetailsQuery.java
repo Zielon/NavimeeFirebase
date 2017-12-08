@@ -40,7 +40,7 @@ public class FoursquareDetailsQuery extends Query<FsPlaceDetailsDto, FoursquareC
             builder.setPath("v2/" + params.type + "/" + params.placeId);
             builder.setParameter("v", fmt.print(warsawCurrent));
             builder.setParameter("client_id", configuration.clientId);
-            builder.setParameter("access_token", configuration.clientSecret);
+            builder.setParameter("client_secret", configuration.clientSecret);
             uri = builder.build();
         } catch (URISyntaxException e) {
             e.printStackTrace();
