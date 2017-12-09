@@ -38,14 +38,14 @@ public class PlacesTask {
         Map<String, List<Coordinate>> coordinates = navimeeData.getCoordinates();
         List<City> cities = navimeeData.getCities();
 
-        firestoreRepository.deleteCollection(AVAILABLE_CITIES_COLLECTION);
-        placesRepository.setAvailableCities(cities).get();
+  //      firestoreRepository.deleteCollection(AVAILABLE_CITIES_COLLECTION);
+  //      placesRepository.setAvailableCities(cities).get();
 
-        firestoreRepository.deleteCollection(COORDINATES_COLLECTION);
-        firestoreRepository.deleteCollection(FOURSQUARE_PLACES_COLLECTION);
-        firestoreRepository.deleteCollection(FACEBOOK_PLACES_COLLECTION);
+  //      firestoreRepository.deleteCollection(COORDINATES_COLLECTION);
+  //      firestoreRepository.deleteCollection(FOURSQUARE_PLACES_COLLECTION);
+  //      firestoreRepository.deleteCollection(FACEBOOK_PLACES_COLLECTION);
 
-        placesRepository.setCoordinates(coordinates).get();
+  //      placesRepository.setCoordinates(coordinates).get();
 
         Logger.LOG(new Log(LogEnum.TASK, "Places update"));
 
