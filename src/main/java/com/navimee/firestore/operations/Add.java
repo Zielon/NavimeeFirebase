@@ -51,9 +51,11 @@ public class Add {
     private <T extends Entity> Future toCollection(CollectionReference collectionReference, Map<String, T> entities, AdditionEnum options) {
         return executorService.submit(() -> {
             if (entities.size() == 0) return;
+            String type = null;
             try {
                 List<Future<WriteResult>> tasks = new ArrayList<>();
                 for (Map.Entry<String, T> entry : entities.entrySet()) {
+                    type = entry.getValue().getClass().getName();
                     if (options == AdditionEnum.MERGE)
                         tasks.add(collectionReference.document(entry.getKey()).set(entry.getValue(), SetOptions.merge()));
                     else
@@ -62,7 +64,9 @@ public class Add {
                 // Wait for all tasks to finish.
                 waitForSingleFuture(executorService, tasks);
 
-                Logger.LOG(new Log(LogEnum.ADDITION, collectionReference.getPath(), entities.size()));
+                Logger.LOG(new Log(LogEnum.ADDITION,
+                                String.format("%s | [%s]", collectionReference.getPath(), type),
+                                entities.size()));
 
             } catch (Exception e) {
                 Logger.LOG(new Log(LogEnum.EXCEPTION, e));
