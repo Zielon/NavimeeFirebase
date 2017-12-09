@@ -21,7 +21,7 @@ public interface PlacesRepository {
 
     List<FsPlace> getFoursquarePlaces(String city);
 
-    List<FsPlaceDetails> getFoursquarePlacesDetails(String city);
+    List<FsPlaceDetails> getFoursquarePlacesDetails();
 
     // SETTERS
     Future setCoordinates(Map<String, List<Coordinate>> coordinatesMap);
@@ -34,7 +34,7 @@ public interface PlacesRepository {
 
     Future setFoursquarePlaces(List<FsPlace> places, String city);
 
-    Future setFoursquarePlacesDetails(List<FsPlaceDetails> details, String city);
+    Future setFoursquarePlacesDetails(List<FsPlaceDetails> details);
 
     // DELETE
     Future deleteCoordinates(String document, String city);

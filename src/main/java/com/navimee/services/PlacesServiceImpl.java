@@ -78,6 +78,7 @@ public class PlacesServiceImpl implements PlacesService {
 
             List<FbPlace> entities = waitForTasks(executorService, tasks)
                     .stream()
+                    .filter(Objects::nonNull)
                     .map(dto -> modelMapper.map(dto, FbPlace.class))
                     .filter(distinctByKey(Place::getId))
                     .collect(Collectors.toList());
@@ -103,6 +104,7 @@ public class PlacesServiceImpl implements PlacesService {
 
             List<FsPlace> entities = waitForTasks(executorService, tasks)
                     .stream()
+                    .filter(Objects::nonNull)
                     .map(dto -> modelMapper.map(dto, FsPlace.class))
                     .filter(distinctByKey(Place::getId))
                     .collect(Collectors.toList());
@@ -133,7 +135,7 @@ public class PlacesServiceImpl implements PlacesService {
                     .filter(d -> d.getStatsCheckinsCount() > 500)
                     .collect(Collectors.toList());
 
-            placesRepository.setFoursquarePlacesDetails(entities, city);
+            placesRepository.setFoursquarePlacesDetails(entities);
         });
     }
 

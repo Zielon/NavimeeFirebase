@@ -2,9 +2,9 @@ package com.navimee.services;
 
 import com.navimee.configuration.specific.FacebookConfiguration;
 import com.navimee.contracts.repositories.EventsRepository;
-import com.navimee.contracts.repositories.HotspotRepository;
 import com.navimee.contracts.repositories.PlacesRepository;
 import com.navimee.contracts.services.EventsService;
+import com.navimee.contracts.services.FirebaseService;
 import com.navimee.contracts.services.HttpClient;
 import com.navimee.contracts.services.PlacesService;
 import com.navimee.events.EventsHelpers;
@@ -12,7 +12,6 @@ import com.navimee.events.queries.FacebookEventsQuery;
 import com.navimee.events.queries.params.EventsParams;
 import com.navimee.general.Collections;
 import com.navimee.models.dto.events.FbEventDto;
-import com.navimee.models.entities.Hotspot;
 import com.navimee.models.entities.events.FbEvent;
 import com.navimee.models.entities.places.facebook.FbPlace;
 import org.modelmapper.ModelMapper;
@@ -45,9 +44,6 @@ public class EventsServiceImpl implements EventsService {
     EventsRepository eventsRepository;
 
     @Autowired
-    HotspotRepository hotspotRepository;
-
-    @Autowired
     ModelMapper modelMapper;
 
     @Autowired
@@ -55,6 +51,9 @@ public class EventsServiceImpl implements EventsService {
 
     @Autowired
     HttpClient httpClient;
+
+    @Autowired
+    FirebaseService firebaseService;
 
     @Override
     public Future saveFacebookEvents(String city) {
@@ -73,8 +72,8 @@ public class EventsServiceImpl implements EventsService {
                     .filter(EventsHelpers.getCompelmentFunction(placesService)::apply)    // Complement event places
                     .collect(toList());
 
-            eventsRepository.setEvents(entities, city);
-            hotspotRepository.setHotspot(entities.stream().map(entity -> modelMapper.map(entity, Hotspot.class)).collect(toList()));
+            eventsRepository.setEvents(entities);
+            firebaseService.transferEvents(entities);
         });
     }
 }

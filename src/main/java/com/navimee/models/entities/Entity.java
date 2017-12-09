@@ -1,9 +1,11 @@
 package com.navimee.models.entities;
 
+import java.util.UUID;
+
 public interface Entity {
     String getId();
 
-    String getReference();
+    String getInternalId();
 
-    void setReference(String reference);
+    void setInternalId(UUID uuid);
 }

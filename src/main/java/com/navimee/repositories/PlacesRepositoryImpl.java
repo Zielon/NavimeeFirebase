@@ -1,6 +1,7 @@
 package com.navimee.repositories;
 
 import com.navimee.contracts.repositories.PlacesRepository;
+import com.navimee.enums.HotspotType;
 import com.navimee.firestore.Database;
 import com.navimee.firestore.operations.Add;
 import com.navimee.firestore.operations.Delete;
@@ -23,7 +24,7 @@ import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 
-import static com.navimee.enums.CollectionEnum.*;
+import static com.navimee.enums.CollectionType.*;
 
 @Repository
 public class PlacesRepositoryImpl implements PlacesRepository {
@@ -57,8 +58,8 @@ public class PlacesRepositoryImpl implements PlacesRepository {
     }
 
     @Override
-    public Future setFoursquarePlacesDetails(List<FsPlaceDetails> details, String city) {
-        return add.toCollection(database.getCollection(FOURSQUARE_PLACES_DETAILS, city), details);
+    public Future setFoursquarePlacesDetails(List<FsPlaceDetails> details) {
+        return add.toCollection(database.getHotspot(), details);
     }
 
     @Override
@@ -118,8 +119,8 @@ public class PlacesRepositoryImpl implements PlacesRepository {
     }
 
     @Override
-    public List<FsPlaceDetails> getFoursquarePlacesDetails(String city) {
-        return get.fromCollection(database.getCollection(FOURSQUARE_PLACES_DETAILS, city), FsPlaceDetails.class);
+    public List<FsPlaceDetails> getFoursquarePlacesDetails() {
+        return get.fromCollection(database.getHotspot().whereEqualTo("hotspotType", HotspotType.FOURSQUARE_PLACE), FsPlaceDetails.class);
     }
 
     @Override

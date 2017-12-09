@@ -4,13 +4,14 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.navimee.models.entities.events.FbEvent;
 
 import java.util.List;
+import java.util.UUID;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class User implements Entity {
     private String token;
     private String email;
     private List<FbEvent> events;
-    private String reference;
+    private String internalId;
 
     public String getEmail() {
         return email;
@@ -33,6 +34,16 @@ public class User implements Entity {
         return token;
     }
 
+    @Override
+    public String getInternalId() {
+        return internalId;
+    }
+
+    @Override
+    public void setInternalId(UUID uuid) {
+        this.internalId = uuid.toString();
+    }
+
     public List<FbEvent> getEvents() {
         return events;
     }
@@ -41,12 +52,5 @@ public class User implements Entity {
         this.events = events;
     }
 
-    @Override
-    public String getReference() {
-        return reference;
-    }
 
-    public void setReference(String reference) {
-        this.reference = reference;
-    }
 }

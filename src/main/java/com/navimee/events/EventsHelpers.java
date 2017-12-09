@@ -13,6 +13,7 @@ import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.joda.time.LocalDateTime;
 
+import java.util.UUID;
 import java.util.concurrent.Future;
 import java.util.function.Function;
 
@@ -60,6 +61,7 @@ public class EventsHelpers {
 
                     event.getPlace().setCity(getType(searchPlace, GeoType.administrative_area_level_2));
                     event.getPlace().setAddress(getType(searchPlace, GeoType.route) + " " + getType(searchPlace, GeoType.street_number));
+                    event.getPlace().setInternalId(UUID.fromString(event.getSearchPlace().getInternalId()));
                 }
 
                 return true;
@@ -76,6 +78,7 @@ public class EventsHelpers {
                 event.getPlace().setCity(getType(place, GeoType.administrative_area_level_2));
                 event.getPlace().setAddress(getType(place, GeoType.route) + " " + getType(place, GeoType.street_number));
                 event.getPlace().setGeoPoint(new GeoPoint(place.geometry.lat, place.geometry.lon));
+                event.getPlace().setInternalId(UUID.randomUUID());
 
                 return true;
             }

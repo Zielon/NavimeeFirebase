@@ -12,58 +12,33 @@ import java.util.concurrent.*;
 public class CompletionCollector {
 
     public static <T> List<T> waitForSingleFuture(ExecutorService executorService, Collection<? extends Future<T>> futures) {
-        List<T> output = new ArrayList<>();
         CompletionService<T> completionService = new ExecutorCompletionService<>(executorService);
-
-        // Create callable tasks
         futures.forEach(future -> completionService.submit(() -> future.get()));
-
-        int received = 0;
-        while (received < futures.size()) {
-            try {
-                T result = completionService.take().get();
-                if (result != null)
-                    output.add(result);
-                received++;
-            } catch (Exception e) {
-                Logger.LOG(new Log(LogEnum.EXCEPTION, e));
-            }
-        }
-
-        return output;
+        return collectSingle(completionService, futures.size());
     }
 
     public static <T> List<T> waitForFutures(ExecutorService executorService, Collection<? extends Future<List<T>>> futures) {
-        List<T> output = new ArrayList<>();
         CompletionService<List<T>> completionService = new ExecutorCompletionService<>(executorService);
-
-        // Create callable tasks
         futures.forEach(future -> completionService.submit(() -> future.get()));
-
-        int received = 0;
-        while (received < futures.size()) {
-            try {
-                List<T> result = completionService.take().get();
-                if (result != null && result.size() > 0)
-                    output.addAll(result);
-                received++;
-            } catch (Exception e) {
-                Logger.LOG(new Log(LogEnum.EXCEPTION, e));
-            }
-        }
-
-        return output;
+        return collectLists(completionService, futures.size());
     }
 
     public static <T> List<T> waitForSingleTask(ExecutorService executorService, Collection<Callable<T>> tasks) {
-        List<T> output = new ArrayList<>();
         CompletionService<T> completionService = new ExecutorCompletionService<>(executorService);
-
-        // Create callable tasks
         tasks.forEach(completionService::submit);
+        return collectSingle(completionService, tasks.size());
+    }
 
+    public static <T> List<T> waitForTasks(ExecutorService executorService, Collection<Callable<List<T>>> tasks) {
+        CompletionService<List<T>> completionService = new ExecutorCompletionService<>(executorService);
+        tasks.forEach(completionService::submit);
+        return collectLists(completionService, tasks.size());
+    }
+
+    private static <T> List<T> collectSingle(CompletionService<T> completionService, int size) {
+        List<T> output = new ArrayList<>();
         int received = 0;
-        while (received < tasks.size()) {
+        while (received < size) {
             try {
                 T result = completionService.take().get();
                 if (result != null)
@@ -77,15 +52,10 @@ public class CompletionCollector {
         return output;
     }
 
-    public static <T> List<T> waitForTasks(ExecutorService executorService, Collection<Callable<List<T>>> tasks) {
+    private static <T> List<T> collectLists(CompletionService<List<T>> completionService, int size) {
         List<T> output = new ArrayList<>();
-        CompletionService<List<T>> completionService = new ExecutorCompletionService<>(executorService);
-
-        // Create callable tasks
-        tasks.forEach(completionService::submit);
-
         int received = 0;
-        while (received < tasks.size()) {
+        while (received < size) {
             try {
                 List<T> result = completionService.take().get();
                 if (result != null && result.size() > 0)
@@ -95,7 +65,6 @@ public class CompletionCollector {
                 Logger.LOG(new Log(LogEnum.EXCEPTION, e));
             }
         }
-
         return output;
     }
 }

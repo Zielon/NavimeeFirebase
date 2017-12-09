@@ -29,6 +29,8 @@ function addLogs(newLogs){
         tr.setAttribute("id", lastLog)
         Object.keys(log).forEach(key => {
 
+            if(key === "internalId") return;
+
             var td = document.createElement('td');
             var div = document.createElement('div');
 

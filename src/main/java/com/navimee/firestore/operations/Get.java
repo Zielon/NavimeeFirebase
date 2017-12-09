@@ -5,23 +5,18 @@ import com.fasterxml.jackson.datatype.joda.JodaModule;
 import com.google.cloud.firestore.CollectionReference;
 import com.google.cloud.firestore.DocumentReference;
 import com.google.cloud.firestore.DocumentSnapshot;
-import com.navimee.firestore.Paths;
+import com.google.cloud.firestore.Query;
 import com.navimee.logger.LogEnum;
 import com.navimee.logger.Logger;
 import com.navimee.models.entities.Entity;
 import com.navimee.models.entities.Log;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ExecutorService;
 
 @Component
 public class Get {
-
-    @Autowired
-    ExecutorService executorService;
 
     public <T extends Entity> List<T> fromDocument(DocumentReference documentReference, Class<T> type) {
         List<T> output = new ArrayList<>();
@@ -40,18 +35,38 @@ public class Get {
         return fromCollection(collectionReference, type, true);
     }
 
-    public <T extends Entity> List<T> fromCollection(CollectionReference collectionReference, Class<T> type, boolean logging) {
+    public <T extends Entity> List<T> fromCollection(Query query, Class<T> type) {
+        List<T> output = new ArrayList<>();
+        try {
+            output = fromCollection(query.get().get().getDocuments(), type);
+        } catch (Exception e) {
+            Logger.LOG(new Log(LogEnum.EXCEPTION, e));
+        }
+
+        return output;
+    }
+
+    private <T extends Entity> List<T> fromCollection(CollectionReference collectionReference, Class<T> type, boolean logging) {
+        List<T> output = new ArrayList<>();
+        try {
+            output = fromCollection(collectionReference.get().get().getDocuments(), type);
+        } catch (Exception e) {
+            Logger.LOG(new Log(LogEnum.EXCEPTION, e));
+        }
+        if (logging)
+            Logger.LOG(new Log(LogEnum.RETRIEVAL, collectionReference.getPath(), output.size()));
+        return output;
+    }
+
+    private <T extends Entity> List<T> fromCollection(List<DocumentSnapshot> documentSnapshots, Class<T> type) {
         ObjectMapper mapper = new ObjectMapper();
         mapper.registerModule(new JodaModule());
         List<T> output = new ArrayList<>();
         try {
-            for (DocumentSnapshot document : collectionReference.get().get().getDocuments()) {
+            for (DocumentSnapshot document : documentSnapshots) {
                 T entity = mapper.convertValue(document.getData(), type);
-                entity.setReference(Paths.get(collectionReference));
                 output.add(entity);
             }
-            if (logging)
-                Logger.LOG(new Log(LogEnum.RETRIEVAL, collectionReference.getPath(), output.size()));
         } catch (Exception e) {
             Logger.LOG(new Log(LogEnum.EXCEPTION, e));
         }

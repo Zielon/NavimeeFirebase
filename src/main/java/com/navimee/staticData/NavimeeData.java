@@ -62,8 +62,11 @@ public class NavimeeData {
         ObjectMapper mapper = new ObjectMapper();
         object.keySet().stream().forEach(city -> {
             try {
-                final List<Coordinate> coords = mapper.readValue(object.getJSONObject(city.toString()).getJSONArray("points").toString(), new TypeReference<List<Coordinate>>() {
-                });
+                final List<Coordinate> coords =
+                        mapper.readValue(
+                                object.getJSONObject(city.toString()).getJSONArray("points").toString(),
+                                new TypeReference<List<Coordinate>>() {
+                                });
                 int i = 0;
                 for (Coordinate c : coords) c.setId(Integer.toString(i++));
                 coordinates.put(city.toString(), coords);

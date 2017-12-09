@@ -1,10 +1,12 @@
 package com.navimee.models.entities.events;
 
 import com.google.cloud.firestore.annotation.IgnoreExtraProperties;
+import com.navimee.enums.HotspotType;
 import com.navimee.models.entities.Entity;
 import com.navimee.models.entities.places.facebook.FbPlace;
 
 import java.util.Date;
+import java.util.UUID;
 
 @IgnoreExtraProperties
 public class FbEvent implements Entity {
@@ -18,7 +20,8 @@ public class FbEvent implements Entity {
     private String type;
     private FbPlace place;
     private FbPlace searchPlace;
-    private String reference;
+    private String internalId;
+    private HotspotType hotspotType = HotspotType.FACEBOOK_EVENT;
 
     public String getName() {
         return name;
@@ -30,6 +33,16 @@ public class FbEvent implements Entity {
 
     public String getId() {
         return id;
+    }
+
+    @Override
+    public String getInternalId() {
+        return internalId;
+    }
+
+    @Override
+    public void setInternalId(UUID uuid) {
+        this.internalId = uuid.toString();
     }
 
     public void setId(String id) {
@@ -100,12 +113,7 @@ public class FbEvent implements Entity {
         this.startTime = startTime;
     }
 
-    @Override
-    public String getReference() {
-        return reference;
-    }
-
-    public void setReference(String reference) {
-        this.reference = reference;
+    public HotspotType getHotspotType() {
+        return hotspotType;
     }
 }

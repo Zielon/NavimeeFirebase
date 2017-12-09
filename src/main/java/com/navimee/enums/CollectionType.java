@@ -2,7 +2,7 @@ package com.navimee.enums;
 
 import static com.navimee.firestore.Paths.*;
 
-public enum CollectionEnum {
+public enum CollectionType {
     EVENTS(EVENTS_COLLECTION),
     FACEBOOK_PLACES(FACEBOOK_PLACES_COLLECTION),
     FOURSQUARE_PLACES(FOURSQUARE_PLACES_COLLECTION),
@@ -14,7 +14,7 @@ public enum CollectionEnum {
 
     private final String path;
 
-    CollectionEnum(final String path) {
+    CollectionType(final String path) {
         this.path = path;
     }
 

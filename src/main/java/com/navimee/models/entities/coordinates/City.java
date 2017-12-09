@@ -2,13 +2,25 @@ package com.navimee.models.entities.coordinates;
 
 import com.navimee.models.entities.Entity;
 
+import java.util.UUID;
+
 public class City implements Entity {
     private String id;
     private String name;
-    private String reference;
+    private String internalId;
 
     public String getId() {
         return id;
+    }
+
+    @Override
+    public String getInternalId() {
+        return internalId;
+    }
+
+    @Override
+    public void setInternalId(UUID uuid) {
+        this.internalId = uuid.toString();
     }
 
     public void setId(String id) {
@@ -21,14 +33,5 @@ public class City implements Entity {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    @Override
-    public String getReference() {
-        return reference;
-    }
-
-    public void setReference(String reference) {
-        this.reference = reference;
     }
 }

@@ -1,8 +1,10 @@
 package com.navimee.models.entities.places.foursquare;
 
+import com.navimee.enums.HotspotType;
 import com.navimee.models.entities.Entity;
 
 import java.util.List;
+import java.util.UUID;
 
 public class FsPlaceDetails implements Entity {
     private String id;
@@ -32,10 +34,21 @@ public class FsPlaceDetails implements Entity {
 
     private List<String> categories;
 
-    private String reference;
+    private String internalId;
+    private HotspotType hotspotType = HotspotType.FOURSQUARE_PLACE;
 
     public String getId() {
         return id;
+    }
+
+    @Override
+    public String getInternalId() {
+        return internalId;
+    }
+
+    @Override
+    public void setInternalId(UUID uuid) {
+        this.internalId = uuid.toString();
     }
 
     public void setId(String id) {
@@ -202,13 +215,7 @@ public class FsPlaceDetails implements Entity {
         this.categories = categories;
     }
 
-    @Override
-    public String getReference() {
-        return reference;
-    }
-
-    @Override
-    public void setReference(String reference) {
-        this.reference = reference;
+    public HotspotType getHotspotType() {
+        return hotspotType;
     }
 }

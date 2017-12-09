@@ -23,8 +23,8 @@ public class FoursquareController {
         return mapper.writeValueAsString(placesRepository.getFoursquarePlaces(city.toUpperCase()));
     }
 
-    @RequestMapping(value = "details/{city}", method = RequestMethod.GET, produces = "application/json")
-    public String details(@PathVariable("city") String city) throws JsonProcessingException {
-        return mapper.writeValueAsString(placesRepository.getFoursquarePlacesDetails(city.toUpperCase()));
+    @RequestMapping(value = "details", method = RequestMethod.GET, produces = "application/json")
+    public String details() throws JsonProcessingException {
+        return mapper.writeValueAsString(placesRepository.getFoursquarePlacesDetails());
     }
 }

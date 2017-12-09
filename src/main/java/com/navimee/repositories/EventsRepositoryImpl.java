@@ -1,6 +1,7 @@
 package com.navimee.repositories;
 
 import com.navimee.contracts.repositories.EventsRepository;
+import com.navimee.enums.HotspotType;
 import com.navimee.firestore.Database;
 import com.navimee.firestore.operations.Add;
 import com.navimee.firestore.operations.Get;
@@ -9,12 +10,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
-
-import static com.navimee.enums.CollectionEnum.EVENTS;
-import static com.navimee.enums.CollectionEnum.SEGREGATED_EVENTS;
 
 @Repository
 public class EventsRepositoryImpl implements EventsRepository {
@@ -32,20 +29,13 @@ public class EventsRepositoryImpl implements EventsRepository {
     Get get;
 
     @Override
-    public List<FbEvent> getEvents(String city) {
-        return get.fromCollection(database.getCollection(EVENTS, city), FbEvent.class);
+    public List<FbEvent> getEvents() {
+        return get.fromCollection(database.getHotspot().whereEqualTo("hotspotType", HotspotType.FACEBOOK_EVENT), FbEvent.class);
     }
 
     @Override
-    public Future setEvents(List<FbEvent> events, String city) {
-        return add.toCollection(database.getCollection(EVENTS, city), events);
-    }
-
-    @Override
-    public Future sevenDaysSegregation(Map<String, List<FbEvent>> events, String city) {
-        return executorService.submit(() ->
-                events.forEach((key, segregatedEvents) ->
-                        add.toCollection(database.getCollection(SEGREGATED_EVENTS, city).document(key).collection("EVENTS"), segregatedEvents)));
+    public Future setEvents(List<FbEvent> events) {
+        return add.toCollection(database.getHotspot(), events);
     }
 
     @Override

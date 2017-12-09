@@ -3,7 +3,6 @@ package com.navimee.services;
 import com.firebase.geofire.GeoFire;
 import com.firebase.geofire.GeoLocation;
 import com.google.firebase.database.FirebaseDatabase;
-import com.navimee.contracts.repositories.HotspotRepository;
 import com.navimee.contracts.services.FirebaseService;
 import com.navimee.firestore.Paths;
 import com.navimee.models.entities.Entity;
@@ -27,19 +26,13 @@ public class FirebaseServiceImpl implements FirebaseService {
     @Autowired
     ExecutorService executorService;
 
-    @Autowired
-    HotspotRepository hotspotRepository;
-
     @Override
     public Future transferEvents(List<FbEvent> events) {
-
         return executorService.submit(() -> {
             GeoFire geoFire = new GeoFire(firebaseDatabase.getReference(Paths.HOTSPOT));
-            Map<String, FbEvent> entityMap = events.stream().collect(Collectors.toMap(Entity::getId, Function.identity()));
-
-            entityMap.forEach((k, v) -> {
-                geoFire.setLocation(k, new GeoLocation(v.getPlace().getGeoPoint().getLatitude(), v.getPlace().getGeoPoint().getLongitude()));
-            });
+            Map<String, FbEvent> entityMap = events.stream().collect(Collectors.toMap(Entity::getInternalId, Function.identity()));
+            entityMap.forEach((key, v) ->
+                    geoFire.setLocation(key, new GeoLocation(v.getPlace().getGeoPoint().getLatitude(), v.getPlace().getGeoPoint().getLongitude())));
         });
     }
 }

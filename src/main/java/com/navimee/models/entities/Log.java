@@ -8,6 +8,7 @@ import org.joda.time.LocalDateTime;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Date;
+import java.util.UUID;
 
 public class Log implements Comparable<Log>, Entity {
 
@@ -77,16 +78,21 @@ public class Log implements Comparable<Log>, Entity {
         return id;
     }
 
+    public String getInternalId() {
+        return "";
+    }
+
+    public void setInternalId(UUID uuid) {
+    }
+
     public void setId(String id) {
         this.id = id;
     }
 
-    @Override
     public String getReference() {
         return reference;
     }
 
-    @Override
     public void setReference(String reference) {
         this.reference = reference;
     }

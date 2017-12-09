@@ -2,7 +2,6 @@ package com.navimee.configuration;
 
 import com.google.cloud.firestore.Firestore;
 import com.google.firebase.database.FirebaseDatabase;
-import com.navimee.configuration.mappers.FbEventToHotspotConverter;
 import com.navimee.configuration.mappers.FsPlacesDetailsConverter;
 import com.navimee.configuration.specific.*;
 import org.modelmapper.ModelMapper;
@@ -58,7 +57,6 @@ public class Injections {
 
         // Converters
         modalMapper.addConverter(FsPlacesDetailsConverter.getConverter());
-        modalMapper.addConverter(FbEventToHotspotConverter.getConverter());
 
         modalMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
         return modalMapper;

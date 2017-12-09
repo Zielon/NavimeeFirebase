@@ -1,6 +1,7 @@
 package com.navimee.tasks.events;
 
 
+import com.navimee.contracts.repositories.FirestoreRepository;
 import com.navimee.contracts.repositories.PlacesRepository;
 import com.navimee.contracts.services.EventsService;
 import com.navimee.logger.LogEnum;
@@ -21,11 +22,14 @@ public class EventsTask {
     @Autowired
     EventsService eventsService;
 
+    @Autowired
+    FirestoreRepository firestoreRepository;
+
     public void addEventsTask() throws ExecutionException, InterruptedException {
 
         Logger.LOG(new Log(LogEnum.TASK, "Events update"));
 
-        // placesRepository.deleteCollection(Paths.EVENTS_COLLECTION).get();
+        // firestoreRepository.deleteCollection(Paths.EVENTS_COLLECTION);
         // placesRepository.deleteCollection(Paths.HOTSPOT).get();
 
         placesRepository.getAvailableCities().forEach(city -> {

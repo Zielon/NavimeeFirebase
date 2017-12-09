@@ -27,8 +27,8 @@ public class FacebookController {
         return mapper.writeValueAsString(placesRepository.getFacebookPlaces(city.toUpperCase()));
     }
 
-    @RequestMapping(value = "events/{city}", method = RequestMethod.GET, produces = "application/json")
-    public String events(@PathVariable("city") String city) throws JsonProcessingException {
-        return mapper.writeValueAsString(eventsRepository.getEvents(city.toUpperCase()));
+    @RequestMapping(value = "events", method = RequestMethod.GET, produces = "application/json")
+    public String events() throws JsonProcessingException {
+        return mapper.writeValueAsString(eventsRepository.getEvents());
     }
 }
