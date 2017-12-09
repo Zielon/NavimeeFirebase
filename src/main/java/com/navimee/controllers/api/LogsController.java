@@ -3,9 +3,13 @@ package com.navimee.controllers.api;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.cloud.firestore.Firestore;
 import com.navimee.configuration.specific.FirebaseInitialization;
+import com.navimee.contracts.repositories.FirestoreRepository;
 import com.navimee.firestore.Paths;
 import com.navimee.models.entities.Log;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -19,6 +23,10 @@ import static java.util.stream.Collectors.toList;
 @RestController
 @RequestMapping(value = "api/logs")
 public class LogsController {
+
+
+    @Autowired
+    FirestoreRepository firestoreRepository;
 
     private Firestore db = FirebaseInitialization.firestore;
     private ObjectMapper mapper = new ObjectMapper();
@@ -54,5 +62,15 @@ public class LogsController {
                 .collect(toList());
 
         return mapper.writeValueAsString(logs);
+    }
+
+    @RequestMapping(value = "delete", method = RequestMethod.POST)
+    public ResponseEntity<?> delete() {
+        try {
+            firestoreRepository.deleteDocument(Paths.LOGS);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }

@@ -1,16 +1,35 @@
 var logs = {};
+var intervalId = null;
+var isResetting = false;
 
 function start(){
     document.getElementsByClassName("loader")[0].style.display = "block";
-    setInterval(function(){ loadDoc();}, 500)
+    intervalId = setInterval(function(){ loadDoc();}, 500)
 }
 
-function reset(){}
+function reset(){
+      clearInterval(intervalId);
+      logs = {};
+      isResetting = true;
+      document.getElementById("logs").innerHTML = "";
+      document.getElementsByClassName("loader")[0].style.display = "block";
+      document.getElementById("startButton").disabled = true;
+      var xhttp = new XMLHttpRequest();
+      xhttp.onreadystatechange = function() {
+            if (this.readyState == 4 && this.status == 200) {
+                isResetting = false;
+                document.getElementsByClassName("loader")[0].style.display = "none";
+                document.getElementById("startButton").disabled = false;
+                document.getElementById("logs").innerHTML = "";
+            }
+      };
+      xhttp.open("POST", "api/logs/delete", true);
+      xhttp.send();}
 
 function loadDoc() {
       var xhttp = new XMLHttpRequest();
       xhttp.onreadystatechange = function() {
-            if (this.readyState == 4 && this.status == 200) {
+            if (this.readyState == 4 && this.status == 200 && !isResetting) {
                 document.getElementsByClassName("loader")[0].style.display = "none";
                 addLogs(JSON.parse(this.responseText));
             }
@@ -28,8 +47,6 @@ function addLogs(newLogs){
         var tr = document.createElement('tr');
         tr.setAttribute("id", lastLog)
         Object.keys(log).forEach(key => {
-
-            if(key === "internalId") return;
 
             var td = document.createElement('td');
             var div = document.createElement('div');

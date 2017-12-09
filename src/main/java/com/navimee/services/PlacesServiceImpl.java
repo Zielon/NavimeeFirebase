@@ -4,6 +4,7 @@ import com.navimee.configuration.specific.FacebookConfiguration;
 import com.navimee.configuration.specific.FoursquareConfiguration;
 import com.navimee.configuration.specific.GoogleConfiguration;
 import com.navimee.contracts.repositories.PlacesRepository;
+import com.navimee.contracts.services.FirebaseService;
 import com.navimee.contracts.services.HttpClient;
 import com.navimee.contracts.services.PlacesService;
 import com.navimee.models.dto.geocoding.GooglePlaceDto;
@@ -60,6 +61,9 @@ public class PlacesServiceImpl implements PlacesService {
 
     @Autowired
     HttpClient httpClient;
+
+    @Autowired
+    FirebaseService firebaseService;
 
     @Override
     public Future saveFacebookPlaces(String city) {
@@ -126,7 +130,6 @@ public class PlacesServiceImpl implements PlacesService {
             List<Callable<FsPlaceDetailsDto>> tasks = new ArrayList<>();
             places.forEach(p -> tasks.add(query.execute(new PlaceDetailsParams("venues", p.getId()))));
 
-
             List<FsPlaceDetails> entities = waitForSingleTask(executorService, tasks)
                     .stream()
                     .filter(Objects::nonNull)
@@ -136,6 +139,7 @@ public class PlacesServiceImpl implements PlacesService {
                     .collect(Collectors.toList());
 
             placesRepository.setFoursquarePlacesDetails(entities);
+            firebaseService.transferPlaces(entities);
         });
     }
 

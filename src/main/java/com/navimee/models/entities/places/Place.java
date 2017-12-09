@@ -2,14 +2,11 @@ package com.navimee.models.entities.places;
 
 import com.navimee.models.entities.Entity;
 
-import java.util.UUID;
-
 public class Place implements Entity {
     private String name;
     private String id;
     private String city;
     private String address;
-    private String internalId;
 
     public String getName() {
         return name;
@@ -21,16 +18,6 @@ public class Place implements Entity {
 
     public String getId() {
         return id;
-    }
-
-    @Override
-    public String getInternalId() {
-        return internalId;
-    }
-
-    @Override
-    public void setInternalId(UUID uuid) {
-        this.internalId = uuid.toString();
     }
 
     public void setId(String id) {

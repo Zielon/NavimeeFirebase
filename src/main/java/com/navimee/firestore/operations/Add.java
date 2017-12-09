@@ -11,7 +11,10 @@ import com.navimee.models.entities.Log;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 import java.util.function.Function;
@@ -29,22 +32,19 @@ public class Add {
     public <T extends Entity> Future toCollection(CollectionReference collectionReference, List<T> entities) {
         Map<String, T> entityMap = entities.stream()
                 .filter(distinctByKey(Entity::getId))
-                .peek(entity -> entity.setInternalId(UUID.randomUUID()))
-                .collect(Collectors.toMap(Entity::getInternalId, Function.identity()));
+                .collect(Collectors.toMap(Entity::getId, Function.identity()));
         return toCollection(collectionReference, entityMap, AdditionEnum.OVERWRITE);
     }
 
     public <T extends Entity> Future toCollection(CollectionReference collectionReference, T entity) {
         Map<String, T> entityMap = new HashMap<>();
-        entity.setInternalId(UUID.randomUUID());
-        entityMap.put(entity.getInternalId(), entity);
+        entityMap.put(entity.getId(), entity);
         return toCollection(collectionReference, entityMap, AdditionEnum.OVERWRITE);
     }
 
     public <T extends Entity> Future toCollection(CollectionReference collectionReference, T entity, AdditionEnum option) {
         Map<String, T> entityMap = new HashMap<>();
-        entity.setInternalId(UUID.randomUUID());
-        entityMap.put(entity.getInternalId(), entity);
+        entityMap.put(entity.getId(), entity);
         return toCollection(collectionReference, entityMap, option);
     }
 

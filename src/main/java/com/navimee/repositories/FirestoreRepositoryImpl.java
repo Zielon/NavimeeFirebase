@@ -23,7 +23,7 @@ public class FirestoreRepositoryImpl implements FirestoreRepository {
 
     @Override
     public void deleteDocument(String document) {
-
+        delete.collection(db.collection(document), 1);
     }
 
     @Override
