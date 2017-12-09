@@ -5,5 +5,5 @@ import com.navimee.models.entities.User;
 import java.util.List;
 
 public interface UsersRepository {
-    List<User> getUsers();
+    List<User> getUsersForNotification();
 }
