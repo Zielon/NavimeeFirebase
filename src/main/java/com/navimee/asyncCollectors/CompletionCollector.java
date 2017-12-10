@@ -48,7 +48,6 @@ public class CompletionCollector {
                 Logger.LOG(new Log(LogEnum.EXCEPTION, e));
             }
         }
-
         return output;
     }
 

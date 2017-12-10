@@ -53,7 +53,6 @@ public class FoursquarePlacesQuery extends Query<List<FsPlaceDto>, FoursquareCon
 
     @Override
     protected List<FsPlaceDto> map(Callable<JSONObject> task, PlaceDetailsParams params) {
-
         List<FsPlaceDto> output = null;
         try {
             JSONObject object = task.call();
