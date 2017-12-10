@@ -135,6 +135,7 @@ public class PlacesServiceImpl implements PlacesService {
                     .filter(Objects::nonNull)
                     .map(dto -> modelMapper.map(dto, FsPlaceDetails.class))
                     .filter(distinctByKey(FsPlaceDetails::getId))
+                    .filter(d -> d.getPopularTimeframes() != null && d.getPopularTimeframes().size() > 0)
                     .filter(d -> d.getStatsCheckinsCount() > 500)
                     .collect(Collectors.toList());
 

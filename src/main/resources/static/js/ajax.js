@@ -55,15 +55,15 @@ function addLogs(newLogs){
 
             // Background colors based on a type.
             if(log.type === "TASK")
-                td.style.backgroundColor = 'Lavender';
+                tr.style.backgroundColor = 'Lavender';
             else if(log.type === "ADDITION")
-                td.style.backgroundColor = 'LightYellow';
+                tr.style.backgroundColor = 'LightYellow';
             else if(log.type === "RETRIEVAL")
-                td.style.backgroundColor = 'LightSteelBlue';
+                tr.style.backgroundColor = 'LightSteelBlue';
             else if(log.type === "DELETION")
-                td.style.backgroundColor = 'IndianRed';
+                tr.style.backgroundColor = 'IndianRed';
             else if(log.type === "EXCEPTION"){
-                td.style.backgroundColor = 'Crimson';
+                tr.style.backgroundColor = 'Crimson';
                 if(key === "reference")
                     div.className = "exception";
             }
