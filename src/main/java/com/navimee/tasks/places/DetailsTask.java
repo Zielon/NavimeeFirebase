@@ -32,7 +32,7 @@ public class DetailsTask {
     }
 
     // Once per 5 hour.
-    //@Scheduled(cron = "0 0 0/5 * * ?")
+    @Scheduled(cron = "0 0 0/5 * * ?")
     public void task() {
         try {
             this.addDetailsTask();

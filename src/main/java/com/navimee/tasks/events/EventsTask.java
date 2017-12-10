@@ -38,7 +38,7 @@ public class EventsTask {
     }
 
     // Once per 30 minutes.
-    //@Scheduled(cron = "0 0/30 * * * ?")
+    @Scheduled(cron = "0 0 0/1 * * ?")
     public void task() {
         try {
             this.addEventsTask();
