@@ -14,12 +14,14 @@ function reset(){
       document.getElementById("logs").innerHTML = "";
       document.getElementsByClassName("loader")[0].style.display = "block";
       document.getElementById("startButton").disabled = true;
+      document.getElementById("resetButton").disabled = true;
       var xhttp = new XMLHttpRequest();
       xhttp.onreadystatechange = function() {
             if (this.readyState == 4 && this.status == 200) {
                 isResetting = false;
                 document.getElementsByClassName("loader")[0].style.display = "none";
                 document.getElementById("startButton").disabled = false;
+                 document.getElementById("resetButton").disabled = false;
                 document.getElementById("logs").innerHTML = "";
             }
       };
