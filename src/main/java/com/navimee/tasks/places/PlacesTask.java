@@ -10,12 +10,10 @@ import com.navimee.models.entities.coordinates.City;
 import com.navimee.models.entities.coordinates.Coordinate;
 import com.navimee.staticData.NavimeeData;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ExecutionException;
 
 @Component
 public class PlacesTask {
@@ -29,7 +27,7 @@ public class PlacesTask {
     @Autowired
     FirestoreRepository firestoreRepository;
 
-    public void addPlacesTask() throws ExecutionException, InterruptedException {
+    public void addPlacesTask() {
 
         // Mocked data.
         NavimeeData navimeeData = new NavimeeData();
@@ -57,10 +55,6 @@ public class PlacesTask {
     //Once per 30 days.
     //@Scheduled(cron = "0 00 12 ? * *")
     public void task() {
-        try {
-            this.addPlacesTask();
-        } catch (Exception e) {
-            Logger.LOG(new Log(LogEnum.EXCEPTION, e));
-        }
+        this.addPlacesTask();
     }
 }

@@ -7,6 +7,8 @@ import com.navimee.firestore.operations.Delete;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import java.util.concurrent.ExecutorService;
+
 import static com.navimee.firestore.Paths.BY_CITY;
 
 @Repository
@@ -14,6 +16,9 @@ public class FirestoreRepositoryImpl implements FirestoreRepository {
 
     @Autowired
     PlacesRepository placesRepository;
+
+    @Autowired
+    ExecutorService executorService;
 
     @Autowired
     Delete delete;
@@ -31,4 +36,6 @@ public class FirestoreRepositoryImpl implements FirestoreRepository {
         placesRepository.getAvailableCities().forEach(city ->
                 delete.collection(db.collection(collection).document(BY_CITY).collection(city.getName()), 1));
     }
+
+
 }

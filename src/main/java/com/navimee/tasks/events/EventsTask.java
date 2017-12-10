@@ -11,8 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
-import java.util.concurrent.ExecutionException;
-
 @Component
 public class EventsTask {
 
@@ -25,7 +23,7 @@ public class EventsTask {
     @Autowired
     FirestoreRepository firestoreRepository;
 
-    public void addEventsTask() throws ExecutionException, InterruptedException {
+    public void addEventsTask() {
 
         Logger.LOG(new Log(LogEnum.TASK, "Events update"));
 
@@ -40,10 +38,6 @@ public class EventsTask {
     // Once per 30 minutes.
     @Scheduled(cron = "0 0 0/1 * * ?")
     public void task() {
-        try {
-            this.addEventsTask();
-        } catch (Exception e) {
-            Logger.LOG(new Log(LogEnum.EXCEPTION, e));
-        }
+        this.addEventsTask();
     }
 }

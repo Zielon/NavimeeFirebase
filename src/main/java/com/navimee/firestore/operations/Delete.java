@@ -57,4 +57,13 @@ public class Delete {
             Logger.LOG(new Log(LogEnum.EXCEPTION, e));
         }
     }
+
+    public void document(Query query) {
+        try {
+            for (DocumentSnapshot documentSnapshot : query.get().get().getDocuments())
+                document(documentSnapshot.getReference());
+        } catch (Exception e) {
+            Logger.LOG(new Log(LogEnum.EXCEPTION, e));
+        }
+    }
 }

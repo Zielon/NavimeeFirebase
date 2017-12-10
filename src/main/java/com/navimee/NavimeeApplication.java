@@ -20,6 +20,6 @@ public class NavimeeApplication extends SpringBootServletInitializer {
         SpringApplication.run(NavimeeApplication.class, args);
 
         // Disable logging for the whole application.
-        Logger.IsRunning = true;
+        Logger.isRunning = true;
     }
 }

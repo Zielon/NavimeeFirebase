@@ -9,12 +9,12 @@ import java.util.concurrent.Future;
 
 public class Logger {
 
-    public static boolean IsRunning = true;
+    public static boolean isRunning = true;
 
     private static Firestore db = FirebaseInitialization.firestore;
 
     public static Future LOG(Log log) {
-        if (IsRunning)
+        if (isRunning)
             return db != null ? db.collection(Paths.LOGS).document().set(log) : null;
         else return null;
     }

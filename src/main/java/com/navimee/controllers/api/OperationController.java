@@ -2,6 +2,7 @@ package com.navimee.controllers.api;
 
 import com.navimee.tasks.NotificationsTask;
 import com.navimee.tasks.events.EventsTask;
+import com.navimee.tasks.events.RemoveEventsTask;
 import com.navimee.tasks.places.DetailsTask;
 import com.navimee.tasks.places.PlacesTask;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +27,9 @@ public class OperationController {
 
     @Autowired
     NotificationsTask notificationsTask;
+
+    @Autowired
+    RemoveEventsTask removeEventsTask;
 
     @RequestMapping(value = "update/places", method = RequestMethod.POST)
     public ResponseEntity<?> updatePlaces() {
@@ -61,6 +65,16 @@ public class OperationController {
     public ResponseEntity<?> notificationsSend() {
         try {
             notificationsTask.sendNotification();
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @RequestMapping(value = "remove/events", method = RequestMethod.POST)
+    public ResponseEntity<?> removeFbEvents() {
+        try {
+            removeEventsTask.addRemoveEventsTask();
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }

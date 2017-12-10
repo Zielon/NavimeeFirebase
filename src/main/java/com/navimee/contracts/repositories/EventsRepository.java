@@ -15,5 +15,7 @@ public interface EventsRepository {
 
     Future updateHistorical(List<FbEvent> events);
 
-    Future deleteEvents(List<FbEvent> events, String city);
+    Future deleteEvents(List<FbEvent> events);
+
+    Future removeOldEvents();
 }

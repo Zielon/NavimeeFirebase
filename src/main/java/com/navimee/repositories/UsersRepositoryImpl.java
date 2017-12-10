@@ -38,7 +38,7 @@ public class UsersRepositoryImpl implements UsersRepository {
             for (DocumentSnapshot document : db.collection(USERS_COLLECTION).get().get().getDocuments()) {
                 User user = mapper.convertValue(document.getData(), User.class);
 
-                if(user.getToken() == null || user.getToken().equals("")) continue;
+                if (user.getToken() == null || user.getToken().equals("")) continue;
 
                 List<FbEvent> events = get.fromCollection(document
                         .getReference()
