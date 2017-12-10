@@ -1,6 +1,7 @@
 package com.navimee.services;
 
 import com.navimee.configuration.specific.GoogleConfiguration;
+import com.navimee.contracts.repositories.UsersRepository;
 import com.navimee.contracts.services.NotificationsService;
 import com.navimee.logger.LogEnum;
 import com.navimee.logger.Logger;
@@ -12,7 +13,6 @@ import de.bytefish.fcmjava.client.settings.PropertiesBasedSettings;
 import de.bytefish.fcmjava.model.options.FcmMessageOptions;
 import de.bytefish.fcmjava.requests.data.DataUnicastMessage;
 import de.bytefish.fcmjava.requests.notification.NotificationPayload;
-import de.bytefish.fcmjava.responses.FcmMessageResultItem;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -33,25 +33,36 @@ public class NotificationsServiceImpl implements NotificationsService {
     @Autowired
     GoogleConfiguration googleConfiguration;
 
+    @Autowired
+    UsersRepository usersRepository;
+
     @Override
-    public Future send(List<User> users) {
-
-        Properties properties = new Properties();
-        properties.setProperty("fcm.api.url", googleConfiguration.fmcApiUrl);
-        properties.setProperty("fcm.api.key", googleConfiguration.fmcApiKey);
-
+    public Future send() {
         return executorService.submit(() -> {
+
+            List<User> users = usersRepository.getUsersForNotification();
+
+            Properties properties = new Properties();
+            properties.setProperty("fcm.api.url", googleConfiguration.fmcApiUrl);
+            properties.setProperty("fcm.api.key", googleConfiguration.fmcApiKey);
+
             try {
                 try (FcmClient client = new FcmClient(PropertiesBasedSettings.createFromProperties(properties))) {
 
                     FcmMessageOptions options = FcmMessageOptions.builder().setTimeToLive(Duration.ofHours(1)).build();
 
                     users.forEach(user -> {
-                        NotificationPayload payload = NotificationPayload.builder().setBody("Events for " + user.getEmail()).setTitle("Title").setTag("Tag").build();
+                        NotificationPayload payload =
+                                NotificationPayload.builder()
+                                        .setBody("Events for " + user.getEmail())
+                                        .setTitle("Warning")
+                                        .setTag("Events less than 30 minutes from now!")
+                                        .build();
+
                         Map<String, FbEvent> data = new HashMap<>();
+
                         DataUnicastMessage message = new DataUnicastMessage(options, user.getToken(), data, payload);
-                        List<FcmMessageResultItem> results = client.send(message).getResults();
-                        results.size();
+                        client.send(message).getResults();
                     });
                 }
             } catch (Exception e) {
