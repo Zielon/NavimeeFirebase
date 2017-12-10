@@ -17,8 +17,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
-import static com.navimee.firestore.Paths.*;
-
 @Component
 public class PlacesTask {
 
@@ -57,7 +55,7 @@ public class PlacesTask {
     }
 
     //Once per 30 days.
-    @Scheduled(cron = "0 00 12 ? * *")
+    //@Scheduled(cron = "0 00 12 ? * *")
     public void task() {
         try {
             this.addPlacesTask();

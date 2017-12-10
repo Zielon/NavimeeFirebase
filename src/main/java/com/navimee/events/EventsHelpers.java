@@ -13,7 +13,6 @@ import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.joda.time.LocalDateTime;
 
-import java.util.UUID;
 import java.util.concurrent.Future;
 import java.util.function.Function;
 

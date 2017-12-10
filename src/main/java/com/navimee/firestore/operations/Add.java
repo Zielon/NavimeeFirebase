@@ -65,8 +65,8 @@ public class Add {
                 waitForSingleFuture(executorService, tasks);
 
                 Logger.LOG(new Log(LogEnum.ADDITION,
-                                String.format("%s | [%s]", collectionReference.getPath(), type),
-                                entities.size()));
+                        String.format("%s | [%s]", collectionReference.getPath(), type),
+                        entities.size()));
 
             } catch (Exception e) {
                 Logger.LOG(new Log(LogEnum.EXCEPTION, e));

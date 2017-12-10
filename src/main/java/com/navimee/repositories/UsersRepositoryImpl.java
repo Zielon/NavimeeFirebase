@@ -43,7 +43,7 @@ public class UsersRepositoryImpl implements UsersRepository {
                         .collection(USERS_EVENTS_COLLECTION)
                         .whereLessThanOrEqualTo("startTime", warsaw), FbEvent.class);
 
-                if(events.size() == 0) continue;
+                if (events.size() == 0) continue;
 
                 user.setEvents(events);
                 users.add(user);
