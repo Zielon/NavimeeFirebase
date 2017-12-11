@@ -11,6 +11,8 @@ public class NavimeeApplicationTests {
 
     @Test
     public void contextLoads() {
-    }
 
+
+
+    }
 }

@@ -7,6 +7,7 @@ import com.navimee.contracts.repositories.FirebaseRepository;
 import com.navimee.contracts.repositories.PlacesRepository;
 import com.navimee.contracts.services.HttpClient;
 import com.navimee.contracts.services.PlacesService;
+import com.navimee.linq.AdjustFsTimeFrames;
 import com.navimee.models.dto.geocoding.GooglePlaceDto;
 import com.navimee.models.dto.placeDetails.FsPlaceDetailsDto;
 import com.navimee.models.dto.places.facebook.FbPlaceDto;
@@ -131,12 +132,13 @@ public class PlacesServiceImpl implements PlacesService {
             places.forEach(p -> tasks.add(query.execute(new PlaceDetailsParams("venues", p.getId()))));
 
             List<FsPlaceDetails> entities = waitForSingleTask(executorService, tasks)
-                    .stream()
+                    .parallelStream()
                     .filter(Objects::nonNull)
                     .map(dto -> modelMapper.map(dto, FsPlaceDetails.class))
                     .filter(distinctByKey(FsPlaceDetails::getId))
                     .filter(d -> d.getPopularTimeframes() != null && d.getPopularTimeframes().size() > 0)
                     .filter(d -> d.getStatsCheckinsCount() > 500)
+                    .map(AdjustFsTimeFrames.adjust())
                     .collect(Collectors.toList());
 
             placesRepository.setFoursquarePlacesDetails(entities);

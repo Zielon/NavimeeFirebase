@@ -6,6 +6,7 @@ import com.navimee.logger.Logger;
 import com.navimee.models.entities.Log;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
+import org.apache.http.HttpStatus;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultConnectionKeepAliveStrategy;
 import org.apache.http.impl.nio.client.CloseableHttpAsyncClient;
@@ -17,9 +18,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.net.URI;
-import java.nio.charset.Charset;
 import java.util.concurrent.Callable;
-import java.util.concurrent.Future;
 
 @Service
 public class HttpClientImpl implements HttpClient {
@@ -35,9 +34,13 @@ public class HttpClientImpl implements HttpClient {
         return () -> {
             HttpGet request = new HttpGet(uri);
             try {
-                Future<HttpResponse> future = client.execute(request, null);
-                HttpEntity entity = future.get().getEntity();
-                String json = EntityUtils.toString(entity, Charset.defaultCharset());
+                HttpResponse response = client.execute(request, null).get();
+                HttpEntity entity = response.getEntity();
+
+                if (response.getStatusLine().getStatusCode() != HttpStatus.SC_OK)
+                    throw new Exception(String.format("The status code is: %d!", response.getStatusLine().getStatusCode()));
+
+                String json = EntityUtils.toString(entity, "UTF-8");
                 EntityUtils.consume(entity);
                 return new JSONObject(json);
             } catch (Exception e) {
