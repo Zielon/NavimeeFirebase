@@ -4,7 +4,7 @@ import com.navimee.configuration.specific.FacebookConfiguration;
 import com.navimee.contracts.repositories.EventsRepository;
 import com.navimee.contracts.repositories.PlacesRepository;
 import com.navimee.contracts.services.EventsService;
-import com.navimee.contracts.services.FirebaseService;
+import com.navimee.contracts.repositories.FirebaseRepository;
 import com.navimee.contracts.services.HttpClient;
 import com.navimee.contracts.services.PlacesService;
 import com.navimee.events.EventsHelpers;
@@ -53,7 +53,7 @@ public class EventsServiceImpl implements EventsService {
     HttpClient httpClient;
 
     @Autowired
-    FirebaseService firebaseService;
+    FirebaseRepository firebaseService;
 
     @Override
     public Future saveFacebookEvents(String city) {

@@ -28,8 +28,8 @@ public class DetailsTask {
         );
     }
 
-    // Once per 5 hour.
-    @Scheduled(cron = "0 0 0/5 * * ?")
+    // Once per 12 hour.
+    @Scheduled(cron = "0 0 0/12 * * ?")
     public void task() {
         this.addDetailsTask();
     }

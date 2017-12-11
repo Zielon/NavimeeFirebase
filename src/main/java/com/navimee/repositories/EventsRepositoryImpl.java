@@ -1,6 +1,9 @@
 package com.navimee.repositories;
 
+import com.google.cloud.firestore.Query;
 import com.navimee.contracts.repositories.EventsRepository;
+import com.navimee.contracts.repositories.FirebaseRepository;
+import com.navimee.contracts.repositories.FirestoreRepository;
 import com.navimee.enums.HotspotType;
 import com.navimee.firestore.Database;
 import com.navimee.firestore.operations.Add;
@@ -25,6 +28,9 @@ public class EventsRepositoryImpl implements EventsRepository {
 
     @Autowired
     ExecutorService executorService;
+
+    @Autowired
+    FirebaseRepository firebaseRepository;
 
     @Autowired
     Add add;
@@ -61,7 +67,9 @@ public class EventsRepositoryImpl implements EventsRepository {
     public Future removeOldEvents() {
         return executorService.submit(() -> {
             Date warsaw = LocalDateTime.now(DateTimeZone.forID("Europe/Warsaw")).plusMinutes(30).toDate();
-            delete.document(database.getHotspot().whereLessThan("endTime", warsaw));
+            Query query = database.getHotspot().whereLessThan("endTime", warsaw);
+            delete.document(query);
+            firebaseRepository.deleteEvents(get.fromCollection(query, FbEvent.class));
         });
     }
 }

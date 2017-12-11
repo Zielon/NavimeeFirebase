@@ -43,7 +43,7 @@ public class UsersRepositoryImpl implements UsersRepository {
                 List<FbEvent> events = get.fromCollection(document
                         .getReference()
                         .collection(USERS_EVENTS_COLLECTION)
-                        .whereLessThanOrEqualTo("startTime", warsaw), FbEvent.class);
+                        .whereLessThanOrEqualTo("endTime", warsaw), FbEvent.class);
 
                 if (events.size() == 0) continue;
 

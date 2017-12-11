@@ -36,6 +36,4 @@ public class FirestoreRepositoryImpl implements FirestoreRepository {
         placesRepository.getAvailableCities().forEach(city ->
                 delete.collection(db.collection(collection).document(BY_CITY).collection(city.getName()), 1));
     }
-
-
 }

@@ -2,7 +2,7 @@ package com.navimee.controllers.api;
 
 import com.navimee.tasks.NotificationsTask;
 import com.navimee.tasks.events.EventsTask;
-import com.navimee.tasks.events.RemoveEventsTask;
+import com.navimee.tasks.RemovalTask;
 import com.navimee.tasks.places.DetailsTask;
 import com.navimee.tasks.places.PlacesTask;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,7 +29,7 @@ public class OperationController {
     NotificationsTask notificationsTask;
 
     @Autowired
-    RemoveEventsTask removeEventsTask;
+    RemovalTask removeEventsTask;
 
     @RequestMapping(value = "update/places", method = RequestMethod.POST)
     public ResponseEntity<?> updatePlaces() {

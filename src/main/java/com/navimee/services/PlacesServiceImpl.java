@@ -4,7 +4,7 @@ import com.navimee.configuration.specific.FacebookConfiguration;
 import com.navimee.configuration.specific.FoursquareConfiguration;
 import com.navimee.configuration.specific.GoogleConfiguration;
 import com.navimee.contracts.repositories.PlacesRepository;
-import com.navimee.contracts.services.FirebaseService;
+import com.navimee.contracts.repositories.FirebaseRepository;
 import com.navimee.contracts.services.HttpClient;
 import com.navimee.contracts.services.PlacesService;
 import com.navimee.models.dto.geocoding.GooglePlaceDto;
@@ -63,7 +63,7 @@ public class PlacesServiceImpl implements PlacesService {
     HttpClient httpClient;
 
     @Autowired
-    FirebaseService firebaseService;
+    FirebaseRepository firebaseService;
 
     @Override
     public Future saveFacebookPlaces(String city) {
