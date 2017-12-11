@@ -19,7 +19,6 @@ public class RemovalTask {
         eventsRepository.removeOldEvents();
     }
 
-    // Once per 1 hour.
     @Scheduled(cron = "0 0 0/1 * * ?")
     public void task() {
         this.addRemoveEventsTask();

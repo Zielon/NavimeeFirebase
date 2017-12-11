@@ -23,13 +23,17 @@ public class DetailsTask {
         Logger.LOG(new Log(LogEnum.TASK, "Foursquare details update"));
 
         placesRepository.getAvailableCities().forEach(city -> {
-                placesService.saveFoursquarePlacesDetails(city.getName());
-            }
+                    try {
+                        placesService.saveFoursquarePlacesDetails(city.getName()).get();
+                        Thread.sleep(1000 * 60 * 60);
+                    } catch (Exception e) {
+                        Logger.LOG(new Log(LogEnum.EXCEPTION, e));
+                    }
+                }
         );
     }
 
-    // Once per 12 hour.
-    @Scheduled(cron = "0 0 0/12 * * ?")
+    @Scheduled(cron = "0 0 0/5 * * ?")
     public void task() {
         this.addDetailsTask();
     }

@@ -1,8 +1,8 @@
 package com.navimee.controllers.api;
 
 import com.navimee.tasks.NotificationsTask;
-import com.navimee.tasks.events.EventsTask;
 import com.navimee.tasks.RemovalTask;
+import com.navimee.tasks.events.EventsTask;
 import com.navimee.tasks.places.DetailsTask;
 import com.navimee.tasks.places.PlacesTask;
 import org.springframework.beans.factory.annotation.Autowired;

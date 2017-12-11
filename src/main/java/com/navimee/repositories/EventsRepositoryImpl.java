@@ -3,7 +3,6 @@ package com.navimee.repositories;
 import com.google.cloud.firestore.Query;
 import com.navimee.contracts.repositories.EventsRepository;
 import com.navimee.contracts.repositories.FirebaseRepository;
-import com.navimee.contracts.repositories.FirestoreRepository;
 import com.navimee.enums.HotspotType;
 import com.navimee.firestore.Database;
 import com.navimee.firestore.operations.Add;

@@ -2,9 +2,9 @@ package com.navimee.services;
 
 import com.navimee.configuration.specific.FacebookConfiguration;
 import com.navimee.contracts.repositories.EventsRepository;
+import com.navimee.contracts.repositories.FirebaseRepository;
 import com.navimee.contracts.repositories.PlacesRepository;
 import com.navimee.contracts.services.EventsService;
-import com.navimee.contracts.repositories.FirebaseRepository;
 import com.navimee.contracts.services.HttpClient;
 import com.navimee.contracts.services.PlacesService;
 import com.navimee.events.EventsHelpers;

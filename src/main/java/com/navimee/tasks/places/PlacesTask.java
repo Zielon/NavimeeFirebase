@@ -52,7 +52,6 @@ public class PlacesTask {
         );
     }
 
-    //Once per 30 days.
     //@Scheduled(cron = "0 00 12 ? * *")
     public void task() {
         this.addPlacesTask();
