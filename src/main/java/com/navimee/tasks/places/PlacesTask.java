@@ -53,7 +53,7 @@ public class PlacesTask {
         );
     }
 
-    @Scheduled(cron = "0 0 15 L * ?")
+    @Scheduled(cron = "0 0 15 1 * ?")
     public void task() {
         this.addPlacesTask();
     }
