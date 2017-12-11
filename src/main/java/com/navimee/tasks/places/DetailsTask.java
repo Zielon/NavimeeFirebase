@@ -34,7 +34,7 @@ public class DetailsTask {
         );
     }
 
-    @Scheduled(cron = "0 5 1 * * ?")
+    @Scheduled(cron = "0 0 10 L * ?")
     public void task() {
         this.addDetailsTask();
     }
