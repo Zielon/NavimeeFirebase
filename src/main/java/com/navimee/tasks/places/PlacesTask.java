@@ -10,6 +10,7 @@ import com.navimee.models.entities.coordinates.City;
 import com.navimee.models.entities.coordinates.Coordinate;
 import com.navimee.staticData.NavimeeData;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -52,7 +53,7 @@ public class PlacesTask {
         );
     }
 
-    //@Scheduled(cron = "0 00 12 ? * *")
+    @Scheduled(cron = "0 0 0 1 ? *")
     public void task() {
         this.addPlacesTask();
     }
