@@ -53,6 +53,13 @@ function addLogs(newLogs){
             var td = document.createElement('td');
             var div = document.createElement('div');
 
+             if(key === "reference")
+                td.setAttribute('style', 'width: 500px;');
+             if(key === "count")
+                 td.setAttribute('style', 'width: 50px;');
+             if(key === "id")
+                 td.setAttribute('style', 'width: 150px;');
+
             // Background colors based on a type.
             if(log.type === "TASK")
                 tr.style.backgroundColor = 'Lavender';
@@ -64,11 +71,38 @@ function addLogs(newLogs){
                 tr.style.backgroundColor = 'IndianRed';
             else if(log.type === "EXCEPTION"){
                 tr.style.backgroundColor = 'Crimson';
-                if(key === "reference")
-                    div.className = "exception";
+                if(key === "reference"){
+                    var buttonDiv = document.createElement('div');
+
+                    var button = document.createElement('button');
+                    button.setAttribute('type', 'button');
+                    button.setAttribute('class', 'btn btn-primary btn-xs');
+                    button.setAttribute('data-toggle', 'collapse');
+                    button.setAttribute('data-target', `#${log["time"]}`);
+                    button.setAttribute('style', 'display: inline-block; float: left;');
+
+                    var span = document.createElement('span');
+                    span.setAttribute('class', 'glyphicon glyphicon-chevron-down');
+
+                    button.appendChild(span);
+
+                    var textDiv = document.createElement('div');
+                    textDiv.setAttribute('style', 'text-overflow: ellipsis; display: inline-block;');
+                    textDiv.appendChild(document.createTextNode(log[key].split("\n")[0]))
+
+                    buttonDiv.appendChild(button);
+                    buttonDiv.appendChild(textDiv);
+
+                    div.setAttribute('id', log["time"]);
+                    div.setAttribute('class', 'collapse | exception');
+                    div.setAttribute('style', 'font-size: 10px;');
+
+                    td.appendChild(buttonDiv);
+                }
             }
 
             div.appendChild(document.createTextNode(key === "time" ? new Date(log[key]).toISOString() : !log[key] ? " - " : log[key]))
+
             td.appendChild(div);
             tr.appendChild(td);
         });

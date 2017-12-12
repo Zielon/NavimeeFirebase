@@ -36,12 +36,12 @@ public class HttpClientImpl implements HttpClient {
             try {
                 HttpResponse response = client.execute(request, null).get();
                 HttpEntity entity = response.getEntity();
-
-                if (response.getStatusLine().getStatusCode() != HttpStatus.SC_OK)
-                    throw new Exception(String.format("The status code is: %d!", response.getStatusLine().getStatusCode()));
-
                 String json = EntityUtils.toString(entity, "UTF-8");
                 EntityUtils.consume(entity);
+
+                if (response.getStatusLine().getStatusCode() != HttpStatus.SC_OK)
+                    throw new Exception(json);
+
                 return new JSONObject(json);
             } catch (Exception e) {
                 Logger.LOG(new Log(LogEnum.EXCEPTION, e));
