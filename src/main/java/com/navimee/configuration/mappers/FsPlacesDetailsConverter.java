@@ -2,7 +2,6 @@ package com.navimee.configuration.mappers;
 
 import com.navimee.models.dto.placeDetails.FsPlaceDetailsDto;
 import com.navimee.models.entities.places.foursquare.FsPlaceDetails;
-import com.navimee.models.entities.places.foursquare.FsTimeFrame;
 import org.modelmapper.Converter;
 import org.modelmapper.spi.MappingContext;
 
@@ -49,18 +48,6 @@ public class FsPlacesDetailsConverter {
                 // Category
                 if (dto.categories != null) {
                     entity.setCategories(dto.categories.stream().map(c -> c.name).collect(toList()));
-                }
-
-                // Popular
-                if (dto.popular != null) {
-                    entity.setPopularStatus(dto.popular.status);
-                    entity.setPopularIsLocalHoliday(dto.popular.isLocalHoliday);
-                    entity.setPopularIsOpen(dto.popular.isOpen);
-
-                    if (dto.popular.timeframes != null)
-                        entity.setPopularTimeframes(dto.popular.timeframes.stream()
-                                .map(frame -> new FsTimeFrame(frame.days, frame.open.stream().map(f -> f.renderedTime).collect(toList())))
-                                .collect(toList()));
                 }
 
                 return entity;

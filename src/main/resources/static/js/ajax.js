@@ -50,15 +50,15 @@ function addLogs(newLogs){
         tr.setAttribute("id", lastLog)
         Object.keys(log).forEach(key => {
 
+            if(key === "id") return;
+
             var td = document.createElement('td');
             var div = document.createElement('div');
 
              if(key === "reference")
-                td.setAttribute('style', 'width: 500px;');
+                td.setAttribute('style', 'width: 700px;');
              if(key === "count")
                  td.setAttribute('style', 'width: 50px;');
-             if(key === "id")
-                 td.setAttribute('style', 'width: 150px;');
 
             // Background colors based on a type.
             if(log.type === "TASK")
@@ -73,6 +73,7 @@ function addLogs(newLogs){
                 tr.style.backgroundColor = 'Crimson';
                 if(key === "reference"){
                     var buttonDiv = document.createElement('div');
+                    div = document.createElement('pre');
 
                     var button = document.createElement('button');
                     button.setAttribute('type', 'button');
@@ -88,14 +89,13 @@ function addLogs(newLogs){
 
                     var textDiv = document.createElement('div');
                     textDiv.setAttribute('style', 'text-overflow: ellipsis; display: inline-block;');
-                    textDiv.appendChild(document.createTextNode(log[key].split("\n")[0]))
+                    textDiv.appendChild(document.createTextNode(log[key].split(":")[0]))
 
                     buttonDiv.appendChild(button);
                     buttonDiv.appendChild(textDiv);
 
                     div.setAttribute('id', log["time"]);
-                    div.setAttribute('class', 'collapse | exception');
-                    div.setAttribute('style', 'font-size: 10px;');
+                    div.setAttribute('class', 'collapse');
 
                     td.appendChild(buttonDiv);
                 }

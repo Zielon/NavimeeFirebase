@@ -13,7 +13,6 @@ public class FsPlaceDetailsDto implements Dto {
     public double rating;
     public LocationDto location;
     public StatsDto stats;
-    public PopularDto popular;
     public LikesDto likes;
     public List<CategoryDto> categories;
 }

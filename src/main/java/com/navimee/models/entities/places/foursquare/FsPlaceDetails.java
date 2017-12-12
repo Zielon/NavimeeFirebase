@@ -2,6 +2,8 @@ package com.navimee.models.entities.places.foursquare;
 
 import com.navimee.enums.HotspotType;
 import com.navimee.models.entities.Entity;
+import com.navimee.models.entities.places.foursquare.popularHours.FsPopular;
+import com.navimee.models.entities.places.foursquare.popularHours.FsTimeFrame;
 
 import java.util.List;
 
@@ -26,10 +28,7 @@ public class FsPlaceDetails implements Entity {
     private double locationLat;
     private double locationLng;
 
-    private String popularStatus;
-    private boolean popularIsOpen;
-    private boolean popularIsLocalHoliday;
-    private List<FsTimeFrame> popularTimeframes;
+    private FsPopular popular;
 
     private List<String> categories;
 
@@ -163,38 +162,6 @@ public class FsPlaceDetails implements Entity {
         this.locationLng = locationLng;
     }
 
-    public String getPopularStatus() {
-        return popularStatus;
-    }
-
-    public void setPopularStatus(String popularStatus) {
-        this.popularStatus = popularStatus;
-    }
-
-    public boolean isPopularIsOpen() {
-        return popularIsOpen;
-    }
-
-    public void setPopularIsOpen(boolean popularIsOpen) {
-        this.popularIsOpen = popularIsOpen;
-    }
-
-    public boolean isPopularIsLocalHoliday() {
-        return popularIsLocalHoliday;
-    }
-
-    public void setPopularIsLocalHoliday(boolean popularIsLocalHoliday) {
-        this.popularIsLocalHoliday = popularIsLocalHoliday;
-    }
-
-    public List<FsTimeFrame> getPopularTimeframes() {
-        return popularTimeframes;
-    }
-
-    public void setPopularTimeframes(List<FsTimeFrame> popularTimeframes) {
-        this.popularTimeframes = popularTimeframes;
-    }
-
     public List<String> getCategories() {
         return categories;
     }
@@ -205,5 +172,13 @@ public class FsPlaceDetails implements Entity {
 
     public HotspotType getHotspotType() {
         return hotspotType;
+    }
+
+    public FsPopular getPopular() {
+        return popular;
+    }
+
+    public void setPopular(FsPopular popular) {
+        this.popular = popular;
     }
 }

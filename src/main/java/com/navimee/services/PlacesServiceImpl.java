@@ -12,15 +12,15 @@ import com.navimee.models.dto.geocoding.GooglePlaceDto;
 import com.navimee.models.dto.placeDetails.FsPlaceDetailsDto;
 import com.navimee.models.dto.places.facebook.FbPlaceDto;
 import com.navimee.models.dto.places.foursquare.FsPlaceDto;
+import com.navimee.models.dto.timeframes.PopularDto;
+import com.navimee.models.dto.timeframes.TimeFrameDto;
 import com.navimee.models.entities.coordinates.Coordinate;
 import com.navimee.models.entities.places.Place;
 import com.navimee.models.entities.places.facebook.FbPlace;
 import com.navimee.models.entities.places.foursquare.FsPlace;
 import com.navimee.models.entities.places.foursquare.FsPlaceDetails;
-import com.navimee.places.queries.FacebookPlacesQuery;
-import com.navimee.places.queries.FoursquareDetailsQuery;
-import com.navimee.places.queries.FoursquarePlacesQuery;
-import com.navimee.places.queries.GoogleGeocodingQuery;
+import com.navimee.models.entities.places.foursquare.popularHours.FsPopular;
+import com.navimee.places.queries.*;
 import com.navimee.places.queries.params.PlaceDetailsParams;
 import com.navimee.places.queries.params.PlacesParams;
 import org.modelmapper.ModelMapper;
@@ -38,6 +38,7 @@ import java.util.stream.Collectors;
 import static com.navimee.asyncCollectors.CompletionCollector.waitForSingleTask;
 import static com.navimee.asyncCollectors.CompletionCollector.waitForTasks;
 import static com.navimee.linq.Distinct.distinctByKey;
+import static java.util.stream.Collectors.toList;
 
 @Service
 public class PlacesServiceImpl implements PlacesService {
@@ -79,14 +80,14 @@ public class PlacesServiceImpl implements PlacesService {
             List<Callable<List<FbPlaceDto>>> tasks =
                     coordinates.stream()
                             .map(c -> facebookPlacesQuery.execute(new PlacesParams(c.getLatitude(), c.getLongitude())))
-                            .collect(Collectors.toList());
+                            .collect(toList());
 
             List<FbPlace> entities = waitForTasks(executorService, tasks)
                     .stream()
                     .filter(Objects::nonNull)
                     .map(dto -> modelMapper.map(dto, FbPlace.class))
                     .filter(distinctByKey(Place::getId))
-                    .collect(Collectors.toList());
+                    .collect(toList());
 
             placesRepository.setFacebookPlaces(entities, city);
         });
@@ -105,14 +106,14 @@ public class PlacesServiceImpl implements PlacesService {
             List<Callable<List<FsPlaceDto>>> tasks =
                     coordinates.stream()
                             .map(c -> foursquarePlacesQuery.execute(new PlaceDetailsParams(c.getLatitude(), c.getLongitude(), "/venues/search")))
-                            .collect(Collectors.toList());
+                            .collect(toList());
 
             List<FsPlace> entities = waitForTasks(executorService, tasks)
                     .stream()
                     .filter(Objects::nonNull)
                     .map(dto -> modelMapper.map(dto, FsPlace.class))
                     .filter(distinctByKey(Place::getId))
-                    .collect(Collectors.toList());
+                    .collect(toList());
 
             placesRepository.setFoursquarePlaces(entities, city);
         });
@@ -125,21 +126,37 @@ public class PlacesServiceImpl implements PlacesService {
             List<FsPlace> places = placesRepository.getFoursquarePlaces(city);
 
             // Get data from the external foursquare API
-            FoursquareDetailsQuery query =
+            FoursquareDetailsQuery placesQuery =
                     new FoursquareDetailsQuery(foursquareConfiguration, executorService, httpClient);
 
-            List<Callable<FsPlaceDetailsDto>> tasks = new ArrayList<>();
-            places.forEach(p -> tasks.add(query.execute(new PlaceDetailsParams("venues", p.getId()))));
+            List<Callable<FsPlaceDetailsDto>> placesTasks = new ArrayList<>();
+            places.forEach(p -> placesTasks.add(placesQuery.execute(new PlaceDetailsParams("venues", p.getId()))));
 
-            List<FsPlaceDetails> entities = waitForSingleTask(executorService, tasks)
-                    .parallelStream()
+            List<FsPlaceDetails> entitiesDetails = waitForSingleTask(executorService, placesTasks).parallelStream()
                     .filter(Objects::nonNull)
                     .map(dto -> modelMapper.map(dto, FsPlaceDetails.class))
                     .filter(distinctByKey(FsPlaceDetails::getId))
-                    .filter(d -> d.getPopularTimeframes() != null && d.getPopularTimeframes().size() > 0)
                     .filter(d -> d.getStatsCheckinsCount() > 500)
                     .map(AdjustFsTimeFrames.adjust())
-                    .collect(Collectors.toList());
+                    .collect(toList());
+
+            // Update timeframes for every place
+            FoursquareTimeFramesQuery timeframeQuery =
+                    new FoursquareTimeFramesQuery(foursquareConfiguration, executorService, httpClient);
+
+            List<Callable<PopularDto>> popularTasks = new ArrayList<>();
+            entitiesDetails.forEach(p -> popularTasks.add(timeframeQuery.execute(new PlaceDetailsParams("venues", p.getId()))));
+
+            waitForSingleTask(executorService, popularTasks).stream()
+                    .filter(Objects::nonNull)
+                    .forEach(dto ->
+                        entitiesDetails.stream()
+                                .filter(details -> details.getId().equals(dto.getPlaceId()))
+                                .findFirst().get()
+                                .setPopular(modelMapper.map(dto, FsPopular.class)));
+
+            List<FsPlaceDetails> entities = entitiesDetails.stream()
+                    .filter(details -> details.getPopular() != null).collect(toList());
 
             placesRepository.setFoursquarePlacesDetails(entities);
             firebaseService.transferPlaces(entities);

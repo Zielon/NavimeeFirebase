@@ -58,7 +58,6 @@ public class Injections {
     public ModelMapper modelMapperProvider() {
         ModelMapper modalMapper = new ModelMapper();
 
-        // Converters
         modalMapper.addConverter(FsPlacesDetailsConverter.getConverter());
 
         modalMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
