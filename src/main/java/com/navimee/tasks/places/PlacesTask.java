@@ -15,6 +15,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
 
 @Component
 public class PlacesTask {
@@ -28,7 +29,7 @@ public class PlacesTask {
     @Autowired
     FirestoreRepository firestoreRepository;
 
-    public void addPlacesTask() {
+    public void addPlacesTask() throws ExecutionException, InterruptedException {
 
         // Mocked data.
         NavimeeData navimeeData = new NavimeeData();
@@ -54,7 +55,7 @@ public class PlacesTask {
     }
 
     @Scheduled(cron = "0 0 15 1 * ?")
-    public void task() {
+    public void task() throws ExecutionException, InterruptedException {
         this.addPlacesTask();
     }
 }

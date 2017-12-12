@@ -3,7 +3,6 @@ package com.navimee.models.entities.places.foursquare;
 import com.navimee.enums.HotspotType;
 import com.navimee.models.entities.Entity;
 import com.navimee.models.entities.places.foursquare.popularHours.FsPopular;
-import com.navimee.models.entities.places.foursquare.popularHours.FsTimeFrame;
 
 import java.util.List;
 

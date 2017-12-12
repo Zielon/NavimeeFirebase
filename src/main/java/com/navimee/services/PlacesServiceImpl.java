@@ -7,13 +7,11 @@ import com.navimee.contracts.repositories.FirebaseRepository;
 import com.navimee.contracts.repositories.PlacesRepository;
 import com.navimee.contracts.services.HttpClient;
 import com.navimee.contracts.services.PlacesService;
-import com.navimee.linq.AdjustFsTimeFrames;
 import com.navimee.models.dto.geocoding.GooglePlaceDto;
 import com.navimee.models.dto.placeDetails.FsPlaceDetailsDto;
 import com.navimee.models.dto.places.facebook.FbPlaceDto;
 import com.navimee.models.dto.places.foursquare.FsPlaceDto;
 import com.navimee.models.dto.timeframes.PopularDto;
-import com.navimee.models.dto.timeframes.TimeFrameDto;
 import com.navimee.models.entities.coordinates.Coordinate;
 import com.navimee.models.entities.places.Place;
 import com.navimee.models.entities.places.facebook.FbPlace;
@@ -33,7 +31,6 @@ import java.util.Objects;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
-import java.util.stream.Collectors;
 
 import static com.navimee.asyncCollectors.CompletionCollector.waitForSingleTask;
 import static com.navimee.asyncCollectors.CompletionCollector.waitForTasks;
@@ -137,7 +134,6 @@ public class PlacesServiceImpl implements PlacesService {
                     .map(dto -> modelMapper.map(dto, FsPlaceDetails.class))
                     .filter(distinctByKey(FsPlaceDetails::getId))
                     .filter(d -> d.getStatsCheckinsCount() > 500)
-                    .map(AdjustFsTimeFrames.adjust())
                     .collect(toList());
 
             // Update timeframes for every place
@@ -150,16 +146,15 @@ public class PlacesServiceImpl implements PlacesService {
             waitForSingleTask(executorService, popularTasks).stream()
                     .filter(Objects::nonNull)
                     .forEach(dto ->
-                        entitiesDetails.stream()
-                                .filter(details -> details.getId().equals(dto.getPlaceId()))
-                                .findFirst().get()
-                                .setPopular(modelMapper.map(dto, FsPopular.class)));
+                            entitiesDetails.stream()
+                                    .filter(details -> details.getId().equals(dto.getPlaceId()))
+                                    .findFirst().get()
+                                    .setPopular(modelMapper.map(dto, FsPopular.class)));
 
             List<FsPlaceDetails> entities = entitiesDetails.stream()
                     .filter(details -> details.getPopular() != null).collect(toList());
 
             placesRepository.setFoursquarePlacesDetails(entities);
-            firebaseService.transferPlaces(entities);
         });
     }
 
