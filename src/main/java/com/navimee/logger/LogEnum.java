@@ -7,5 +7,5 @@ public enum LogEnum {
     TASK,
     RETRIEVAL_IN_MEMORY,
     ADDITION_IN_MEMORY,
-    EXCEPTION
+    EXCEPTION,
 }

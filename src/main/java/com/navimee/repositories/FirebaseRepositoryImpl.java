@@ -16,10 +16,8 @@ import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
-
-import static com.navimee.linq.HotspotFilters.filterFbEvents;
-import static com.navimee.linq.HotspotFilters.filterFsPopular;
 
 @Repository
 public class FirebaseRepositoryImpl implements FirebaseRepository {
@@ -30,48 +28,47 @@ public class FirebaseRepositoryImpl implements FirebaseRepository {
     @Autowired
     ExecutorService executorService;
 
-    private final String hotspotEvents = Paths.HOTSPOT + "_EVENTS";
-    private final String hotspotPlaces = Paths.HOTSPOT + "_PLACES";
+    private final String hotspotCurrent = Paths.HOTSPOT + "_CURRENT";
 
     @Override
     public Future transferEvents(List<FbEvent> events) {
         return executorService.submit(() -> {
-            GeoFire geoFireForFiltered = new GeoFire(firebaseDatabase.getReference(hotspotEvents));
-            GeoFire getFireAll  = new GeoFire(firebaseDatabase.getReference(Paths.HOTSPOT));
-
-            Map<String, FbEvent> filtered = events.stream().filter(filterFbEvents()).collect(Collectors.toMap(Entity::getId, Function.identity()));
-            Map<String, FbEvent> all = events.stream().collect(Collectors.toMap(Entity::getId, Function.identity()));
-
-            filtered.forEach((key, v) -> geoFireForFiltered.setLocation(key, new GeoLocation(v.getPlace().getGeoPoint().getLatitude(), v.getPlace().getGeoPoint().getLongitude())));
-            all.forEach((key, v) -> getFireAll.setLocation(key, new GeoLocation(v.getPlace().getGeoPoint().getLatitude(), v.getPlace().getGeoPoint().getLongitude())));
+            GeoFire geoFire  = new GeoFire(firebaseDatabase.getReference(Paths.HOTSPOT));
+            Map<String, FbEvent> entities = events.stream().collect(Collectors.toMap(Entity::getId, Function.identity()));
+            entities.forEach((key, v) -> geoFire.setLocation(key, new GeoLocation(v.getPlace().getGeoPoint().getLatitude(), v.getPlace().getGeoPoint().getLongitude())));
         });
     }
 
     @Override
     public Future transferPlaces(List<FsPlaceDetails> placeDetails) {
         return executorService.submit(() -> {
-            GeoFire geoFireForFiltered = new GeoFire(firebaseDatabase.getReference(hotspotPlaces));
-            GeoFire getFireAll  = new GeoFire(firebaseDatabase.getReference(Paths.HOTSPOT));
+            GeoFire geoFire  = new GeoFire(firebaseDatabase.getReference(Paths.HOTSPOT));
+            Map<String, FsPlaceDetails> entities = placeDetails.stream().collect(Collectors.toMap(Entity::getId, Function.identity()));
+            entities.forEach((key, v) -> geoFire.setLocation(key, new GeoLocation(v.getLocationLat(), v.getLocationLng())));
+        });
+    }
 
-            Map<String, FsPlaceDetails> filtered = placeDetails.stream().filter(filterFsPopular()).collect(Collectors.toMap(Entity::getId, Function.identity()));
-            Map<String, FsPlaceDetails> all = placeDetails.stream().collect(Collectors.toMap(Entity::getId, Function.identity()));
+    @Override
+    public void deleteCurrentHotspot() {
+        try {
+            firebaseDatabase.getReference(hotspotCurrent).removeValueAsync().get();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
-            filtered.forEach((key, v) -> geoFireForFiltered.setLocation(key, new GeoLocation(v.getLocationLat(), v.getLocationLng())));
-            all.forEach((key, v) -> getFireAll.setLocation(key, new GeoLocation(v.getLocationLat(), v.getLocationLng())));
+    @Override
+    public <T extends Entity> Future filterAndTransferToCurrent(List<T> entities, Predicate<T> predicate, Function<T, GeoLocation> function) {
+        return executorService.submit(() -> {
+            GeoFire geoFire  = new GeoFire(firebaseDatabase.getReference(hotspotCurrent));
+            Map<String, T> filtered = entities.stream().filter(predicate).collect(Collectors.toMap(Entity::getId, Function.identity()));
+            filtered.forEach((key, value) -> geoFire.setLocation(key, function.apply(value)));
         });
     }
 
     @Override
     public Future deleteEvents(List<FbEvent> events) {
-        return executorService.submit(() -> {
-            events.forEach(event -> firebaseDatabase.getReference(String.format("%s/%s", Paths.HOTSPOT, event.getId())).removeValueAsync());
-            events.forEach(event -> firebaseDatabase.getReference(String.format("%s/%s", hotspotEvents, event.getId())).removeValueAsync());
-        });
-    }
-
-    @Override
-    public Future deletePlaces(List<FsPlaceDetails> places) {
-        return executorService.submit(
-                () -> places.forEach(event -> firebaseDatabase.getReference(String.format("%s/%s", hotspotPlaces, event.getId())).removeValueAsync()));
+        return executorService.submit(() ->
+                events.forEach(event -> firebaseDatabase.getReference(String.format("%s/%s", Paths.HOTSPOT, event.getId())).removeValueAsync()));
     }
 }

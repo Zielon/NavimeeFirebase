@@ -62,7 +62,7 @@ public class PlacesServiceImpl implements PlacesService {
     HttpClient httpClient;
 
     @Autowired
-    FirebaseRepository firebaseService;
+    FirebaseRepository firebaseRepository;
 
     @Override
     public Future saveFacebookPlaces(String city) {
@@ -155,7 +155,7 @@ public class PlacesServiceImpl implements PlacesService {
                     .filter(details -> details.getPopular() != null).collect(toList());
 
             placesRepository.setFoursquarePlacesDetails(entities);
-            firebaseService.transferPlaces(entities);
+            firebaseRepository.transferPlaces(entities);
         });
     }
 

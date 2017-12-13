@@ -1,5 +1,6 @@
 package com.navimee.controllers.api;
 
+import com.navimee.tasks.HotspotTask;
 import com.navimee.tasks.NotificationsTask;
 import com.navimee.tasks.RemovalTask;
 import com.navimee.tasks.events.EventsTask;
@@ -30,6 +31,9 @@ public class OperationController {
 
     @Autowired
     RemovalTask removeEventsTask;
+
+    @Autowired
+    HotspotTask hotspotTask;
 
     @RequestMapping(value = "update/places", method = RequestMethod.POST)
     public ResponseEntity<?> updatePlaces() {
@@ -75,6 +79,16 @@ public class OperationController {
     public ResponseEntity<?> removeFbEvents() {
         try {
             removeEventsTask.addRemoveEventsTask();
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @RequestMapping(value = "hotspot/update", method = RequestMethod.POST)
+    public ResponseEntity<?> updateHotspot() {
+        try {
+            hotspotTask.addHotspotTask();
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }

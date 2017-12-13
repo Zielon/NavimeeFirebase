@@ -53,7 +53,7 @@ public class EventsServiceImpl implements EventsService {
     HttpClient httpClient;
 
     @Autowired
-    FirebaseRepository firebaseService;
+    FirebaseRepository firebaseRepository;
 
     @Override
     public Future saveFacebookEvents(String city) {
@@ -73,7 +73,7 @@ public class EventsServiceImpl implements EventsService {
                     .collect(toList());
 
             eventsRepository.setEvents(entities);
-            firebaseService.transferEvents(entities);
+            firebaseRepository.transferEvents(entities);
         });
     }
 }

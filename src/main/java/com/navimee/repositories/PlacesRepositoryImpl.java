@@ -47,18 +47,19 @@ public class PlacesRepositoryImpl implements PlacesRepository {
     // SETTERS
     @Override
     public Future setFacebookPlaces(List<FbPlace> places, String city) {
-        InMemoryRepository.SET_FACEBOOK(city, places);
+        InMemoryRepository.SET("fb_" + city, places);
         return add.toCollection(database.getCollection(FACEBOOK_PLACES, city), places);
     }
 
     @Override
     public Future setFoursquarePlaces(List<FsPlace> places, String city) {
-        InMemoryRepository.SET_FOURSQUARE(city, places);
+        InMemoryRepository.SET("fs_" + city, places);
         return add.toCollection(database.getCollection(FOURSQUARE_PLACES, city), places);
     }
 
     @Override
     public Future setFoursquarePlacesDetails(List<FsPlaceDetails> details) {
+        InMemoryRepository.SET("fs_details", details);
         return add.toCollection(database.getHotspot(), details);
     }
 
@@ -100,27 +101,32 @@ public class PlacesRepositoryImpl implements PlacesRepository {
     // GETTERS
     @Override
     public List<FbPlace> getFacebookPlaces(String city) {
-        List<FbPlace> places = InMemoryRepository.GET_FACEBOOK(city);
+        List<FbPlace> places = InMemoryRepository.GET("fb_" + city);
         if (places == null) {
             places = get.fromCollection(database.getCollection(FACEBOOK_PLACES, city), FbPlace.class);
-            InMemoryRepository.SET_FACEBOOK(city, places);
+            InMemoryRepository.SET(city, places);
         }
         return places;
     }
 
     @Override
     public List<FsPlace> getFoursquarePlaces(String city) {
-        List<FsPlace> places = InMemoryRepository.GET_FOURSQUARE(city);
+        List<FsPlace> places = InMemoryRepository.GET("fs_" + city);
         if (places == null) {
             places = get.fromCollection(database.getCollection(FOURSQUARE_PLACES, city), FsPlace.class);
-            InMemoryRepository.SET_FOURSQUARE(city, places);
+            InMemoryRepository.SET(city, places);
         }
         return places;
     }
 
     @Override
     public List<FsPlaceDetails> getFoursquarePlacesDetails() {
-        return get.fromCollection(database.getHotspot().whereEqualTo("hotspotType", HotspotType.FOURSQUARE_PLACE), FsPlaceDetails.class);
+        List<FsPlaceDetails> details = InMemoryRepository.GET("fs_details");
+        if (details == null) {
+            details = get.fromCollection(database.getHotspot().whereEqualTo("hotspotType", HotspotType.FOURSQUARE_PLACE), FsPlaceDetails.class);
+            InMemoryRepository.SET("fs_details", details);
+        }
+        return details;
     }
 
     @Override

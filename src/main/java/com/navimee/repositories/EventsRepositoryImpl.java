@@ -9,6 +9,7 @@ import com.navimee.firestore.operations.Add;
 import com.navimee.firestore.operations.Delete;
 import com.navimee.firestore.operations.Get;
 import com.navimee.models.entities.events.FbEvent;
+import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.joda.time.LocalDateTime;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,6 +47,17 @@ public class EventsRepositoryImpl implements EventsRepository {
     }
 
     @Override
+    public List<FbEvent> getEventsBeforeEnd(int timeToEnd) {
+        DateTime warsaw = LocalDateTime.now(DateTimeZone.forID("Europe/Warsaw")).toDateTime();
+        return get.fromCollection(
+                database.getHotspot()
+                        .whereEqualTo("hotspotType", HotspotType.FACEBOOK_EVENT)
+                        .whereGreaterThanOrEqualTo("endTime", warsaw.toDate())
+                        .whereLessThanOrEqualTo("endTime", warsaw.plusMinutes(timeToEnd).toDate())
+                , FbEvent.class);
+    }
+
+    @Override
     public Future setEvents(List<FbEvent> events) {
         return add.toCollection(database.getHotspot(), events);
     }
@@ -65,7 +77,7 @@ public class EventsRepositoryImpl implements EventsRepository {
     @Override
     public Future removeOldEvents() {
         return executorService.submit(() -> {
-            Date warsaw = LocalDateTime.now(DateTimeZone.forID("Europe/Warsaw")).plusMinutes(30).toDate();
+            Date warsaw = LocalDateTime.now(DateTimeZone.forID("Europe/Warsaw")).toDate();
             Query query = database.getHotspot().whereLessThan("endTime", warsaw);
             delete.document(query);
             firebaseRepository.deleteEvents(get.fromCollection(query, FbEvent.class));

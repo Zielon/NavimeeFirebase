@@ -2,25 +2,29 @@ package com.navimee.repositories.inmemory;
 
 import com.navimee.logger.LogEnum;
 import com.navimee.logger.Logger;
+import com.navimee.models.entities.Entity;
 import com.navimee.models.entities.Log;
 import com.navimee.models.entities.places.facebook.FbPlace;
 import com.navimee.models.entities.places.foursquare.FsPlace;
+import org.hibernate.validator.internal.xml.ClassType;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
+
+import static java.util.stream.Collectors.toList;
 
 public class InMemoryRepository {
 
-    private final static Map<String, List<FsPlace>> FoursquarePlaces = new HashMap<>();
-    private final static Map<String, List<FbPlace>> FacebookPlaces = new HashMap<>();
+    private final static Map<String, List<Entity>> Entities = new HashMap<>();
 
-    public static List<FbPlace> GET_FACEBOOK(String city) {
-        synchronized (FacebookPlaces) {
-            if (FacebookPlaces.containsKey(city)) {
-                List<FbPlace> places = FacebookPlaces.get(city);
+    public static <T extends Entity> List<T> GET(String city) {
+        synchronized (Entities) {
+            if (Entities.containsKey(city)) {
+                List<T> places = Entities.get(city).stream().map(entity -> (T)entity).collect(toList());
                 Logger.LOG(new Log(LogEnum.RETRIEVAL_IN_MEMORY,
-                        String.format("GET [%s] FACEBOOK PLACES [IN-MEMORY]", city.toUpperCase()),
+                        String.format("GET [%s] [IN-MEMORY]", city.toUpperCase()),
                         places.size()));
 
                 return places;
@@ -28,39 +32,14 @@ public class InMemoryRepository {
         }
     }
 
-    public static void SET_FACEBOOK(String city, List<FbPlace> places) {
-        synchronized (FacebookPlaces) {
-            if (!FacebookPlaces.containsKey(city)) {
+    public static <T extends Entity> void SET(String city, List<T> entities) {
+        synchronized (Entities) {
+            if (!Entities.containsKey(city)) {
                 Logger.LOG(new Log(LogEnum.ADDITION_IN_MEMORY,
-                        String.format("SET [%s] FACEBOOK PLACES [IN-MEMORY]", city.toUpperCase()),
-                        places.size()));
+                        String.format("SET [%s] [IN-MEMORY]", city.toUpperCase()),
+                        entities.size()));
 
-                FacebookPlaces.put(city, places);
-            }
-        }
-    }
-
-    public static List<FsPlace> GET_FOURSQUARE(String city) {
-        synchronized (FoursquarePlaces) {
-            if (FoursquarePlaces.containsKey(city)) {
-                List<FsPlace> places = FoursquarePlaces.get(city);
-                Logger.LOG(new Log(LogEnum.RETRIEVAL_IN_MEMORY,
-                        String.format("GET [%s] FOURSQUARE PLACES [IN-MEMORY]", city.toUpperCase()),
-                        places.size()));
-
-                return places;
-            } else return null;
-        }
-    }
-
-    public static void SET_FOURSQUARE(String city, List<FsPlace> places) {
-        synchronized (FoursquarePlaces) {
-            if (!FoursquarePlaces.containsKey(city)) {
-                Logger.LOG(new Log(LogEnum.ADDITION_IN_MEMORY,
-                        String.format("SET [%s] FOURSQUARE PLACES [IN-MEMORY]", city.toUpperCase()),
-                        places.size()));
-
-                FoursquarePlaces.put(city, places);
+                Entities.put(city, entities.stream().map(entity -> (Entity)entity).collect(toList()));
             }
         }
     }

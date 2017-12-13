@@ -10,6 +10,8 @@ public interface EventsRepository {
     // GETTERS
     List<FbEvent> getEvents();
 
+    List<FbEvent> getEventsBeforeEnd(int timeToEnd);
+
     // SETTERS
     Future setEvents(List<FbEvent> events);
 
