@@ -12,4 +12,6 @@ public interface FirebaseRepository {
     Future transferPlaces(List<FsPlaceDetails> placeDetails);
 
     Future deleteEvents(List<FbEvent> events);
+
+    Future deletePlaces(List<FsPlaceDetails> places);
 }

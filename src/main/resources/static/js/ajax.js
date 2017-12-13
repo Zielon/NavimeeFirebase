@@ -88,7 +88,6 @@ function addLogs(newLogs){
                     button.appendChild(span);
 
                     var textDiv = document.createElement('div');
-                    textDiv.setAttribute('style', 'text-overflow: ellipsis; display: inline-block;');
                     textDiv.appendChild(document.createTextNode(log[key].split(":")[0].toUpperCase()))
 
                     buttonDiv.appendChild(button);

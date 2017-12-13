@@ -155,6 +155,7 @@ public class PlacesServiceImpl implements PlacesService {
                     .filter(details -> details.getPopular() != null).collect(toList());
 
             placesRepository.setFoursquarePlacesDetails(entities);
+            firebaseService.transferPlaces(entities);
         });
     }
 
