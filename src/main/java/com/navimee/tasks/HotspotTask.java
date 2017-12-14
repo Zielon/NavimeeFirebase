@@ -4,6 +4,7 @@ import com.firebase.geofire.GeoLocation;
 import com.navimee.contracts.repositories.EventsRepository;
 import com.navimee.contracts.repositories.FirebaseRepository;
 import com.navimee.contracts.repositories.PlacesRepository;
+import com.navimee.linq.HotspotFilters;
 import com.navimee.logger.LogEnum;
 import com.navimee.logger.Logger;
 import com.navimee.models.entities.Log;
@@ -30,7 +31,7 @@ public class HotspotTask {
 
         firebaseRepository.filterAndTransferToCurrent(
                 placesRepository.getFoursquarePlacesDetails(),
-                fsPlaceDetails -> true, //HotspotFilters.filterFsPopular(),
+                HotspotFilters.filterFsPopular(),
                 fsPlaceDetails -> new GeoLocation(fsPlaceDetails.getLocationLat(), fsPlaceDetails.getLocationLng()));
 
         firebaseRepository.filterAndTransferToCurrent(

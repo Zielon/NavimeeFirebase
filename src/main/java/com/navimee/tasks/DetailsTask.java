@@ -24,8 +24,6 @@ public class DetailsTask {
         placesRepository.getAvailableCities().forEach(city -> {
                     try {
                         placesService.saveFoursquarePlacesDetails(city.getName()).get();
-                        // The requests rate is 5000 per hour.
-                        Thread.sleep(1000 * 60 * 60);
                     } catch (Exception e) {
                         Logger.LOG(new Log(LogEnum.EXCEPTION, e));
                     }
@@ -33,7 +31,7 @@ public class DetailsTask {
         );
     }
 
-    @Scheduled(cron = "0 12 15 * * ?")
+    @Scheduled(cron = "0 0 1 1 * ?")
     public void task() {
         this.addDetailsTask();
     }

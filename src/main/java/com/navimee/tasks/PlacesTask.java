@@ -54,7 +54,7 @@ public class PlacesTask {
         );
     }
 
-    @Scheduled(cron = "0 0 15 1 * ?")
+    @Scheduled(cron = "0 0 1 2 * ?")
     public void task() throws ExecutionException, InterruptedException {
         this.addPlacesTask();
     }
