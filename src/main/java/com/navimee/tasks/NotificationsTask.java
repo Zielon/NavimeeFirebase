@@ -20,7 +20,7 @@ public class NotificationsTask {
         notifications.send();
     }
 
-    @Scheduled(cron = "0 5 0 * * ?")
+    @Scheduled(cron = "0 0/5 0 * * ?")
     public void sendNotificationTask() {
         this.addSendNotification();
     }

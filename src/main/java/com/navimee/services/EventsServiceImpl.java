@@ -20,6 +20,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
@@ -67,6 +68,7 @@ public class EventsServiceImpl implements EventsService {
 
             List<FbEvent> entities = waitForTasks(executorService, events)
                     .parallelStream()
+                    .filter(Objects::nonNull)
                     .map(dto -> modelMapper.map(dto, FbEvent.class))
                     .filter(distinctByKey(FbEvent::getId))
                     .filter(EventsHelpers.getCompelmentFunction(placesService)::apply)    // Complement event places

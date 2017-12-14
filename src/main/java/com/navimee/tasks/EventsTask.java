@@ -25,7 +25,7 @@ public class EventsTask {
         placesRepository.getAvailableCities().forEach(city -> eventsService.saveFacebookEvents(city.getName()));
     }
 
-    @Scheduled(cron = "0 30 0 * * ?")
+    @Scheduled(cron = "0 0/30 0 * * ?")
     public void task() {
         this.addEventsTask();
     }

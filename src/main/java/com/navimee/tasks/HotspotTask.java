@@ -39,7 +39,7 @@ public class HotspotTask {
                 event -> new GeoLocation(event.getPlace().getGeoPoint().getLatitude(), event.getPlace().getGeoPoint().getLongitude()));
     }
 
-    @Scheduled(cron = "0 3 0 * * ?")
+    @Scheduled(cron = "0 0/5 0 * * ?")
     public void task() {
         this.addHotspotTask();
     }
