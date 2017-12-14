@@ -37,6 +37,6 @@ public class HotspotFilters {
         DateTime current = fmt.parseDateTime(fmt.print(warsaw));
         DateTime earlier = start.isBefore(end) ? start : end;
         DateTime later = start.isBefore(end) ? end : start;
-        return current.isAfter(earlier) && current.isBefore(later);
+        return earlier.getMinuteOfDay() <= current.getMinuteOfDay() && later.getMinuteOfDay() >= current.getMinuteOfDay();
     }
 }

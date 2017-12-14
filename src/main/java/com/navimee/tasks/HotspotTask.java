@@ -29,18 +29,18 @@ public class HotspotTask {
 
         firebaseRepository.deleteCurrentHotspot();
 
-        firebaseRepository.filterAndTransferToCurrent(
+        firebaseRepository.filterAndTransfer(
                 placesRepository.getFoursquarePlacesDetails(),
                 HotspotFilters.filterFsPopular(),
                 fsPlaceDetails -> new GeoLocation(fsPlaceDetails.getLocationLat(), fsPlaceDetails.getLocationLng()));
 
-        firebaseRepository.filterAndTransferToCurrent(
+        firebaseRepository.filterAndTransfer(
                 eventsRepository.getEventsBefore(500),
                 event -> true,
                 event -> new GeoLocation(event.getPlace().getGeoPoint().getLatitude(), event.getPlace().getGeoPoint().getLongitude()));
     }
 
-    @Scheduled(cron = "0 0/5 0 * * ?")
+    @Scheduled(cron = "0 0/10 * * * ?")
     public void task() {
         this.executeHotspotTask();
     }

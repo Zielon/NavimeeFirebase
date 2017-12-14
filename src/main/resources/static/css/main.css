@@ -4,6 +4,8 @@ table {
 	font-style: normal;
 	width: 100%;
 	border-collapse: collapse;
+	table-layout: fixed;
+	word-wrap: break-word;
 }
 
 th, td {
@@ -16,7 +18,6 @@ tr:nth-child(even) {background-color: #f2f2f2;}
 
 pre{
     font-size: 10px !important;
-    word-wrap: break-word !important;
     background-color: transparent !important;
     border: transparent !important;
     width: 100%;

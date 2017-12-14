@@ -8,4 +8,5 @@ public enum LogEnum {
     RETRIEVAL_IN_MEMORY,
     ADDITION_IN_MEMORY,
     EXCEPTION,
+    TRANSFER
 }

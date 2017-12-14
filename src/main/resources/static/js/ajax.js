@@ -56,7 +56,7 @@ function addLogs(newLogs){
             var div = document.createElement('div');
 
              if(key === "reference")
-                td.setAttribute('style', 'width: 700px;');
+                td.setAttribute('style', 'width: 500px;');
              if(key === "count")
                  td.setAttribute('style', 'width: 50px;');
 

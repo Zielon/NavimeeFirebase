@@ -59,7 +59,6 @@ public class PlacesRepositoryImpl implements PlacesRepository {
 
     @Override
     public Future setFoursquarePlacesDetails(List<FsPlaceDetails> details) {
-        InMemoryRepository.SET(details, FsPlaceDetails.class);
         return add.toCollection(database.getHotspot(), details);
     }
 

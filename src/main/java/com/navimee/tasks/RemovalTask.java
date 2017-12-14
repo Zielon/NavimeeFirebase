@@ -20,7 +20,7 @@ public class RemovalTask {
         eventsRepository.removeEvents();
     }
 
-    @Scheduled(cron = "0 0/20 0 * * ?")
+    @Scheduled(cron = "0 0/20 * * * ?")
     public void task() {
         this.executeRemoveEventsTask();
     }

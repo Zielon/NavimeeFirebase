@@ -19,5 +19,5 @@ public interface FirebaseRepository {
 
     Future deleteEvents(List<FbEvent> events);
 
-    <T extends Entity> Future filterAndTransferToCurrent(List<T> entities, Predicate<T> predicate, Function<T, GeoLocation> function);
+    <T extends Entity> Future filterAndTransfer(List<T> entities, Predicate<T> predicate, Function<T, GeoLocation> function);
 }
