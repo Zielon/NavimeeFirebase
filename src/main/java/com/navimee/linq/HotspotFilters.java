@@ -21,7 +21,7 @@ public class HotspotFilters {
 
     private static boolean isPopular(FsPopular popular) {
         DateTime warsaw = LocalDateTime.now(DateTimeZone.forID("Europe/Warsaw")).toDateTime();
-        int currentDay = warsaw.getDayOfWeek() - 1;
+        int currentDay = warsaw.getDayOfWeek();
         FsTimeFrame timeFrame = popular.getTimeframes().stream().filter(frame -> frame.getDays().contains(currentDay)).findFirst().get();
 
         return timeFrame.getOpen().stream().anyMatch(time -> {
