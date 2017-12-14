@@ -55,7 +55,7 @@ public class DbAdd {
             try {
                 List<Future<WriteResult>> tasks = new ArrayList<>();
                 for (Map.Entry<String, T> entry : entities.entrySet()) {
-                    type = entry.getValue().getClass().getName();
+                    type = entry.getValue().getClass().getSimpleName();
                     if (options == AdditionEnum.MERGE)
                         tasks.add(collectionReference.document(entry.getKey()).set(entry.getValue(), SetOptions.merge()));
                     else
@@ -65,7 +65,7 @@ public class DbAdd {
                 waitForSingleFuture(executorService, tasks);
 
                 Logger.LOG(new Log(LogEnum.ADDITION,
-                        String.format("%s | [%s]", collectionReference.getPath(), type),
+                        String.format("%s | [Type: %s]", collectionReference.getPath(), type),
                         entities.size()));
 
             } catch (Exception e) {

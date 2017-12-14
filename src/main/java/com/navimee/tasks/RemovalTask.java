@@ -14,7 +14,7 @@ public class RemovalTask {
     @Autowired
     EventsRepository eventsRepository;
 
-    public void addRemoveEventsTask() {
+    public void executeRemoveEventsTask() {
         Logger.LOG(new Log(LogEnum.DELETION, "Delete old events"));
 
         eventsRepository.removeEvents();
@@ -22,6 +22,6 @@ public class RemovalTask {
 
     @Scheduled(cron = "0 0/20 0 * * ?")
     public void task() {
-        this.addRemoveEventsTask();
+        this.executeRemoveEventsTask();
     }
 }

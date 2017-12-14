@@ -33,7 +33,7 @@ public class OperationController {
     @RequestMapping(value = "update/places", method = RequestMethod.POST)
     public ResponseEntity<?> updatePlaces() {
         try {
-            placesTask.addPlacesTask();
+            placesTask.executePlacesTask();
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
@@ -43,7 +43,7 @@ public class OperationController {
     @RequestMapping(value = "update/events", method = RequestMethod.POST)
     public ResponseEntity<?> updateFbEvents() {
         try {
-            eventsTask.addEventsTask();
+            eventsTask.executeEventsTask();
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
@@ -53,7 +53,7 @@ public class OperationController {
     @RequestMapping(value = "update/details", method = RequestMethod.POST)
     public ResponseEntity<?> fsPlacesDetails() {
         try {
-            detailsTask.addDetailsTask();
+            detailsTask.executeDetailsTask();
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
@@ -63,7 +63,7 @@ public class OperationController {
     @RequestMapping(value = "notifications/send", method = RequestMethod.POST)
     public ResponseEntity<?> notificationsSend() {
         try {
-            notificationsTask.addSendNotification();
+            notificationsTask.executeSendNotification();
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
@@ -73,7 +73,7 @@ public class OperationController {
     @RequestMapping(value = "remove/events", method = RequestMethod.POST)
     public ResponseEntity<?> removeFbEvents() {
         try {
-            removeEventsTask.addRemoveEventsTask();
+            removeEventsTask.executeRemoveEventsTask();
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
@@ -83,7 +83,7 @@ public class OperationController {
     @RequestMapping(value = "hotspot/update", method = RequestMethod.POST)
     public ResponseEntity<?> updateHotspot() {
         try {
-            hotspotTask.addHotspotTask();
+            hotspotTask.executeHotspotTask();
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }

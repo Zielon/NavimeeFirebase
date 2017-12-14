@@ -29,7 +29,7 @@ public class PlacesTask {
     @Autowired
     FirestoreRepository firestoreRepository;
 
-    public void addPlacesTask() throws ExecutionException, InterruptedException {
+    public void executePlacesTask() throws ExecutionException, InterruptedException {
 
         // Mocked data.
         NavimeeData navimeeData = new NavimeeData();
@@ -56,6 +56,6 @@ public class PlacesTask {
 
     @Scheduled(cron = "0 0 1 2 * ?")
     public void task() throws ExecutionException, InterruptedException {
-        this.addPlacesTask();
+        this.executePlacesTask();
     }
 }

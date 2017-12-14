@@ -14,14 +14,14 @@ public class NotificationsTask {
     @Autowired
     NotificationsService notifications;
 
-    public void addSendNotification() {
+    public void executeSendNotification() {
         Logger.LOG(new Log(LogEnum.TASK, "Send notifications"));
 
         notifications.send();
     }
 
     @Scheduled(cron = "0 0/5 0 * * ?")
-    public void sendNotificationTask() {
-        this.addSendNotification();
+    public void task() {
+        this.executeSendNotification();
     }
 }

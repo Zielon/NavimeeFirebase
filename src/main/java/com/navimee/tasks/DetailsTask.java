@@ -18,21 +18,17 @@ public class DetailsTask {
     @Autowired
     PlacesService placesService;
 
-    public void addDetailsTask() {
+    public void executeDetailsTask() {
         Logger.LOG(new Log(LogEnum.TASK, "Foursquare details update"));
 
         placesRepository.getAvailableCities().forEach(city -> {
-                    try {
-                        placesService.saveFoursquarePlacesDetails(city.getName()).get();
-                    } catch (Exception e) {
-                        Logger.LOG(new Log(LogEnum.EXCEPTION, e));
-                    }
+                    placesService.saveFoursquarePlacesDetails(city.getName());
                 }
         );
     }
 
     @Scheduled(cron = "0 0 1 1 * ?")
     public void task() {
-        this.addDetailsTask();
+        this.executeDetailsTask();
     }
 }

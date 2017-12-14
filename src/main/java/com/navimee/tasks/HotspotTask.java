@@ -24,7 +24,7 @@ public class HotspotTask {
     @Autowired
     PlacesRepository placesRepository;
 
-    public void addHotspotTask() {
+    public void executeHotspotTask() {
         Logger.LOG(new Log(LogEnum.TASK, "Hotspot update"));
 
         firebaseRepository.deleteCurrentHotspot();
@@ -42,6 +42,6 @@ public class HotspotTask {
 
     @Scheduled(cron = "0 0/5 0 * * ?")
     public void task() {
-        this.addHotspotTask();
+        this.executeHotspotTask();
     }
 }

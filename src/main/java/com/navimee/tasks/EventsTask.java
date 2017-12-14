@@ -19,7 +19,7 @@ public class EventsTask {
     @Autowired
     EventsService eventsService;
 
-    public void addEventsTask() {
+    public void executeEventsTask() {
         Logger.LOG(new Log(LogEnum.TASK, "Events update"));
 
         placesRepository.getAvailableCities().forEach(city -> eventsService.saveFacebookEvents(city.getName()));
@@ -27,6 +27,6 @@ public class EventsTask {
 
     @Scheduled(cron = "0 0/30 0 * * ?")
     public void task() {
-        this.addEventsTask();
+        this.executeEventsTask();
     }
 }
