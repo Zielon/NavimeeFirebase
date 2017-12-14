@@ -29,7 +29,7 @@ public class InMemoryRepository {
             if (Entities.containsKey(key)) {
                 List<T> places = Entities.get(key).stream().map(entity -> (T) entity).collect(toList());
                 Logger.LOG(new Log(LogEnum.RETRIEVAL_IN_MEMORY,
-                        String.format("GET -> [type: %s] IN-MEMORY", key.toUpperCase(), type.getSimpleName()),
+                        String.format("GET -> [type: %s] IN-MEMORY", type.getSimpleName()),
                         places.size()));
 
                 return places;
@@ -42,7 +42,7 @@ public class InMemoryRepository {
             key += type.getTypeName();
             if (!Entities.containsKey(key)) {
                 Logger.LOG(new Log(LogEnum.ADDITION_IN_MEMORY,
-                        String.format("SET -> [type: %s] IN-MEMORY", key.toUpperCase(), type.getSimpleName()),
+                        String.format("SET -> [type: %s] IN-MEMORY", type.getSimpleName()),
                         entities.size()));
 
                 Entities.put(key, entities.stream().map(entity -> (Entity) entity).collect(toList()));
