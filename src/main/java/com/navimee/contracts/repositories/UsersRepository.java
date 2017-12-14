@@ -6,4 +6,6 @@ import java.util.List;
 
 public interface UsersRepository {
     List<User> getUsersForNotification();
+
+    User getUser(String id);
 }

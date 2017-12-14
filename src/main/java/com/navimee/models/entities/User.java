@@ -7,8 +7,11 @@ import java.util.List;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class User implements Entity {
+    private String id;
     private String token;
     private String email;
+    private boolean bigEventsNotification;
+    private boolean dayScheduleNotification;
     private List<FbEvent> events;
 
     public String getEmail() {
@@ -27,16 +30,35 @@ public class User implements Entity {
         this.token = token;
     }
 
-    @Override
-    public String getId() {
-        return token;
-    }
-
     public List<FbEvent> getEvents() {
         return events;
     }
 
     public void setEvents(List<FbEvent> events) {
         this.events = events;
+    }
+
+    public boolean isBigEventsNotification() {
+        return bigEventsNotification;
+    }
+
+    public void setBigEventsNotification(boolean bigEventsNotification) {
+        this.bigEventsNotification = bigEventsNotification;
+    }
+
+    public boolean isDayScheduleNotification() {
+        return dayScheduleNotification;
+    }
+
+    public void setDayScheduleNotification(boolean dayScheduleNotification) {
+        this.dayScheduleNotification = dayScheduleNotification;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 }

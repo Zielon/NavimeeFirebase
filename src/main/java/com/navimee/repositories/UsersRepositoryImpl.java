@@ -15,6 +15,7 @@ import org.springframework.stereotype.Repository;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 import static com.navimee.firestore.Paths.USERS_COLLECTION;
 import static com.navimee.firestore.Paths.USERS_EVENTS_COLLECTION;
@@ -37,6 +38,7 @@ public class UsersRepositoryImpl implements UsersRepository {
         try {
             for (DocumentSnapshot document : db.collection(USERS_COLLECTION).get().get().getDocuments()) {
                 User user = mapper.convertValue(document.getData(), User.class);
+                user.setId(document.getId());
 
                 if (user.getToken() == null || user.getToken().equals("")) continue;
 
@@ -55,5 +57,18 @@ public class UsersRepositoryImpl implements UsersRepository {
         }
 
         return users;
+    }
+
+    @Override
+    public User getUser(String id) {
+        ObjectMapper mapper = new ObjectMapper();
+        User user = null;
+        try {
+            user = mapper.convertValue(db.collection(USERS_COLLECTION).document(id).get().get().getData(), User.class);
+            user.setId(id);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return user;
     }
 }

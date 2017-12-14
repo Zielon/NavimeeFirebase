@@ -21,7 +21,7 @@ function reset(){
                 isResetting = false;
                 document.getElementsByClassName("loader")[0].style.display = "none";
                 document.getElementById("startButton").disabled = false;
-                 document.getElementById("resetButton").disabled = false;
+                document.getElementById("resetButton").disabled = false;
                 document.getElementById("logs").innerHTML = "";
             }
       };
@@ -65,6 +65,8 @@ function addLogs(newLogs){
                 tr.style.backgroundColor = 'Lavender';
             else if(log.type === "ADDITION")
                 tr.style.backgroundColor = 'LightYellow';
+            else if(log.type === "TRANSFER")
+                tr.style.backgroundColor = 'Gold';
             else if(log.type === "RETRIEVAL")
                 tr.style.backgroundColor = 'LightSteelBlue';
             else if(log.type === "DELETION")
