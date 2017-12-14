@@ -1,4 +1,4 @@
-package com.navimee.tasks.places;
+package com.navimee.tasks;
 
 import com.navimee.contracts.repositories.FirestoreRepository;
 import com.navimee.contracts.repositories.PlacesRepository;
@@ -16,8 +16,6 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
-
-import static com.navimee.firestore.Paths.*;
 
 @Component
 public class PlacesTask {

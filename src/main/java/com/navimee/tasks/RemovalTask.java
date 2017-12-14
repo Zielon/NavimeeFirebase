@@ -16,10 +16,11 @@ public class RemovalTask {
 
     public void addRemoveEventsTask() {
         Logger.LOG(new Log(LogEnum.DELETION, "Delete old events"));
-        eventsRepository.removeOldEvents();
+
+        eventsRepository.removeEvents();
     }
 
-    @Scheduled(cron = "0 0 0/1 * * ?")
+    @Scheduled(cron = "0 40 0 * * ?")
     public void task() {
         this.addRemoveEventsTask();
     }

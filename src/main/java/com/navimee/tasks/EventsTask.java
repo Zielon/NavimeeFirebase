@@ -1,7 +1,6 @@
-package com.navimee.tasks.events;
+package com.navimee.tasks;
 
 
-import com.navimee.contracts.repositories.FirestoreRepository;
 import com.navimee.contracts.repositories.PlacesRepository;
 import com.navimee.contracts.services.EventsService;
 import com.navimee.logger.LogEnum;
@@ -20,22 +19,13 @@ public class EventsTask {
     @Autowired
     EventsService eventsService;
 
-    @Autowired
-    FirestoreRepository firestoreRepository;
-
     public void addEventsTask() {
-
         Logger.LOG(new Log(LogEnum.TASK, "Events update"));
 
-        // firestoreRepository.deleteCollection(Paths.EVENTS_COLLECTION);
-        // placesRepository.deleteCollection(Paths.HOTSPOT).get();
-
-        placesRepository.getAvailableCities().forEach(city -> {
-            eventsService.saveFacebookEvents(city.getName());
-        });
+        placesRepository.getAvailableCities().forEach(city -> eventsService.saveFacebookEvents(city.getName()));
     }
 
-    @Scheduled(cron = "0 0 0/1 * * ?")
+    @Scheduled(cron = "0 30 0 * * ?")
     public void task() {
         this.addEventsTask();
     }

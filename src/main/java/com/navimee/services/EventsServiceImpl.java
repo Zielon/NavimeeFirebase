@@ -60,7 +60,7 @@ public class EventsServiceImpl implements EventsService {
         return executorService.submit(() -> {
             List<FbPlace> fbPlaces = placesRepository.getFacebookPlaces(city);
 
-            // Get data from the external facebook API
+            // DbGet data from the external facebook API
             List<Callable<List<FbEventDto>>> events = new ArrayList<>();
             FacebookEventsQuery query = new FacebookEventsQuery(facebookConfiguration, executorService, httpClient);
             Collections.spliter(fbPlaces, 50).forEach(places -> events.add(query.execute(new EventsParams(places))));

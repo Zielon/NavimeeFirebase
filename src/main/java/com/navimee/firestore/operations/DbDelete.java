@@ -15,7 +15,7 @@ import java.util.concurrent.Future;
 import static com.navimee.asyncCollectors.CompletionCollector.waitForSingleFuture;
 
 @Component
-public class Delete {
+public class DbDelete {
 
     @Autowired
     ExecutorService executorService;
@@ -45,7 +45,7 @@ public class Delete {
             Logger.LOG(new Log(LogEnum.EXCEPTION, e));
         }
 
-        Logger.LOG(new Log(LogEnum.DELETION, collection.getPath(), deletedAll));
+        // Logger.LOG(new Log(LogEnum.DELETION, collection.getPath(), deletedAll));
     }
 
     public void document(DocumentReference document) {

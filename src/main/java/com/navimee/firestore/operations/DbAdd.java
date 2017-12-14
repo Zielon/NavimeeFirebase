@@ -24,7 +24,7 @@ import static com.navimee.asyncCollectors.CompletionCollector.waitForSingleFutur
 import static com.navimee.linq.Distinct.distinctByKey;
 
 @Component
-public class Add {
+public class DbAdd {
 
     @Autowired
     ExecutorService executorService;

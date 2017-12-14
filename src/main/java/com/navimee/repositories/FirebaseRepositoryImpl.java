@@ -33,7 +33,7 @@ public class FirebaseRepositoryImpl implements FirebaseRepository {
     @Override
     public Future transferEvents(List<FbEvent> events) {
         return executorService.submit(() -> {
-            GeoFire geoFire  = new GeoFire(firebaseDatabase.getReference(Paths.HOTSPOT));
+            GeoFire geoFire = new GeoFire(firebaseDatabase.getReference(Paths.HOTSPOT));
             Map<String, FbEvent> entities = events.stream().collect(Collectors.toMap(Entity::getId, Function.identity()));
             entities.forEach((key, v) -> geoFire.setLocation(key, new GeoLocation(v.getPlace().getGeoPoint().getLatitude(), v.getPlace().getGeoPoint().getLongitude())));
         });
@@ -42,7 +42,7 @@ public class FirebaseRepositoryImpl implements FirebaseRepository {
     @Override
     public Future transferPlaces(List<FsPlaceDetails> placeDetails) {
         return executorService.submit(() -> {
-            GeoFire geoFire  = new GeoFire(firebaseDatabase.getReference(Paths.HOTSPOT));
+            GeoFire geoFire = new GeoFire(firebaseDatabase.getReference(Paths.HOTSPOT));
             Map<String, FsPlaceDetails> entities = placeDetails.stream().collect(Collectors.toMap(Entity::getId, Function.identity()));
             entities.forEach((key, v) -> geoFire.setLocation(key, new GeoLocation(v.getLocationLat(), v.getLocationLng())));
         });
@@ -60,7 +60,7 @@ public class FirebaseRepositoryImpl implements FirebaseRepository {
     @Override
     public <T extends Entity> Future filterAndTransferToCurrent(List<T> entities, Predicate<T> predicate, Function<T, GeoLocation> function) {
         return executorService.submit(() -> {
-            GeoFire geoFire  = new GeoFire(firebaseDatabase.getReference(hotspotCurrent));
+            GeoFire geoFire = new GeoFire(firebaseDatabase.getReference(hotspotCurrent));
             Map<String, T> filtered = entities.stream().filter(predicate).collect(Collectors.toMap(Entity::getId, Function.identity()));
             filtered.forEach((key, value) -> geoFire.setLocation(key, function.apply(value)));
         });

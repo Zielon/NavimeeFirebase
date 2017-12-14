@@ -70,7 +70,7 @@ public class PlacesServiceImpl implements PlacesService {
         return executorService.submit(() -> {
             List<Coordinate> coordinates = placesRepository.getCoordinates(city);
 
-            // Get data from the external facebook API
+            // DbGet data from the external facebook API
             FacebookPlacesQuery facebookPlacesQuery =
                     new FacebookPlacesQuery(facebookConfiguration, executorService, httpClient);
 
@@ -96,7 +96,7 @@ public class PlacesServiceImpl implements PlacesService {
         return executorService.submit(() -> {
             List<Coordinate> coordinates = placesRepository.getCoordinates(city);
 
-            // Get data from the external foursquare API
+            // DbGet data from the external foursquare API
             FoursquarePlacesQuery foursquarePlacesQuery =
                     new FoursquarePlacesQuery(foursquareConfiguration, executorService, httpClient);
 
@@ -122,7 +122,7 @@ public class PlacesServiceImpl implements PlacesService {
         return executorService.submit(() -> {
             List<FsPlace> places = placesRepository.getFoursquarePlaces(city);
 
-            // Get data from the external foursquare API
+            // DbGet data from the external foursquare API
             FoursquareDetailsQuery placesQuery =
                     new FoursquareDetailsQuery(foursquareConfiguration, executorService, httpClient);
 

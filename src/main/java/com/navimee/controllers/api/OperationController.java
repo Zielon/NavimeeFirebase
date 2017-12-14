@@ -1,11 +1,6 @@
 package com.navimee.controllers.api;
 
-import com.navimee.tasks.HotspotTask;
-import com.navimee.tasks.NotificationsTask;
-import com.navimee.tasks.RemovalTask;
-import com.navimee.tasks.events.EventsTask;
-import com.navimee.tasks.places.DetailsTask;
-import com.navimee.tasks.places.PlacesTask;
+import com.navimee.tasks.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -68,7 +63,7 @@ public class OperationController {
     @RequestMapping(value = "notifications/send", method = RequestMethod.POST)
     public ResponseEntity<?> notificationsSend() {
         try {
-            notificationsTask.sendNotification();
+            notificationsTask.addSendNotification();
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }

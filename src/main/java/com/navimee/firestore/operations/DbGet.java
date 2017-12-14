@@ -16,7 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Component
-public class Get {
+public class DbGet {
 
     public <T extends Entity> List<T> fromDocument(DocumentReference documentReference, Class<T> type) {
         List<T> output = new ArrayList<>();

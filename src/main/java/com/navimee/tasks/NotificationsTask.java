@@ -8,17 +8,20 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
-import java.util.concurrent.ExecutionException;
-
 @Component
 public class NotificationsTask {
 
     @Autowired
     NotificationsService notifications;
 
-    @Scheduled(cron = "0 0 0/1 * * ?")
-    public void sendNotification() throws ExecutionException, InterruptedException {
+    public void addSendNotification() {
         Logger.LOG(new Log(LogEnum.TASK, "Send notifications"));
+
         notifications.send();
+    }
+
+    @Scheduled(cron = "0 5 0 * * ?")
+    public void sendNotificationTask() {
+        this.addSendNotification();
     }
 }

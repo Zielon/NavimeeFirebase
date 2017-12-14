@@ -1,4 +1,4 @@
-package com.navimee.tasks.places;
+package com.navimee.tasks;
 
 import com.navimee.contracts.repositories.PlacesRepository;
 import com.navimee.contracts.services.PlacesService;
@@ -19,7 +19,6 @@ public class DetailsTask {
     PlacesService placesService;
 
     public void addDetailsTask() {
-
         Logger.LOG(new Log(LogEnum.TASK, "Foursquare details update"));
 
         placesRepository.getAvailableCities().forEach(city -> {
@@ -34,7 +33,7 @@ public class DetailsTask {
         );
     }
 
-    @Scheduled(cron = "0 0 10 1 * ?")
+    @Scheduled(cron = "0 12 15 * * ?")
     public void task() {
         this.addDetailsTask();
     }

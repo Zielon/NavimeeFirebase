@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.cloud.firestore.DocumentSnapshot;
 import com.google.cloud.firestore.Firestore;
 import com.navimee.contracts.repositories.UsersRepository;
-import com.navimee.firestore.operations.Get;
+import com.navimee.firestore.operations.DbGet;
 import com.navimee.models.entities.User;
 import com.navimee.models.entities.events.FbEvent;
 import org.joda.time.DateTimeZone;
@@ -26,7 +26,7 @@ public class UsersRepositoryImpl implements UsersRepository {
     Firestore db;
 
     @Autowired
-    Get get;
+    DbGet dbGet;
 
     @Override
     public List<User> getUsersForNotification() {
@@ -40,7 +40,7 @@ public class UsersRepositoryImpl implements UsersRepository {
 
                 if (user.getToken() == null || user.getToken().equals("")) continue;
 
-                List<FbEvent> events = get.fromCollection(document
+                List<FbEvent> events = dbGet.fromCollection(document
                         .getReference()
                         .collection(USERS_EVENTS_COLLECTION)
                         .whereLessThanOrEqualTo("endTime", warsaw), FbEvent.class);

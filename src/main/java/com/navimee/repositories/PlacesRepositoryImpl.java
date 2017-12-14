@@ -3,9 +3,9 @@ package com.navimee.repositories;
 import com.navimee.contracts.repositories.PlacesRepository;
 import com.navimee.enums.HotspotType;
 import com.navimee.firestore.Database;
-import com.navimee.firestore.operations.Add;
-import com.navimee.firestore.operations.Delete;
-import com.navimee.firestore.operations.Get;
+import com.navimee.firestore.operations.DbAdd;
+import com.navimee.firestore.operations.DbDelete;
+import com.navimee.firestore.operations.DbGet;
 import com.navimee.firestore.operations.enums.AdditionEnum;
 import com.navimee.logger.LogEnum;
 import com.navimee.logger.Logger;
@@ -36,30 +36,30 @@ public class PlacesRepositoryImpl implements PlacesRepository {
     ExecutorService executorService;
 
     @Autowired
-    Add add;
+    DbAdd add;
 
     @Autowired
-    Get get;
+    DbGet dbGet;
 
     @Autowired
-    Delete delete;
+    DbDelete delete;
 
     // SETTERS
     @Override
     public Future setFacebookPlaces(List<FbPlace> places, String city) {
-        InMemoryRepository.SET("fb_" + city, places);
+        InMemoryRepository.SET(city, places, FbPlace.class);
         return add.toCollection(database.getCollection(FACEBOOK_PLACES, city), places);
     }
 
     @Override
     public Future setFoursquarePlaces(List<FsPlace> places, String city) {
-        InMemoryRepository.SET("fs_" + city, places);
+        InMemoryRepository.SET(city, places, FsPlace.class);
         return add.toCollection(database.getCollection(FOURSQUARE_PLACES, city), places);
     }
 
     @Override
     public Future setFoursquarePlacesDetails(List<FsPlaceDetails> details) {
-        InMemoryRepository.SET("fs_details", details);
+        InMemoryRepository.SET(details, FsPlaceDetails.class);
         return add.toCollection(database.getHotspot(), details);
     }
 
@@ -101,41 +101,41 @@ public class PlacesRepositoryImpl implements PlacesRepository {
     // GETTERS
     @Override
     public List<FbPlace> getFacebookPlaces(String city) {
-        List<FbPlace> places = InMemoryRepository.GET("fb_" + city);
+        List<FbPlace> places = InMemoryRepository.GET(city, FbPlace.class);
         if (places == null) {
-            places = get.fromCollection(database.getCollection(FACEBOOK_PLACES, city), FbPlace.class);
-            InMemoryRepository.SET(city, places);
+            places = dbGet.fromCollection(database.getCollection(FACEBOOK_PLACES, city), FbPlace.class);
+            InMemoryRepository.SET(city, places, FbPlace.class);
         }
         return places;
     }
 
     @Override
     public List<FsPlace> getFoursquarePlaces(String city) {
-        List<FsPlace> places = InMemoryRepository.GET("fs_" + city);
+        List<FsPlace> places = InMemoryRepository.GET(city, FsPlace.class);
         if (places == null) {
-            places = get.fromCollection(database.getCollection(FOURSQUARE_PLACES, city), FsPlace.class);
-            InMemoryRepository.SET(city, places);
+            places = dbGet.fromCollection(database.getCollection(FOURSQUARE_PLACES, city), FsPlace.class);
+            InMemoryRepository.SET(city, places, FsPlace.class);
         }
         return places;
     }
 
     @Override
     public List<FsPlaceDetails> getFoursquarePlacesDetails() {
-        List<FsPlaceDetails> details = InMemoryRepository.GET("fs_details");
+        List<FsPlaceDetails> details = InMemoryRepository.GET(FsPlaceDetails.class);
         if (details == null) {
-            details = get.fromCollection(database.getHotspot().whereEqualTo("hotspotType", HotspotType.FOURSQUARE_PLACE), FsPlaceDetails.class);
-            InMemoryRepository.SET("fs_details", details);
+            details = dbGet.fromCollection(database.getHotspot().whereEqualTo("hotspotType", HotspotType.FOURSQUARE_PLACE), FsPlaceDetails.class);
+            InMemoryRepository.SET(details, FsPlaceDetails.class);
         }
         return details;
     }
 
     @Override
     public List<Coordinate> getCoordinates(String city) {
-        return get.fromCollection(database.getCollection(COORDINATES, city), Coordinate.class);
+        return dbGet.fromCollection(database.getCollection(COORDINATES, city), Coordinate.class);
     }
 
     @Override
     public List<City> getAvailableCities() {
-        return get.fromDocument(database.getDocument(AVAILABLE_CITIES), City.class);
+        return dbGet.fromDocument(database.getDocument(AVAILABLE_CITIES), City.class);
     }
 }

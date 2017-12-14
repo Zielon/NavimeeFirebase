@@ -5,9 +5,9 @@ import com.navimee.contracts.repositories.EventsRepository;
 import com.navimee.contracts.repositories.FirebaseRepository;
 import com.navimee.enums.HotspotType;
 import com.navimee.firestore.Database;
-import com.navimee.firestore.operations.Add;
-import com.navimee.firestore.operations.Delete;
-import com.navimee.firestore.operations.Get;
+import com.navimee.firestore.operations.DbAdd;
+import com.navimee.firestore.operations.DbDelete;
+import com.navimee.firestore.operations.DbGet;
 import com.navimee.models.entities.events.FbEvent;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
@@ -33,23 +33,23 @@ public class EventsRepositoryImpl implements EventsRepository {
     FirebaseRepository firebaseRepository;
 
     @Autowired
-    Add add;
+    DbAdd dbAdd;
 
     @Autowired
-    Get get;
+    DbGet dbGet;
 
     @Autowired
-    Delete delete;
+    DbDelete delete;
 
     @Override
     public List<FbEvent> getEvents() {
-        return get.fromCollection(database.getHotspot().whereEqualTo("hotspotType", HotspotType.FACEBOOK_EVENT), FbEvent.class);
+        return dbGet.fromCollection(database.getHotspot().whereEqualTo("hotspotType", HotspotType.FACEBOOK_EVENT), FbEvent.class);
     }
 
     @Override
-    public List<FbEvent> getEventsBeforeEnd(int timeToEnd) {
+    public List<FbEvent> getEventsBefore(int timeToEnd) {
         DateTime warsaw = LocalDateTime.now(DateTimeZone.forID("Europe/Warsaw")).toDateTime();
-        return get.fromCollection(
+        return dbGet.fromCollection(
                 database.getHotspot()
                         .whereEqualTo("hotspotType", HotspotType.FACEBOOK_EVENT)
                         .whereGreaterThanOrEqualTo("endTime", warsaw.toDate())
@@ -59,28 +59,16 @@ public class EventsRepositoryImpl implements EventsRepository {
 
     @Override
     public Future setEvents(List<FbEvent> events) {
-        return add.toCollection(database.getHotspot(), events);
+        return dbAdd.toCollection(database.getHotspot(), events);
     }
 
     @Override
-    public Future deleteEvents(List<FbEvent> events) {
-        return executorService.submit(() -> {
-        });
-    }
-
-    @Override
-    public Future updateHistorical(List<FbEvent> events) {
-        return executorService.submit(() -> {
-        });
-    }
-
-    @Override
-    public Future removeOldEvents() {
+    public Future removeEvents() {
         return executorService.submit(() -> {
             Date warsaw = LocalDateTime.now(DateTimeZone.forID("Europe/Warsaw")).toDate();
             Query query = database.getHotspot().whereLessThan("endTime", warsaw);
             delete.document(query);
-            firebaseRepository.deleteEvents(get.fromCollection(query, FbEvent.class));
+            firebaseRepository.deleteEvents(dbGet.fromCollection(query, FbEvent.class));
         });
     }
 }

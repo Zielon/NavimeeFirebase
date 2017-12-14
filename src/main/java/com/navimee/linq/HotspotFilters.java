@@ -19,7 +19,7 @@ public class HotspotFilters {
         return fsPlaceDetails -> isPopular(fsPlaceDetails.getPopular());
     }
 
-    private static boolean isPopular(FsPopular popular){
+    private static boolean isPopular(FsPopular popular) {
         DateTime warsaw = LocalDateTime.now(DateTimeZone.forID("Europe/Warsaw")).toDateTime();
         int currentDay = warsaw.getDayOfWeek() - 1;
         FsTimeFrame timeFrame = popular.getTimeframes().stream().filter(frame -> frame.getDays().contains(currentDay)).findFirst().get();
@@ -33,7 +33,7 @@ public class HotspotFilters {
         });
     }
 
-    private static boolean isNowPopular(DateTime start, DateTime end, DateTime warsaw){
+    private static boolean isNowPopular(DateTime start, DateTime end, DateTime warsaw) {
         DateTime current = fmt.parseDateTime(fmt.print(warsaw));
         DateTime earlier = start.isBefore(end) ? start : end;
         DateTime later = start.isBefore(end) ? end : start;
