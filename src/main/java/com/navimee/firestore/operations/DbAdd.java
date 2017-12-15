@@ -20,7 +20,7 @@ import java.util.concurrent.Future;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import static com.navimee.asyncCollectors.CompletionCollector.waitForSingleFuture;
+import static com.navimee.asyncCollectors.CompletionCollector.waitForFutures;
 import static com.navimee.linq.Distinct.distinctByKey;
 
 @Component
@@ -62,7 +62,7 @@ public class DbAdd {
                         tasks.add(collectionReference.document(entry.getKey()).set(entry.getValue()));
                 }
                 // Wait for all tasks to finish.
-                waitForSingleFuture(executorService, tasks);
+                waitForFutures(executorService, tasks);
 
                 Logger.LOG(new Log(LogEnum.ADDITION,
                         String.format("%s | [Type: %s]", collectionReference.getPath(), type),

@@ -8,6 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
+import java.util.concurrent.ExecutionException;
+
 import static com.navimee.tasks.TasksFixedTimes.MINUTE;
 import static com.navimee.tasks.TasksFixedTimes.NOTIFICATIONS;
 
@@ -17,14 +19,14 @@ public class NotificationsTask {
     @Autowired
     NotificationsService notifications;
 
-    public void executeSendNotification() {
+    public void executeSendNotification() throws ExecutionException, InterruptedException {
         Logger.LOG(new Log(LogEnum.TASK, "Send notifications"));
 
-        notifications.send();
+        notifications.send().get();
     }
 
     @Scheduled(fixedDelay = NOTIFICATIONS, initialDelay = MINUTE * 2)
-    public void task() {
+    public void task() throws ExecutionException, InterruptedException {
         this.executeSendNotification();
     }
 }

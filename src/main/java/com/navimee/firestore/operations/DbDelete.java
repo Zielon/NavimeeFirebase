@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 
-import static com.navimee.asyncCollectors.CompletionCollector.waitForSingleFuture;
+import static com.navimee.asyncCollectors.CompletionCollector.waitForFutures;
 
 @Component
 public class DbDelete {
@@ -35,7 +35,7 @@ public class DbDelete {
             }
 
             // Wait for all tasks to finish.
-            waitForSingleFuture(executorService, tasks);
+            waitForFutures(executorService, tasks);
 
             if (deleted >= batchSize) {
                 deletedAll += deleted;

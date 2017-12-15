@@ -11,16 +11,16 @@ import java.util.concurrent.*;
 
 public class CompletionCollector {
 
-    public static <T> List<T> waitForSingleFuture(ExecutorService executorService, Collection<? extends Future<T>> futures) {
+    public static <T> List<T> waitForFutures(ExecutorService executorService, Collection<? extends Future<T>> futures) {
         CompletionService<T> completionService = new ExecutorCompletionService<>(executorService);
         futures.forEach(future -> completionService.submit(() -> future.get()));
         return collectSingle(completionService, futures.size());
     }
 
-    public static <T> List<T> waitForFutures(ExecutorService executorService, Collection<? extends Future<List<T>>> futures) {
-        CompletionService<List<T>> completionService = new ExecutorCompletionService<>(executorService);
+    public static void waitForFutures(ExecutorService executorService, List<Future> futures) {
+        CompletionService completionService = new ExecutorCompletionService<>(executorService);
         futures.forEach(future -> completionService.submit(() -> future.get()));
-        return collectLists(completionService, futures.size());
+        collectSingle(completionService, futures.size());
     }
 
     public static <T> List<T> waitForSingleTask(ExecutorService executorService, Collection<Callable<T>> tasks) {

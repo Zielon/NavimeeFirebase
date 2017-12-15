@@ -12,6 +12,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Future;
+
+import static com.navimee.asyncCollectors.CompletionCollector.waitForFutures;
 import static com.navimee.tasks.TasksFixedTimes.HOTSPOT;
 import static com.navimee.tasks.TasksFixedTimes.MINUTE;
 
@@ -27,20 +33,27 @@ public class HotspotTask {
     @Autowired
     PlacesRepository placesRepository;
 
+    @Autowired
+    ExecutorService executorService;
+
     public void executeHotspotTask() {
         Logger.LOG(new Log(LogEnum.TASK, "Hotspot update"));
+        List<Future> futures = new ArrayList<>();
 
         firebaseRepository.deleteCurrentHotspot();
 
-        firebaseRepository.filterAndTransfer(
+        futures.add(firebaseRepository.filterAndTransfer(
                 placesRepository.getFoursquarePlacesDetails(),
                 HotspotFilters.filterFsPopular(),
-                fsPlaceDetails -> new GeoLocation(fsPlaceDetails.getLocationLat(), fsPlaceDetails.getLocationLng()));
+                fsPlaceDetails -> new GeoLocation(fsPlaceDetails.getLocationLat(), fsPlaceDetails.getLocationLng())));
 
-        firebaseRepository.filterAndTransfer(
+        futures.add(firebaseRepository.filterAndTransfer(
                 eventsRepository.getEventsBefore(60 * 2),
                 event -> true,
-                event -> new GeoLocation(event.getPlace().getGeoPoint().getLatitude(), event.getPlace().getGeoPoint().getLongitude()));
+                event -> new GeoLocation(event.getPlace().getGeoPoint().getLatitude(), event.getPlace().getGeoPoint().getLongitude())));
+
+        waitForFutures(executorService, futures);
+
     }
 
     @Scheduled(fixedDelay = HOTSPOT, initialDelay = MINUTE)

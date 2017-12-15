@@ -8,6 +8,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+
 import static com.navimee.tasks.TasksFixedTimes.MINUTE;
 import static com.navimee.tasks.TasksFixedTimes.REMOVAL;
 
@@ -17,14 +20,17 @@ public class RemovalTask {
     @Autowired
     EventsRepository eventsRepository;
 
-    public void executeRemoveEventsTask() {
+    @Autowired
+    ExecutorService executorService;
+
+    public void executeRemoveEventsTask() throws ExecutionException, InterruptedException {
         Logger.LOG(new Log(LogEnum.DELETION, "Delete old events"));
 
-        eventsRepository.removeEvents();
+        eventsRepository.removeEvents().get();
     }
 
     @Scheduled(fixedDelay = REMOVAL, initialDelay = MINUTE * 3)
-    public void task() {
+    public void task() throws ExecutionException, InterruptedException {
         this.executeRemoveEventsTask();
     }
 }

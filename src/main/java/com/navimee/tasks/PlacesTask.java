@@ -13,9 +13,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Future;
+
+import static com.navimee.asyncCollectors.CompletionCollector.waitForFutures;
 
 @Component
 public class PlacesTask {
@@ -28,6 +33,9 @@ public class PlacesTask {
 
     @Autowired
     FirestoreRepository firestoreRepository;
+
+    @Autowired
+    ExecutorService executorService;
 
     public void executePlacesTask() throws ExecutionException, InterruptedException {
 
@@ -46,12 +54,15 @@ public class PlacesTask {
         placesRepository.setCoordinates(coordinates).get();*/
 
         Logger.LOG(new Log(LogEnum.TASK, "Places update"));
+        List<Future> futures = new ArrayList<>();
 
         placesRepository.getAvailableCities().forEach(city -> {
-                    placesService.saveFoursquarePlaces(city.getName());
-                    placesService.saveFacebookPlaces(city.getName());
+                    futures.add(placesService.saveFoursquarePlaces(city.getName()));
+                    futures.add(placesService.saveFacebookPlaces(city.getName()));
                 }
         );
+
+        waitForFutures(executorService, futures);
     }
 
     @Scheduled(cron = "0 0 1 2 * ?")
