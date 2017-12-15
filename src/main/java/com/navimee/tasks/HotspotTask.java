@@ -53,7 +53,6 @@ public class HotspotTask {
                 event -> new GeoLocation(event.getPlace().getGeoPoint().getLatitude(), event.getPlace().getGeoPoint().getLongitude())));
 
         waitForFutures(executorService, futures);
-
     }
 
     @Scheduled(fixedDelay = HOTSPOT, initialDelay = MINUTE)
