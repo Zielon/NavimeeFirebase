@@ -110,12 +110,7 @@ public class PlacesRepositoryImpl implements PlacesRepository {
 
     @Override
     public List<FsPlace> getFoursquarePlaces(String city) {
-        List<FsPlace> places = InMemoryRepository.GET(city, FsPlace.class);
-        if (places == null) {
-            places = dbGet.fromCollection(database.getCollection(FOURSQUARE_PLACES, city), FsPlace.class);
-            InMemoryRepository.SET(city, places, FsPlace.class);
-        }
-        return places;
+        return dbGet.fromCollection(database.getCollection(FOURSQUARE_PLACES, city), FsPlace.class);
     }
 
     @Override

@@ -26,7 +26,7 @@ public class DetailsTask {
 
         for (City city : placesRepository.getAvailableCities()) {
             placesService.saveFoursquarePlacesDetails(city.getName()).get();
-            Thread.sleep(1000*60*60);
+            Thread.sleep(1000 * 60 * 60);
         }
     }
 
