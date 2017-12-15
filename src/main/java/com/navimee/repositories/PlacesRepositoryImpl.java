@@ -110,17 +110,17 @@ public class PlacesRepositoryImpl implements PlacesRepository {
 
     @Override
     public List<FsPlace> getFoursquarePlaces(String city) {
-        return dbGet.fromCollection(database.getCollection(FOURSQUARE_PLACES, city), FsPlace.class);
+        List<FsPlace> places = InMemoryRepository.GET(city, FsPlace.class);
+        if (places == null) {
+            places = dbGet.fromCollection(database.getCollection(FOURSQUARE_PLACES, city), FsPlace.class);
+            InMemoryRepository.SET(city, places, FsPlace.class);
+        }
+        return places;
     }
 
     @Override
     public List<FsPlaceDetails> getFoursquarePlacesDetails() {
-        List<FsPlaceDetails> details = InMemoryRepository.GET(FsPlaceDetails.class);
-        if (details == null) {
-            details = dbGet.fromCollection(database.getHotspot().whereEqualTo("hotspotType", HotspotType.FOURSQUARE_PLACE), FsPlaceDetails.class);
-            InMemoryRepository.SET(details, FsPlaceDetails.class);
-        }
-        return details;
+        return dbGet.fromCollection(database.getHotspot().whereEqualTo("hotspotType", HotspotType.FOURSQUARE_PLACE), FsPlaceDetails.class);
     }
 
     @Override
