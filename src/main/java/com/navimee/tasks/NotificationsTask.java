@@ -8,6 +8,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
+import static com.navimee.tasks.TasksFixedTimes.MINUTE;
+import static com.navimee.tasks.TasksFixedTimes.NOTIFICATIONS;
+
 @Component
 public class NotificationsTask {
 
@@ -20,7 +23,7 @@ public class NotificationsTask {
         notifications.send();
     }
 
-    @Scheduled(cron = "0 0/5 * * * ?")
+    @Scheduled(fixedDelay = NOTIFICATIONS, initialDelay = MINUTE * 2)
     public void task() {
         this.executeSendNotification();
     }

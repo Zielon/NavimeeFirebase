@@ -8,6 +8,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
+import static com.navimee.tasks.TasksFixedTimes.MINUTE;
+import static com.navimee.tasks.TasksFixedTimes.REMOVAL;
+
 @Component
 public class RemovalTask {
 
@@ -20,7 +23,7 @@ public class RemovalTask {
         eventsRepository.removeEvents();
     }
 
-    @Scheduled(cron = "0 0/20 * * * ?")
+    @Scheduled(fixedDelay = REMOVAL, initialDelay = MINUTE * 3)
     public void task() {
         this.executeRemoveEventsTask();
     }

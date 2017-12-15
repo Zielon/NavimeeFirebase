@@ -12,6 +12,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
+import static com.navimee.tasks.TasksFixedTimes.HOTSPOT;
+import static com.navimee.tasks.TasksFixedTimes.MINUTE;
+
 @Component
 public class HotspotTask {
 
@@ -40,7 +43,7 @@ public class HotspotTask {
                 event -> new GeoLocation(event.getPlace().getGeoPoint().getLatitude(), event.getPlace().getGeoPoint().getLongitude()));
     }
 
-    @Scheduled(cron = "0 0/10 * * * ?")
+    @Scheduled(fixedDelay = HOTSPOT, initialDelay = MINUTE)
     public void task() {
         this.executeHotspotTask();
     }

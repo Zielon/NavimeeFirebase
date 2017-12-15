@@ -15,7 +15,6 @@ import org.springframework.stereotype.Repository;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 
 import static com.navimee.firestore.Paths.USERS_COLLECTION;
 import static com.navimee.firestore.Paths.USERS_EVENTS_COLLECTION;
