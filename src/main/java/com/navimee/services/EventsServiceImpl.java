@@ -103,7 +103,7 @@ public class EventsServiceImpl implements EventsService {
 
             List<Callable<List<PhqEventDto>>> events = new ArrayList<>();
             PredictHqEventsQuery query = new PredictHqEventsQuery(predictHqConfiguration, executorService, httpClient);
-            Collections.spliter(coordinates, 100).forEach(coods -> {
+            Collections.spliter(coordinates, 25).forEach(coods -> {
                 try {
                     events.add(query.execute(new PredictHqEventsParams(coods)));
                     TimeUnit.MINUTES.sleep(2);
