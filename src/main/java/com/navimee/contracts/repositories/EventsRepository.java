@@ -1,8 +1,6 @@
 package com.navimee.contracts.repositories;
 
-import com.navimee.models.entities.events.Event;
-import com.navimee.models.entities.events.FbEvent;
-import com.navimee.models.entities.events.PhqEvent;
+import com.navimee.models.entities.HotspotEvent;
 
 import java.util.List;
 import java.util.concurrent.Future;
@@ -10,16 +8,12 @@ import java.util.concurrent.Future;
 public interface EventsRepository {
 
     // GETTERS
-    List<FbEvent> getFacebookEvents();
+    List<HotspotEvent> getEvents();
 
-    List<PhqEvent> getPredictHqEvents();
-
-    List<FbEvent> getEventsBefore(int timeToEnd);
+    List<HotspotEvent> getEventsBefore(int timeToEnd);
 
     // SETTERS
-    Future setFacebookEvents(List<FbEvent> events);
-
-    Future setPredictHqEvents(List<PhqEvent> events);
+    Future setEvents(List<HotspotEvent> events);
 
     Future removeEvents();
 }

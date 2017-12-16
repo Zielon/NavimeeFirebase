@@ -14,11 +14,12 @@ import com.navimee.events.queries.PredictHqEventsQuery;
 import com.navimee.events.queries.params.FacebookEventsParams;
 import com.navimee.events.queries.params.PredictHqEventsParams;
 import com.navimee.general.Collections;
+import com.navimee.models.bo.FbEvent;
+import com.navimee.models.bo.PhqEvent;
 import com.navimee.models.dto.events.FbEventDto;
 import com.navimee.models.dto.events.PhqEventDto;
+import com.navimee.models.entities.HotspotEvent;
 import com.navimee.models.entities.coordinates.Coordinate;
-import com.navimee.models.entities.events.FbEvent;
-import com.navimee.models.entities.events.PhqEvent;
 import com.navimee.models.entities.places.facebook.FbPlace;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +31,7 @@ import java.util.Objects;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 
 import static com.navimee.asyncCollectors.CompletionCollector.waitForTasks;
 import static com.navimee.linq.Distinct.distinctByKey;
@@ -75,15 +77,16 @@ public class EventsServiceImpl implements EventsService {
             FacebookEventsQuery query = new FacebookEventsQuery(facebookConfiguration, executorService, httpClient);
             Collections.spliter(fbPlaces, 50).forEach(places -> events.add(query.execute(new FacebookEventsParams(places))));
 
-            List<FbEvent> entities = waitForTasks(executorService, events)
+            List<HotspotEvent> entities = waitForTasks(executorService, events)
                     .parallelStream()
                     .filter(Objects::nonNull)
                     .map(dto -> modelMapper.map(dto, FbEvent.class))
                     .filter(distinctByKey(FbEvent::getId))
                     .filter(EventsHelpers.getCompelmentFunction(placesService)::apply)    // Complement event places
+                    .map(dto -> modelMapper.map(dto, HotspotEvent.class))
                     .collect(toList());
 
-            eventsRepository.setFacebookEvents(entities);
+            eventsRepository.setEvents(entities);
             firebaseRepository.transferEvents(entities);
         });
     }
@@ -95,15 +98,24 @@ public class EventsServiceImpl implements EventsService {
 
             List<Callable<List<PhqEventDto>>> events = new ArrayList<>();
             PredictHqEventsQuery query = new PredictHqEventsQuery(predictHqConfiguration, executorService, httpClient);
-            coordinates.forEach(coordinate -> events.add(query.execute(new PredictHqEventsParams(coordinate.getLatitude(), coordinate.getLongitude()))));
+            Collections.spliter(coordinates, 100).forEach(coods -> {
+                try {
+                    events.add(query.execute(new PredictHqEventsParams(coods)));
+                    TimeUnit.MINUTES.sleep(2);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            });
 
-            List<PhqEvent> entities = waitForTasks(executorService, events).parallelStream()
+            List<HotspotEvent> entities = waitForTasks(executorService, events).parallelStream()
                     .filter(Objects::nonNull)
                     .map(dto -> modelMapper.map(dto, PhqEvent.class))
                     .filter(distinctByKey(PhqEvent::getId))
+                    .map(dto -> modelMapper.map(dto, HotspotEvent.class))
                     .collect(toList());
 
-            entities.size();
+            eventsRepository.setEvents(entities);
+            firebaseRepository.transferEvents(entities);
         });
     }
 }

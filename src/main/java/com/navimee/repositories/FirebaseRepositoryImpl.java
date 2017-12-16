@@ -8,8 +8,8 @@ import com.navimee.firestore.Paths;
 import com.navimee.logger.LogEnum;
 import com.navimee.logger.Logger;
 import com.navimee.models.entities.Entity;
+import com.navimee.models.entities.HotspotEvent;
 import com.navimee.models.entities.Log;
-import com.navimee.models.entities.events.FbEvent;
 import com.navimee.models.entities.places.foursquare.FsPlaceDetails;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -34,11 +34,11 @@ public class FirebaseRepositoryImpl implements FirebaseRepository {
     private final String hotspotCurrent = Paths.HOTSPOT + "_CURRENT";
 
     @Override
-    public Future transferEvents(List<FbEvent> events) {
+    public Future transferEvents(List<HotspotEvent> events) {
         return executorService.submit(() -> {
             GeoFire geoFire = new GeoFire(firebaseDatabase.getReference(Paths.HOTSPOT));
-            Map<String, FbEvent> entities = events.stream().collect(Collectors.toMap(Entity::getId, Function.identity()));
-            entities.forEach((key, v) -> geoFire.setLocation(key, new GeoLocation(v.getPlace().getGeoPoint().getLatitude(), v.getPlace().getGeoPoint().getLongitude())));
+            Map<String, HotspotEvent> entities = events.stream().collect(Collectors.toMap(Entity::getId, Function.identity()));
+            entities.forEach((key, v) -> geoFire.setLocation(key, new GeoLocation(v.getGeoPoint().getLatitude(), v.getGeoPoint().getLongitude())));
             Logger.LOG(new Log(LogEnum.TRANSFER, "Transfer facebook events details [Firebase]"));
         });
     }
@@ -73,7 +73,7 @@ public class FirebaseRepositoryImpl implements FirebaseRepository {
     }
 
     @Override
-    public Future deleteEvents(List<FbEvent> events) {
+    public Future deleteEvents(List<HotspotEvent> events) {
         return executorService.submit(() ->
                 events.forEach(event -> firebaseDatabase.getReference(String.format("%s/%s", Paths.HOTSPOT, event.getId())).removeValueAsync()));
     }

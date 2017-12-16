@@ -6,6 +6,7 @@ import com.navimee.contracts.services.EventsService;
 import com.navimee.logger.LogEnum;
 import com.navimee.logger.Logger;
 import com.navimee.models.entities.Log;
+import com.navimee.models.entities.coordinates.City;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
@@ -29,20 +30,18 @@ public class EventsTask {
     @Autowired
     ExecutorService executorService;
 
-    public void executeEventsTask() {
+    public void executeEventsTask() throws InterruptedException {
         Logger.LOG(new Log(LogEnum.TASK, "Events update"));
         List<Future> futures = new ArrayList<>();
 
-        placesRepository.getAvailableCities().forEach(city -> {
-            if(city.getName().equals("SOPOT")) {
-                futures.add(eventsService.savePredictHqEvents(city.getName()));
-                futures.add(eventsService.saveFacebookEvents(city.getName()));
-            }
-        });
+        for (City city : placesRepository.getAvailableCities()) {
+            futures.add(eventsService.saveFacebookEvents(city.getName()));
+            futures.add(eventsService.savePredictHqEvents(city.getName()));
+        }
     }
 
-    //@Scheduled(fixedDelay = EVENTS)
-    public void task() {
+    @Scheduled(fixedDelay = EVENTS)
+    public void task() throws InterruptedException {
         this.executeEventsTask();
     }
 }

@@ -1,7 +1,6 @@
 package com.navimee.services;
 
 import com.navimee.contracts.services.HttpClient;
-import com.navimee.general.JSON;
 import com.navimee.logger.LogEnum;
 import com.navimee.logger.Logger;
 import com.navimee.models.entities.Log;
@@ -49,7 +48,7 @@ public class HttpClientImpl implements HttpClient {
         }
     }
 
-    private JSONObject runRequest(HttpGet request){
+    private JSONObject runRequest(HttpGet request) {
         try {
             HttpResponse response = client.execute(request, null).get();
             HttpEntity entity = response.getEntity();

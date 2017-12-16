@@ -1,8 +1,7 @@
 package com.navimee.enums;
 
 public enum HotspotType {
-    FACEBOOK_EVENT,
-    PREDICTHQ_EVENT,
+    EVENT,
     UBER_MULTIPLIER,
     FOURSQUARE_PLACE
 }

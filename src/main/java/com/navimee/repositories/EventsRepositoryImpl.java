@@ -8,9 +8,7 @@ import com.navimee.firestore.Database;
 import com.navimee.firestore.operations.DbAdd;
 import com.navimee.firestore.operations.DbDelete;
 import com.navimee.firestore.operations.DbGet;
-import com.navimee.models.entities.events.Event;
-import com.navimee.models.entities.events.FbEvent;
-import com.navimee.models.entities.events.PhqEvent;
+import com.navimee.models.entities.HotspotEvent;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.joda.time.LocalDateTime;
@@ -44,33 +42,23 @@ public class EventsRepositoryImpl implements EventsRepository {
     DbDelete delete;
 
     @Override
-    public List<FbEvent> getFacebookEvents() {
-        return dbGet.fromCollection(database.getHotspot().whereEqualTo("hotspotType", HotspotType.FACEBOOK_EVENT), FbEvent.class);
+    public List<HotspotEvent> getEvents() {
+        return dbGet.fromCollection(database.getHotspot().whereEqualTo("hotspotType", HotspotType.EVENT), HotspotEvent.class);
     }
 
     @Override
-    public List<PhqEvent> getPredictHqEvents() {
-        return dbGet.fromCollection(database.getHotspot().whereEqualTo("hotspotType", HotspotType.PREDICTHQ_EVENT), PhqEvent.class);
-    }
-
-    @Override
-    public List<FbEvent> getEventsBefore(int timeToEnd) {
+    public List<HotspotEvent> getEventsBefore(int timeToEnd) {
         DateTime warsaw = LocalDateTime.now(DateTimeZone.forID("Europe/Warsaw")).toDateTime();
         return dbGet.fromCollection(
                 database.getHotspot()
-                        .whereEqualTo("hotspotType", HotspotType.FACEBOOK_EVENT)
+                        .whereEqualTo("hotspotType", HotspotType.EVENT)
                         .whereGreaterThanOrEqualTo("endTime", warsaw.toDate())
                         .whereLessThanOrEqualTo("endTime", warsaw.plusMinutes(timeToEnd).toDate())
-                , FbEvent.class);
+                , HotspotEvent.class);
     }
 
     @Override
-    public Future setFacebookEvents(List<FbEvent> events) {
-        return dbAdd.toCollection(database.getHotspot(), events);
-    }
-
-    @Override
-    public Future setPredictHqEvents(List<PhqEvent> events) {
+    public Future setEvents(List<HotspotEvent> events) {
         return dbAdd.toCollection(database.getHotspot(), events);
     }
 
@@ -80,7 +68,7 @@ public class EventsRepositoryImpl implements EventsRepository {
             Date warsaw = LocalDateTime.now(DateTimeZone.forID("Europe/Warsaw")).toDate();
             Query query = database.getHotspot().whereLessThan("endTime", warsaw);
             delete.document(query);
-            firebaseRepository.deleteEvents(dbGet.fromCollection(query, FbEvent.class));
+            firebaseRepository.deleteEvents(dbGet.fromCollection(query, HotspotEvent.class));
         });
     }
 }

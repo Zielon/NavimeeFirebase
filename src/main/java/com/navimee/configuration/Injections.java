@@ -2,7 +2,9 @@ package com.navimee.configuration;
 
 import com.google.cloud.firestore.Firestore;
 import com.google.firebase.database.FirebaseDatabase;
-import com.navimee.configuration.mappers.FsPlacesDetailsConverter;
+import com.navimee.configuration.mappers.FbEventTransformer;
+import com.navimee.configuration.mappers.FsPlacesDetailsTransformer;
+import com.navimee.configuration.mappers.PhqEventTransformer;
 import com.navimee.configuration.specific.*;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
@@ -66,7 +68,9 @@ public class Injections {
     public ModelMapper modelMapperProvider() {
         ModelMapper modalMapper = new ModelMapper();
 
-        modalMapper.addConverter(FsPlacesDetailsConverter.getConverter());
+        modalMapper.addConverter(FsPlacesDetailsTransformer.get());
+        modalMapper.addConverter(PhqEventTransformer.get());
+        modalMapper.addConverter(FbEventTransformer.get());
 
         modalMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
         return modalMapper;

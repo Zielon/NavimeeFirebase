@@ -54,11 +54,10 @@ public class PlacesTask {
         Logger.LOG(new Log(LogEnum.TASK, "Places update"));
         List<Future> futures = new ArrayList<>();
 
-        placesRepository.getAvailableCities().forEach(city -> {
-                    futures.add(placesService.saveFoursquarePlaces(city.getName()));
-                    futures.add(placesService.saveFacebookPlaces(city.getName()));
-                }
-        );
+        for (City city : placesRepository.getAvailableCities()) {
+            futures.add(placesService.saveFoursquarePlaces(city.getName()));
+            futures.add(placesService.saveFacebookPlaces(city.getName()));
+        }
     }
 
     @Scheduled(cron = "0 0 1 2 * ?")

@@ -12,8 +12,7 @@ public class Collections {
         List<List<T>> split = new ArrayList<>();
         List<T> subList = new ArrayList<>();
 
-        if (collection.size() < splitSize || splitSize < 0)
-            return split;
+        if (splitSize < 0) return split;
 
         Iterator<T> iterator = collection.iterator();
 

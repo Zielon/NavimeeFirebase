@@ -1,16 +1,15 @@
-package com.navimee.models.entities.events;
+package com.navimee.models.entities;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.cloud.firestore.GeoPoint;
-import com.google.cloud.firestore.annotation.IgnoreExtraProperties;
+import com.navimee.enums.EventType;
 import com.navimee.enums.HotspotType;
-import com.navimee.models.entities.Entity;
 
 import java.util.Date;
+import java.util.Map;
 
-@IgnoreExtraProperties
-public class PhqEvent implements Entity, Event {
+public class HotspotEvent implements Entity {
     private String id;
-    private String scope;
     private String title;
     private String description;
     private String category;
@@ -19,22 +18,21 @@ public class PhqEvent implements Entity, Event {
     private GeoPoint geoPoint;
     private Date startTime;
     private Date endTime;
-    private HotspotType hotspotType = HotspotType.PREDICTHQ_EVENT;
+    private HotspotType hotspotType;
+    private EventType source;
 
+    @JsonProperty("geoPoint")
+    private void getGeoPoint(Map<String, Double> json) {
+        geoPoint = new GeoPoint(json.get("latitude"), json.get("longitude"));
+    }
+
+    @Override
     public String getId() {
         return id;
     }
 
     public void setId(String id) {
         this.id = id;
-    }
-
-    public String getScope() {
-        return scope;
-    }
-
-    public void setScope(String scope) {
-        this.scope = scope;
     }
 
     public String getTitle() {
@@ -103,5 +101,17 @@ public class PhqEvent implements Entity, Event {
 
     public HotspotType getHotspotType() {
         return hotspotType;
+    }
+
+    public void setHotspotType(HotspotType hotspotType) {
+        this.hotspotType = hotspotType;
+    }
+
+    public EventType getSource() {
+        return source;
+    }
+
+    public void setSource(EventType source) {
+        this.source = source;
     }
 }

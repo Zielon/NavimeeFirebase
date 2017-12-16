@@ -5,8 +5,8 @@ import com.google.cloud.firestore.DocumentSnapshot;
 import com.google.cloud.firestore.Firestore;
 import com.navimee.contracts.repositories.UsersRepository;
 import com.navimee.firestore.operations.DbGet;
+import com.navimee.models.entities.HotspotEvent;
 import com.navimee.models.entities.User;
-import com.navimee.models.entities.events.FbEvent;
 import org.joda.time.DateTimeZone;
 import org.joda.time.LocalDateTime;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,10 +41,10 @@ public class UsersRepositoryImpl implements UsersRepository {
 
                 if (user.getToken() == null || user.getToken().equals("")) continue;
 
-                List<FbEvent> events = dbGet.fromCollection(document
+                List<HotspotEvent> events = dbGet.fromCollection(document
                         .getReference()
                         .collection(USERS_EVENTS_COLLECTION)
-                        .whereLessThanOrEqualTo("endTime", warsaw), FbEvent.class);
+                        .whereLessThanOrEqualTo("endTime", warsaw), HotspotEvent.class);
 
                 if (events.size() == 0) continue;
 

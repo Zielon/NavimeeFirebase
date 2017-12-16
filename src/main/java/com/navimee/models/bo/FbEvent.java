@@ -1,14 +1,14 @@
-package com.navimee.models.entities.events;
+package com.navimee.models.bo;
 
 import com.google.cloud.firestore.annotation.IgnoreExtraProperties;
+import com.navimee.enums.EventType;
 import com.navimee.enums.HotspotType;
-import com.navimee.models.entities.Entity;
 import com.navimee.models.entities.places.facebook.FbPlace;
 
 import java.util.Date;
 
 @IgnoreExtraProperties
-public class FbEvent implements Entity, Event {
+public class FbEvent {
     private String name;
     private String id;
     private String category;
@@ -19,7 +19,9 @@ public class FbEvent implements Entity, Event {
     private String type;
     private FbPlace place;
     private FbPlace searchPlace;
-    private HotspotType hotspotType = HotspotType.FACEBOOK_EVENT;
+    private HotspotType hotspotType = HotspotType.EVENT;
+    private String timezone = "Europe/Warsaw";
+    private EventType source = EventType.FACEBOOK;
 
     public String getName() {
         return name;
@@ -103,5 +105,13 @@ public class FbEvent implements Entity, Event {
 
     public HotspotType getHotspotType() {
         return hotspotType;
+    }
+
+    public String getTimezone() {
+        return timezone;
+    }
+
+    public EventType getSource() {
+        return source;
     }
 }

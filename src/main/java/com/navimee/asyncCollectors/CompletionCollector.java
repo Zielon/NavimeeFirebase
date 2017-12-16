@@ -18,7 +18,7 @@ public class CompletionCollector {
     }
 
     public static void waitForFutures(ExecutorService executorService, List<Future> futures) {
-        CompletionService completionService = new ExecutorCompletionService<>(executorService);
+        CompletionService<Object> completionService = new ExecutorCompletionService<>(executorService);
         futures.forEach(future -> completionService.submit(() -> future.get()));
         collectSingle(completionService, futures.size());
     }

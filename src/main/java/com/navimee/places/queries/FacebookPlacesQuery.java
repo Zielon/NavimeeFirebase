@@ -1,6 +1,5 @@
 package com.navimee.places.queries;
 
-import com.mashape.unirest.http.exceptions.UnirestException;
 import com.navimee.configuration.specific.FacebookConfiguration;
 import com.navimee.contracts.services.HttpClient;
 import com.navimee.general.JSON;

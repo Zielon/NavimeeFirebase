@@ -7,9 +7,9 @@ import org.modelmapper.spi.MappingContext;
 
 import static java.util.stream.Collectors.toList;
 
-public class FsPlacesDetailsConverter {
+public class FsPlacesDetailsTransformer {
 
-    public static Converter<FsPlaceDetailsDto, FsPlaceDetails> getConverter() {
+    public static Converter<FsPlaceDetailsDto, FsPlaceDetails> get() {
         return new Converter<FsPlaceDetailsDto, FsPlaceDetails>() {
             public FsPlaceDetails convert(MappingContext<FsPlaceDetailsDto, FsPlaceDetails> context) {
                 FsPlaceDetailsDto dto = context.getSource();

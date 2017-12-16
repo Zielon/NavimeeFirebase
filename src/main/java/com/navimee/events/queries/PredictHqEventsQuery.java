@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
+import java.util.stream.Collectors;
 
 public class PredictHqEventsQuery extends Query<List<PhqEventDto>, PredictHqConfiguration, PredictHqEventsParams> {
 
@@ -35,12 +36,16 @@ public class PredictHqEventsQuery extends Query<List<PhqEventDto>, PredictHqConf
         DateTimeFormatter dtf = DateTimeFormat.forPattern("yyyyddMM");
 
         URI uri = null;
+        String within = params.coordinates.stream()
+                .map(c -> String.format("1km@%f,%f", c.getLatitude(), c.getLongitude()))
+                .collect(Collectors.joining("+"));
+
         try {
             URIBuilder builder = new URIBuilder(configuration.apiUrl + "/v1/events/");
             builder.setParameter("date.gte", dtf.print(warsawCurrent));
             builder.setParameter("date.lte", dtf.print(warsawLater));
             builder.setParameter("date.tz", "Europe/Warsaw");
-            builder.setParameter("within", String.format("1km@%f,%f", params.lat, params.lon));
+            builder.setParameter("within", within);
             uri = builder.build();
         } catch (URISyntaxException e) {
             e.printStackTrace();
@@ -65,8 +70,11 @@ public class PredictHqEventsQuery extends Query<List<PhqEventDto>, PredictHqConf
 
             while (true) {
                 try {
-                    object = httpClient.GET(new URI(nextUrl)).call();
-                    if(!object.has("results")) break;
+                    HttpGet request = new HttpGet(nextUrl);
+                    request.setHeader("Authorization", String.format("Bearer %s", configuration.accessToken));
+
+                    object = httpClient.GET(request).call();
+                    if (!object.has("results")) break;
 
                     list.addAll(JSON.arrayMapper(object.getJSONArray("results"), PhqEventDto.class));
 

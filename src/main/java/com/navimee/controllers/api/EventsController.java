@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping(value = "api/fb")
-public class FacebookController {
+public class EventsController {
 
     private ObjectMapper mapper = new ObjectMapper();
 
@@ -29,6 +29,6 @@ public class FacebookController {
 
     @RequestMapping(value = "events", method = RequestMethod.GET, produces = "application/json")
     public String events() throws JsonProcessingException {
-        return mapper.writeValueAsString(eventsRepository.getFacebookEvents());
+        return mapper.writeValueAsString(eventsRepository.getEvents());
     }
 }

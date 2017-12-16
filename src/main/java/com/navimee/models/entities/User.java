@@ -1,7 +1,6 @@
 package com.navimee.models.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.navimee.models.entities.events.FbEvent;
 
 import java.util.List;
 
@@ -12,7 +11,7 @@ public class User implements Entity {
     private String email;
     private boolean bigEventsNotification;
     private boolean dayScheduleNotification;
-    private List<FbEvent> events;
+    private List<HotspotEvent> events;
 
     public String getEmail() {
         return email;
@@ -30,11 +29,11 @@ public class User implements Entity {
         this.token = token;
     }
 
-    public List<FbEvent> getEvents() {
+    public List<HotspotEvent> getEvents() {
         return events;
     }
 
-    public void setEvents(List<FbEvent> events) {
+    public void setEvents(List<HotspotEvent> events) {
         this.events = events;
     }
 
