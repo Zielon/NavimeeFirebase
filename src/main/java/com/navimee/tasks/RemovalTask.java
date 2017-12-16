@@ -11,7 +11,6 @@ import org.springframework.stereotype.Component;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 
-import static com.navimee.tasks.TasksFixedTimes.MINUTE;
 import static com.navimee.tasks.TasksFixedTimes.REMOVAL;
 
 @Component

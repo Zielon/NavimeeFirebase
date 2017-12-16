@@ -20,8 +20,6 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 
-import static com.navimee.asyncCollectors.CompletionCollector.waitForFutures;
-
 @Component
 public class PlacesTask {
 
