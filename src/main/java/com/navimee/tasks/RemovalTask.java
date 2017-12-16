@@ -26,7 +26,7 @@ public class RemovalTask {
     public void executeRemoveEventsTask() throws ExecutionException, InterruptedException {
         Logger.LOG(new Log(LogEnum.DELETION, "Delete old events"));
 
-        eventsRepository.removeEvents().get();
+        eventsRepository.removeEvents();
     }
 
     @Scheduled(fixedDelay = REMOVAL)

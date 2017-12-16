@@ -61,8 +61,6 @@ public class PlacesTask {
                     futures.add(placesService.saveFacebookPlaces(city.getName()));
                 }
         );
-
-        waitForFutures(executorService, futures);
     }
 
     @Scheduled(cron = "0 0 1 2 * ?")

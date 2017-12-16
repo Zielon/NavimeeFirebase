@@ -36,8 +36,6 @@ public class EventsTask {
         List<Future> futures = new ArrayList<>();
 
         placesRepository.getAvailableCities().forEach(city -> futures.add(eventsService.saveFacebookEvents(city.getName())));
-
-        waitForFutures(executorService, futures);
     }
 
     @Scheduled(fixedDelay = EVENTS)

@@ -30,7 +30,11 @@ public class DetailsTask {
     }
 
     @Scheduled(cron = "0 0 1 1 * ?")
-    public void task() throws ExecutionException, InterruptedException {
-        this.executeDetailsTask();
+    public void task() {
+        try {
+            this.executeDetailsTask();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }

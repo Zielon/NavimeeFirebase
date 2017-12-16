@@ -22,7 +22,7 @@ public class NotificationsTask {
     public void executeSendNotification() throws ExecutionException, InterruptedException {
         Logger.LOG(new Log(LogEnum.TASK, "Send notifications"));
 
-        notifications.send().get();
+        notifications.send();
     }
 
     @Scheduled(fixedDelay = NOTIFICATIONS)
