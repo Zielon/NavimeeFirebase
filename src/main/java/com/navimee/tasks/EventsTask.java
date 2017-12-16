@@ -31,7 +31,6 @@ public class EventsTask {
     ExecutorService executorService;
 
     public void executeEventsTask() throws InterruptedException {
-        Logger.LOG(new Log(LogEnum.TASK, "Events update"));
         List<Future> futures = new ArrayList<>();
 
         for (City city : placesRepository.getAvailableCities()) {

@@ -8,7 +8,10 @@ import com.navimee.firestore.Database;
 import com.navimee.firestore.operations.DbAdd;
 import com.navimee.firestore.operations.DbDelete;
 import com.navimee.firestore.operations.DbGet;
+import com.navimee.logger.LogEnum;
+import com.navimee.logger.Logger;
 import com.navimee.models.entities.HotspotEvent;
+import com.navimee.models.entities.Log;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.joda.time.LocalDateTime;
@@ -65,6 +68,8 @@ public class EventsRepositoryImpl implements EventsRepository {
     @Override
     public Future removeEvents() {
         return executorService.submit(() -> {
+            Logger.LOG(new Log(LogEnum.DELETION, "Delete old events"));
+
             Date warsaw = LocalDateTime.now(DateTimeZone.forID("Europe/Warsaw")).toDate();
             Query query = database.getHotspot().whereLessThan("endTime", warsaw);
             delete.document(query);

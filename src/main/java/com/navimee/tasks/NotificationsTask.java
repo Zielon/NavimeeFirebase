@@ -14,7 +14,6 @@ public class NotificationsTask {
     NotificationsService notifications;
 
     public void executeSendNotification() throws InterruptedException {
-        Logger.LOG(new Log(LogEnum.TASK, "Send notifications"));
         notifications.send();
     }
 

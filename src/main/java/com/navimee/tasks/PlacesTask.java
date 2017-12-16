@@ -51,7 +51,6 @@ public class PlacesTask {
 
         placesRepository.setCoordinates(coordinates).get();*/
 
-        Logger.LOG(new Log(LogEnum.TASK, "Places update"));
         List<Future> futures = new ArrayList<>();
 
         for (City city : placesRepository.getAvailableCities()) {

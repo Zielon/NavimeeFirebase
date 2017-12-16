@@ -7,11 +7,14 @@ import com.navimee.contracts.repositories.FirebaseRepository;
 import com.navimee.contracts.repositories.PlacesRepository;
 import com.navimee.contracts.services.HttpClient;
 import com.navimee.contracts.services.PlacesService;
+import com.navimee.logger.LogEnum;
+import com.navimee.logger.Logger;
 import com.navimee.models.dto.geocoding.GooglePlaceDto;
 import com.navimee.models.dto.placeDetails.FsPlaceDetailsDto;
 import com.navimee.models.dto.places.facebook.FbPlaceDto;
 import com.navimee.models.dto.places.foursquare.FsPlaceDto;
 import com.navimee.models.dto.timeframes.PopularDto;
+import com.navimee.models.entities.Log;
 import com.navimee.models.entities.coordinates.Coordinate;
 import com.navimee.models.entities.places.Place;
 import com.navimee.models.entities.places.facebook.FbPlace;
@@ -66,8 +69,8 @@ public class PlacesServiceImpl implements PlacesService {
 
     @Override
     public Future saveFacebookPlaces(String city) {
-
         return executorService.submit(() -> {
+            Logger.LOG(new Log(LogEnum.TASK, "Foursquare places update"));
             List<Coordinate> coordinates = placesRepository.getCoordinates(city);
 
             // DbGet data from the external facebook API
@@ -92,8 +95,8 @@ public class PlacesServiceImpl implements PlacesService {
 
     @Override
     public Future saveFoursquarePlaces(String city) {
-
         return executorService.submit(() -> {
+            Logger.LOG(new Log(LogEnum.TASK, "Foursquare places update"));
             List<Coordinate> coordinates = placesRepository.getCoordinates(city);
 
             // DbGet data from the external foursquare API
@@ -118,8 +121,8 @@ public class PlacesServiceImpl implements PlacesService {
 
     @Override
     public Future saveFoursquarePlacesDetails(String city) {
-
         return executorService.submit(() -> {
+            Logger.LOG(new Log(LogEnum.TASK, "Foursquare details update for " + city));
             List<FsPlace> places = placesRepository.getFoursquarePlaces(city);
 
             // DbGet data from the external foursquare API

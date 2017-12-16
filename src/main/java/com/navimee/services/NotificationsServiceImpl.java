@@ -39,6 +39,7 @@ public class NotificationsServiceImpl implements NotificationsService {
     @Override
     public Future send() {
         return executorService.submit(() -> {
+            Logger.LOG(new Log(LogEnum.TASK, "Send notifications"));
 
             List<User> users = usersRepository.getUsersForNotification();
 

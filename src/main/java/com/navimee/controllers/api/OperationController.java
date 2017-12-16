@@ -50,7 +50,7 @@ public class OperationController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @RequestMapping(value = "update/details", method = RequestMethod.POST)
+    @RequestMapping(value = "update/foursquaredetails", method = RequestMethod.POST)
     public ResponseEntity<?> fsPlacesDetails() {
         try {
             detailsTask.executeDetailsTask();

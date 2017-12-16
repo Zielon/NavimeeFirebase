@@ -32,8 +32,6 @@ public class HotspotTask {
     ExecutorService executorService;
 
     public void executeHotspotTask() throws InterruptedException {
-        Logger.LOG(new Log(LogEnum.TASK, "Hotspot update"));
-
         firebaseRepository.deleteCurrentHotspot();
 
         firebaseRepository.filterAndTransfer(

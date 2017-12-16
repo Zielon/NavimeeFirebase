@@ -22,7 +22,6 @@ public class RemovalTask {
     ExecutorService executorService;
 
     synchronized public void executeRemoveEventsTask() throws InterruptedException {
-        Logger.LOG(new Log(LogEnum.DELETION, "Delete old events"));
         eventsRepository.removeEvents();
     }
 

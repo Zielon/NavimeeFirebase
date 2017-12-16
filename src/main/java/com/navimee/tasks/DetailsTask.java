@@ -20,8 +20,6 @@ public class DetailsTask {
     PlacesService placesService;
 
     public void executeDetailsTask() throws InterruptedException {
-        Logger.LOG(new Log(LogEnum.TASK, "Foursquare details update"));
-
         for (City city : placesRepository.getAvailableCities()) {
             placesService.saveFoursquarePlacesDetails(city.getName()).wait();
             Thread.sleep(1000 * 60 * 75);

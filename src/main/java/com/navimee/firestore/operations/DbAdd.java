@@ -7,6 +7,7 @@ import com.navimee.firestore.operations.enums.AdditionEnum;
 import com.navimee.logger.LogEnum;
 import com.navimee.logger.Logger;
 import com.navimee.models.entities.Entity;
+import com.navimee.models.entities.HotspotEvent;
 import com.navimee.models.entities.Log;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -51,11 +52,11 @@ public class DbAdd {
     private <T extends Entity> Future toCollection(CollectionReference collectionReference, Map<String, T> entities, AdditionEnum options) {
         return executorService.submit(() -> {
             if (entities.size() == 0) return;
-            String type = null;
+            T entity = null;
             try {
                 List<Future<WriteResult>> tasks = new ArrayList<>();
                 for (Map.Entry<String, T> entry : entities.entrySet()) {
-                    type = entry.getValue().getClass().getSimpleName();
+                    entity = entry.getValue();
                     if (options == AdditionEnum.MERGE)
                         tasks.add(collectionReference.document(entry.getKey()).set(entry.getValue(), SetOptions.merge()));
                     else
@@ -64,8 +65,10 @@ public class DbAdd {
                 // Wait for all tasks to finish.
                 waitForFutures(executorService, tasks);
 
+                String extraInfo = entity instanceof HotspotEvent ? " -> " + ((HotspotEvent)entity).getSource().toString() : "";
+
                 Logger.LOG(new Log(LogEnum.ADDITION,
-                        String.format("%s | [Type: %s]", collectionReference.getPath(), type),
+                        String.format("%s | [Type: %s%s]", collectionReference.getPath(), entity.getClass().getSimpleName(), extraInfo),
                         entities.size()));
 
             } catch (Exception e) {
