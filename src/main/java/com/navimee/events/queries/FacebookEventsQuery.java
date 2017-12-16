@@ -2,7 +2,7 @@ package com.navimee.events.queries;
 
 import com.navimee.configuration.specific.FacebookConfiguration;
 import com.navimee.contracts.services.HttpClient;
-import com.navimee.events.queries.params.EventsParams;
+import com.navimee.events.queries.params.FacebookEventsParams;
 import com.navimee.general.JSON;
 import com.navimee.models.dto.events.FbEventDto;
 import com.navimee.models.entities.places.Place;
@@ -26,7 +26,7 @@ import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toList;
 
-public class FacebookEventsQuery extends Query<List<FbEventDto>, FacebookConfiguration, EventsParams> {
+public class FacebookEventsQuery extends Query<List<FbEventDto>, FacebookConfiguration, FacebookEventsParams> {
 
     public FacebookEventsQuery(FacebookConfiguration configuration,
                                ExecutorService executorService,
@@ -35,7 +35,7 @@ public class FacebookEventsQuery extends Query<List<FbEventDto>, FacebookConfigu
     }
 
     @Override
-    public Callable<List<FbEventDto>> execute(EventsParams params) {
+    public Callable<List<FbEventDto>> execute(FacebookEventsParams params) {
 
         StringJoiner joiner = new StringJoiner(",");
         joiner.add("place.fields(id,name,location)");
@@ -76,7 +76,7 @@ public class FacebookEventsQuery extends Query<List<FbEventDto>, FacebookConfigu
     }
 
     @Override
-    protected List<FbEventDto> map(Callable<JSONObject> task, EventsParams params) {
+    protected List<FbEventDto> map(Callable<JSONObject> task, FacebookEventsParams params) {
         List<FbEventDto> events = new ArrayList<>();
 
         try {

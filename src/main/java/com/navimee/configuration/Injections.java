@@ -34,6 +34,9 @@ public class Injections {
     @Value(value = "classpath:google-fmc-services.json")
     private Resource googleFmcConfig;
 
+    @Value(value = "classpath:predicthq-services.json")
+    private Resource predictHqConfig;
+
     @Bean
     FirebaseConfiguration providerFirebaseConfiguration() throws IOException {
         return new FirebaseConfiguration(firebaseConfig);
@@ -52,6 +55,11 @@ public class Injections {
     @Bean
     GoogleConfiguration providerGoogleConfiguration() throws IOException {
         return new GoogleConfiguration(googleGeoConfig, googleFmcConfig);
+    }
+
+    @Bean
+    PredictHqConfiguration providerPredictHqConfiguration() throws IOException {
+        return new PredictHqConfiguration(predictHqConfig);
     }
 
     @Bean

@@ -1,6 +1,7 @@
 package com.navimee.services;
 
 import com.navimee.contracts.services.HttpClient;
+import com.navimee.general.JSON;
 import com.navimee.logger.LogEnum;
 import com.navimee.logger.Logger;
 import com.navimee.models.entities.Log;
@@ -31,25 +32,12 @@ public class HttpClientImpl implements HttpClient {
 
     @Override
     public Callable<JSONObject> GET(URI uri) {
-        return () -> {
-            HttpGet request = new HttpGet(uri);
-            try {
-                HttpResponse response = client.execute(request, null).get();
-                HttpEntity entity = response.getEntity();
-                String json = EntityUtils.toString(entity, "UTF-8");
-                EntityUtils.consume(entity);
+        return () -> runRequest(new HttpGet(uri));
+    }
 
-                if (response.getStatusLine().getStatusCode() != HttpStatus.SC_OK)
-                    throw new Exception(json);
-
-                return new JSONObject(json);
-            } catch (Exception e) {
-                Logger.LOG(new Log(LogEnum.EXCEPTION, e));
-                return new JSONObject();
-            } finally {
-                request.releaseConnection();
-            }
-        };
+    @Override
+    public Callable<JSONObject> GET(HttpGet httpGet) {
+        return () -> runRequest(httpGet);
     }
 
     @Override
@@ -58,6 +46,25 @@ public class HttpClientImpl implements HttpClient {
             client.close();
         } catch (IOException e) {
             Logger.LOG(new Log(LogEnum.EXCEPTION, e));
+        }
+    }
+
+    private JSONObject runRequest(HttpGet request){
+        try {
+            HttpResponse response = client.execute(request, null).get();
+            HttpEntity entity = response.getEntity();
+            String json = EntityUtils.toString(entity, "UTF-8");
+            EntityUtils.consume(entity);
+
+            if (response.getStatusLine().getStatusCode() != HttpStatus.SC_OK)
+                throw new Exception(json);
+
+            return new JSONObject(json);
+        } catch (Exception e) {
+            Logger.LOG(new Log(LogEnum.EXCEPTION, e));
+            return new JSONObject();
+        } finally {
+            request.releaseConnection();
         }
     }
 

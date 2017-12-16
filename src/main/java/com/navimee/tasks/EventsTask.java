@@ -33,10 +33,15 @@ public class EventsTask {
         Logger.LOG(new Log(LogEnum.TASK, "Events update"));
         List<Future> futures = new ArrayList<>();
 
-        placesRepository.getAvailableCities().forEach(city -> futures.add(eventsService.saveFacebookEvents(city.getName())));
+        placesRepository.getAvailableCities().forEach(city -> {
+            if(city.getName().equals("SOPOT")) {
+                futures.add(eventsService.savePredictHqEvents(city.getName()));
+                futures.add(eventsService.saveFacebookEvents(city.getName()));
+            }
+        });
     }
 
-    @Scheduled(fixedDelay = EVENTS)
+    //@Scheduled(fixedDelay = EVENTS)
     public void task() {
         this.executeEventsTask();
     }

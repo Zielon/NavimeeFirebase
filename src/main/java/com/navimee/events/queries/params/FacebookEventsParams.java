@@ -5,10 +5,10 @@ import com.navimee.queries.QueryParams;
 
 import java.util.List;
 
-public class EventsParams implements QueryParams {
+public class FacebookEventsParams implements QueryParams {
     public List<FbPlace> places;
 
-    public EventsParams(List<FbPlace> places) {
+    public FacebookEventsParams(List<FbPlace> places) {
         this.places = places;
     }
 }

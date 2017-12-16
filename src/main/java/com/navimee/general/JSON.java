@@ -14,6 +14,10 @@ public class JSON {
         return jsonObject.has("paging") && jsonObject.has("next");
     }
 
+    public static String getNext(JSONObject jsonObject) {
+        return jsonObject.getJSONObject("paging").getString("next");
+    }
+
     public static <T> List<T> arrayMapper(JSONArray array, Class<T> type) {
         List<T> list = new ArrayList<>();
         ObjectMapper mapper = new ObjectMapper();

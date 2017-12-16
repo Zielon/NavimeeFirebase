@@ -8,7 +8,7 @@ import com.navimee.models.entities.places.facebook.FbPlace;
 import java.util.Date;
 
 @IgnoreExtraProperties
-public class FbEvent implements Entity {
+public class FbEvent implements Entity, Event {
     private String name;
     private String id;
     private String category;

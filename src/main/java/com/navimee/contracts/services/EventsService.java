@@ -4,4 +4,6 @@ import java.util.concurrent.Future;
 
 public interface EventsService {
     Future saveFacebookEvents(String city);
+
+    Future savePredictHqEvents(String city);
 }

@@ -8,7 +8,9 @@ import com.navimee.firestore.Database;
 import com.navimee.firestore.operations.DbAdd;
 import com.navimee.firestore.operations.DbDelete;
 import com.navimee.firestore.operations.DbGet;
+import com.navimee.models.entities.events.Event;
 import com.navimee.models.entities.events.FbEvent;
+import com.navimee.models.entities.events.PhqEvent;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.joda.time.LocalDateTime;
@@ -42,8 +44,13 @@ public class EventsRepositoryImpl implements EventsRepository {
     DbDelete delete;
 
     @Override
-    public List<FbEvent> getEvents() {
+    public List<FbEvent> getFacebookEvents() {
         return dbGet.fromCollection(database.getHotspot().whereEqualTo("hotspotType", HotspotType.FACEBOOK_EVENT), FbEvent.class);
+    }
+
+    @Override
+    public List<PhqEvent> getPredictHqEvents() {
+        return dbGet.fromCollection(database.getHotspot().whereEqualTo("hotspotType", HotspotType.PREDICTHQ_EVENT), PhqEvent.class);
     }
 
     @Override
@@ -58,7 +65,12 @@ public class EventsRepositoryImpl implements EventsRepository {
     }
 
     @Override
-    public Future setEvents(List<FbEvent> events) {
+    public Future setFacebookEvents(List<FbEvent> events) {
+        return dbAdd.toCollection(database.getHotspot(), events);
+    }
+
+    @Override
+    public Future setPredictHqEvents(List<PhqEvent> events) {
         return dbAdd.toCollection(database.getHotspot(), events);
     }
 

@@ -51,7 +51,7 @@ public class HotspotTask {
                 event -> new GeoLocation(event.getPlace().getGeoPoint().getLatitude(), event.getPlace().getGeoPoint().getLongitude())));
     }
 
-    @Scheduled(fixedDelay = HOTSPOT)
+    //@Scheduled(fixedDelay = HOTSPOT)
     public void task() {
         this.executeHotspotTask();
     }

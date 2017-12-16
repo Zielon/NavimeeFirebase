@@ -28,7 +28,7 @@ public class RemovalTask {
         eventsRepository.removeEvents();
     }
 
-    @Scheduled(fixedDelay = REMOVAL)
+    //@Scheduled(fixedDelay = REMOVAL)
     public void task() {
         try {
             this.executeRemoveEventsTask();

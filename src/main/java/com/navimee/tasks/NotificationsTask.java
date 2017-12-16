@@ -24,7 +24,7 @@ public class NotificationsTask {
         notifications.send();
     }
 
-    @Scheduled(fixedDelay = NOTIFICATIONS)
+    //@Scheduled(fixedDelay = NOTIFICATIONS)
     public void task() {
         try {
             this.executeSendNotification();

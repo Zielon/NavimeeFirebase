@@ -31,14 +31,14 @@ public class FoursquareDetailsQuery extends Query<FsPlaceDetailsDto, FoursquareC
     public Callable<FsPlaceDetailsDto> execute(PlaceDetailsParams params) {
 
         LocalDateTime warsawCurrent = LocalDateTime.now(DateTimeZone.forID("Europe/Warsaw"));
-        DateTimeFormatter fmt = DateTimeFormat.forPattern("yyyyddMM");
+        DateTimeFormatter dtf = DateTimeFormat.forPattern("yyyyddMM");
 
         URI uri = null;
 
         try {
             URIBuilder builder = new URIBuilder(configuration.apiUrl);
             builder.setPath("v2/" + params.type + "/" + params.placeId);
-            builder.setParameter("v", fmt.print(warsawCurrent));
+            builder.setParameter("v", dtf.print(warsawCurrent));
             builder.setParameter("client_id", configuration.clientId);
             builder.setParameter("client_secret", configuration.clientSecret);
             uri = builder.build();

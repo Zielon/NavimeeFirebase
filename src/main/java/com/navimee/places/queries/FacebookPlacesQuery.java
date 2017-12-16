@@ -57,17 +57,18 @@ public class FacebookPlacesQuery extends Query<List<FbPlaceDto>, FacebookConfigu
             list.addAll(JSON.arrayMapper(object.getJSONArray("data"), FbPlaceDto.class));
 
             if (!JSON.hasPaging(object)) return list;
-            String nextUrl = object.getJSONObject("paging").getString("next");
+            String nextUrl = JSON.getNext(object);
 
             // Read all places from paging
             while (true) {
                 try {
-                    JSONObject nextObj = httpClient.GET(new URI(nextUrl)).call();
-                    list.addAll(JSON.arrayMapper(nextObj.getJSONArray("data"), FbPlaceDto.class));
+                    object = httpClient.GET(new URI(nextUrl)).call();
+                    list.addAll(JSON.arrayMapper(object.getJSONArray("data"), FbPlaceDto.class));
 
                     if (!JSON.hasPaging(object)) break;
+                    nextUrl = JSON.getNext(object);
 
-                } catch (UnirestException e) {
+                } catch (Exception e) {
                     e.printStackTrace();
                     break;
                 }
