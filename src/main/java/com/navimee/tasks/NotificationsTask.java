@@ -25,8 +25,12 @@ public class NotificationsTask {
         notifications.send().get();
     }
 
-    @Scheduled(fixedDelay = NOTIFICATIONS, initialDelay = MINUTE * 2)
-    public void task() throws ExecutionException, InterruptedException {
-        this.executeSendNotification();
+    @Scheduled(fixedDelay = NOTIFICATIONS)
+    public void task() {
+        try {
+            this.executeSendNotification();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }

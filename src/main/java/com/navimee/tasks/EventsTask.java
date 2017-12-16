@@ -40,7 +40,7 @@ public class EventsTask {
         waitForFutures(executorService, futures);
     }
 
-    @Scheduled(fixedDelay = EVENTS, initialDelay = MINUTE * 4)
+    @Scheduled(fixedDelay = EVENTS)
     public void task() {
         this.executeEventsTask();
     }

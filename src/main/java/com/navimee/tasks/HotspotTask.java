@@ -55,7 +55,7 @@ public class HotspotTask {
         waitForFutures(executorService, futures);
     }
 
-    @Scheduled(fixedDelay = HOTSPOT, initialDelay = MINUTE)
+    @Scheduled(fixedDelay = HOTSPOT)
     public void task() {
         this.executeHotspotTask();
     }
