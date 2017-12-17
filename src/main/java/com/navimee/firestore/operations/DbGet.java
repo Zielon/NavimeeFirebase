@@ -14,6 +14,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 @Component
 public class DbGet {
@@ -29,6 +30,18 @@ public class DbGet {
         }
 
         return output;
+    }
+
+    public <T extends Entity> T fromSingleDocument(DocumentReference documentReference, Class<T> type) {
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.registerModule(new JodaModule());
+        T entity = null;
+        try {
+            entity = mapper.convertValue(documentReference.get().get().getData(), type);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return entity;
     }
 
     public <T extends Entity> List<T> fromCollection(CollectionReference collectionReference, Class<T> type) {

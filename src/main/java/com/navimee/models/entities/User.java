@@ -2,8 +2,6 @@ package com.navimee.models.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
-import java.util.List;
-
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class User implements Entity {
     private String id;
@@ -11,7 +9,6 @@ public class User implements Entity {
     private String email;
     private boolean bigEventsNotification;
     private boolean dayScheduleNotification;
-    private List<Event> events;
 
     public String getEmail() {
         return email;
@@ -27,14 +24,6 @@ public class User implements Entity {
 
     public void setToken(String token) {
         this.token = token;
-    }
-
-    public List<Event> getEvents() {
-        return events;
-    }
-
-    public void setEvents(List<Event> events) {
-        this.events = events;
     }
 
     public boolean isBigEventsNotification() {

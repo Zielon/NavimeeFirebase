@@ -16,7 +16,7 @@ public class Paths {
     public static final String SEGREGATED_EVENTS_COLLECTION = "SEGREGATED_EVENTS";
 
     // Documents
-    public static final String PLACES_DOCUMENT = "PLACES";
+    public static final String NOTIFICATIONS_COLLECTION = "NOTIFICATIONS";
 
     // Users
     public static final String USERS_COLLECTION = "USERS";
