@@ -7,6 +7,8 @@ import com.navimee.contracts.repositories.FirebaseRepository;
 import com.navimee.contracts.repositories.PlacesRepository;
 import com.navimee.contracts.services.HttpClient;
 import com.navimee.contracts.services.PlacesService;
+import com.navimee.events.queries.params.PredictHqEventsParams;
+import com.navimee.general.Collections;
 import com.navimee.logger.LogEnum;
 import com.navimee.logger.Logger;
 import com.navimee.models.dto.geocoding.GooglePlaceDto;
@@ -34,6 +36,7 @@ import java.util.Objects;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 
 import static com.navimee.asyncCollectors.CompletionCollector.waitForSingleTask;
 import static com.navimee.asyncCollectors.CompletionCollector.waitForTasks;
@@ -130,7 +133,15 @@ public class PlacesServiceImpl implements PlacesService {
                     new FoursquareDetailsQuery(foursquareConfiguration, executorService, httpClient);
 
             List<Callable<FsPlaceDetailsDto>> placesTasks = new ArrayList<>();
-            places.forEach(p -> placesTasks.add(placesQuery.execute(new PlaceDetailsParams("venues", p.getId()))));
+            // The hour rate limit for Foursquare is 5000 requests
+            Collections.spliter(places, 4000).forEach(subPlaces -> {
+                try {
+                    subPlaces.forEach(p -> placesTasks.add(placesQuery.execute(new PlaceDetailsParams("venues", p.getId()))));
+                    TimeUnit.MINUTES.sleep(60);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            });
 
             List<FsPlaceDetails> entitiesDetails = waitForSingleTask(executorService, placesTasks).parallelStream()
                     .filter(Objects::nonNull)
