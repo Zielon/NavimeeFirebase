@@ -90,7 +90,7 @@ public class EventsServiceImpl implements EventsService {
                     .map(dto -> modelMapper.map(dto, HotspotEvent.class))
                     .collect(toList());
 
-            eventsRepository.setEvents(entities);
+            eventsRepository.setEvents(entities, city);
             firebaseRepository.transferEvents(entities);
         });
     }
@@ -102,24 +102,29 @@ public class EventsServiceImpl implements EventsService {
             List<Coordinate> coordinates = placesRepository.getCoordinates(city);
 
             List<Callable<List<PhqEventDto>>> events = new ArrayList<>();
+            List<PhqEventDto> eventsDto = new ArrayList<>();
+
             PredictHqEventsQuery query = new PredictHqEventsQuery(predictHqConfiguration, executorService, httpClient);
-            Collections.spliter(coordinates, 25).forEach(coods -> {
+            Collections.spliter(coordinates, 100).forEach(coods -> {
                 try {
-                    events.add(query.execute(new PredictHqEventsParams(coods)));
-                    TimeUnit.MINUTES.sleep(2);
+                    coods.forEach(c -> events.add(query.execute(new PredictHqEventsParams(c.getLatitude(), c.getLongitude()))));
+                    eventsDto.addAll(waitForTasks(executorService, events));
+                    TimeUnit.MINUTES.sleep(5);
+                    events.clear();
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
             });
 
-            List<HotspotEvent> entities = waitForTasks(executorService, events).parallelStream()
+            List<HotspotEvent> entities = eventsDto
+                    .parallelStream()
                     .filter(Objects::nonNull)
                     .map(dto -> modelMapper.map(dto, PhqEvent.class))
                     .filter(distinctByKey(PhqEvent::getId))
                     .map(dto -> modelMapper.map(dto, HotspotEvent.class))
                     .collect(toList());
 
-            eventsRepository.setEvents(entities);
+            eventsRepository.setEvents(entities, city);
             firebaseRepository.transferEvents(entities);
         });
     }

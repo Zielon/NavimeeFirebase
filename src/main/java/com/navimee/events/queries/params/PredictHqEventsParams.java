@@ -1,14 +1,13 @@
 package com.navimee.events.queries.params;
 
-import com.navimee.models.entities.coordinates.Coordinate;
 import com.navimee.queries.QueryParams;
 
-import java.util.List;
-
 public class PredictHqEventsParams implements QueryParams {
-    public List<Coordinate> coordinates;
+    public double lat;
+    public double lon;
 
-    public PredictHqEventsParams(List<Coordinate> coordinates) {
-        this.coordinates = coordinates;
+    public PredictHqEventsParams(double lat, double lon) {
+        this.lat = lat;
+        this.lon = lon;
     }
 }

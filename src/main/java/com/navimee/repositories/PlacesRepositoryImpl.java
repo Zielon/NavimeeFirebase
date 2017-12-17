@@ -48,7 +48,7 @@ public class PlacesRepositoryImpl implements PlacesRepository {
     @Override
     public Future setFacebookPlaces(List<FbPlace> places, String city) {
         InMemoryRepository.SET(city, places, FbPlace.class);
-        return add.toCollection(database.getCollection(FACEBOOK_PLACES, city), places);
+        return add.toCollection(database.getCollection(FACEBOOK_PLACES, city), places, city);
     }
 
     @Override

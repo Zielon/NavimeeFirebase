@@ -13,7 +13,7 @@ public interface EventsRepository {
     List<HotspotEvent> getEventsBefore(int timeToEnd);
 
     // SETTERS
-    Future setEvents(List<HotspotEvent> events);
+    Future setEvents(List<HotspotEvent> events, String city);
 
     Future removeEvents();
 }

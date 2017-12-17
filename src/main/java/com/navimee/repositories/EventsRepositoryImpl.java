@@ -61,8 +61,8 @@ public class EventsRepositoryImpl implements EventsRepository {
     }
 
     @Override
-    public Future setEvents(List<HotspotEvent> events) {
-        return dbAdd.toCollection(database.getHotspot(), events);
+    public Future setEvents(List<HotspotEvent> events, String city) {
+        return dbAdd.toCollection(database.getHotspot(), events, city);
     }
 
     @Override

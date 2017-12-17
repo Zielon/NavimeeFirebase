@@ -27,7 +27,7 @@ public class PhqEventDto implements Dto {
 
     @JsonProperty("location")
     private void getGeoPoint(List<Double> list) {
-        geoPoint = new GeoPoint(list.get(0), list.get(1));
+        geoPoint = new GeoPoint(list.get(1), list.get(0));
     }
 
     public String getId() {

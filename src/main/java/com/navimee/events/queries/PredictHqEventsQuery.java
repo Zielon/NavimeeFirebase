@@ -36,16 +36,12 @@ public class PredictHqEventsQuery extends Query<List<PhqEventDto>, PredictHqConf
         DateTimeFormatter dtf = DateTimeFormat.forPattern("yyyy-MM-dd");
 
         URI uri = null;
-        String within = params.coordinates.stream()
-                .map(c -> String.format("1km@%f,%f", c.getLatitude(), c.getLongitude()))
-                .collect(Collectors.joining("+"));
-
         try {
             URIBuilder builder = new URIBuilder(configuration.apiUrl + "/v1/events/");
             builder.setParameter("start.gte", dtf.print(warsawCurrent));
             builder.setParameter("start.lte", dtf.print(warsawLater));
             builder.setParameter("start.tz", "Europe/Warsaw");
-            builder.setParameter("within", within);
+            builder.setParameter("within", String.format("2km@%f,%f", params.lat, params.lon));
             uri = builder.build();
         } catch (URISyntaxException e) {
             e.printStackTrace();

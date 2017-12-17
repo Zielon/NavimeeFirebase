@@ -30,26 +30,36 @@ public class DbAdd {
     @Autowired
     ExecutorService executorService;
 
+    public <T extends Entity> Future toCollection(CollectionReference collectionReference, List<T> entities, String city) {
+        Map<String, T> entityMap = entities.stream()
+                .filter(distinctByKey(Entity::getId))
+                .collect(Collectors.toMap(Entity::getId, Function.identity()));
+
+        String extraInfo = entities.get(0) instanceof HotspotEvent ? String.format(" %s -> %s", city, ((HotspotEvent)entities.get(0)).getSource()) : "";
+        return toCollection(collectionReference, entityMap, AdditionEnum.OVERWRITE, extraInfo);
+    }
+
     public <T extends Entity> Future toCollection(CollectionReference collectionReference, List<T> entities) {
         Map<String, T> entityMap = entities.stream()
                 .filter(distinctByKey(Entity::getId))
                 .collect(Collectors.toMap(Entity::getId, Function.identity()));
-        return toCollection(collectionReference, entityMap, AdditionEnum.OVERWRITE);
+
+        return toCollection(collectionReference, entityMap, AdditionEnum.OVERWRITE, "");
     }
 
     public <T extends Entity> Future toCollection(CollectionReference collectionReference, T entity) {
         Map<String, T> entityMap = new HashMap<>();
         entityMap.put(entity.getId(), entity);
-        return toCollection(collectionReference, entityMap, AdditionEnum.OVERWRITE);
+        return toCollection(collectionReference, entityMap, AdditionEnum.OVERWRITE, "");
     }
 
     public <T extends Entity> Future toCollection(CollectionReference collectionReference, T entity, AdditionEnum option) {
         Map<String, T> entityMap = new HashMap<>();
         entityMap.put(entity.getId(), entity);
-        return toCollection(collectionReference, entityMap, option);
+        return toCollection(collectionReference, entityMap, option, "");
     }
 
-    private <T extends Entity> Future toCollection(CollectionReference collectionReference, Map<String, T> entities, AdditionEnum options) {
+    private <T extends Entity> Future toCollection(CollectionReference collectionReference, Map<String, T> entities, AdditionEnum options, String extraInfo) {
         return executorService.submit(() -> {
             if (entities.size() == 0) return;
             T entity = null;
@@ -64,8 +74,6 @@ public class DbAdd {
                 }
                 // Wait for all tasks to finish.
                 waitForFutures(executorService, tasks);
-
-                String extraInfo = entity instanceof HotspotEvent ? " -> " + ((HotspotEvent)entity).getSource().toString() : "";
 
                 Logger.LOG(new Log(LogEnum.ADDITION,
                         String.format("%s | [Type: %s%s]", collectionReference.getPath(), entity.getClass().getSimpleName(), extraInfo),

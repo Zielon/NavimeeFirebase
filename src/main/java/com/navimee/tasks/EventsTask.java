@@ -13,6 +13,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 
@@ -30,17 +31,19 @@ public class EventsTask {
     @Autowired
     ExecutorService executorService;
 
-    public void executeEventsTask() throws InterruptedException {
-        List<Future> futures = new ArrayList<>();
+    public void executeEventsTask() throws InterruptedException, ExecutionException {
 
         for (City city : placesRepository.getAvailableCities()) {
-            futures.add(eventsService.saveFacebookEvents(city.getName()));
-            futures.add(eventsService.savePredictHqEvents(city.getName()));
+            eventsService.saveFacebookEvents(city.getName());
+        }
+
+        for (City city : placesRepository.getAvailableCities()) {
+            eventsService.savePredictHqEvents(city.getName()).get();
         }
     }
 
     //@Scheduled(fixedDelay = EVENTS)
-    public void task() throws InterruptedException {
+    public void task() throws InterruptedException, ExecutionException {
         this.executeEventsTask();
     }
 }
