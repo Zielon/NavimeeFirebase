@@ -7,18 +7,20 @@ import com.navimee.models.entities.Log;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.concurrent.ExecutionException;
+
 @Component
 public class NotificationsTask {
 
     @Autowired
     NotificationsService notifications;
 
-    public void executeSendNotification() throws InterruptedException {
-        notifications.send();
+    public void executeSendNotification() throws InterruptedException, ExecutionException {
+        notifications.send().get();
     }
 
     //@Scheduled(fixedDelay = NOTIFICATIONS)
-    public void task() throws InterruptedException {
+    public void task() throws InterruptedException, ExecutionException {
         this.executeSendNotification();
     }
 }

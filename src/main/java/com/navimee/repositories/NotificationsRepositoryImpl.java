@@ -9,6 +9,7 @@ import com.navimee.models.entities.User;
 import org.joda.time.DateTimeZone;
 import org.joda.time.LocalDateTime;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -16,6 +17,7 @@ import java.util.List;
 
 import static com.navimee.firestore.Paths.NOTIFICATIONS_COLLECTION;
 
+@Repository
 public class NotificationsRepositoryImpl implements NotificationsRepository {
 
     @Autowired
