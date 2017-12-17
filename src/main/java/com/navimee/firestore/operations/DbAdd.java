@@ -7,7 +7,7 @@ import com.navimee.firestore.operations.enums.AdditionEnum;
 import com.navimee.logger.LogEnum;
 import com.navimee.logger.Logger;
 import com.navimee.models.entities.Entity;
-import com.navimee.models.entities.HotspotEvent;
+import com.navimee.models.entities.Event;
 import com.navimee.models.entities.Log;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -35,7 +35,7 @@ public class DbAdd {
                 .filter(distinctByKey(Entity::getId))
                 .collect(Collectors.toMap(Entity::getId, Function.identity()));
 
-        String extraInfo = entities.get(0) instanceof HotspotEvent ? String.format(" %s -> %s", city, ((HotspotEvent)entities.get(0)).getSource()) : "";
+        String extraInfo = entities.get(0) instanceof Event ? String.format(" %s -> %s", city, ((Event)entities.get(0)).getSource()) : "";
         return toCollection(collectionReference, entityMap, AdditionEnum.OVERWRITE, extraInfo);
     }
 

@@ -23,8 +23,7 @@ public class DetailsTask {
 
     public void executeDetailsTask() throws InterruptedException, ExecutionException {
         for (City city : placesRepository.getAvailableCities()) {
-            if(city.getName().equals("WARSZAWA"))
-                placesService.saveFoursquarePlacesDetails(city.getName()).get();
+            placesService.saveFoursquarePlacesDetails(city.getName()).get();
         }
     }
 

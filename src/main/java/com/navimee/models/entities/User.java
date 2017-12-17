@@ -11,7 +11,7 @@ public class User implements Entity {
     private String email;
     private boolean bigEventsNotification;
     private boolean dayScheduleNotification;
-    private List<HotspotEvent> events;
+    private List<Event> events;
 
     public String getEmail() {
         return email;
@@ -29,11 +29,11 @@ public class User implements Entity {
         this.token = token;
     }
 
-    public List<HotspotEvent> getEvents() {
+    public List<Event> getEvents() {
         return events;
     }
 
-    public void setEvents(List<HotspotEvent> events) {
+    public void setEvents(List<Event> events) {
         this.events = events;
     }
 
