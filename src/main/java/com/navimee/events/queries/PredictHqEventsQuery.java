@@ -33,7 +33,7 @@ public class PredictHqEventsQuery extends Query<List<PhqEventDto>, PredictHqConf
 
         LocalDateTime warsawCurrent = LocalDateTime.now(DateTimeZone.forID("Europe/Warsaw"));
         LocalDateTime warsawLater = warsawCurrent.plusDays(14);
-        DateTimeFormatter dtf = DateTimeFormat.forPattern("yyyyddMM");
+        DateTimeFormatter dtf = DateTimeFormat.forPattern("yyyy-MM-dd");
 
         URI uri = null;
         String within = params.coordinates.stream()
@@ -42,9 +42,9 @@ public class PredictHqEventsQuery extends Query<List<PhqEventDto>, PredictHqConf
 
         try {
             URIBuilder builder = new URIBuilder(configuration.apiUrl + "/v1/events/");
-            builder.setParameter("date.gte", dtf.print(warsawCurrent));
-            builder.setParameter("date.lte", dtf.print(warsawLater));
-            builder.setParameter("date.tz", "Europe/Warsaw");
+            builder.setParameter("start.gte", dtf.print(warsawCurrent));
+            builder.setParameter("start.lte", dtf.print(warsawLater));
+            builder.setParameter("start.tz", "Europe/Warsaw");
             builder.setParameter("within", within);
             uri = builder.build();
         } catch (URISyntaxException e) {
