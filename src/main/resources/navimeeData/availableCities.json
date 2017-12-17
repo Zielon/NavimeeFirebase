@@ -1,8 +1,10 @@
 {
   "GDANSK" : {"id": "2261011", "name" : "GDANSK"},
-  "WARSAW" : {"id": "1465011", "name" : "WARSZAWA"},
   "SOPOT" : {"id": "2264011", "name" : "SOPOT"},
-  "WROCLAW" : {"id": "0264011", "name" : "WROCLAW"},
   "GDYNIA" : {"id": "2262011", "name" : "GDYNIA"},
-  "KRAKOW" : {"id": "1261011", "name" : "KRAKOW"}
+  "WARSAW" : {"id": "1465011", "name" : "WARSZAWA"},
+  "WROCLAW" : {"id": "0264011", "name" : "WROCLAW"},
+  "KRAKOW" : {"id": "1261011", "name" : "KRAKOW"},
+  "POZNAN" : {"id": "3064011", "name" : "POZNAN"},
+  "LODZ" :  {"id": "1061011", "name" : "LODZ"}
 }
