@@ -21,7 +21,7 @@ public class DetailsTask {
 
     public void executeDetailsTask() throws InterruptedException {
         for (City city : placesRepository.getAvailableCities()) {
-            placesService.saveFoursquarePlacesDetails(city.getName()).wait();
+            placesService.saveFoursquarePlacesDetails(city.getName());
             Thread.sleep(1000 * 60 * 75);
         }
     }
