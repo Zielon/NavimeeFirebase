@@ -30,8 +30,6 @@ public class PlacesTask {
     @Autowired
     FirestoreRepository firestoreRepository;
 
-    @Autowired
-    ExecutorService executorService;
 
     public void executePlacesTask() throws ExecutionException, InterruptedException {
 
@@ -44,16 +42,14 @@ public class PlacesTask {
         placesRepository.setAvailableCities(cities).get();
 
         firestoreRepository.deleteCollection(COORDINATES_COLLECTION);
-        //firestoreRepository.deleteCollection(FOURSQUARE_PLACES_COLLECTION);
-        //firestoreRepository.deleteCollection(FACEBOOK_PLACES_COLLECTION);
+        firestoreRepository.deleteCollection(FOURSQUARE_PLACES_COLLECTION);
+        firestoreRepository.deleteCollection(FACEBOOK_PLACES_COLLECTION);
 
         placesRepository.setCoordinates(coordinates).get();*/
 
-        List<Future> futures = new ArrayList<>();
-
         for (City city : placesRepository.getAvailableCities()) {
-            futures.add(placesService.saveFoursquarePlaces(city.getName()));
-            futures.add(placesService.saveFacebookPlaces(city.getName()));
+            placesService.saveFacebookPlaces(city.getName()).get();
+            placesService.saveFoursquarePlaces(city.getName()).get();
         }
     }
 

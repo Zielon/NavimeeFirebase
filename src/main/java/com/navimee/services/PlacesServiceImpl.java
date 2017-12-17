@@ -74,7 +74,7 @@ public class PlacesServiceImpl implements PlacesService {
     @Override
     public Future saveFacebookPlaces(String city) {
         return executorService.submit(() -> {
-            Logger.LOG(new Log(LogEnum.TASK, "Foursquare places update"));
+            Logger.LOG(new Log(LogEnum.TASK, "Facebook places update"));
             List<Coordinate> coordinates = placesRepository.getCoordinates(city);
 
             // DbGet data from the external facebook API
