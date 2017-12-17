@@ -39,7 +39,7 @@ public class EventsTask {
         }
     }
 
-    @Scheduled(fixedDelay = EVENTS)
+    //@Scheduled(fixedDelay = EVENTS)
     public void task() throws InterruptedException {
         this.executeEventsTask();
     }

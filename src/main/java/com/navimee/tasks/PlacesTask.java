@@ -59,7 +59,7 @@ public class PlacesTask {
         }
     }
 
-    @Scheduled(cron = "0 0 1 2 * ?")
+    //@Scheduled(cron = "0 0 1 2 * ?")
     public void task() throws ExecutionException, InterruptedException {
         this.executePlacesTask();
     }
