@@ -9,6 +9,7 @@ import com.navimee.models.dto.geocoding.GooglePlaceDto;
 import com.navimee.models.entities.Event;
 import com.navimee.models.entities.Log;
 import com.navimee.models.entities.coordinates.Coordinate;
+import com.navimee.models.entities.places.Place;
 import com.navimee.places.googleGeocoding.enums.GeoType;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
@@ -44,11 +45,15 @@ public class EventsHelpers {
     public static Function<Event, Event> setAddress(PlacesService placesService){
         return event -> {
             try {
-                GooglePlaceDto place = placesService.downloadReverseGeocoding(new Coordinate(event.getGeoPoint().getLatitude(), event.getGeoPoint().getLongitude())).get();
-                event.getPlace().setCity(getType(place, GeoType.administrative_area_level_2));
-                event.getPlace().setAddress(getType(place, GeoType.route) + " " + getType(place, GeoType.street_number));
-                event.getPlace().setId("");
-                event.getPlace().setName("");
+                GooglePlaceDto googlePlace = placesService.downloadReverseGeocoding(new Coordinate(event.getGeoPoint().getLatitude(), event.getGeoPoint().getLongitude())).get();
+                Place place = new Place();
+
+                place.setCity(getType(googlePlace, GeoType.administrative_area_level_2));
+                place.setAddress(getType(googlePlace, GeoType.route) + " " + getType(googlePlace, GeoType.street_number));
+                place.setId("");
+                place.setName("");
+
+                event.setPlace(place);
             } catch (Exception e) {
                 e.printStackTrace();
             }
