@@ -10,6 +10,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
+import java.util.concurrent.ExecutionException;
+
 @Component
 public class DetailsTask {
 
@@ -19,14 +21,15 @@ public class DetailsTask {
     @Autowired
     PlacesService placesService;
 
-    public void executeDetailsTask() throws InterruptedException {
+    public void executeDetailsTask() throws InterruptedException, ExecutionException {
         for (City city : placesRepository.getAvailableCities()) {
-            placesService.saveFoursquarePlacesDetails(city.getName());
+            if(city.getName().equals("WARSZAWA"))
+                placesService.saveFoursquarePlacesDetails(city.getName()).get();
         }
     }
 
     //@Scheduled(cron = "0 0 1 1 * ?")
-    public void task() throws InterruptedException {
+    public void task() throws InterruptedException, ExecutionException {
         this.executeDetailsTask();
     }
 }
