@@ -28,16 +28,10 @@ public class EventsTask {
     @Autowired
     EventsService eventsService;
 
-    @Autowired
-    ExecutorService executorService;
-
     public void executeEventsTask() throws InterruptedException, ExecutionException {
 
         for (City city : placesRepository.getAvailableCities()) {
-            eventsService.saveFacebookEvents(city.getName());
-        }
-
-        for (City city : placesRepository.getAvailableCities()) {
+            eventsService.saveFacebookEvents(city.getName()).get();
             eventsService.savePredictHqEvents(city.getName()).get();
         }
     }

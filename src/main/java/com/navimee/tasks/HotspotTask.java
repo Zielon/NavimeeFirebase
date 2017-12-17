@@ -29,9 +29,6 @@ public class HotspotTask {
     @Autowired
     PlacesRepository placesRepository;
 
-    @Autowired
-    ExecutorService executorService;
-
     public void executeHotspotTask() throws InterruptedException, ExecutionException {
         firebaseRepository.deleteCurrentHotspot();
 

@@ -17,11 +17,15 @@ import de.bytefish.fcmjava.client.settings.PropertiesBasedSettings;
 import de.bytefish.fcmjava.model.options.FcmMessageOptions;
 import de.bytefish.fcmjava.requests.data.DataUnicastMessage;
 import de.bytefish.fcmjava.requests.notification.NotificationPayload;
+import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.joda.time.LocalDateTime;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.text.SimpleDateFormat;
 import java.time.Duration;
 import java.util.*;
 import java.util.concurrent.ExecutorService;
@@ -47,6 +51,7 @@ public class NotificationsServiceImpl implements NotificationsService {
             Logger.LOG(new Log(LogEnum.TASK, "Send notifications"));
 
             List<Notification> notifications = notificationsRepository.getAvailable();
+            DateTimeFormatter dtf = DateTimeFormat.forPattern("dd/MM HH:mm:ss");
 
             Properties properties = new Properties();
             properties.setProperty("fcm.api.url", googleConfiguration.fmcApiUrl);
@@ -58,11 +63,12 @@ public class NotificationsServiceImpl implements NotificationsService {
                     FcmMessageOptions options = FcmMessageOptions.builder().setTimeToLive(Duration.ofHours(1)).build();
 
                     notifications.forEach(notification -> {
+                        DateTime endTime = new DateTime(notification.getEndTime());
                         NotificationPayload payload =
                                 NotificationPayload.builder()
                                         .setBody(notification.getTitle())
                                         .setTitle("Event")
-                                        .setTag("The events ends at " + notification.getEndTime())
+                                        .setTag("The event ends at " + dtf.print(endTime))
                                         .build();
 
                         Map<String, FbEvent> data = new HashMap<>();
