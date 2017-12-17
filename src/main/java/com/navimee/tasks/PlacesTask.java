@@ -42,8 +42,8 @@ public class PlacesTask {
         placesRepository.setAvailableCities(cities).get();
 
         firestoreRepository.deleteCollection(COORDINATES_COLLECTION);
-        //firestoreRepository.deleteCollection(FOURSQUARE_PLACES_COLLECTION);
-        //firestoreRepository.deleteCollection(FACEBOOK_PLACES_COLLECTION);
+        firestoreRepository.deleteCollection(FOURSQUARE_PLACES_COLLECTION);
+        firestoreRepository.deleteCollection(FACEBOOK_PLACES_COLLECTION);
 
         placesRepository.setCoordinates(coordinates).get();*/
 
