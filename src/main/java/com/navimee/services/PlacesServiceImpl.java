@@ -11,6 +11,7 @@ import com.navimee.events.queries.params.PredictHqEventsParams;
 import com.navimee.general.Collections;
 import com.navimee.logger.LogEnum;
 import com.navimee.logger.Logger;
+import com.navimee.models.dto.events.PhqEventDto;
 import com.navimee.models.dto.geocoding.GooglePlaceDto;
 import com.navimee.models.dto.placeDetails.FsPlaceDetailsDto;
 import com.navimee.models.dto.places.facebook.FbPlaceDto;
@@ -133,17 +134,20 @@ public class PlacesServiceImpl implements PlacesService {
                     new FoursquareDetailsQuery(foursquareConfiguration, executorService, httpClient);
 
             List<Callable<FsPlaceDetailsDto>> placesTasks = new ArrayList<>();
-            // The hour rate limit for Foursquare is 5000 requests
+            List<FsPlaceDetailsDto> placesDto = new ArrayList<>();
+
             Collections.spliter(places, 4000).forEach(subPlaces -> {
                 try {
                     subPlaces.forEach(p -> placesTasks.add(placesQuery.execute(new PlaceDetailsParams("venues", p.getId()))));
-                    TimeUnit.MINUTES.sleep(60);
+                    placesDto.addAll(waitForSingleTask(executorService, placesTasks));
+                    TimeUnit.HOURS.sleep(1);
+                    placesTasks.clear();
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
             });
 
-            List<FsPlaceDetails> entitiesDetails = waitForSingleTask(executorService, placesTasks).parallelStream()
+            List<FsPlaceDetails> entitiesDetails = placesDto.parallelStream()
                     .filter(Objects::nonNull)
                     .map(dto -> modelMapper.map(dto, FsPlaceDetails.class))
                     .filter(distinctByKey(FsPlaceDetails::getId))
