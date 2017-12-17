@@ -1,5 +1,8 @@
 {
   "GDANSK" : {"id": "2261011", "name" : "GDANSK"},
   "WARSAW" : {"id": "1465011", "name" : "WARSZAWA"},
-  "SOPOT" : {"id": "2264011", "name" : "SOPOT"}
+  "SOPOT" : {"id": "2264011", "name" : "SOPOT"},
+  "WROCLAW" : {"id": "0264011", "name" : "WROCLAW"},
+  "GDYNIA" : {"id": "2262011", "name" : "GDYNIA"},
+  "KRAKOW" : {"id": "1261011", "name" : "KRAKOW"}
 }

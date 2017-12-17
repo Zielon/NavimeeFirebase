@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 
 import static com.navimee.tasks.TasksFixedTimes.HOTSPOT;
@@ -31,22 +32,22 @@ public class HotspotTask {
     @Autowired
     ExecutorService executorService;
 
-    public void executeHotspotTask() throws InterruptedException {
+    public void executeHotspotTask() throws InterruptedException, ExecutionException {
         firebaseRepository.deleteCurrentHotspot();
 
         firebaseRepository.filterAndTransfer(
                 placesRepository.getFoursquarePlacesDetails(),
                 HotspotFilters.filterFsPopular(),
-                fsPlaceDetails -> new GeoLocation(fsPlaceDetails.getLocationLat(), fsPlaceDetails.getLocationLng()));
+                fsPlaceDetails -> new GeoLocation(fsPlaceDetails.getLocationLat(), fsPlaceDetails.getLocationLng())).get();
 
         firebaseRepository.filterAndTransfer(
                 eventsRepository.getEventsBefore(60 * 2),
                 event -> true,
-                event -> new GeoLocation(event.getGeoPoint().getLatitude(), event.getGeoPoint().getLongitude()));
+                event -> new GeoLocation(event.getGeoPoint().getLatitude(), event.getGeoPoint().getLongitude())).get();
     }
 
     //@Scheduled(fixedDelay = HOTSPOT)
-    public void task() throws InterruptedException {
+    public void task() throws InterruptedException, ExecutionException {
         this.executeHotspotTask();
     }
 }
