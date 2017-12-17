@@ -10,7 +10,7 @@ import com.navimee.firestore.operations.DbDelete;
 import com.navimee.firestore.operations.DbGet;
 import com.navimee.logger.LogEnum;
 import com.navimee.logger.Logger;
-import com.navimee.models.entities.HotspotEvent;
+import com.navimee.models.entities.Event;
 import com.navimee.models.entities.Log;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
@@ -45,23 +45,23 @@ public class EventsRepositoryImpl implements EventsRepository {
     DbDelete delete;
 
     @Override
-    public List<HotspotEvent> getEvents() {
-        return dbGet.fromCollection(database.getHotspot().whereEqualTo("hotspotType", HotspotType.EVENT), HotspotEvent.class);
+    public List<Event> getEvents() {
+        return dbGet.fromCollection(database.getHotspot().whereEqualTo("hotspotType", HotspotType.EVENT), Event.class);
     }
 
     @Override
-    public List<HotspotEvent> getEventsBefore(int timeToEnd) {
+    public List<Event> getEventsBefore(int timeToEnd) {
         DateTime warsaw = LocalDateTime.now(DateTimeZone.forID("Europe/Warsaw")).toDateTime();
         return dbGet.fromCollection(
                 database.getHotspot()
                         .whereEqualTo("hotspotType", HotspotType.EVENT)
                         .whereGreaterThanOrEqualTo("endTime", warsaw.toDate())
                         .whereLessThanOrEqualTo("endTime", warsaw.plusMinutes(timeToEnd).toDate())
-                , HotspotEvent.class);
+                , Event.class);
     }
 
     @Override
-    public Future setEvents(List<HotspotEvent> events, String city) {
+    public Future setEvents(List<Event> events, String city) {
         return dbAdd.toCollection(database.getHotspot(), events, city);
     }
 
@@ -73,7 +73,7 @@ public class EventsRepositoryImpl implements EventsRepository {
             Date warsaw = LocalDateTime.now(DateTimeZone.forID("Europe/Warsaw")).toDate();
             Query query = database.getHotspot().whereLessThan("endTime", warsaw);
             delete.document(query);
-            firebaseRepository.deleteEvents(dbGet.fromCollection(query, HotspotEvent.class));
+            firebaseRepository.deleteEvents(dbGet.fromCollection(query, Event.class));
         });
     }
 }

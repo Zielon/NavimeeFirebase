@@ -20,7 +20,7 @@ import com.navimee.models.bo.FbEvent;
 import com.navimee.models.bo.PhqEvent;
 import com.navimee.models.dto.events.FbEventDto;
 import com.navimee.models.dto.events.PhqEventDto;
-import com.navimee.models.entities.HotspotEvent;
+import com.navimee.models.entities.Event;
 import com.navimee.models.entities.Log;
 import com.navimee.models.entities.coordinates.Coordinate;
 import com.navimee.models.entities.places.facebook.FbPlace;
@@ -81,13 +81,13 @@ public class EventsServiceImpl implements EventsService {
             FacebookEventsQuery query = new FacebookEventsQuery(facebookConfiguration, executorService, httpClient);
             Collections.spliter(fbPlaces, 50).forEach(places -> events.add(query.execute(new FacebookEventsParams(places))));
 
-            List<HotspotEvent> entities = waitForTasks(executorService, events)
+            List<Event> entities = waitForTasks(executorService, events)
                     .parallelStream()
                     .filter(Objects::nonNull)
                     .map(dto -> modelMapper.map(dto, FbEvent.class))
                     .filter(distinctByKey(FbEvent::getId))
-                    .filter(EventsHelpers.getCompelmentFunction(placesService)::apply)    // Complement event places
-                    .map(dto -> modelMapper.map(dto, HotspotEvent.class))
+                    .filter(EventsHelpers.getCompelmentFunction(placesService)::apply)    // Check the right place
+                    .map(dto -> modelMapper.map(dto, Event.class))
                     .collect(toList());
 
             eventsRepository.setEvents(entities, city);
@@ -105,7 +105,7 @@ public class EventsServiceImpl implements EventsService {
             List<PhqEventDto> eventsDto = new ArrayList<>();
 
             PredictHqEventsQuery query = new PredictHqEventsQuery(predictHqConfiguration, executorService, httpClient);
-            Collections.spliter(coordinates, 100).forEach(coods -> {
+            Collections.spliter(coordinates, 80).forEach(coods -> {
                 try {
                     coods.forEach(c -> events.add(query.execute(new PredictHqEventsParams(c.getLatitude(), c.getLongitude()))));
                     eventsDto.addAll(waitForTasks(executorService, events));
@@ -116,12 +116,13 @@ public class EventsServiceImpl implements EventsService {
                 }
             });
 
-            List<HotspotEvent> entities = eventsDto
+            List<Event> entities = eventsDto
                     .parallelStream()
                     .filter(Objects::nonNull)
                     .map(dto -> modelMapper.map(dto, PhqEvent.class))
                     .filter(distinctByKey(PhqEvent::getId))
-                    .map(dto -> modelMapper.map(dto, HotspotEvent.class))
+                    .map(dto -> modelMapper.map(dto, Event.class))
+                    .map(event -> EventsHelpers.setAddress(placesService).apply(event)) // Set address for PredictHQ
                     .collect(toList());
 
             eventsRepository.setEvents(entities, city);

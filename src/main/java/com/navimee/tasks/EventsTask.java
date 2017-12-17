@@ -34,12 +34,11 @@ public class EventsTask {
     public void executeEventsTask() throws InterruptedException, ExecutionException {
 
         for (City city : placesRepository.getAvailableCities()) {
-            //eventsService.saveFacebookEvents(city.getName());
+            eventsService.saveFacebookEvents(city.getName());
         }
 
         for (City city : placesRepository.getAvailableCities()) {
-            if(city.getName().equals("WARSZAWA"))
-                eventsService.savePredictHqEvents(city.getName()).get();
+            eventsService.savePredictHqEvents(city.getName()).get();
         }
     }
 

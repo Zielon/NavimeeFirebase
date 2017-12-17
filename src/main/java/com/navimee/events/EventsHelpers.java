@@ -6,6 +6,7 @@ import com.navimee.logger.LogEnum;
 import com.navimee.logger.Logger;
 import com.navimee.models.bo.FbEvent;
 import com.navimee.models.dto.geocoding.GooglePlaceDto;
+import com.navimee.models.entities.Event;
 import com.navimee.models.entities.Log;
 import com.navimee.models.entities.coordinates.Coordinate;
 import com.navimee.places.googleGeocoding.enums.GeoType;
@@ -13,6 +14,7 @@ import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.joda.time.LocalDateTime;
 
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.function.Function;
 
@@ -20,10 +22,8 @@ import static com.navimee.places.googleGeocoding.GoogleGeoTypeGetter.getType;
 
 public class EventsHelpers {
 
-    public static Function<FbEvent, Boolean> getCompelmentFunction(PlacesService service) {
-        PlacesService placesService = service;
+    public static Function<FbEvent, Boolean> getCompelmentFunction(PlacesService placesService) {
         return event -> {
-
             if (event.getPlace() == null || event.getPlace().getGeoPoint() == null) return false;
             if (event.getSearchPlace() == null || event.getSearchPlace().getGeoPoint() == null) return false;
 
@@ -38,6 +38,21 @@ public class EventsHelpers {
                             event.getSearchPlace().getGeoPoint().getLongitude()));
 
             return complement(event, place, searchPlace);
+        };
+    }
+
+    public static Function<Event, Event> setAddress(PlacesService placesService){
+        return event -> {
+            try {
+                GooglePlaceDto place = placesService.downloadReverseGeocoding(new Coordinate(event.getGeoPoint().getLatitude(), event.getGeoPoint().getLongitude())).get();
+                event.getPlace().setCity(getType(place, GeoType.administrative_area_level_2));
+                event.getPlace().setAddress(getType(place, GeoType.route) + " " + getType(place, GeoType.street_number));
+                event.getPlace().setId("");
+                event.getPlace().setName("");
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return event;
         };
     }
 
@@ -83,15 +98,6 @@ public class EventsHelpers {
         } catch (Exception e) {
             Logger.LOG(new Log(LogEnum.EXCEPTION, e));
         }
-
-        return false;
-    }
-
-
-    public static boolean sendNotification(FbEvent event) {
-        DateTimeZone zone = DateTimeZone.forID("Europe/Warsaw");
-        DateTime warsaw = LocalDateTime.now(zone).toDateTime();
-        DateTime eventTime = new DateTime(event.getStartTime());
 
         return false;
     }

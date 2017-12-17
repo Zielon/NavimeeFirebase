@@ -1,17 +1,17 @@
 package com.navimee.configuration.mappers;
 
 import com.navimee.models.bo.PhqEvent;
-import com.navimee.models.entities.HotspotEvent;
+import com.navimee.models.entities.Event;
 import org.modelmapper.Converter;
 import org.modelmapper.spi.MappingContext;
 
 public class PhqEventTransformer {
 
-    public static Converter<PhqEvent, HotspotEvent> get() {
-        return new Converter<PhqEvent, HotspotEvent>() {
-            public HotspotEvent convert(MappingContext<PhqEvent, HotspotEvent> context) {
+    public static Converter<PhqEvent, Event> get() {
+        return new Converter<PhqEvent, Event>() {
+            public Event convert(MappingContext<PhqEvent, Event> context) {
                 PhqEvent bo = context.getSource();
-                HotspotEvent entity = context.getDestination();
+                Event entity = context.getDestination();
 
                 entity.setId(bo.getId());
                 entity.setTitle(bo.getTitle());

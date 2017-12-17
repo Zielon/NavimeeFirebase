@@ -4,11 +4,12 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.cloud.firestore.GeoPoint;
 import com.navimee.enums.EventType;
 import com.navimee.enums.HotspotType;
+import com.navimee.models.entities.places.Place;
 
 import java.util.Date;
 import java.util.Map;
 
-public class HotspotEvent implements Entity {
+public class Event implements Entity {
     private String id;
     private String title;
     private String description;
@@ -20,6 +21,7 @@ public class HotspotEvent implements Entity {
     private Date endTime;
     private HotspotType hotspotType;
     private EventType source;
+    private Place place;
 
     @JsonProperty("geoPoint")
     private void getGeoPoint(Map<String, Double> json) {
@@ -113,5 +115,13 @@ public class HotspotEvent implements Entity {
 
     public void setSource(EventType source) {
         this.source = source;
+    }
+
+    public Place getPlace() {
+        return place;
+    }
+
+    public void setPlace(Place place) {
+        this.place = place;
     }
 }

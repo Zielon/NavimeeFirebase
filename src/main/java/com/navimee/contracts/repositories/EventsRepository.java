@@ -1,6 +1,6 @@
 package com.navimee.contracts.repositories;
 
-import com.navimee.models.entities.HotspotEvent;
+import com.navimee.models.entities.Event;
 
 import java.util.List;
 import java.util.concurrent.Future;
@@ -8,12 +8,12 @@ import java.util.concurrent.Future;
 public interface EventsRepository {
 
     // GETTERS
-    List<HotspotEvent> getEvents();
+    List<Event> getEvents();
 
-    List<HotspotEvent> getEventsBefore(int timeToEnd);
+    List<Event> getEventsBefore(int timeToEnd);
 
     // SETTERS
-    Future setEvents(List<HotspotEvent> events, String city);
+    Future setEvents(List<Event> events, String city);
 
     Future removeEvents();
 }
