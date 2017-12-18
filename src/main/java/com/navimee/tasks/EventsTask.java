@@ -22,7 +22,7 @@ public class EventsTask {
 
         for (City city : placesRepository.getAvailableCities()) {
             eventsService.saveFacebookEvents(city.getName()).get();
-            //eventsService.savePredictHqEvents(city.getName()).get();
+            eventsService.savePredictHqEvents(city.getName()).get();
         }
     }
 

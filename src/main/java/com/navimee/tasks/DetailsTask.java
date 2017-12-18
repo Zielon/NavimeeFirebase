@@ -19,7 +19,6 @@ public class DetailsTask {
 
     public void executeDetailsTask() throws InterruptedException, ExecutionException {
         for (City city : placesRepository.getAvailableCities()) {
-            if(city.getName().equals("GDANSK") || city.getName().equals("SOPOT"))
             placesService.saveFoursquarePlacesDetails(city.getName()).get();
         }
     }

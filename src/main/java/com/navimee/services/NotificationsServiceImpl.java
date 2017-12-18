@@ -57,15 +57,18 @@ public class NotificationsServiceImpl implements NotificationsService {
                     FcmMessageOptions options = FcmMessageOptions.builder().setTimeToLive(Duration.ofHours(1)).build();
 
                     notifications.forEach(notification -> {
-                        DateTime endTime = new DateTime(notification.getEndTime());
                         NotificationPayload payload =
                                 NotificationPayload.builder()
                                         .setBody(notification.getTitle())
                                         .setTitle("Event")
-                                        .setTag("The event ends at " + dtf.print(endTime))
+                                        .setTag("Less than 30 minutes remaining to the event ending!")
                                         .build();
 
-                        Map<String, FbEvent> data = new HashMap<>();
+                        Map<String, Object> data = new HashMap<>();
+
+                        data.put("endTime", notification.getEndTime());
+                        data.put("startTime", notification.getStartTime());
+                        data.put("type", notification.getType());
 
                         DataUnicastMessage message = new DataUnicastMessage(options, notification.getToken(), data, payload);
                         client.send(message).getResults();
