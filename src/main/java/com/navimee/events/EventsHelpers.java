@@ -11,11 +11,7 @@ import com.navimee.models.entities.Log;
 import com.navimee.models.entities.coordinates.Coordinate;
 import com.navimee.models.entities.places.Place;
 import com.navimee.places.googleGeocoding.enums.GeoType;
-import org.joda.time.DateTime;
-import org.joda.time.DateTimeZone;
-import org.joda.time.LocalDateTime;
 
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.function.Function;
 
@@ -42,7 +38,7 @@ public class EventsHelpers {
         };
     }
 
-    public static Function<Event, Event> setAddress(PlacesService placesService){
+    public static Function<Event, Event> setAddress(PlacesService placesService) {
         return event -> {
             try {
                 GooglePlaceDto googlePlace = placesService.downloadReverseGeocoding(new Coordinate(event.getGeoPoint().getLatitude(), event.getGeoPoint().getLongitude())).get();

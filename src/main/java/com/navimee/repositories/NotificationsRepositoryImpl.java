@@ -6,8 +6,8 @@ import com.navimee.contracts.repositories.UsersRepository;
 import com.navimee.firestore.operations.DbGet;
 import com.navimee.models.entities.Notification;
 import com.navimee.models.entities.User;
+import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
-import org.joda.time.LocalDateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -31,7 +31,7 @@ public class NotificationsRepositoryImpl implements NotificationsRepository {
 
     @Override
     public List<Notification> getAvailable() {
-        Date warsaw = LocalDateTime.now(DateTimeZone.forID("Europe/Warsaw")).plusMinutes(30).toDate();
+        Date warsaw = DateTime.now(DateTimeZone.UTC).plusMinutes(30).toDate();
 
         List<Notification> uncheckedNotifications = dbGet.fromCollection(
                 db.collection(NOTIFICATIONS_COLLECTION)
@@ -41,8 +41,10 @@ public class NotificationsRepositoryImpl implements NotificationsRepository {
 
         uncheckedNotifications.forEach(notification -> {
             User user = usersRepository.getUser(notification.getUserId());
-            if(user.isDayScheduleNotification())
+            if (user.isDayScheduleNotification()) {
+                notification.setToken(user.getToken());
                 notifications.add(notification);
+            }
         });
 
         return notifications;

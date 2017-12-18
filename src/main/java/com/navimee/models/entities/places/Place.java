@@ -1,7 +1,9 @@
 package com.navimee.models.entities.places;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.navimee.models.entities.Entity;
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Place implements Entity {
     private String name;
     private String id;

@@ -9,8 +9,8 @@ import com.navimee.models.entities.places.Place;
 import com.navimee.models.entities.places.facebook.FbPlace;
 import com.navimee.queries.Query;
 import org.apache.http.client.utils.URIBuilder;
+import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
-import org.joda.time.LocalDateTime;
 import org.joda.time.format.DateTimeFormatter;
 import org.joda.time.format.ISODateTimeFormat;
 import org.json.JSONObject;
@@ -49,8 +49,8 @@ public class FacebookEventsQuery extends Query<List<FbEventDto>, FacebookConfigu
         joiner.add("maybe_count");
         joiner.add("picture.type(large)");
 
-        LocalDateTime warsawCurrent = LocalDateTime.now(DateTimeZone.forID("GMT"));
-        LocalDateTime warsawLater = warsawCurrent.plusDays(14);
+        DateTime warsawCurrent = DateTime.now(DateTimeZone.UTC);
+        DateTime warsawLater = warsawCurrent.plusDays(14);
         DateTimeFormatter dtf = ISODateTimeFormat.dateTime();
 
         String fields =

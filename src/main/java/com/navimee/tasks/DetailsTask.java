@@ -2,12 +2,8 @@ package com.navimee.tasks;
 
 import com.navimee.contracts.repositories.PlacesRepository;
 import com.navimee.contracts.services.PlacesService;
-import com.navimee.logger.LogEnum;
-import com.navimee.logger.Logger;
-import com.navimee.models.entities.Log;
 import com.navimee.models.entities.coordinates.City;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import java.util.concurrent.ExecutionException;
@@ -23,6 +19,7 @@ public class DetailsTask {
 
     public void executeDetailsTask() throws InterruptedException, ExecutionException {
         for (City city : placesRepository.getAvailableCities()) {
+            if(city.getName().equals("GDANSK") || city.getName().equals("SOPOT"))
             placesService.saveFoursquarePlacesDetails(city.getName()).get();
         }
     }

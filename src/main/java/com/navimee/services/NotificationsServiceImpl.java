@@ -1,37 +1,31 @@
 package com.navimee.services;
 
-import com.google.cloud.firestore.Firestore;
 import com.navimee.configuration.specific.GoogleConfiguration;
 import com.navimee.contracts.repositories.NotificationsRepository;
-import com.navimee.contracts.repositories.UsersRepository;
 import com.navimee.contracts.services.NotificationsService;
-import com.navimee.firestore.operations.DbGet;
 import com.navimee.logger.LogEnum;
 import com.navimee.logger.Logger;
 import com.navimee.models.bo.FbEvent;
 import com.navimee.models.entities.Log;
 import com.navimee.models.entities.Notification;
-import com.navimee.models.entities.User;
 import de.bytefish.fcmjava.client.FcmClient;
 import de.bytefish.fcmjava.client.settings.PropertiesBasedSettings;
 import de.bytefish.fcmjava.model.options.FcmMessageOptions;
 import de.bytefish.fcmjava.requests.data.DataUnicastMessage;
 import de.bytefish.fcmjava.requests.notification.NotificationPayload;
 import org.joda.time.DateTime;
-import org.joda.time.DateTimeZone;
-import org.joda.time.LocalDateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.text.SimpleDateFormat;
 import java.time.Duration;
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
-
-import static com.navimee.firestore.Paths.NOTIFICATIONS_COLLECTION;
 
 @Service
 public class NotificationsServiceImpl implements NotificationsService {

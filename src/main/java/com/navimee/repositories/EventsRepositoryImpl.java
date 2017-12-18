@@ -51,7 +51,8 @@ public class EventsRepositoryImpl implements EventsRepository {
 
     @Override
     public List<Event> getEventsBefore(int timeToEnd) {
-        DateTime warsaw = LocalDateTime.now(DateTimeZone.forID("Europe/Warsaw")).toDateTime();
+        DateTime warsaw = LocalDateTime.now(DateTimeZone.UTC).toDateTime();
+
         return dbGet.fromCollection(
                 database.getHotspot()
                         .whereEqualTo("hotspotType", HotspotType.EVENT)

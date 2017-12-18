@@ -35,7 +35,7 @@ public class DbAdd {
                 .filter(distinctByKey(Entity::getId))
                 .collect(Collectors.toMap(Entity::getId, Function.identity()));
 
-        String extraInfo = entities.get(0) instanceof Event ? String.format(" %s -> %s", city, ((Event)entities.get(0)).getSource()) : "";
+        String extraInfo = entities.get(0) instanceof Event ? String.format(" %s -> %s", city, ((Event) entities.get(0)).getSource()) : "";
         return toCollection(collectionReference, entityMap, AdditionEnum.OVERWRITE, extraInfo);
     }
 

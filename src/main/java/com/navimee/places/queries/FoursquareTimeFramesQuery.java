@@ -7,8 +7,8 @@ import com.navimee.models.dto.timeframes.PopularDto;
 import com.navimee.places.queries.params.PlaceDetailsParams;
 import com.navimee.queries.Query;
 import org.apache.http.client.utils.URIBuilder;
+import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
-import org.joda.time.LocalDateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import org.json.JSONObject;
@@ -28,7 +28,8 @@ public class FoursquareTimeFramesQuery extends Query<PopularDto, FoursquareConfi
 
     @Override
     public Callable<PopularDto> execute(PlaceDetailsParams params) {
-        LocalDateTime warsawCurrent = LocalDateTime.now(DateTimeZone.forID("Europe/Warsaw"));
+
+        DateTime warsawCurrent = DateTime.now(DateTimeZone.UTC);
         DateTimeFormatter fmt = DateTimeFormat.forPattern("yyyyddMM");
 
         URI uri = null;

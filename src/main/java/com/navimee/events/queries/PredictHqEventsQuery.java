@@ -8,8 +8,8 @@ import com.navimee.models.dto.events.PhqEventDto;
 import com.navimee.queries.Query;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.utils.URIBuilder;
+import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
-import org.joda.time.LocalDateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import org.json.JSONObject;
@@ -20,7 +20,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
-import java.util.stream.Collectors;
 
 public class PredictHqEventsQuery extends Query<List<PhqEventDto>, PredictHqConfiguration, PredictHqEventsParams> {
 
@@ -31,8 +30,8 @@ public class PredictHqEventsQuery extends Query<List<PhqEventDto>, PredictHqConf
     @Override
     public Callable<List<PhqEventDto>> execute(PredictHqEventsParams params) {
 
-        LocalDateTime warsawCurrent = LocalDateTime.now(DateTimeZone.forID("Europe/Warsaw"));
-        LocalDateTime warsawLater = warsawCurrent.plusDays(14);
+        DateTime warsawCurrent = DateTime.now(DateTimeZone.UTC);
+        DateTime warsawLater = warsawCurrent.plusDays(14);
         DateTimeFormatter dtf = DateTimeFormat.forPattern("yyyy-MM-dd");
 
         URI uri = null;
@@ -40,7 +39,6 @@ public class PredictHqEventsQuery extends Query<List<PhqEventDto>, PredictHqConf
             URIBuilder builder = new URIBuilder(configuration.apiUrl + "/v1/events/");
             builder.setParameter("start.gte", dtf.print(warsawCurrent));
             builder.setParameter("start.lte", dtf.print(warsawLater));
-            builder.setParameter("start.tz", "Europe/Warsaw");
             builder.setParameter("within", String.format("2km@%f,%f", params.lat, params.lon));
             uri = builder.build();
         } catch (URISyntaxException e) {

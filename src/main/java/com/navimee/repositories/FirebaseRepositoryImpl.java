@@ -65,6 +65,7 @@ public class FirebaseRepositoryImpl implements FirebaseRepository {
     @Override
     public <T extends Entity> Future filterAndTransfer(List<T> entities, Predicate<T> predicate, Function<T, GeoLocation> function) {
         return executorService.submit(() -> {
+            if(entities.isEmpty()) return;
             GeoFire geoFire = new GeoFire(firebaseDatabase.getReference(hotspotCurrent));
             Map<String, T> filtered = entities.stream().filter(predicate).collect(Collectors.toMap(Entity::getId, Function.identity()));
 
