@@ -48,13 +48,13 @@ public class PlacesRepositoryImpl implements PlacesRepository {
     @Override
     public Future setFacebookPlaces(List<FbPlace> places, String city) {
         InMemoryRepository.SET(city, places, FbPlace.class);
-        return add.toCollection(database.getCollection(FACEBOOK_PLACES, city), places, city);
+        return add.toCollection(database.getCollectionByCity(FACEBOOK_PLACES, city), places, city);
     }
 
     @Override
     public Future setFoursquarePlaces(List<FsPlace> places, String city) {
         InMemoryRepository.SET(city, places, FsPlace.class);
-        return add.toCollection(database.getCollection(FOURSQUARE_PLACES, city), places);
+        return add.toCollection(database.getCollectionByCity(FOURSQUARE_PLACES, city), places);
     }
 
     @Override
@@ -67,7 +67,7 @@ public class PlacesRepositoryImpl implements PlacesRepository {
         return executorService.submit(() ->
                 cities.forEach(city -> {
                     try {
-                        add.toCollection(database.getCollection(AVAILABLE_CITIES, city.getName()), city).get();
+                        add.toCollection(database.getCollectionByCity(AVAILABLE_CITIES, city.getName()), city).get();
                     } catch (Exception e) {
                         Logger.LOG(new Log(LogEnum.EXCEPTION, e));
                     }
@@ -79,7 +79,7 @@ public class PlacesRepositoryImpl implements PlacesRepository {
         return executorService.submit(() ->
                 coordinatesMap.forEach((k, v) -> {
                     try {
-                        add.toCollection(database.getCollection(COORDINATES, k), v).get();
+                        add.toCollection(database.getCollectionByCity(COORDINATES, k), v).get();
                     } catch (Exception e) {
                         Logger.LOG(new Log(LogEnum.EXCEPTION, e));
                     }
@@ -88,13 +88,13 @@ public class PlacesRepositoryImpl implements PlacesRepository {
 
     @Override
     public Future addCoordinates(Coordinate coordinate, String city) {
-        return add.toCollection(database.getCollection(COORDINATES, city), coordinate, AdditionEnum.MERGE);
+        return add.toCollection(database.getCollectionByCity(COORDINATES, city), coordinate, AdditionEnum.MERGE);
     }
 
     // DELETE
     @Override
     public Future deleteCoordinates(String document, String city) {
-        return executorService.submit(() -> delete.document(database.getDocument(COORDINATES).collection(city).document(document)));
+        return executorService.submit(() -> delete.document(database.getDocumentByCity(COORDINATES).collection(city).document(document)));
     }
 
     // GETTERS
@@ -102,7 +102,7 @@ public class PlacesRepositoryImpl implements PlacesRepository {
     public List<FbPlace> getFacebookPlaces(String city) {
         List<FbPlace> places = InMemoryRepository.GET(city, FbPlace.class);
         if (places == null) {
-            places = dbGet.fromCollection(database.getCollection(FACEBOOK_PLACES, city), FbPlace.class);
+            places = dbGet.fromCollection(database.getCollectionByCity(FACEBOOK_PLACES, city), FbPlace.class);
             InMemoryRepository.SET(city, places, FbPlace.class);
         }
         return places;
@@ -112,7 +112,7 @@ public class PlacesRepositoryImpl implements PlacesRepository {
     public List<FsPlace> getFoursquarePlaces(String city) {
         List<FsPlace> places = InMemoryRepository.GET(city, FsPlace.class);
         if (places == null) {
-            places = dbGet.fromCollection(database.getCollection(FOURSQUARE_PLACES, city), FsPlace.class);
+            places = dbGet.fromCollection(database.getCollectionByCity(FOURSQUARE_PLACES, city), FsPlace.class);
             InMemoryRepository.SET(city, places, FsPlace.class);
         }
         return places;
@@ -125,11 +125,11 @@ public class PlacesRepositoryImpl implements PlacesRepository {
 
     @Override
     public List<Coordinate> getCoordinates(String city) {
-        return dbGet.fromCollection(database.getCollection(COORDINATES, city), Coordinate.class);
+        return dbGet.fromCollection(database.getCollectionByCity(COORDINATES, city), Coordinate.class);
     }
 
     @Override
     public List<City> getAvailableCities() {
-        return dbGet.fromDocument(database.getDocument(AVAILABLE_CITIES), City.class);
+        return dbGet.fromDocument(database.getDocumentByCity(AVAILABLE_CITIES), City.class);
     }
 }

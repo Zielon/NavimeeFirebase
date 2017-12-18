@@ -2,8 +2,8 @@ package com.navimee.models.entities;
 
 import com.navimee.firestore.Paths;
 import com.navimee.logger.LogEnum;
+import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
-import org.joda.time.LocalDateTime;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -21,8 +21,7 @@ public class Log implements Comparable<Log>, Entity {
     }
 
     public Log(LogEnum type, String reference, Integer count) {
-        DateTimeZone zone = DateTimeZone.forID("Europe/Warsaw");
-        LocalDateTime warsaw = LocalDateTime.now(zone);
+        DateTime warsaw = DateTime.now(DateTimeZone.forID("Europe/Warsaw"));
 
         this.type = type;
         this.reference = Paths.get(reference);
@@ -34,8 +33,7 @@ public class Log implements Comparable<Log>, Entity {
         StringWriter sw = new StringWriter();
         exception.printStackTrace(new PrintWriter(sw));
 
-        DateTimeZone zone = DateTimeZone.forID("Europe/Warsaw");
-        LocalDateTime warsaw = LocalDateTime.now(zone);
+        DateTime warsaw = DateTime.now(DateTimeZone.forID("Europe/Warsaw"));
 
         exception.printStackTrace();
 

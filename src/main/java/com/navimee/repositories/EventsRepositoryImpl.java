@@ -3,6 +3,7 @@ package com.navimee.repositories;
 import com.google.cloud.firestore.Query;
 import com.navimee.contracts.repositories.EventsRepository;
 import com.navimee.contracts.repositories.FirebaseRepository;
+import com.navimee.enums.CollectionType;
 import com.navimee.enums.HotspotType;
 import com.navimee.firestore.Database;
 import com.navimee.firestore.operations.DbAdd;
@@ -51,7 +52,8 @@ public class EventsRepositoryImpl implements EventsRepository {
 
     @Override
     public List<Event> getEventsBefore(int timeToEnd) {
-        DateTime warsaw = LocalDateTime.now(DateTimeZone.forID("Europe/Warsaw")).toDateTime();
+        DateTime warsaw = LocalDateTime.now(DateTimeZone.UTC).toDateTime();
+
         return dbGet.fromCollection(
                 database.getHotspot()
                         .whereEqualTo("hotspotType", HotspotType.EVENT)
@@ -70,10 +72,15 @@ public class EventsRepositoryImpl implements EventsRepository {
         return executorService.submit(() -> {
             Logger.LOG(new Log(LogEnum.DELETION, "Delete old events"));
 
-            Date warsaw = LocalDateTime.now(DateTimeZone.forID("Europe/Warsaw")).toDate();
-            Query query = database.getHotspot().whereLessThan("endTime", warsaw);
-            delete.document(query);
-            firebaseRepository.deleteEvents(dbGet.fromCollection(query, Event.class));
+            Date warsaw = LocalDateTime.now(DateTimeZone.UTC).toDate();
+
+            Query hotspot = database.getHotspot().whereLessThan("endTime", warsaw);
+            Query notification = database.getCollection(CollectionType.NOTIFICATIONS);
+
+            delete.document(hotspot);
+            delete.document(notification);
+
+            firebaseRepository.deleteEvents(dbGet.fromCollection(hotspot, Event.class));
         });
     }
 }

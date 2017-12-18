@@ -14,7 +14,7 @@ public class PhqEvent {
     private String title;
     private String description;
     private String category;
-    private String timezone = "Europe/Warsaw";
+    private String timezone = "UTC";
     private int rank;
     private GeoPoint geoPoint;
     private Date startTime;

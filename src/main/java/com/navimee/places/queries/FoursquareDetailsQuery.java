@@ -7,8 +7,8 @@ import com.navimee.models.dto.placeDetails.FsPlaceDetailsDto;
 import com.navimee.places.queries.params.PlaceDetailsParams;
 import com.navimee.queries.Query;
 import org.apache.http.client.utils.URIBuilder;
+import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
-import org.joda.time.LocalDateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import org.json.JSONObject;
@@ -30,7 +30,7 @@ public class FoursquareDetailsQuery extends Query<FsPlaceDetailsDto, FoursquareC
     @Override
     public Callable<FsPlaceDetailsDto> execute(PlaceDetailsParams params) {
 
-        LocalDateTime warsawCurrent = LocalDateTime.now(DateTimeZone.forID("Europe/Warsaw"));
+        DateTime warsawCurrent = DateTime.now(DateTimeZone.UTC);
         DateTimeFormatter dtf = DateTimeFormat.forPattern("yyyyddMM");
 
         URI uri = null;

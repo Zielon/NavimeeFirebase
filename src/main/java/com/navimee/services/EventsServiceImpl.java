@@ -109,7 +109,7 @@ public class EventsServiceImpl implements EventsService {
                 try {
                     coods.forEach(c -> events.add(query.execute(new PredictHqEventsParams(c.getLatitude(), c.getLongitude()))));
                     eventsDto.addAll(waitForTasks(executorService, events));
-                    TimeUnit.MINUTES.sleep(5);
+                    TimeUnit.MINUTES.sleep(3);
                     events.clear();
                 } catch (Exception e) {
                     e.printStackTrace();

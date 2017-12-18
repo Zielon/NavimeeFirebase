@@ -20,7 +20,7 @@ public class FbEvent {
     private FbPlace place;
     private FbPlace searchPlace;
     private HotspotType hotspotType = HotspotType.EVENT;
-    private String timezone = "Europe/Warsaw";
+    private String timezone = "UTC";
     private EventType source = EventType.FACEBOOK;
 
     public String getName() {

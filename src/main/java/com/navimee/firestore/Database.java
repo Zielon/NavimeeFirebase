@@ -13,12 +13,16 @@ public class Database {
     @Autowired
     Firestore db;
 
-    public CollectionReference getCollection(CollectionType collection, String city) {
+    public CollectionReference getCollectionByCity(CollectionType collection, String city) {
         return db.collection(collection.toString()).document(Paths.BY_CITY).collection(city);
     }
 
-    public DocumentReference getDocument(CollectionType collection) {
+    public DocumentReference getDocumentByCity(CollectionType collection) {
         return db.collection(collection.toString()).document(Paths.BY_CITY);
+    }
+
+    public CollectionReference getCollection(CollectionType collection) {
+        return db.collection(collection.toString());
     }
 
     public CollectionReference getHotspot() {

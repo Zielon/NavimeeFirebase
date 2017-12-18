@@ -2,7 +2,6 @@ package com.navimee.repositories;
 
 import com.google.cloud.firestore.Firestore;
 import com.navimee.contracts.repositories.UsersRepository;
-import com.navimee.enums.CollectionType;
 import com.navimee.firestore.operations.DbGet;
 import com.navimee.models.entities.User;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -1,9 +1,6 @@
 package com.navimee.tasks;
 
 import com.navimee.contracts.services.NotificationsService;
-import com.navimee.logger.LogEnum;
-import com.navimee.logger.Logger;
-import com.navimee.models.entities.Log;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
