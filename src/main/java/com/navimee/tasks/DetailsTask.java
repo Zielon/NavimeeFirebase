@@ -4,6 +4,7 @@ import com.navimee.contracts.repositories.PlacesRepository;
 import com.navimee.contracts.services.PlacesService;
 import com.navimee.models.entities.coordinates.City;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import java.util.concurrent.ExecutionException;
@@ -23,7 +24,7 @@ public class DetailsTask {
         }
     }
 
-    //@Scheduled(cron = "0 0 1 1 * ?")
+    @Scheduled(cron = "0 0 1 1 * ?")
     public void task() throws InterruptedException, ExecutionException {
         this.executeDetailsTask();
     }
