@@ -6,9 +6,13 @@ import com.navimee.contracts.repositories.FirebaseRepository;
 import com.navimee.contracts.repositories.PlacesRepository;
 import com.navimee.linq.HotspotFilters;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import java.util.concurrent.ExecutionException;
+
+import static com.navimee.tasks.TasksFixedTimes.EVENTS_TO_END;
+import static com.navimee.tasks.TasksFixedTimes.HOTSPOT;
 
 @Component
 public class HotspotTask {
@@ -31,12 +35,12 @@ public class HotspotTask {
                 fsPlaceDetails -> new GeoLocation(fsPlaceDetails.getLocationLat(), fsPlaceDetails.getLocationLng())).get();
 
         firebaseRepository.filterAndTransfer(
-                eventsRepository.getEventsBefore(60 * 2),
+                eventsRepository.getEventsBefore(EVENTS_TO_END),
                 event -> true,
                 event -> new GeoLocation(event.getGeoPoint().getLatitude(), event.getGeoPoint().getLongitude())).get();
     }
 
-    //@Scheduled(fixedDelay = HOTSPOT)
+    @Scheduled(fixedDelay = HOTSPOT)
     public void task() throws InterruptedException, ExecutionException {
         this.executeHotspotTask();
     }

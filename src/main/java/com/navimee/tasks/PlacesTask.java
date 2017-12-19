@@ -7,6 +7,7 @@ import com.navimee.models.entities.coordinates.City;
 import com.navimee.models.entities.coordinates.Coordinate;
 import com.navimee.staticData.NavimeeData;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -24,7 +25,6 @@ public class PlacesTask {
 
     @Autowired
     FirestoreRepository firestoreRepository;
-
 
     public void executePlacesTask() throws ExecutionException, InterruptedException {
 
@@ -48,7 +48,7 @@ public class PlacesTask {
         }
     }
 
-    //@Scheduled(cron = "0 0 1 2 * ?")
+    @Scheduled(cron = "0 0 1 2 * ?")
     public void task() throws ExecutionException, InterruptedException {
         this.executePlacesTask();
     }

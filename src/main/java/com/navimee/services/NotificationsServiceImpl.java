@@ -5,7 +5,6 @@ import com.navimee.contracts.repositories.NotificationsRepository;
 import com.navimee.contracts.services.NotificationsService;
 import com.navimee.logger.LogEnum;
 import com.navimee.logger.Logger;
-import com.navimee.models.bo.FbEvent;
 import com.navimee.models.entities.Log;
 import com.navimee.models.entities.Notification;
 import de.bytefish.fcmjava.client.FcmClient;
@@ -13,7 +12,6 @@ import de.bytefish.fcmjava.client.settings.PropertiesBasedSettings;
 import de.bytefish.fcmjava.model.options.FcmMessageOptions;
 import de.bytefish.fcmjava.requests.data.DataUnicastMessage;
 import de.bytefish.fcmjava.requests.notification.NotificationPayload;
-import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -61,7 +59,6 @@ public class NotificationsServiceImpl implements NotificationsService {
                                 NotificationPayload.builder()
                                         .setBody(notification.getTitle())
                                         .setTitle("Event")
-                                        .setTag("Less than 30 minutes remaining to the event ending!")
                                         .build();
 
                         Map<String, Object> data = new HashMap<>();
