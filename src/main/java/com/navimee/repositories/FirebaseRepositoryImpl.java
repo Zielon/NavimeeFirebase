@@ -75,7 +75,9 @@ public class FirebaseRepositoryImpl implements FirebaseRepository {
 
     @Override
     public Future deleteEvents(List<Event> events) {
-        return executorService.submit(() ->
-                events.forEach(event -> firebaseDatabase.getReference(String.format("%s/%s", Paths.HOTSPOT, event.getId())).removeValueAsync()));
+        return executorService.submit(() -> {
+            events.forEach(event -> firebaseDatabase.getReference(String.format("%s/%s", Paths.HOTSPOT, event.getId())).removeValueAsync());
+            events.forEach(event -> firebaseDatabase.getReference(String.format("%s/%s", hotspotCurrent, event.getId())).removeValueAsync());
+        });
     }
 }

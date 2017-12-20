@@ -51,14 +51,14 @@ public class EventsRepositoryImpl implements EventsRepository {
     }
 
     @Override
-    public List<Event> getEventsBefore(int timeToEnd) {
+    public List<Event> getEventsBefore(int minutesBeforeEnd) {
         DateTime warsaw = LocalDateTime.now(DateTimeZone.UTC).toDateTime();
 
         return dbGet.fromCollection(
                 database.getHotspot()
                         .whereEqualTo("hotspotType", HotspotType.EVENT)
                         .whereGreaterThanOrEqualTo("endTime", warsaw.toDate())
-                        .whereLessThanOrEqualTo("endTime", warsaw.plusMinutes(timeToEnd).toDate())
+                        .whereLessThanOrEqualTo("endTime", warsaw.plusMinutes(minutesBeforeEnd).toDate())
                 , Event.class);
     }
 

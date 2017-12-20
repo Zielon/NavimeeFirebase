@@ -35,7 +35,7 @@ public class HotspotTask {
                 fsPlaceDetails -> new GeoLocation(fsPlaceDetails.getLocationLat(), fsPlaceDetails.getLocationLng())).get();
 
         firebaseRepository.filterAndTransfer(
-                eventsRepository.getEventsBefore(EVENTS_TO_END),
+                eventsRepository.getEventsBefore(60 * 2),
                 event -> true,
                 event -> new GeoLocation(event.getGeoPoint().getLatitude(), event.getGeoPoint().getLongitude())).get();
     }
