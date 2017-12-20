@@ -59,7 +59,7 @@ public class PlacesRepositoryImpl implements PlacesRepository {
 
     @Override
     public Future setFoursquarePlacesDetails(List<FsPlaceDetails> details) {
-        return add.toCollection(database.getHotspot(), details);
+        return add.toCollection(database.getCollection(HOTSPOT), details);
     }
 
     @Override
@@ -120,7 +120,7 @@ public class PlacesRepositoryImpl implements PlacesRepository {
 
     @Override
     public List<FsPlaceDetails> getFoursquarePlacesDetails() {
-        return dbGet.fromCollection(database.getHotspot().whereEqualTo("hotspotType", HotspotType.FOURSQUARE_PLACE), FsPlaceDetails.class);
+        return dbGet.fromCollection(database.getCollection(HOTSPOT).whereEqualTo("hotspotType", HotspotType.FOURSQUARE_PLACE), FsPlaceDetails.class);
     }
 
     @Override

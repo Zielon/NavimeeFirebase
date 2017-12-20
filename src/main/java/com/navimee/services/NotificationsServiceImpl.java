@@ -3,15 +3,20 @@ package com.navimee.services;
 import com.navimee.configuration.specific.GoogleConfiguration;
 import com.navimee.contracts.repositories.NotificationsRepository;
 import com.navimee.contracts.services.NotificationsService;
+import com.navimee.enums.CollectionType;
+import com.navimee.firestore.Database;
+import com.navimee.firestore.operations.DbAdd;
 import com.navimee.logger.LogEnum;
 import com.navimee.logger.Logger;
 import com.navimee.models.entities.Log;
 import com.navimee.models.entities.Notification;
 import de.bytefish.fcmjava.client.FcmClient;
 import de.bytefish.fcmjava.client.settings.PropertiesBasedSettings;
+import de.bytefish.fcmjava.model.enums.PriorityEnum;
 import de.bytefish.fcmjava.model.options.FcmMessageOptions;
 import de.bytefish.fcmjava.requests.data.DataUnicastMessage;
 import de.bytefish.fcmjava.requests.notification.NotificationPayload;
+import de.bytefish.fcmjava.responses.FcmMessageResultItem;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,6 +42,12 @@ public class NotificationsServiceImpl implements NotificationsService {
     @Autowired
     NotificationsRepository notificationsRepository;
 
+    @Autowired
+    DbAdd dbAdd;
+
+    @Autowired
+    Database database;
+
     @Override
     public Future send() {
         return executorService.submit(() -> {
@@ -52,27 +63,41 @@ public class NotificationsServiceImpl implements NotificationsService {
             try {
                 try (FcmClient client = new FcmClient(PropertiesBasedSettings.createFromProperties(properties))) {
 
-                    FcmMessageOptions options = FcmMessageOptions.builder().setTimeToLive(Duration.ofHours(1)).build();
+                    FcmMessageOptions options = FcmMessageOptions.builder()
+                            .setPriorityEnum(PriorityEnum.High)
+                            .setContentAvailable(true)
+                            .setTimeToLive(Duration.ofMinutes(30))
+                            .build();
 
                     notifications.forEach(notification -> {
                         NotificationPayload payload =
                                 NotificationPayload.builder()
                                         .setBody(notification.getTitle())
-                                        .setTitle("Event")
+                                        .setTitle("Hotspot")
                                         .build();
 
                         Map<String, Object> data = new HashMap<>();
 
                         data.put("endTime", notification.getEndTime());
                         data.put("startTime", notification.getStartTime());
-                        data.put("type", notification.getType());
+                        data.put("lat", notification.getGeoPoint().getLatitude());
+                        data.put("lng", notification.getGeoPoint().getLongitude());
 
                         DataUnicastMessage message = new DataUnicastMessage(options, notification.getToken(), data, payload);
-                        client.send(message).getResults();
+                        List<FcmMessageResultItem> results = client.send(message).getResults();
+
+                        if(results.stream().allMatch(fmc -> fmc.getErrorCode() == null))
+                            notification.setSent(true);
                     });
                 }
             } catch (Exception e) {
                 Logger.LOG(new Log(LogEnum.EXCEPTION, e));
+            } finally {
+                // Update the notification collection with isSent flag set on updated value.
+                notifications.forEach(notification ->
+                        database.getCollection(CollectionType.NOTIFICATIONS)
+                                .document(notification.getId())
+                                .update("isSent", notification.isSent()));
             }
         });
     }

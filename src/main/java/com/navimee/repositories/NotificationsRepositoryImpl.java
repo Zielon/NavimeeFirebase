@@ -1,5 +1,6 @@
 package com.navimee.repositories;
 
+import com.google.cloud.firestore.Query;
 import com.navimee.contracts.repositories.NotificationsRepository;
 import com.navimee.contracts.repositories.UsersRepository;
 import com.navimee.firestore.Database;
@@ -12,7 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import static com.navimee.enums.CollectionType.NOTIFICATIONS;
@@ -32,13 +32,14 @@ public class NotificationsRepositoryImpl implements NotificationsRepository {
     @Override
     public List<Notification> getAvailable() {
 
-        Date warsaw = DateTime.now(DateTimeZone.UTC).plusMinutes(30).toDate();
+        DateTime warsaw = DateTime.now(DateTimeZone.UTC);
 
-        List<Notification> uncheckedNotifications =
-                dbGet.fromCollection(
-                        database.getCollection(NOTIFICATIONS)
-                                .whereLessThanOrEqualTo("endTime", warsaw), Notification.class);
+        Query query = database.getCollection(NOTIFICATIONS)
+                .whereGreaterThanOrEqualTo("endTime", warsaw.toDate())
+                .whereLessThanOrEqualTo("endTime", warsaw.plusMinutes(45).toDate())
+                .whereEqualTo("isSent", false);
 
+        List<Notification> uncheckedNotifications = dbGet.fromCollection(query, Notification.class);
         List<Notification> notifications = new ArrayList<>();
 
         uncheckedNotifications.forEach(notification -> {

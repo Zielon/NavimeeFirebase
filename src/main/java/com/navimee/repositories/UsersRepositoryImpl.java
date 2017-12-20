@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import static com.navimee.enums.CollectionType.USERS;
+import static com.navimee.firestore.Paths.USERS_COLLECTION;
 
 @Repository
 public class UsersRepositoryImpl implements UsersRepository {
@@ -20,6 +21,6 @@ public class UsersRepositoryImpl implements UsersRepository {
 
     @Override
     public User getUser(String id) {
-        return dbGet.fromSingleDocument(db.collection(USERS.toString()).document(id), User.class);
+        return dbGet.fromSingleDocument(db.collection(USERS_COLLECTION).document(id), User.class);
     }
 }

@@ -24,8 +24,4 @@ public class Database {
     public CollectionReference getCollection(CollectionType collection) {
         return db.collection(collection.toString());
     }
-
-    public CollectionReference getHotspot() {
-        return db.collection(Paths.HOTSPOT);
-    }
 }
