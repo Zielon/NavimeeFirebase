@@ -29,7 +29,8 @@ public class Paths {
     public static final String LOGS = "EXECUTION_LOGS";
 
     // Hotspot
-    public static final String HOTSPOT = "HOTSPOT";
+    public static final String HOTSPOT_COLLECTION = "HOTSPOT";
+    public static final String HOTSPOT_CURRENT_COLLECTION = "HOTSPOT_CURRENT";
 
     public static String get(CollectionReference collectionReference) {
         String path = collectionReference.getPath();

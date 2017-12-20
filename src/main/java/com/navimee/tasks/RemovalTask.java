@@ -6,7 +6,6 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
 
 import static com.navimee.tasks.TasksFixedTimes.REMOVAL;
 

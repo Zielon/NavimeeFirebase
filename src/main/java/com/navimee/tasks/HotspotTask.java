@@ -11,7 +11,6 @@ import org.springframework.stereotype.Component;
 
 import java.util.concurrent.ExecutionException;
 
-import static com.navimee.tasks.TasksFixedTimes.EVENTS_TO_END;
 import static com.navimee.tasks.TasksFixedTimes.HOTSPOT;
 
 @Component

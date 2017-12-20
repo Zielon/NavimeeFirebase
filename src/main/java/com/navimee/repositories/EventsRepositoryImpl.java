@@ -24,6 +24,9 @@ import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 
+import static com.navimee.enums.CollectionType.HOTSPOT;
+import static com.navimee.enums.CollectionType.NOTIFICATIONS;
+
 @Repository
 public class EventsRepositoryImpl implements EventsRepository {
 
@@ -47,7 +50,9 @@ public class EventsRepositoryImpl implements EventsRepository {
 
     @Override
     public List<Event> getEvents() {
-        return dbGet.fromCollection(database.getHotspot().whereEqualTo("hotspotType", HotspotType.EVENT), Event.class);
+        return dbGet.fromCollection(
+                database.getCollection(HOTSPOT)
+                        .whereEqualTo("hotspotType", HotspotType.EVENT), Event.class);
     }
 
     @Override
@@ -55,7 +60,7 @@ public class EventsRepositoryImpl implements EventsRepository {
         DateTime warsaw = LocalDateTime.now(DateTimeZone.UTC).toDateTime();
 
         return dbGet.fromCollection(
-                database.getHotspot()
+                database.getCollection(HOTSPOT)
                         .whereEqualTo("hotspotType", HotspotType.EVENT)
                         .whereGreaterThanOrEqualTo("endTime", warsaw.toDate())
                         .whereLessThanOrEqualTo("endTime", warsaw.plusMinutes(minutesBeforeEnd).toDate())
@@ -64,7 +69,7 @@ public class EventsRepositoryImpl implements EventsRepository {
 
     @Override
     public Future setEvents(List<Event> events, String city) {
-        return dbAdd.toCollection(database.getHotspot(), events, city);
+        return dbAdd.toCollection(database.getCollection(HOTSPOT), events, city);
     }
 
     @Override
@@ -74,8 +79,8 @@ public class EventsRepositoryImpl implements EventsRepository {
 
             Date warsaw = LocalDateTime.now(DateTimeZone.UTC).toDate();
 
-            Query hotspot = database.getHotspot().whereLessThan("endTime", warsaw);
-            Query notification = database.getCollection(CollectionType.NOTIFICATIONS).whereLessThan("endTime", warsaw);
+            Query hotspot = database.getCollection(HOTSPOT).whereLessThan("endTime", warsaw);
+            Query notification = database.getCollection(NOTIFICATIONS).whereLessThan("endTime", warsaw);
 
             delete.document(hotspot);
             delete.document(notification);
