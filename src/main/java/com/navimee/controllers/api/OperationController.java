@@ -16,7 +16,7 @@ public class OperationController {
     FacebookEventsTask facebookEventsTask;
 
     @Autowired
-    PredicHqEventsTasks predicHqEventsTasks;
+    PredictHqEventsTasks predictHqEventsTasks;
 
     @Autowired
     NotificationsTask notificationsTask;
@@ -40,7 +40,7 @@ public class OperationController {
     @RequestMapping(value = "update/predicthqEvents", method = RequestMethod.POST)
     public ResponseEntity<?> updatePhqEvents() {
         try {
-            predicHqEventsTasks.executeEventsTask();
+            predictHqEventsTasks.executeEventsTask();
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }

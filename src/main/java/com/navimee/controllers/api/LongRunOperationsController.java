@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping(value = "api/longrunoperation")
-public class LongRunOperations {
+public class LongRunOperationsController {
 
     @Autowired
     DetailsTask detailsTask;

@@ -149,7 +149,7 @@ public class PlacesServiceImpl implements PlacesService {
                     .filter(Objects::nonNull)
                     .map(dto -> modelMapper.map(dto, FsPlaceDetails.class))
                     .filter(distinctByKey(FsPlaceDetails::getId))
-                    .filter(d -> d.getStatsCheckinsCount() > 500)
+                    .filter(d -> d.getStatsCheckinsCount() > 300)
                     .collect(toList());
 
             // Update timeframes for every place

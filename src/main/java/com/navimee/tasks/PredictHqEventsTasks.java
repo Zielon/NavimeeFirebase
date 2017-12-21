@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 import java.util.concurrent.ExecutionException;
 
 @Component
-public class PredicHqEventsTasks {
+public class PredictHqEventsTasks {
     @Autowired
     PlacesRepository placesRepository;
 
