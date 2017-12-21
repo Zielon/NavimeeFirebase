@@ -61,7 +61,9 @@ public class FoursquareTimeFramesQuery extends Query<PopularDto, FoursquareConfi
         } catch (Exception e) {
             e.printStackTrace();
         }
+
         popular.setPlaceId(params.placeId);
+
         return popular;
     }
 }

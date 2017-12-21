@@ -53,17 +53,17 @@ public class FoursquareDetailsQuery extends Query<FsPlaceDetailsDto, FoursquareC
     @Override
     protected FsPlaceDetailsDto map(Callable<JSONObject> task, PlaceDetailsParams params) {
         ObjectMapper mapper = new ObjectMapper();
-        FsPlaceDetailsDto mapped = null;
+        FsPlaceDetailsDto places = null;
         try {
             JSONObject object = task.call();
             JSONObject response = object.getJSONObject("response");
-            if (!response.has("venue")) return mapped;
+            if (!response.has("venue")) return places;
             JSONObject details = response.getJSONObject("venue");
-            mapped = mapper.readValue(details.toString(), FsPlaceDetailsDto.class);
+            places = mapper.readValue(details.toString(), FsPlaceDetailsDto.class);
         } catch (Exception e) {
             e.printStackTrace();
         }
 
-        return mapped;
+        return places;
     }
 }

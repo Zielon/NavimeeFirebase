@@ -14,10 +14,7 @@ import de.bytefish.fcmjava.client.settings.PropertiesBasedSettings;
 import de.bytefish.fcmjava.model.enums.PriorityEnum;
 import de.bytefish.fcmjava.model.options.FcmMessageOptions;
 import de.bytefish.fcmjava.requests.data.DataUnicastMessage;
-import de.bytefish.fcmjava.requests.notification.NotificationPayload;
 import de.bytefish.fcmjava.responses.FcmMessageResultItem;
-import org.joda.time.format.DateTimeFormat;
-import org.joda.time.format.DateTimeFormatter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -55,7 +52,6 @@ public class NotificationsServiceImpl implements NotificationsService {
             Logger.LOG(new Log(LogTypes.TASK, "Send notifications"));
 
             List<Notification> notifications = notificationsRepository.getAvailable();
-            DateTimeFormatter dtf = DateTimeFormat.forPattern("dd/MM HH:mm:ss");
 
             Properties properties = new Properties();
             properties.setProperty("fcm.api.url", googleConfiguration.fmcApiUrl);
@@ -67,24 +63,20 @@ public class NotificationsServiceImpl implements NotificationsService {
                     FcmMessageOptions options = FcmMessageOptions.builder()
                             .setPriorityEnum(PriorityEnum.High)
                             .setContentAvailable(true)
+                            .setCollapseKey("collapseKey")
                             .setTimeToLive(Duration.ofMinutes(30))
                             .build();
 
                     notifications.forEach(notification -> {
-                        NotificationPayload payload =
-                                NotificationPayload.builder()
-                                        .setBody(notification.getTitle())
-                                        .setTitle("Hotspot")
-                                        .build();
 
                         Map<String, Object> data = new HashMap<>();
 
+                        data.put("title", notification.getTitle());
                         data.put("endTime", notification.getEndTime());
-                        data.put("startTime", notification.getStartTime());
                         data.put("lat", notification.getGeoPoint().getLatitude());
                         data.put("lng", notification.getGeoPoint().getLongitude());
 
-                        DataUnicastMessage message = new DataUnicastMessage(options, notification.getToken(), data, payload);
+                        DataUnicastMessage message = new DataUnicastMessage(options, notification.getToken(), data);
                         List<FcmMessageResultItem> results = client.send(message).getResults();
 
                         if(results.stream().allMatch(fmc -> fmc.getErrorCode() == null))
