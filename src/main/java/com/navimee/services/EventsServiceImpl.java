@@ -14,7 +14,7 @@ import com.navimee.events.queries.PredictHqEventsQuery;
 import com.navimee.events.queries.params.FacebookEventsParams;
 import com.navimee.events.queries.params.PredictHqEventsParams;
 import com.navimee.general.Collections;
-import com.navimee.logger.LogEnum;
+import com.navimee.logger.LogTypes;
 import com.navimee.logger.Logger;
 import com.navimee.models.bo.FbEvent;
 import com.navimee.models.bo.PhqEvent;
@@ -73,7 +73,7 @@ public class EventsServiceImpl implements EventsService {
     @Override
     public Future saveFacebookEvents(String city) {
         return executorService.submit(() -> {
-            Logger.LOG(new Log(LogEnum.TASK, "Events update for " + city + " [FB]"));
+            Logger.LOG(new Log(LogTypes.TASK, "Events update for " + city + " [FB]"));
             List<FbPlace> fbPlaces = placesRepository.getFacebookPlaces(city);
 
             // DbGet data from the external facebook API
@@ -98,7 +98,7 @@ public class EventsServiceImpl implements EventsService {
     @Override
     public Future savePredictHqEvents(String city) {
         return executorService.submit(() -> {
-            Logger.LOG(new Log(LogEnum.TASK, "Events update for " + city + " [P_HQ]"));
+            Logger.LOG(new Log(LogTypes.TASK, "Events update for " + city + " [P_HQ]"));
             List<Coordinate> coordinates = placesRepository.getCoordinates(city);
 
             List<Callable<List<PhqEventDto>>> events = new ArrayList<>();

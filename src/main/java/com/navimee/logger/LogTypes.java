@@ -1,6 +1,6 @@
 package com.navimee.logger;
 
-public enum LogEnum {
+public enum LogTypes {
     ADDITION,
     RETRIEVAL,
     DELETION,

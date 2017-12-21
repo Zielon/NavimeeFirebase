@@ -1,6 +1,6 @@
 package com.navimee.repositories.inmemory;
 
-import com.navimee.logger.LogEnum;
+import com.navimee.logger.LogTypes;
 import com.navimee.logger.Logger;
 import com.navimee.models.entities.Entity;
 import com.navimee.models.entities.Log;
@@ -28,7 +28,7 @@ public class InMemoryRepository {
             key += type.getTypeName();
             if (Entities.containsKey(key)) {
                 List<T> places = Entities.get(key).stream().map(entity -> (T) entity).collect(toList());
-                Logger.LOG(new Log(LogEnum.RETRIEVAL_IN_MEMORY,
+                Logger.LOG(new Log(LogTypes.RETRIEVAL_IN_MEMORY,
                         String.format("GET -> [type: %s] IN-MEMORY", type.getSimpleName()),
                         places.size()));
 
@@ -41,7 +41,7 @@ public class InMemoryRepository {
         synchronized (Entities) {
             key += type.getTypeName();
             if (!Entities.containsKey(key)) {
-                Logger.LOG(new Log(LogEnum.ADDITION_IN_MEMORY,
+                Logger.LOG(new Log(LogTypes.ADDITION_IN_MEMORY,
                         String.format("SET -> [type: %s] IN-MEMORY", type.getSimpleName()),
                         entities.size()));
 

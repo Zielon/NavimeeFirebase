@@ -4,7 +4,7 @@ import com.firebase.geofire.GeoFire;
 import com.firebase.geofire.GeoLocation;
 import com.google.firebase.database.FirebaseDatabase;
 import com.navimee.contracts.repositories.FirebaseRepository;
-import com.navimee.logger.LogEnum;
+import com.navimee.logger.LogTypes;
 import com.navimee.logger.Logger;
 import com.navimee.models.entities.Entity;
 import com.navimee.models.entities.Event;
@@ -39,7 +39,7 @@ public class FirebaseRepositoryImpl implements FirebaseRepository {
             GeoFire geoFire = new GeoFire(firebaseDatabase.getReference(HOTSPOT_COLLECTION));
             Map<String, Event> entities = events.stream().collect(Collectors.toMap(Entity::getId, Function.identity()));
             entities.forEach((key, v) -> geoFire.setLocation(key, new GeoLocation(v.getGeoPoint().getLatitude(), v.getGeoPoint().getLongitude())));
-            Logger.LOG(new Log(LogEnum.TRANSFER, "Transfer facebook events details [Firebase]", events.size()));
+            Logger.LOG(new Log(LogTypes.TRANSFER, "Transfer facebook events details [Firebase]", events.size()));
         });
     }
 
@@ -49,7 +49,7 @@ public class FirebaseRepositoryImpl implements FirebaseRepository {
             GeoFire geoFire = new GeoFire(firebaseDatabase.getReference(HOTSPOT_COLLECTION));
             Map<String, FsPlaceDetails> entities = placeDetails.stream().collect(Collectors.toMap(Entity::getId, Function.identity()));
             entities.forEach((key, v) -> geoFire.setLocation(key, new GeoLocation(v.getLocationLat(), v.getLocationLng())));
-            Logger.LOG(new Log(LogEnum.TRANSFER, "Transfer foursquare details [Firebase]", placeDetails.size()));
+            Logger.LOG(new Log(LogTypes.TRANSFER, "Transfer foursquare details [Firebase]", placeDetails.size()));
         });
     }
 
@@ -68,7 +68,7 @@ public class FirebaseRepositoryImpl implements FirebaseRepository {
             if (entities.isEmpty()) return;
             GeoFire geoFire = new GeoFire(firebaseDatabase.getReference(HOTSPOT_CURRENT_COLLECTION));
             Map<String, T> filtered = entities.stream().filter(predicate).collect(Collectors.toMap(Entity::getId, Function.identity()));
-            Logger.LOG(new Log(LogEnum.TRANSFER, String.format("Transfer %s [Firebase]", entities.get(0).getClass().getSimpleName(), filtered.size())));
+            Logger.LOG(new Log(LogTypes.TRANSFER, String.format("Transfer %s [Firebase]", entities.get(0).getClass().getSimpleName(), filtered.size())));
             filtered.forEach((key, value) -> geoFire.setLocation(key, function.apply(value)));
         });
     }

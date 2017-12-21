@@ -1,7 +1,7 @@
 package com.navimee.models.entities;
 
 import com.navimee.firestore.Paths;
-import com.navimee.logger.LogEnum;
+import com.navimee.logger.LogTypes;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 
@@ -11,7 +11,7 @@ import java.util.Date;
 
 public class Log implements Comparable<Log>, Entity {
 
-    private LogEnum type;
+    private LogTypes type;
     private Date time;
     private String reference;
     private Integer count;
@@ -20,8 +20,8 @@ public class Log implements Comparable<Log>, Entity {
     public Log() {
     }
 
-    public Log(LogEnum type, String reference, Integer count) {
-        DateTime warsaw = DateTime.now(DateTimeZone.forID("Europe/Warsaw"));
+    public Log(LogTypes type, String reference, Integer count) {
+        DateTime warsaw = DateTime.now(DateTimeZone.UTC);
 
         this.type = type;
         this.reference = Paths.get(reference);
@@ -29,11 +29,11 @@ public class Log implements Comparable<Log>, Entity {
         this.time = warsaw.toDate();
     }
 
-    public Log(LogEnum type, Exception exception) {
+    public Log(LogTypes type, Exception exception) {
         StringWriter sw = new StringWriter();
         exception.printStackTrace(new PrintWriter(sw));
 
-        DateTime warsaw = DateTime.now(DateTimeZone.forID("Europe/Warsaw"));
+        DateTime warsaw = DateTime.now(DateTimeZone.UTC);
 
         exception.printStackTrace();
 
@@ -43,15 +43,15 @@ public class Log implements Comparable<Log>, Entity {
         this.count = null;
     }
 
-    public Log(LogEnum type, String reference) {
+    public Log(LogTypes type, String reference) {
         this(type, reference, null);
     }
 
-    public LogEnum getType() {
+    public LogTypes getType() {
         return type;
     }
 
-    public void setType(LogEnum type) {
+    public void setType(LogTypes type) {
         this.type = type;
     }
 

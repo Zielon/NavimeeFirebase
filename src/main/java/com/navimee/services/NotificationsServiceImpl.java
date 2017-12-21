@@ -3,10 +3,9 @@ package com.navimee.services;
 import com.navimee.configuration.specific.GoogleConfiguration;
 import com.navimee.contracts.repositories.NotificationsRepository;
 import com.navimee.contracts.services.NotificationsService;
-import com.navimee.enums.CollectionType;
 import com.navimee.firestore.Database;
 import com.navimee.firestore.operations.DbAdd;
-import com.navimee.logger.LogEnum;
+import com.navimee.logger.LogTypes;
 import com.navimee.logger.Logger;
 import com.navimee.models.entities.Log;
 import com.navimee.models.entities.Notification;
@@ -30,6 +29,8 @@ import java.util.Properties;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 
+import static com.navimee.enums.CollectionType.NOTIFICATIONS;
+
 @Service
 public class NotificationsServiceImpl implements NotificationsService {
 
@@ -51,7 +52,7 @@ public class NotificationsServiceImpl implements NotificationsService {
     @Override
     public Future send() {
         return executorService.submit(() -> {
-            Logger.LOG(new Log(LogEnum.TASK, "Send notifications"));
+            Logger.LOG(new Log(LogTypes.TASK, "Send notifications"));
 
             List<Notification> notifications = notificationsRepository.getAvailable();
             DateTimeFormatter dtf = DateTimeFormat.forPattern("dd/MM HH:mm:ss");
@@ -91,11 +92,11 @@ public class NotificationsServiceImpl implements NotificationsService {
                     });
                 }
             } catch (Exception e) {
-                Logger.LOG(new Log(LogEnum.EXCEPTION, e));
+                Logger.LOG(new Log(LogTypes.EXCEPTION, e));
             } finally {
-                // Update the notification collection with isSent flag set on updated value.
+                // Update the notification collection with isSent flag changed.
                 notifications.forEach(notification ->
-                        database.getCollection(CollectionType.NOTIFICATIONS)
+                        database.getCollection(NOTIFICATIONS)
                                 .document(notification.getId())
                                 .update("isSent", notification.isSent()));
             }
