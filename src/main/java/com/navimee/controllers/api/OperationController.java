@@ -13,13 +13,10 @@ import org.springframework.web.bind.annotation.RestController;
 public class OperationController {
 
     @Autowired
-    PlacesTask placesTask;
+    FacebookEventsTask facebookEventsTask;
 
     @Autowired
-    EventsTask eventsTask;
-
-    @Autowired
-    DetailsTask detailsTask;
+    PredicHqEventsTasks predicHqEventsTasks;
 
     @Autowired
     NotificationsTask notificationsTask;
@@ -30,30 +27,30 @@ public class OperationController {
     @Autowired
     HotspotTask hotspotTask;
 
-    @RequestMapping(value = "update/places", method = RequestMethod.POST)
-    public ResponseEntity<?> updatePlaces() {
-        try {
-            placesTask.executePlacesTask();
-        } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-        return new ResponseEntity<>(HttpStatus.OK);
-    }
-
-    @RequestMapping(value = "update/events", method = RequestMethod.POST)
+    @RequestMapping(value = "update/facebookEvents", method = RequestMethod.POST)
     public ResponseEntity<?> updateFbEvents() {
         try {
-            eventsTask.executeEventsTask();
+            facebookEventsTask.executeEventsTask();
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @RequestMapping(value = "update/foursquaredetails", method = RequestMethod.POST)
-    public ResponseEntity<?> fsPlacesDetails() {
+    @RequestMapping(value = "update/predicthqEvents", method = RequestMethod.POST)
+    public ResponseEntity<?> updatePhqEvents() {
         try {
-            detailsTask.executeDetailsTask();
+            predicHqEventsTasks.executeEventsTask();
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @RequestMapping(value = "update/hotspot", method = RequestMethod.POST)
+    public ResponseEntity<?> updateHotspot() {
+        try {
+            hotspotTask.executeHotspotTask();
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
@@ -74,16 +71,6 @@ public class OperationController {
     public ResponseEntity<?> removeFbEvents() {
         try {
             removeEventsTask.executeRemoveEventsTask();
-        } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-        return new ResponseEntity<>(HttpStatus.OK);
-    }
-
-    @RequestMapping(value = "hotspot/update", method = RequestMethod.POST)
-    public ResponseEntity<?> updateHotspot() {
-        try {
-            hotspotTask.executeHotspotTask();
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }

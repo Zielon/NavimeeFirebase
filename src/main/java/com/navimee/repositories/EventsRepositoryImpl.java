@@ -3,13 +3,12 @@ package com.navimee.repositories;
 import com.google.cloud.firestore.Query;
 import com.navimee.contracts.repositories.EventsRepository;
 import com.navimee.contracts.repositories.FirebaseRepository;
-import com.navimee.enums.CollectionType;
 import com.navimee.enums.HotspotType;
 import com.navimee.firestore.Database;
 import com.navimee.firestore.operations.DbAdd;
 import com.navimee.firestore.operations.DbDelete;
 import com.navimee.firestore.operations.DbGet;
-import com.navimee.logger.LogEnum;
+import com.navimee.logger.LogTypes;
 import com.navimee.logger.Logger;
 import com.navimee.models.entities.Event;
 import com.navimee.models.entities.Log;
@@ -75,7 +74,7 @@ public class EventsRepositoryImpl implements EventsRepository {
     @Override
     public Future removeEvents() {
         return executorService.submit(() -> {
-            Logger.LOG(new Log(LogEnum.DELETION, "Delete old events"));
+            Logger.LOG(new Log(LogTypes.DELETION, "Delete old events"));
 
             Date warsaw = LocalDateTime.now(DateTimeZone.UTC).toDate();
 

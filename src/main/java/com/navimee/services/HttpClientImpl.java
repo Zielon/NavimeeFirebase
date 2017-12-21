@@ -1,7 +1,7 @@
 package com.navimee.services;
 
 import com.navimee.contracts.services.HttpClient;
-import com.navimee.logger.LogEnum;
+import com.navimee.logger.LogTypes;
 import com.navimee.logger.Logger;
 import com.navimee.models.entities.Log;
 import org.apache.http.HttpEntity;
@@ -44,7 +44,7 @@ public class HttpClientImpl implements HttpClient {
         try {
             client.close();
         } catch (IOException e) {
-            Logger.LOG(new Log(LogEnum.EXCEPTION, e));
+            Logger.LOG(new Log(LogTypes.EXCEPTION, e));
         }
     }
 
@@ -60,7 +60,7 @@ public class HttpClientImpl implements HttpClient {
 
             return new JSONObject(json);
         } catch (Exception e) {
-            Logger.LOG(new Log(LogEnum.EXCEPTION, e));
+            Logger.LOG(new Log(LogTypes.EXCEPTION, e));
             return new JSONObject();
         } finally {
             request.releaseConnection();

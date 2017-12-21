@@ -1,6 +1,6 @@
 package com.navimee.asyncCollectors;
 
-import com.navimee.logger.LogEnum;
+import com.navimee.logger.LogTypes;
 import com.navimee.logger.Logger;
 import com.navimee.models.entities.Log;
 
@@ -45,7 +45,7 @@ public class CompletionCollector {
                     output.add(result);
                 received++;
             } catch (Exception e) {
-                Logger.LOG(new Log(LogEnum.EXCEPTION, e));
+                Logger.LOG(new Log(LogTypes.EXCEPTION, e));
             }
         }
         return output;
@@ -61,7 +61,7 @@ public class CompletionCollector {
                     output.addAll(result);
                 received++;
             } catch (Exception e) {
-                Logger.LOG(new Log(LogEnum.EXCEPTION, e));
+                Logger.LOG(new Log(LogTypes.EXCEPTION, e));
             }
         }
         return output;

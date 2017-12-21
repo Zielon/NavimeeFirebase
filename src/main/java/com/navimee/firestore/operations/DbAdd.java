@@ -4,7 +4,7 @@ import com.google.cloud.firestore.CollectionReference;
 import com.google.cloud.firestore.SetOptions;
 import com.google.cloud.firestore.WriteResult;
 import com.navimee.firestore.operations.enums.AdditionEnum;
-import com.navimee.logger.LogEnum;
+import com.navimee.logger.LogTypes;
 import com.navimee.logger.Logger;
 import com.navimee.models.entities.Entity;
 import com.navimee.models.entities.Event;
@@ -75,12 +75,12 @@ public class DbAdd {
                 // Wait for all tasks to finish.
                 waitForFutures(executorService, tasks);
 
-                Logger.LOG(new Log(LogEnum.ADDITION,
+                Logger.LOG(new Log(LogTypes.ADDITION,
                         String.format("%s | [Type: %s%s]", collectionReference.getPath(), entity.getClass().getSimpleName(), extraInfo),
                         entities.size()));
 
             } catch (Exception e) {
-                Logger.LOG(new Log(LogEnum.EXCEPTION, e));
+                Logger.LOG(new Log(LogTypes.EXCEPTION, e));
             }
         });
     }

@@ -1,7 +1,7 @@
 package com.navimee.firestore.operations;
 
 import com.google.cloud.firestore.*;
-import com.navimee.logger.LogEnum;
+import com.navimee.logger.LogTypes;
 import com.navimee.logger.Logger;
 import com.navimee.models.entities.Log;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,10 +42,10 @@ public class DbDelete {
                 collection(collection, deletedAll);
             }
         } catch (Exception e) {
-            Logger.LOG(new Log(LogEnum.EXCEPTION, e));
+            Logger.LOG(new Log(LogTypes.EXCEPTION, e));
         }
 
-        // Logger.LOG(new Log(LogEnum.DELETION, collection.getPath(), deletedAll));
+        // Logger.LOG(new Log(LogTypes.DELETION, collection.getPath(), deletedAll));
     }
 
     public void document(DocumentReference document) {
@@ -54,7 +54,7 @@ public class DbDelete {
                 collection(collection, 1);
             document.delete().get();
         } catch (Exception e) {
-            Logger.LOG(new Log(LogEnum.EXCEPTION, e));
+            Logger.LOG(new Log(LogTypes.EXCEPTION, e));
         }
     }
 
@@ -63,7 +63,7 @@ public class DbDelete {
             for (DocumentSnapshot documentSnapshot : query.get().get().getDocuments())
                 document(documentSnapshot.getReference());
         } catch (Exception e) {
-            Logger.LOG(new Log(LogEnum.EXCEPTION, e));
+            Logger.LOG(new Log(LogTypes.EXCEPTION, e));
         }
     }
 }

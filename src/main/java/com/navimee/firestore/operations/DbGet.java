@@ -6,7 +6,7 @@ import com.google.cloud.firestore.CollectionReference;
 import com.google.cloud.firestore.DocumentReference;
 import com.google.cloud.firestore.DocumentSnapshot;
 import com.google.cloud.firestore.Query;
-import com.navimee.logger.LogEnum;
+import com.navimee.logger.LogTypes;
 import com.navimee.logger.Logger;
 import com.navimee.models.entities.Entity;
 import com.navimee.models.entities.Log;
@@ -25,7 +25,7 @@ public class DbGet {
                 output.addAll(fromCollection(collectionReference, type, false));
 
         } catch (Exception e) {
-            Logger.LOG(new Log(LogEnum.EXCEPTION, e));
+            Logger.LOG(new Log(LogTypes.EXCEPTION, e));
         }
 
         return output;
@@ -52,7 +52,7 @@ public class DbGet {
         try {
             output = fromCollection(query.get().get().getDocuments(), type);
         } catch (Exception e) {
-            Logger.LOG(new Log(LogEnum.EXCEPTION, e));
+            Logger.LOG(new Log(LogTypes.EXCEPTION, e));
         }
 
         return output;
@@ -63,10 +63,10 @@ public class DbGet {
         try {
             output = fromCollection(collectionReference.get().get().getDocuments(), type);
         } catch (Exception e) {
-            Logger.LOG(new Log(LogEnum.EXCEPTION, e));
+            Logger.LOG(new Log(LogTypes.EXCEPTION, e));
         }
         if (logging)
-            Logger.LOG(new Log(LogEnum.RETRIEVAL, collectionReference.getPath(), output.size()));
+            Logger.LOG(new Log(LogTypes.RETRIEVAL, collectionReference.getPath(), output.size()));
         return output;
     }
 
@@ -80,7 +80,7 @@ public class DbGet {
                 output.add(entity);
             }
         } catch (Exception e) {
-            Logger.LOG(new Log(LogEnum.EXCEPTION, e));
+            Logger.LOG(new Log(LogTypes.EXCEPTION, e));
         }
 
         return output;

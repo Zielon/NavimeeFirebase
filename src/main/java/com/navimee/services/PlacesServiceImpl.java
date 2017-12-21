@@ -8,7 +8,7 @@ import com.navimee.contracts.repositories.PlacesRepository;
 import com.navimee.contracts.services.HttpClient;
 import com.navimee.contracts.services.PlacesService;
 import com.navimee.general.Collections;
-import com.navimee.logger.LogEnum;
+import com.navimee.logger.LogTypes;
 import com.navimee.logger.Logger;
 import com.navimee.models.dto.geocoding.GooglePlaceDto;
 import com.navimee.models.dto.placeDetails.FsPlaceDetailsDto;
@@ -72,7 +72,7 @@ public class PlacesServiceImpl implements PlacesService {
     @Override
     public Future saveFacebookPlaces(String city) {
         return executorService.submit(() -> {
-            Logger.LOG(new Log(LogEnum.TASK, "Facebook places update"));
+            Logger.LOG(new Log(LogTypes.TASK, "Facebook places update"));
             List<Coordinate> coordinates = placesRepository.getCoordinates(city);
 
             // DbGet data from the external facebook API
@@ -98,7 +98,7 @@ public class PlacesServiceImpl implements PlacesService {
     @Override
     public Future saveFoursquarePlaces(String city) {
         return executorService.submit(() -> {
-            Logger.LOG(new Log(LogEnum.TASK, "Foursquare places update"));
+            Logger.LOG(new Log(LogTypes.TASK, "Foursquare places update"));
             List<Coordinate> coordinates = placesRepository.getCoordinates(city);
 
             // DbGet data from the external foursquare API
@@ -124,7 +124,7 @@ public class PlacesServiceImpl implements PlacesService {
     @Override
     public Future saveFoursquarePlacesDetails(String city) {
         return executorService.submit(() -> {
-            Logger.LOG(new Log(LogEnum.TASK, "Foursquare details update for " + city));
+            Logger.LOG(new Log(LogTypes.TASK, "Foursquare details update for " + city));
             List<FsPlace> places = placesRepository.getFoursquarePlaces(city);
 
             // DbGet data from the external foursquare API

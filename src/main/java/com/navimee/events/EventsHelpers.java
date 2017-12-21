@@ -2,7 +2,7 @@ package com.navimee.events;
 
 import com.google.cloud.firestore.GeoPoint;
 import com.navimee.contracts.services.PlacesService;
-import com.navimee.logger.LogEnum;
+import com.navimee.logger.LogTypes;
 import com.navimee.logger.Logger;
 import com.navimee.models.bo.FbEvent;
 import com.navimee.models.dto.geocoding.GooglePlaceDto;
@@ -97,7 +97,7 @@ public class EventsHelpers {
             }
 
         } catch (Exception e) {
-            Logger.LOG(new Log(LogEnum.EXCEPTION, e));
+            Logger.LOG(new Log(LogTypes.EXCEPTION, e));
         }
 
         return false;

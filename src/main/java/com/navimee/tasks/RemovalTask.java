@@ -15,11 +15,11 @@ public class RemovalTask {
     @Autowired
     EventsRepository eventsRepository;
 
-    synchronized public void executeRemoveEventsTask() throws InterruptedException, ExecutionException {
+    public void executeRemoveEventsTask() throws InterruptedException, ExecutionException {
         eventsRepository.removeEvents().get();
     }
 
-    @Scheduled(fixedDelay = REMOVAL)
+    //@Scheduled(fixedDelay = REMOVAL)
     public void task() throws InterruptedException, ExecutionException {
         this.executeRemoveEventsTask();
     }
