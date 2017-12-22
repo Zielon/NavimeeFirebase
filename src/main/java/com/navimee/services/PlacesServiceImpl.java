@@ -79,8 +79,7 @@ public class PlacesServiceImpl implements PlacesService {
             FacebookPlacesQuery facebookPlacesQuery =
                     new FacebookPlacesQuery(facebookConfiguration, executorService, httpClient);
 
-            List<Callable<List<FbPlaceDto>>> tasks =
-                    coordinates.stream()
+            List<Callable<List<FbPlaceDto>>> tasks = coordinates.stream()
                             .map(c -> facebookPlacesQuery.execute(new PlacesParams(c.getLatitude(), c.getLongitude())))
                             .collect(toList());
 
@@ -105,8 +104,7 @@ public class PlacesServiceImpl implements PlacesService {
             FoursquarePlacesQuery foursquarePlacesQuery =
                     new FoursquarePlacesQuery(foursquareConfiguration, executorService, httpClient);
 
-            List<Callable<List<FsPlaceDto>>> tasks =
-                    coordinates.stream()
+            List<Callable<List<FsPlaceDto>>> tasks = coordinates.stream()
                             .map(c -> foursquarePlacesQuery.execute(new PlaceDetailsParams(c.getLatitude(), c.getLongitude(), "/venues/search")))
                             .collect(toList());
 
@@ -161,8 +159,7 @@ public class PlacesServiceImpl implements PlacesService {
 
             waitForSingleTask(executorService, popularTasks).stream()
                     .filter(Objects::nonNull)
-                    .forEach(dto ->
-                            entitiesDetails.stream()
+                    .forEach(dto -> entitiesDetails.stream()
                                     .filter(details -> details.getId().equals(dto.getPlaceId()))
                                     .findFirst().get()
                                     .setPopular(modelMapper.map(dto, FsPopular.class)));
