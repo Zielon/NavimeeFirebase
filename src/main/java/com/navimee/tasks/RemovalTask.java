@@ -19,7 +19,7 @@ public class RemovalTask {
         eventsRepository.removeEvents().get();
     }
 
-    //@Scheduled(fixedDelay = REMOVAL)
+    @Scheduled(fixedDelay = REMOVAL)
     public void task() throws InterruptedException, ExecutionException {
         this.executeRemoveEventsTask();
     }
