@@ -8,15 +8,18 @@ import com.navimee.configuration.mappers.PhqEventTransformer;
 import com.navimee.configuration.specific.*;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.Scope;
 import org.springframework.core.io.Resource;
 
 import java.io.IOException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 
 @Configuration
 public class Injections {
@@ -89,8 +92,16 @@ public class Injections {
     }
 
     @Bean
+    @Primary
     @Scope("singleton")
     public ExecutorService providerExecutorService() {
         return Executors.newWorkStealingPool();
+    }
+
+    @Bean
+    @Scope("singleton")
+    @Qualifier("scheduledExecutor")
+    public ScheduledExecutorService providerScheduledExecutorService() {
+        return Executors.newScheduledThreadPool(2);
     }
 }

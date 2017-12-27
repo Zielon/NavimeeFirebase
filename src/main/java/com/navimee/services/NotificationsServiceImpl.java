@@ -1,97 +1,100 @@
 package com.navimee.services;
 
-import com.navimee.configuration.specific.GoogleConfiguration;
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.FirebaseDatabase;
 import com.navimee.contracts.repositories.NotificationsRepository;
+import com.navimee.contracts.repositories.UsersRepository;
+import com.navimee.contracts.services.FcmService;
 import com.navimee.contracts.services.NotificationsService;
-import com.navimee.firestore.Database;
-import com.navimee.firestore.operations.DbAdd;
-import com.navimee.logger.LogTypes;
-import com.navimee.logger.Logger;
-import com.navimee.models.entities.Log;
+import com.navimee.firestore.Paths;
+import com.navimee.models.entities.Feedback;
 import com.navimee.models.entities.Notification;
-import de.bytefish.fcmjava.client.FcmClient;
-import de.bytefish.fcmjava.client.settings.PropertiesBasedSettings;
-import de.bytefish.fcmjava.model.enums.PriorityEnum;
-import de.bytefish.fcmjava.model.options.FcmMessageOptions;
-import de.bytefish.fcmjava.requests.data.DataUnicastMessage;
-import de.bytefish.fcmjava.responses.FcmMessageResultItem;
+import com.navimee.models.entities.User;
+import com.navimee.models.entities.contracts.FcmSendable;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
-import java.time.Duration;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
-import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
-
-import static com.navimee.enums.CollectionType.NOTIFICATIONS;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 @Service
 public class NotificationsServiceImpl implements NotificationsService {
 
     @Autowired
-    ExecutorService executorService;
-
-    @Autowired
-    GoogleConfiguration googleConfiguration;
+    FirebaseDatabase firebaseDatabase;
 
     @Autowired
     NotificationsRepository notificationsRepository;
 
     @Autowired
-    DbAdd dbAdd;
+    FcmService fcmService;
 
     @Autowired
-    Database database;
+    UsersRepository usersRepository;
+
+    @Autowired
+    @Qualifier("scheduledExecutor")
+    ScheduledExecutorService scheduledExecutorService;
 
     @Override
-    public Future send() {
-        return executorService.submit(() -> {
-            Logger.LOG(new Log(LogTypes.TASK, "Send notifications"));
-
-            List<Notification> notifications = notificationsRepository.getAvailable();
-
-            Properties properties = new Properties();
-            properties.setProperty("fcm.api.url", googleConfiguration.fmcApiUrl);
-            properties.setProperty("fcm.api.key", googleConfiguration.fmcApiKey);
-
-            try {
-                try (FcmClient client = new FcmClient(PropertiesBasedSettings.createFromProperties(properties))) {
-
-                    FcmMessageOptions options = FcmMessageOptions.builder()
-                            .setPriorityEnum(PriorityEnum.High)
-                            .setContentAvailable(true)
-                            .setCollapseKey("collapseKey")
-                            .setTimeToLive(Duration.ofMinutes(30))
-                            .build();
-
-                    notifications.forEach(notification -> {
-
-                        Map<String, Object> data = new HashMap<>();
-
-                        data.put("title", notification.getTitle());
-                        data.put("endTime", notification.getEndTime());
-                        data.put("lat", notification.getGeoPoint().getLatitude());
-                        data.put("lng", notification.getGeoPoint().getLongitude());
-
-                        DataUnicastMessage message = new DataUnicastMessage(options, notification.getToken(), data);
-                        List<FcmMessageResultItem> results = client.send(message).getResults();
-
-                        if(results.stream().allMatch(fmc -> fmc.getErrorCode() == null))
-                            notification.setSent(true);
-                    });
-                }
-            } catch (Exception e) {
-                Logger.LOG(new Log(LogTypes.EXCEPTION, e));
-            } finally {
-                // Update the notification collection with isSent flag changed.
-                notifications.forEach(notification ->
-                        database.getCollection(NOTIFICATIONS)
-                                .document(notification.getId())
-                                .update("isSent", notification.isSent()));
-            }
+    public Future sendDaySchedule() {
+        List<Notification> notifications = notificationsRepository.getAvailable();
+        return fcmService.send(notifications, notification -> {
+            Map<String, Object> data = new HashMap<>();
+            data.put("title", notification.getTitle());
+            data.put("endTime", notification.getEndTime());
+            data.put("lat", notification.getGeoPoint().getLatitude());
+            data.put("lng", notification.getGeoPoint().getLongitude());
+            return data;
         });
+    }
+
+    @Override
+    public void listenForFeedback() {
+        firebaseDatabase.getReference(Paths.FEEDBACK_COLLECTION).addChildEventListener(getChildEventListener());
+    }
+
+    private ChildEventListener getChildEventListener() {
+        return new ChildEventListener() {
+            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                Feedback feedback = dataSnapshot.getValue(Feedback.class);
+                User user = usersRepository.getUser(feedback.getUserId());
+
+                feedback.setUserId(user.getId());
+                feedback.setToken(user.getToken());
+
+                scheduledExecutorService.schedule(() -> {
+                    List<FcmSendable> sendables = new ArrayList<>();
+                    sendables.add(feedback);
+                    fcmService.send(sendables, fcmSendable -> {
+                        Map<String, Object> data = new HashMap<>();
+                        data.put("address", feedback.getLocationName());
+                        data.put("name", user.getName());
+                        data.put("surname", user.getSurname());
+                        return data;
+                    });
+                }, feedback.getDurationInSec(), TimeUnit.SECONDS);
+            }
+
+            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+            }
+
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
+            }
+
+            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+            }
+
+            public void onCancelled(DatabaseError databaseError) {
+            }
+        };
     }
 }

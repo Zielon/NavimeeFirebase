@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.cloud.firestore.GeoPoint;
 import com.navimee.enums.EventType;
 import com.navimee.enums.HotspotType;
+import com.navimee.models.entities.contracts.Entity;
 import com.navimee.models.entities.places.Place;
 
 import java.util.Date;

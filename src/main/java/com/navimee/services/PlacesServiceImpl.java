@@ -80,8 +80,8 @@ public class PlacesServiceImpl implements PlacesService {
                     new FacebookPlacesQuery(facebookConfiguration, executorService, httpClient);
 
             List<Callable<List<FbPlaceDto>>> tasks = coordinates.stream()
-                            .map(c -> facebookPlacesQuery.execute(new PlacesParams(c.getLatitude(), c.getLongitude())))
-                            .collect(toList());
+                    .map(c -> facebookPlacesQuery.execute(new PlacesParams(c.getLatitude(), c.getLongitude())))
+                    .collect(toList());
 
             List<FbPlace> entities = waitForTasks(executorService, tasks)
                     .stream()
@@ -105,8 +105,8 @@ public class PlacesServiceImpl implements PlacesService {
                     new FoursquarePlacesQuery(foursquareConfiguration, executorService, httpClient);
 
             List<Callable<List<FsPlaceDto>>> tasks = coordinates.stream()
-                            .map(c -> foursquarePlacesQuery.execute(new PlaceDetailsParams(c.getLatitude(), c.getLongitude(), "/venues/search")))
-                            .collect(toList());
+                    .map(c -> foursquarePlacesQuery.execute(new PlaceDetailsParams(c.getLatitude(), c.getLongitude(), "/venues/search")))
+                    .collect(toList());
 
             List<FsPlace> entities = waitForTasks(executorService, tasks)
                     .stream()
@@ -160,9 +160,9 @@ public class PlacesServiceImpl implements PlacesService {
             waitForSingleTask(executorService, popularTasks).stream()
                     .filter(Objects::nonNull)
                     .forEach(dto -> entitiesDetails.stream()
-                                    .filter(details -> details.getId().equals(dto.getPlaceId()))
-                                    .findFirst().get()
-                                    .setPopular(modelMapper.map(dto, FsPopular.class)));
+                            .filter(details -> details.getId().equals(dto.getPlaceId()))
+                            .findFirst().get()
+                            .setPopular(modelMapper.map(dto, FsPopular.class)));
 
             List<FsPlaceDetails> entities = entitiesDetails.stream()
                     .filter(details -> details.getPopular() != null).collect(toList());

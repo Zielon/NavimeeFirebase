@@ -8,8 +8,8 @@ import com.google.cloud.firestore.DocumentSnapshot;
 import com.google.cloud.firestore.Query;
 import com.navimee.logger.LogTypes;
 import com.navimee.logger.Logger;
-import com.navimee.models.entities.Entity;
 import com.navimee.models.entities.Log;
+import com.navimee.models.entities.contracts.Entity;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;

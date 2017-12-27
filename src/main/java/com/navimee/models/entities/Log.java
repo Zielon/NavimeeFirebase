@@ -2,6 +2,7 @@ package com.navimee.models.entities;
 
 import com.navimee.firestore.Paths;
 import com.navimee.logger.LogTypes;
+import com.navimee.models.entities.contracts.Entity;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 

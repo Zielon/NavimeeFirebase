@@ -2,8 +2,8 @@ package com.navimee.repositories.inmemory;
 
 import com.navimee.logger.LogTypes;
 import com.navimee.logger.Logger;
-import com.navimee.models.entities.Entity;
 import com.navimee.models.entities.Log;
+import com.navimee.models.entities.contracts.Entity;
 
 import java.util.HashMap;
 import java.util.List;

@@ -6,9 +6,9 @@ import com.google.cloud.firestore.WriteResult;
 import com.navimee.firestore.operations.enums.AdditionEnum;
 import com.navimee.logger.LogTypes;
 import com.navimee.logger.Logger;
-import com.navimee.models.entities.Entity;
 import com.navimee.models.entities.Event;
 import com.navimee.models.entities.Log;
+import com.navimee.models.entities.contracts.Entity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 

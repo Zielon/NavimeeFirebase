@@ -16,11 +16,11 @@ public class NotificationsTask {
     NotificationsService notifications;
 
     public void executeSendNotification() throws InterruptedException, ExecutionException {
-        notifications.send().get();
+        notifications.sendDaySchedule().get();
     }
 
     @Scheduled(fixedDelay = NOTIFICATIONS)
     public void task() throws InterruptedException, ExecutionException {
-        this.executeSendNotification();
+        //this.executeSendNotification();
     }
 }

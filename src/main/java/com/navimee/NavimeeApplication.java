@@ -1,5 +1,7 @@
 package com.navimee;
 
+import com.navimee.contracts.services.NotificationsService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
@@ -13,9 +15,13 @@ import java.util.TimeZone;
 @EnableScheduling
 public class NavimeeApplication extends SpringBootServletInitializer {
 
+    @Autowired
+    NotificationsService notificationsService;
+
     @PostConstruct
     void started() {
         TimeZone.setDefault(TimeZone.getTimeZone("UTC"));
+        notificationsService.listenForFeedback();
     }
 
     @Override
