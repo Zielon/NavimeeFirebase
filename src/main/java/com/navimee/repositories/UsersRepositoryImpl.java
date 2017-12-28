@@ -23,8 +23,7 @@ public class UsersRepositoryImpl implements UsersRepository {
 
     @Override
     public User getUser(String id) {
-        User user = dbGet.fromSingleDocument(database.getCollection(USERS).document(id), User.class);
-        return user;
+        return dbGet.fromSingleDocument(database.getCollection(USERS).document(id), User.class);
     }
 
     @Override

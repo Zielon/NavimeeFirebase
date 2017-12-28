@@ -47,7 +47,7 @@ public class NotificationsRepositoryImpl implements NotificationsRepository {
 
         uncheckedNotifications.forEach(notification -> {
             User user = usersRepository.getUser(notification.getUserId());
-            if (user.isDayScheduleNotification()) {
+            if (user.getToken() != null && user.isDayScheduleNotification()) {
                 notification.setToken(user.getToken());
                 notifications.add(notification);
             }
@@ -69,6 +69,7 @@ public class NotificationsRepositoryImpl implements NotificationsRepository {
                 .filter(event -> event.getRank() >= 80).collect(toList());
 
         return usersRepository.getUsersWithBigEventsOn().stream()
+                .filter(user -> user.getToken() != null)
                 .map(user -> bigEvents.stream()
                         .map(event -> {
                             Notification notification = new Notification();

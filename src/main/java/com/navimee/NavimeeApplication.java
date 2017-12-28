@@ -1,6 +1,7 @@
 package com.navimee;
 
 import com.navimee.contracts.services.NotificationsService;
+import com.navimee.logger.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -31,5 +32,7 @@ public class NavimeeApplication extends SpringBootServletInitializer {
 
     public static void main(String[] args) throws Exception {
         SpringApplication.run(NavimeeApplication.class, args);
+
+        Logger.isRunning = false;
     }
 }

@@ -13,6 +13,12 @@ public class Feedback implements Entity, FcmSendable {
     private String userId;
     private String token;
     private boolean isSent;
+    private String id;
+    private int feedbackAnswer;
+
+    public Feedback(){
+        this.feedbackAnswer = -1;
+    }
 
     public int getDurationInSec() {
         return durationInSec;
@@ -36,10 +42,6 @@ public class Feedback implements Entity, FcmSendable {
 
     public void setUserId(String userId) {
         this.userId = userId;
-    }
-
-    public String getId() {
-        return userId;
     }
 
     @Override
@@ -74,5 +76,22 @@ public class Feedback implements Entity, FcmSendable {
 
     public void setLocationAddress(String locationAddress) {
         this.locationAddress = locationAddress;
+    }
+
+    @Override
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public int getFeedbackAnswer() {
+        return feedbackAnswer;
+    }
+
+    public void setFeedbackAnswer(int feedbackAnswer) {
+        this.feedbackAnswer = feedbackAnswer;
     }
 }

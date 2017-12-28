@@ -16,8 +16,8 @@ public class NotificationsTask {
     NotificationsService notifications;
 
     public void executeSendNotification() throws InterruptedException, ExecutionException {
-        //notifications.sendDaySchedule().get();
-        //notifications.sendBigEvents().get();
+        notifications.sendDaySchedule().get();
+        notifications.sendBigEvents().get();
     }
 
     @Scheduled(fixedDelay = NOTIFICATIONS)

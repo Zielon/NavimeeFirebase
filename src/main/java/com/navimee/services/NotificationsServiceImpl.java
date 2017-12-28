@@ -81,6 +81,9 @@ public class NotificationsServiceImpl implements NotificationsService {
                 Feedback feedback = dataSnapshot.getValue(Feedback.class);
                 User user = usersRepository.getUser(feedback.getUserId());
 
+                int waitForFeedbackSend = 60 * 15;
+
+                feedback.setId(dataSnapshot.getKey());
                 feedback.setUserId(user.getId());
                 feedback.setToken(user.getToken());
 
@@ -89,13 +92,14 @@ public class NotificationsServiceImpl implements NotificationsService {
                     sendables.add(feedback);
                     fcmService.send(sendables, fcmSendable -> {
                         Map<String, Object> data = new HashMap<>();
+                        data.put("id", feedback.getId());
                         data.put("locationName", feedback.getLocationName());
                         data.put("locationAddress", feedback.getLocationAddress());
                         data.put("name", user.getName() != null ? user.getName().split(" ")[0] : "");
                         data.put("type", NotificationType.FEEDBACK);
                         return data;
                     });
-                }, 2, TimeUnit.SECONDS);
+                }, feedback.getDurationInSec() + waitForFeedbackSend, TimeUnit.SECONDS);
             }
 
             public void onChildChanged(DataSnapshot dataSnapshot, String s) {
