@@ -8,6 +8,7 @@ import com.navimee.contracts.repositories.NotificationsRepository;
 import com.navimee.contracts.repositories.UsersRepository;
 import com.navimee.contracts.services.FcmService;
 import com.navimee.contracts.services.NotificationsService;
+import com.navimee.enums.NotificationType;
 import com.navimee.firestore.Paths;
 import com.navimee.models.entities.Feedback;
 import com.navimee.models.entities.Notification;
@@ -45,25 +46,28 @@ public class NotificationsServiceImpl implements NotificationsService {
     @Qualifier("scheduledExecutor")
     ScheduledExecutorService scheduledExecutorService;
 
-    private Function<Notification, Map<String, Object>> notificationsFunc = notification -> {
-        Map<String, Object> data = new HashMap<>();
-        data.put("title", notification.getTitle());
-        data.put("endTime", notification.getEndTime());
-        data.put("lat", notification.getGeoPoint().getLatitude());
-        data.put("lng", notification.getGeoPoint().getLongitude());
-        return data;
-    };
+    private Function<Notification, Map<String, Object>> getDataCreator(NotificationType type){
+        return notification -> {
+            Map<String, Object> data = new HashMap<>();
+            data.put("title", notification.getTitle());
+            data.put("endTime", notification.getEndTime());
+            data.put("lat", notification.getGeoPoint().getLatitude());
+            data.put("lng", notification.getGeoPoint().getLongitude());
+            data.put("type", type);
+            return data;
+        };
+    }
 
     @Override
     public Future sendDaySchedule() {
         List<Notification> notifications = notificationsRepository.getAvailableNotifications();
-        return fcmService.send(notifications, notificationsFunc);
+        return fcmService.send(notifications, getDataCreator(NotificationType.SCHEDULED_EVENT));
     }
 
     @Override
     public Future sendBigEvents() {
         List<Notification> notifications = notificationsRepository.getBigEventsNotifications();
-        return fcmService.send(notifications, notificationsFunc);
+        return fcmService.send(notifications, getDataCreator(NotificationType.BIG_EVENT));
     }
 
     @Override
@@ -85,12 +89,13 @@ public class NotificationsServiceImpl implements NotificationsService {
                     sendables.add(feedback);
                     fcmService.send(sendables, fcmSendable -> {
                         Map<String, Object> data = new HashMap<>();
-                        data.put("address", feedback.getLocationName());
-                        data.put("name", user.getName());
-                        data.put("surname", user.getSurname());
+                        data.put("locationName", feedback.getLocationName());
+                        data.put("locationAddress", feedback.getLocationAddress());
+                        data.put("name", user.getName() != null ? user.getName().split(" ")[0] : "");
+                        data.put("type", NotificationType.FEEDBACK);
                         return data;
                     });
-                }, feedback.getDurationInSec(), TimeUnit.SECONDS);
+                }, 2, TimeUnit.SECONDS);
             }
 
             public void onChildChanged(DataSnapshot dataSnapshot, String s) {

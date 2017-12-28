@@ -8,6 +8,8 @@ import com.navimee.models.entities.contracts.FcmSendable;
 public class Feedback implements Entity, FcmSendable {
     private int durationInSec;
     private String locationName;
+    private String locationAddress;
+    private int distance;
     private String userId;
     private String token;
     private boolean isSent;
@@ -56,5 +58,21 @@ public class Feedback implements Entity, FcmSendable {
 
     public void setSent(boolean sent) {
         isSent = sent;
+    }
+
+    public int getDistance() {
+        return distance;
+    }
+
+    public void setDistance(int distance) {
+        this.distance = distance;
+    }
+
+    public String getLocationAddress() {
+        return locationAddress;
+    }
+
+    public void setLocationAddress(String locationAddress) {
+        this.locationAddress = locationAddress;
     }
 }
