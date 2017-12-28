@@ -37,8 +37,8 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
-import static com.navimee.asyncCollectors.CompletionCollector.waitForSingleTask;
 import static com.navimee.asyncCollectors.CompletionCollector.waitForManyTasks;
+import static com.navimee.asyncCollectors.CompletionCollector.waitForSingleTask;
 import static com.navimee.linq.Distinct.distinctByKey;
 import static java.util.stream.Collectors.toList;
 

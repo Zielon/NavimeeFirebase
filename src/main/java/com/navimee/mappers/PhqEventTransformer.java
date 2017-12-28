@@ -1,4 +1,4 @@
-package com.navimee.configuration.mappers;
+package com.navimee.mappers;
 
 import com.navimee.models.bo.PhqEvent;
 import com.navimee.models.entities.Event;
