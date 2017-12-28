@@ -1,8 +1,8 @@
 package com.navimee.contracts.repositories;
 
 import com.firebase.geofire.GeoLocation;
-import com.navimee.models.entities.Entity;
 import com.navimee.models.entities.Event;
+import com.navimee.models.entities.contracts.Entity;
 import com.navimee.models.entities.places.foursquare.FsPlaceDetails;
 
 import java.util.List;

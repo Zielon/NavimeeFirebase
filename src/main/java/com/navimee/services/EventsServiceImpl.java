@@ -36,7 +36,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
-import static com.navimee.asyncCollectors.CompletionCollector.waitForTasks;
+import static com.navimee.asyncCollectors.CompletionCollector.waitForManyTasks;
 import static com.navimee.linq.Distinct.distinctByKey;
 import static java.util.stream.Collectors.toList;
 
@@ -81,7 +81,7 @@ public class EventsServiceImpl implements EventsService {
             FacebookEventsQuery query = new FacebookEventsQuery(facebookConfiguration, executorService, httpClient);
             Collections.spliter(fbPlaces, 50).forEach(places -> events.add(query.execute(new FacebookEventsParams(places))));
 
-            List<Event> entities = waitForTasks(executorService, events)
+            List<Event> entities = waitForManyTasks(executorService, events)
                     .parallelStream()
                     .filter(Objects::nonNull)
                     .map(dto -> modelMapper.map(dto, FbEvent.class))
@@ -108,7 +108,7 @@ public class EventsServiceImpl implements EventsService {
             Collections.spliter(coordinates, 80).forEach(coods -> {
                 try {
                     coods.forEach(c -> events.add(query.execute(new PredictHqEventsParams(c.getLatitude(), c.getLongitude()))));
-                    eventsDto.addAll(waitForTasks(executorService, events));
+                    eventsDto.addAll(waitForManyTasks(executorService, events));
                     TimeUnit.MINUTES.sleep(3);
                     events.clear();
                 } catch (Exception e) {

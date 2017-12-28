@@ -17,7 +17,11 @@ public class GoogleGeoTypeGetter {
         String returnType = "";
 
         try {
-            AddressComponentsDto addressComponents = place.addressComponents.stream().filter(address -> address.types.contains(type.toString())).findFirst().get();
+            AddressComponentsDto addressComponents =
+                    place.addressComponents.stream()
+                            .filter(address -> address.types.contains(type.toString()))
+                            .findFirst().get();
+
             returnType = nameType == GeoNameType.long_name ? addressComponents.longName : addressComponents.shortName;
         } catch (NoSuchElementException ignore) {
         }

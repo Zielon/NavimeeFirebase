@@ -3,13 +3,15 @@ package com.navimee.models.entities;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.cloud.firestore.GeoPoint;
+import com.navimee.models.entities.contracts.Entity;
+import com.navimee.models.entities.contracts.FcmSendable;
 
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class Notification implements Entity {
+public class Notification implements Entity, FcmSendable {
     private String id;
     private String token;
     private String userId;
@@ -22,7 +24,7 @@ public class Notification implements Entity {
 
     @JsonProperty("place")
     private void getGeoPoint(Map<String, Object> json) {
-        HashMap point = ((HashMap)json.get("geoPoint"));
+        HashMap point = ((HashMap) json.get("geoPoint"));
         double lat = Double.parseDouble(point.get("latitude").toString());
         double lon = Double.parseDouble(point.get("longitude").toString());
         geoPoint = new GeoPoint(lat, lon);

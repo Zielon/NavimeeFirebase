@@ -25,6 +25,9 @@ public class Paths {
     // Path
     public static final String BY_CITY = "BY_CITY";
 
+    // Feedback
+    public static final String FEEDBACK_COLLECTION = "FEEDBACK";
+
     // Logger
     public static final String LOGS = "EXECUTION_LOGS";
 

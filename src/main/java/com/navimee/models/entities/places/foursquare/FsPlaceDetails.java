@@ -1,7 +1,7 @@
 package com.navimee.models.entities.places.foursquare;
 
 import com.navimee.enums.HotspotType;
-import com.navimee.models.entities.Entity;
+import com.navimee.models.entities.contracts.Entity;
 import com.navimee.models.entities.places.foursquare.popularHours.FsPopular;
 
 import java.util.List;

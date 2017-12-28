@@ -1,12 +1,15 @@
 package com.navimee.models.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.navimee.models.entities.contracts.Entity;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class User implements Entity {
     private String id;
     private String token;
     private String email;
+    private String name;
+    private String surname;
     private boolean bigEventsNotification;
     private boolean dayScheduleNotification;
 
@@ -48,5 +51,21 @@ public class User implements Entity {
 
     public void setId(String id) {
         this.id = id;
+    }
+
+    public String getSurname() {
+        return surname;
+    }
+
+    public void setSurname(String surname) {
+        this.surname = surname;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 }

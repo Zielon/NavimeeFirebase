@@ -1,6 +1,6 @@
 package com.navimee.models.entities.coordinates;
 
-import com.navimee.models.entities.Entity;
+import com.navimee.models.entities.contracts.Entity;
 
 public class Coordinate implements Entity {
     private Double latitude;
