@@ -95,7 +95,7 @@ public class NotificationsServiceImpl implements NotificationsService {
                         data.put("id", feedback.getId());
                         data.put("locationName", feedback.getLocationName());
                         data.put("locationAddress", feedback.getLocationAddress());
-                        data.put("name", user.getName() != null ? user.getName().split(" ")[0] : "");
+                        data.put("name", user.getName() != null ? user.getName().split(" ")[0] : "No-name");
                         data.put("type", NotificationType.FEEDBACK);
                         return data;
                     });
