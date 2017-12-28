@@ -21,6 +21,6 @@ public class NotificationsTask {
 
     @Scheduled(fixedDelay = NOTIFICATIONS)
     public void task() throws InterruptedException, ExecutionException {
-        //this.executeSendNotification();
+        //executeSendNotification();
     }
 }

@@ -38,7 +38,7 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
 import static com.navimee.asyncCollectors.CompletionCollector.waitForSingleTask;
-import static com.navimee.asyncCollectors.CompletionCollector.waitForTasks;
+import static com.navimee.asyncCollectors.CompletionCollector.waitForManyTasks;
 import static com.navimee.linq.Distinct.distinctByKey;
 import static java.util.stream.Collectors.toList;
 
@@ -83,7 +83,7 @@ public class PlacesServiceImpl implements PlacesService {
                     .map(c -> facebookPlacesQuery.execute(new PlacesParams(c.getLatitude(), c.getLongitude())))
                     .collect(toList());
 
-            List<FbPlace> entities = waitForTasks(executorService, tasks)
+            List<FbPlace> entities = waitForManyTasks(executorService, tasks)
                     .stream()
                     .filter(Objects::nonNull)
                     .map(dto -> modelMapper.map(dto, FbPlace.class))
@@ -108,7 +108,7 @@ public class PlacesServiceImpl implements PlacesService {
                     .map(c -> foursquarePlacesQuery.execute(new PlaceDetailsParams(c.getLatitude(), c.getLongitude(), "/venues/search")))
                     .collect(toList());
 
-            List<FsPlace> entities = waitForTasks(executorService, tasks)
+            List<FsPlace> entities = waitForManyTasks(executorService, tasks)
                     .stream()
                     .filter(Objects::nonNull)
                     .map(dto -> modelMapper.map(dto, FsPlace.class))
