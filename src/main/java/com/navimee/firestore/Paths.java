@@ -11,16 +11,11 @@ public class Paths {
     public static final String FOURSQUARE_PLACES_COLLECTION = "FOURSQUARE_PLACES";
     public static final String FOURSQUARE_PLACES_DETAILS_COLLECTION = "FOURSQUARE_PLACES_DETAILS";
 
-    // Collections events
-    public static final String EVENTS_COLLECTION = "EVENTS";
-    public static final String SEGREGATED_EVENTS_COLLECTION = "SEGREGATED_EVENTS";
-
     // Documents
     public static final String NOTIFICATIONS_COLLECTION = "NOTIFICATIONS";
 
     // Users
     public static final String USERS_COLLECTION = "USERS";
-    public static final String USERS_EVENTS_COLLECTION = "USER_EVENTS";
 
     // Path
     public static final String BY_CITY = "BY_CITY";

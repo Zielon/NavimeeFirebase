@@ -24,6 +24,7 @@ import java.util.Map;
 import java.util.concurrent.Future;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Function;
 
 @Service
 public class NotificationsServiceImpl implements NotificationsService {
@@ -44,17 +45,25 @@ public class NotificationsServiceImpl implements NotificationsService {
     @Qualifier("scheduledExecutor")
     ScheduledExecutorService scheduledExecutorService;
 
+    private Function<Notification, Map<String, Object>> notificationsFunc = notification -> {
+        Map<String, Object> data = new HashMap<>();
+        data.put("title", notification.getTitle());
+        data.put("endTime", notification.getEndTime());
+        data.put("lat", notification.getGeoPoint().getLatitude());
+        data.put("lng", notification.getGeoPoint().getLongitude());
+        return data;
+    };
+
     @Override
     public Future sendDaySchedule() {
-        List<Notification> notifications = notificationsRepository.getAvailable();
-        return fcmService.send(notifications, notification -> {
-            Map<String, Object> data = new HashMap<>();
-            data.put("title", notification.getTitle());
-            data.put("endTime", notification.getEndTime());
-            data.put("lat", notification.getGeoPoint().getLatitude());
-            data.put("lng", notification.getGeoPoint().getLongitude());
-            return data;
-        });
+        List<Notification> notifications = notificationsRepository.getAvailableNotifications();
+        return fcmService.send(notifications, notificationsFunc);
+    }
+
+    @Override
+    public Future sendBigEvents() {
+        List<Notification> notifications = notificationsRepository.getBigEventsNotifications();
+        return fcmService.send(notifications, notificationsFunc);
     }
 
     @Override

@@ -5,5 +5,7 @@ import com.navimee.models.entities.Notification;
 import java.util.List;
 
 public interface NotificationsRepository {
-    List<Notification> getAvailable();
+    List<Notification> getAvailableNotifications();
+
+    List<Notification> getBigEventsNotifications();
 }

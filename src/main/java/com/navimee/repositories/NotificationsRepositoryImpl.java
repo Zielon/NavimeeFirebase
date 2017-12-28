@@ -5,6 +5,7 @@ import com.navimee.contracts.repositories.NotificationsRepository;
 import com.navimee.contracts.repositories.UsersRepository;
 import com.navimee.firestore.Database;
 import com.navimee.firestore.operations.DbGet;
+import com.navimee.models.entities.Event;
 import com.navimee.models.entities.Notification;
 import com.navimee.models.entities.User;
 import org.joda.time.DateTime;
@@ -15,7 +16,9 @@ import org.springframework.stereotype.Repository;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.navimee.enums.CollectionType.HOTSPOT;
 import static com.navimee.enums.CollectionType.NOTIFICATIONS;
+import static java.util.stream.Collectors.toList;
 
 @Repository
 public class NotificationsRepositoryImpl implements NotificationsRepository {
@@ -30,7 +33,7 @@ public class NotificationsRepositoryImpl implements NotificationsRepository {
     Database database;
 
     @Override
-    public List<Notification> getAvailable() {
+    public List<Notification> getAvailableNotifications() {
 
         DateTime warsaw = DateTime.now(DateTimeZone.UTC);
 
@@ -51,5 +54,33 @@ public class NotificationsRepositoryImpl implements NotificationsRepository {
         });
 
         return notifications;
+    }
+
+    @Override
+    public List<Notification> getBigEventsNotifications() {
+
+        DateTime warsaw = DateTime.now(DateTimeZone.UTC);
+
+        Query query = database.getCollection(HOTSPOT)
+                .whereGreaterThanOrEqualTo("endTime", warsaw.toDate())
+                .whereLessThanOrEqualTo("endTime", warsaw.plusMinutes(45).toDate());
+
+        List<Event> bigEvents = dbGet.fromCollection(query, Event.class).stream()
+                .filter(event -> event.getRank() >= 80).collect(toList());
+
+        return usersRepository.getUsersWithBigEventsOn().stream()
+                .map(user -> bigEvents.stream()
+                        .map(event -> {
+                            Notification notification = new Notification();
+
+                            notification.setToken(user.getToken());
+                            notification.setGeoPoint(event.getGeoPoint());
+                            notification.setEndTime(event.getEndTime());
+                            notification.setHotspotType(event.getHotspotType().toString());
+                            notification.setUserId(user.getId());
+                            notification.setTitle(event.getTitle());
+
+                            return notification;
+                        }).collect(toList())).flatMap(List::stream).collect(toList());
     }
 }

@@ -5,5 +5,7 @@ import java.util.concurrent.Future;
 public interface NotificationsService {
     Future sendDaySchedule();
 
+    Future sendBigEvents();
+
     void listenForFeedback();
 }

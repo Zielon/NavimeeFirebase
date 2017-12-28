@@ -2,10 +2,10 @@ package com.navimee.configuration;
 
 import com.google.cloud.firestore.Firestore;
 import com.google.firebase.database.FirebaseDatabase;
-import com.navimee.configuration.mappers.FbEventTransformer;
-import com.navimee.configuration.mappers.FsPlacesDetailsTransformer;
-import com.navimee.configuration.mappers.PhqEventTransformer;
 import com.navimee.configuration.specific.*;
+import com.navimee.mappers.FbEventTransformer;
+import com.navimee.mappers.FsPlacesDetailsTransformer;
+import com.navimee.mappers.PhqEventTransformer;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -102,6 +102,6 @@ public class Injections {
     @Scope("singleton")
     @Qualifier("scheduledExecutor")
     public ScheduledExecutorService providerScheduledExecutorService() {
-        return Executors.newScheduledThreadPool(2);
+        return Executors.newScheduledThreadPool(1);
     }
 }

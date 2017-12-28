@@ -1,4 +1,4 @@
-package com.navimee.configuration.mappers;
+package com.navimee.mappers;
 
 import com.navimee.models.bo.FbEvent;
 import com.navimee.models.entities.Event;
@@ -32,7 +32,7 @@ public class FbEventTransformer {
     }
 
     private static int estimateRanking(FbEvent event) {
-        double z = (0.8 * event.getAttendingCount() + 0.2 * event.getMaybeCount()) / 10000.0;
+        double z = (0.8 * event.getAttendingCount() + 0.2 * event.getMaybeCount()) / 1000.0;
         return (int) ((1 / (1 + Math.pow(Math.E, -z))) * 100.0);
     }
 }
