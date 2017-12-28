@@ -6,6 +6,7 @@ import com.navimee.firestore.Database;
 import com.navimee.logger.LogTypes;
 import com.navimee.logger.Logger;
 import com.navimee.models.entities.Log;
+import com.navimee.models.entities.Notification;
 import com.navimee.models.entities.contracts.FcmSendable;
 import de.bytefish.fcmjava.client.FcmClient;
 import de.bytefish.fcmjava.client.settings.PropertiesBasedSettings;
@@ -69,10 +70,11 @@ public class FcmServiceImpl implements FcmService {
                 Logger.LOG(new Log(LogTypes.EXCEPTION, e));
             } finally {
                 // Update the notification collection with isSent flag changed.
-                sendables.forEach(data ->
-                        database.getCollection(NOTIFICATIONS)
-                                .document(data.getId())
-                                .update("isSent", data.isSent()));
+                if(sendables.size() > 0 && sendables.get(0) instanceof Notification)
+                    sendables.forEach(data ->
+                            database.getCollection(NOTIFICATIONS)
+                                    .document(data.getId())
+                                    .update("isSent", data.isSent()));
             }
         });
     }
