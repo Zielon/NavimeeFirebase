@@ -13,7 +13,7 @@ public class Logger {
 
     private static Firestore db = FirebaseInitialization.firestore;
 
-    public static Future LOG(Log log) {
+    public static synchronized Future LOG(Log log) {
         if (isRunning)
             return db != null ? db.collection(Paths.LOGS).document().set(log) : null;
         else return null;

@@ -25,18 +25,18 @@ public class HotspotFilters {
         FsTimeFrame timeFrame = popular.getTimeframes().stream().filter(frame -> frame.getDays().contains(currentDay)).findFirst().get();
 
         return timeFrame.getOpen().stream().anyMatch(time -> {
-            String s = time.getStart().length() > 4 ? time.getStart().substring(1) : time.getStart();
-            String e = time.getEnd().length() > 4 ? time.getEnd().substring(1) : time.getEnd();
-            DateTime start = fmt.parseDateTime(s);
-            DateTime end = fmt.parseDateTime(e);
+            DateTime start = fmt.parseDateTime(time.getStart());
+            DateTime end = fmt.parseDateTime(time.getEnd().contains("+") ? time.getEnd().substring(1) : time.getEnd());
+            
+            if(time.getEnd().contains("+"))
+                end = end.plusDays(1);
+
             return isNowPopular(start, end, warsaw);
         });
     }
 
     private static boolean isNowPopular(DateTime start, DateTime end, DateTime warsaw) {
         DateTime current = fmt.parseDateTime(fmt.print(warsaw));
-        DateTime earlier = start.isBefore(end) ? start : end;
-        DateTime later = start.isBefore(end) ? end : start;
-        return earlier.getMinuteOfDay() <= current.getMinuteOfDay() && later.getMinuteOfDay() >= current.getMinuteOfDay();
+        return start.getMillis() <= current.getMillis() && end.getMillis() >= current.getMillis();
     }
 }
