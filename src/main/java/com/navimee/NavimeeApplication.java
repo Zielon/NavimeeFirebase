@@ -23,7 +23,7 @@ public class NavimeeApplication extends SpringBootServletInitializer {
     void started() {
         TimeZone.setDefault(TimeZone.getTimeZone("UTC"));
         notificationsService.listenForFeedback();
-        Logger.isRunning = false;
+        Logger.isRunning = true;
     }
 
     @Override
