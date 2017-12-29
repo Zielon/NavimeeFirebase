@@ -1,11 +1,9 @@
 package com.navimee.linq;
 
 import com.navimee.models.entities.places.foursquare.FsPlaceDetails;
-import com.navimee.models.entities.places.foursquare.popularHours.FsPopular;
 import com.navimee.models.entities.places.foursquare.popularHours.FsTimeFrame;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
-import org.joda.time.LocalDateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
@@ -16,22 +14,22 @@ public class HotspotFilters {
     private static DateTimeFormatter fmt = DateTimeFormat.forPattern("HHmm");
 
     public static Predicate<FsPlaceDetails> filterFsPopular() {
-        return fsPlaceDetails -> isPopular(fsPlaceDetails.getPopular());
+        return fsPlaceDetails -> isPopular(fsPlaceDetails);
     }
 
-    private static boolean isPopular(FsPopular popular) {
-        DateTime warsaw = DateTime.now(DateTimeZone.UTC);
-        int currentDay = warsaw.getDayOfWeek();
-        FsTimeFrame timeFrame = popular.getTimeframes().stream().filter(frame -> frame.getDays().contains(currentDay)).findFirst().get();
+    private static boolean isPopular(FsPlaceDetails details) {
+        DateTime localPlaceTime = DateTime.now(DateTimeZone.forID(details.getTimeZone()));
+        int currentDay = localPlaceTime.getDayOfWeek();
+        FsTimeFrame timeFrame = details.getPopular().getTimeframes().stream().filter(frame -> frame.getDays().contains(currentDay)).findFirst().get();
 
         return timeFrame.getOpen().stream().anyMatch(time -> {
             DateTime start = fmt.parseDateTime(time.getStart());
             DateTime end = fmt.parseDateTime(time.getEnd().contains("+") ? time.getEnd().substring(1) : time.getEnd());
-            
+
             if(time.getEnd().contains("+"))
                 end = end.plusDays(1);
 
-            return isNowPopular(start, end, warsaw);
+            return isNowPopular(start, end, localPlaceTime);
         });
     }
 

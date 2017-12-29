@@ -1,6 +1,6 @@
 package com.navimee.controllers.api;
 
-import com.navimee.tasks.DetailsTask;
+import com.navimee.tasks.PlacesDetailsTask;
 import com.navimee.tasks.PlacesTask;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class LongRunOperationsController {
 
     @Autowired
-    DetailsTask detailsTask;
+    PlacesDetailsTask detailsTask;
 
     @Autowired
     PlacesTask placesTask;
