@@ -14,6 +14,7 @@ public class FsPlaceDetailsDto implements Dto {
     public String id;
     public String name;
     public double rating;
+    public String timeZone;
     public LocationDto location;
     public StatsDto stats;
     public LikesDto likes;

@@ -19,6 +19,7 @@ public class FsPlacesDetailsTransformer {
                 entity.setId(dto.id);
                 entity.setName(dto.name);
                 entity.setRating(dto.rating);
+                entity.setTimeZone(dto.timeZone);
 
                 // Likes
                 if (dto.likes != null) {

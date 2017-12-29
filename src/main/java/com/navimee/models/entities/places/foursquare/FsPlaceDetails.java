@@ -10,6 +10,7 @@ public class FsPlaceDetails implements Entity {
     private String id;
     private String name;
     private double rating;
+    private String timeZone;
 
     private int likesCount;
     private String likesSummary;
@@ -179,5 +180,13 @@ public class FsPlaceDetails implements Entity {
 
     public void setPopular(FsPopular popular) {
         this.popular = popular;
+    }
+
+    public String getTimeZone() {
+        return timeZone;
+    }
+
+    public void setTimeZone(String timeZone) {
+        this.timeZone = timeZone;
     }
 }

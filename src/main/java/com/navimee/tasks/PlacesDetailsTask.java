@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
 import java.util.concurrent.ExecutionException;
 
 @Component
-public class DetailsTask {
+public class PlacesDetailsTask {
 
     @Autowired
     PlacesRepository placesRepository;
