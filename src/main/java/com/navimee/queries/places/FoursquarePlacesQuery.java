@@ -1,11 +1,11 @@
-package com.navimee.places.queries;
+package com.navimee.queries.places;
 
 import com.navimee.configuration.specific.FoursquareConfiguration;
 import com.navimee.contracts.services.HttpClient;
 import com.navimee.general.JSON;
 import com.navimee.models.dto.places.foursquare.FsPlaceDto;
-import com.navimee.places.queries.params.PlaceDetailsParams;
 import com.navimee.queries.Query;
+import com.navimee.queries.places.params.PlaceDetailsParams;
 import org.apache.http.client.utils.URIBuilder;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;

@@ -1,4 +1,4 @@
-package com.navimee.places.queries.params;
+package com.navimee.queries.places.params;
 
 import com.navimee.queries.QueryParams;
 

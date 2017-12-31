@@ -46,13 +46,14 @@ public class NotificationsServiceImpl implements NotificationsService {
     @Qualifier("scheduledExecutor")
     ScheduledExecutorService scheduledExecutorService;
 
-    private Function<Notification, Map<String, Object>> getDataCreator(NotificationType type){
+    private Function<Notification, Map<String, Object>> getDataCreator(NotificationType type) {
         return notification -> {
             Map<String, Object> data = new HashMap<>();
             data.put("title", notification.getTitle());
             data.put("endTime", notification.getEndTime());
             data.put("lat", notification.getGeoPoint().getLatitude());
             data.put("lng", notification.getGeoPoint().getLongitude());
+            data.put("rank", notification.getRank());
             data.put("type", type);
             return data;
         };
@@ -62,12 +63,6 @@ public class NotificationsServiceImpl implements NotificationsService {
     public Future sendDaySchedule() {
         List<Notification> notifications = notificationsRepository.getAvailableNotifications();
         return fcmService.send(notifications, getDataCreator(NotificationType.SCHEDULED_EVENT));
-    }
-
-    @Override
-    public Future sendBigEvents() {
-        List<Notification> notifications = notificationsRepository.getBigEventsNotifications();
-        return fcmService.send(notifications, getDataCreator(NotificationType.BIG_EVENT));
     }
 
     @Override

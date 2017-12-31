@@ -16,7 +16,7 @@ public class Feedback implements Entity, FcmSendable {
     private String id;
     private int feedbackAnswer;
 
-    public Feedback(){
+    public Feedback() {
         this.feedbackAnswer = -1;
     }
 

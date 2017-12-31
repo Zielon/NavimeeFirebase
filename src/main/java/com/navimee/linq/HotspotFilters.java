@@ -14,22 +14,22 @@ public class HotspotFilters {
     private static DateTimeFormatter fmt = DateTimeFormat.forPattern("HHmm");
 
     public static Predicate<FsPlaceDetails> filterFsPopular() {
-        return fsPlaceDetails -> isPopular(fsPlaceDetails);
+        return HotspotFilters::isPopular;
     }
 
     private static boolean isPopular(FsPlaceDetails details) {
-        DateTime localPlaceTime = DateTime.now(DateTimeZone.forID(details.getTimeZone()));
-        int currentDay = localPlaceTime.getDayOfWeek();
+        DateTime placeTime = DateTime.now(DateTimeZone.forID(details.getTimeZone()));
+        int currentDay = placeTime.getDayOfWeek();
         FsTimeFrame timeFrame = details.getPopular().getTimeframes().stream().filter(frame -> frame.getDays().contains(currentDay)).findFirst().get();
 
         return timeFrame.getOpen().stream().anyMatch(time -> {
             DateTime start = fmt.parseDateTime(time.getStart());
             DateTime end = fmt.parseDateTime(time.getEnd().contains("+") ? time.getEnd().substring(1) : time.getEnd());
 
-            if(time.getEnd().contains("+"))
+            if (time.getEnd().contains("+"))
                 end = end.plusDays(1);
 
-            return isNowPopular(start, end, localPlaceTime);
+            return isNowPopular(start, end, placeTime);
         });
     }
 

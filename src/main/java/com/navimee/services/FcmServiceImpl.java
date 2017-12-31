@@ -71,7 +71,7 @@ public class FcmServiceImpl implements FcmService {
             } finally {
                 // Update the notification collection with isSent flag changed.
                 // To prevent sending multiple times the same event.
-                if(sendables.size() > 0 && sendables.get(0) instanceof Notification)
+                if (sendables.size() > 0 && sendables.get(0) instanceof Notification)
                     sendables.forEach(data ->
                             database.getCollection(NOTIFICATIONS)
                                     .document(data.getId())

@@ -1,4 +1,4 @@
-package com.navimee.events.queries.params;
+package com.navimee.queries.events.params;
 
 import com.navimee.models.entities.places.facebook.FbPlace;
 import com.navimee.queries.QueryParams;

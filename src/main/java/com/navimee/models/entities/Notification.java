@@ -19,6 +19,7 @@ public class Notification implements Entity, FcmSendable {
     private String title;
     private Date startTime;
     private Date endTime;
+    private int rank;
     private boolean isSent;
     private GeoPoint geoPoint;
 
@@ -101,5 +102,13 @@ public class Notification implements Entity, FcmSendable {
 
     public void setGeoPoint(GeoPoint geoPoint) {
         this.geoPoint = geoPoint;
+    }
+
+    public int getRank() {
+        return rank;
+    }
+
+    public void setRank(int rank) {
+        this.rank = rank;
     }
 }

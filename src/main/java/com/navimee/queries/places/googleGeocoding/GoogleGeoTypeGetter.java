@@ -1,9 +1,9 @@
-package com.navimee.places.googleGeocoding;
+package com.navimee.queries.places.googleGeocoding;
 
 import com.navimee.models.dto.geocoding.GooglePlaceDto;
 import com.navimee.models.dto.geocoding.subelement.AddressComponentsDto;
-import com.navimee.places.googleGeocoding.enums.GeoNameType;
-import com.navimee.places.googleGeocoding.enums.GeoType;
+import com.navimee.queries.places.googleGeocoding.enums.GeoNameType;
+import com.navimee.queries.places.googleGeocoding.enums.GeoType;
 
 import java.util.NoSuchElementException;
 

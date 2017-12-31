@@ -1,4 +1,4 @@
-package com.navimee.places.googleGeocoding.enums;
+package com.navimee.queries.places.googleGeocoding.enums;
 
 public enum GeoType {
     street_number,
