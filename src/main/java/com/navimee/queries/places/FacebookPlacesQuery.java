@@ -1,11 +1,11 @@
-package com.navimee.places.queries;
+package com.navimee.queries.places;
 
 import com.navimee.configuration.specific.FacebookConfiguration;
 import com.navimee.contracts.services.HttpClient;
 import com.navimee.general.JSON;
 import com.navimee.models.dto.places.facebook.FbPlaceDto;
-import com.navimee.places.queries.params.PlacesParams;
 import com.navimee.queries.Query;
+import com.navimee.queries.places.params.PlacesParams;
 import org.apache.http.client.utils.URIBuilder;
 import org.json.JSONObject;
 

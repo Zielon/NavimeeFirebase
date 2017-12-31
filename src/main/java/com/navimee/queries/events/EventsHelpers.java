@@ -1,4 +1,4 @@
-package com.navimee.events;
+package com.navimee.queries.events;
 
 import com.google.cloud.firestore.GeoPoint;
 import com.navimee.contracts.services.PlacesService;
@@ -10,12 +10,12 @@ import com.navimee.models.entities.Event;
 import com.navimee.models.entities.Log;
 import com.navimee.models.entities.coordinates.Coordinate;
 import com.navimee.models.entities.places.Place;
-import com.navimee.places.googleGeocoding.enums.GeoType;
+import com.navimee.queries.places.googleGeocoding.enums.GeoType;
 
 import java.util.concurrent.Future;
 import java.util.function.Function;
 
-import static com.navimee.places.googleGeocoding.GoogleGeoTypeGetter.getType;
+import static com.navimee.queries.places.googleGeocoding.GoogleGeoTypeGetter.getType;
 
 public class EventsHelpers {
 

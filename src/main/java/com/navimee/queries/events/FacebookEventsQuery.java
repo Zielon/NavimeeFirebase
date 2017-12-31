@@ -1,13 +1,13 @@
-package com.navimee.events.queries;
+package com.navimee.queries.events;
 
 import com.navimee.configuration.specific.FacebookConfiguration;
 import com.navimee.contracts.services.HttpClient;
-import com.navimee.events.queries.params.FacebookEventsParams;
 import com.navimee.general.JSON;
 import com.navimee.models.dto.events.FbEventDto;
 import com.navimee.models.entities.places.Place;
 import com.navimee.models.entities.places.facebook.FbPlace;
 import com.navimee.queries.Query;
+import com.navimee.queries.events.params.FacebookEventsParams;
 import org.apache.http.client.utils.URIBuilder;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;

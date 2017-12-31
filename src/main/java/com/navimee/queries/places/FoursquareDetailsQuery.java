@@ -1,11 +1,11 @@
-package com.navimee.places.queries;
+package com.navimee.queries.places;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.navimee.configuration.specific.FoursquareConfiguration;
 import com.navimee.contracts.services.HttpClient;
-import com.navimee.models.dto.timeframes.PopularDto;
-import com.navimee.places.queries.params.PlaceDetailsParams;
+import com.navimee.models.dto.placeDetails.FsPlaceDetailsDto;
 import com.navimee.queries.Query;
+import com.navimee.queries.places.params.PlaceDetailsParams;
 import org.apache.http.client.utils.URIBuilder;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
@@ -18,26 +18,27 @@ import java.net.URISyntaxException;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 
-public class FoursquareTimeFramesQuery extends Query<PopularDto, FoursquareConfiguration, PlaceDetailsParams> {
+public class FoursquareDetailsQuery extends Query<FsPlaceDetailsDto, FoursquareConfiguration, PlaceDetailsParams> {
 
-    public FoursquareTimeFramesQuery(FoursquareConfiguration configuration,
-                                     ExecutorService executorService,
-                                     HttpClient httpClient) {
+
+    public FoursquareDetailsQuery(FoursquareConfiguration configuration,
+                                  ExecutorService executorService,
+                                  HttpClient httpClient) {
         super(configuration, executorService, httpClient);
     }
 
     @Override
-    public Callable<PopularDto> execute(PlaceDetailsParams params) {
+    public Callable<FsPlaceDetailsDto> execute(PlaceDetailsParams params) {
 
         DateTime warsawCurrent = DateTime.now(DateTimeZone.UTC);
-        DateTimeFormatter fmt = DateTimeFormat.forPattern("yyyyddMM");
+        DateTimeFormatter dtf = DateTimeFormat.forPattern("yyyyddMM");
 
         URI uri = null;
 
         try {
             URIBuilder builder = new URIBuilder(configuration.apiUrl);
-            builder.setPath("v2/" + params.type + "/" + params.placeId + "/hours");
-            builder.setParameter("v", fmt.print(warsawCurrent));
+            builder.setPath("v2/" + params.type + "/" + params.placeId);
+            builder.setParameter("v", dtf.print(warsawCurrent));
             builder.setParameter("client_id", configuration.clientId);
             builder.setParameter("client_secret", configuration.clientSecret);
             uri = builder.build();
@@ -50,20 +51,19 @@ public class FoursquareTimeFramesQuery extends Query<PopularDto, FoursquareConfi
     }
 
     @Override
-    protected PopularDto map(Callable<JSONObject> task, PlaceDetailsParams params) {
+    protected FsPlaceDetailsDto map(Callable<JSONObject> task, PlaceDetailsParams params) {
         ObjectMapper mapper = new ObjectMapper();
-        PopularDto popular = null;
+        FsPlaceDetailsDto placeDto = null;
         try {
             JSONObject object = task.call();
-            JSONObject json = object.getJSONObject("response").getJSONObject("popular");
-            if (!json.has("timeframes")) return popular;
-            popular = mapper.readValue(json.toString(), PopularDto.class);
+            JSONObject response = object.getJSONObject("response");
+            if (!response.has("venue")) return placeDto;
+            JSONObject details = response.getJSONObject("venue");
+            placeDto = mapper.readValue(details.toString(), FsPlaceDetailsDto.class);
         } catch (Exception e) {
             e.printStackTrace();
         }
 
-        popular.setPlaceId(params.placeId);
-
-        return popular;
+        return placeDto;
     }
 }

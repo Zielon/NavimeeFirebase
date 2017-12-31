@@ -19,12 +19,24 @@ import java.util.Map;
 public class NavimeeData {
 
     private JSONObject getJsonObject(StaticDataEnum mocks) {
-        Resource seleted = mocks == StaticDataEnum.Cities ? new ClassPathResource("navimeeData/availableCities.json")
-                : new ClassPathResource("navimeeData/coordinates.json");
+        Resource selected = null;
+
+        switch (mocks) {
+            case Cities:
+                selected = new ClassPathResource("navimeeData/availableCities.json");
+                break;
+            case Coordinates:
+                selected = new ClassPathResource("navimeeData/coordinates.json");
+                break;
+            case Categories:
+                selected = new ClassPathResource("navimeeData/forbiddenCategories.json");
+                break;
+        }
+
         BufferedReader streamReader = null;
         try {
             streamReader = new BufferedReader(
-                    new InputStreamReader(seleted.getInputStream(), "UTF-8"));
+                    new InputStreamReader(selected.getInputStream(), "UTF-8"));
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -54,6 +66,12 @@ public class NavimeeData {
         });
 
         return cities;
+    }
+
+    public List<String> getCategories() {
+        JSONObject object = getJsonObject(StaticDataEnum.Categories);
+        ObjectMapper mapper = new ObjectMapper();
+        return null;
     }
 
     public Map<String, List<Coordinate>> getCoordinates() {

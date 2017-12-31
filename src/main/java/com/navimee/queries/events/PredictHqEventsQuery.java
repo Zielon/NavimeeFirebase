@@ -1,11 +1,11 @@
-package com.navimee.events.queries;
+package com.navimee.queries.events;
 
 import com.navimee.configuration.specific.PredictHqConfiguration;
 import com.navimee.contracts.services.HttpClient;
-import com.navimee.events.queries.params.PredictHqEventsParams;
 import com.navimee.general.JSON;
 import com.navimee.models.dto.events.PhqEventDto;
 import com.navimee.queries.Query;
+import com.navimee.queries.events.params.PredictHqEventsParams;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.utils.URIBuilder;
 import org.joda.time.DateTime;
