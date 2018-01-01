@@ -39,7 +39,7 @@ public class CategoryTree {
                 available.add(forbidden);
         });
 
-        return available.size() > 0 ? available.get(0) : null;
+        return available.size() > 0 ? available.get(0) : new Pair<>(null, true);
     }
 
     private Pair<CategoryNode, Boolean> isForbidden(String category) {
