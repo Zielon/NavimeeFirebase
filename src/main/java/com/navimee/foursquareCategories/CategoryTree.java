@@ -1,8 +1,8 @@
 package com.navimee.foursquareCategories;
 
+import com.google.firebase.database.utilities.Pair;
 import com.navimee.models.dto.categories.FsCategoriesDto;
 import com.navimee.staticData.NavimeeData;
-import javafx.util.Pair;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -35,7 +35,7 @@ public class CategoryTree {
         categories = categories.stream().map(String::toUpperCase).collect(toList());
         categories.forEach(category -> {
             Pair<CategoryNode, Boolean> forbidden = isForbidden(category);
-            if (!forbidden.getValue())
+            if (!forbidden.getSecond())
                 available.add(forbidden);
         });
 

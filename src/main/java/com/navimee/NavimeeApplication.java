@@ -1,7 +1,6 @@
 package com.navimee;
 
 import com.navimee.contracts.services.NotificationsService;
-import com.navimee.contracts.services.PlacesService;
 import com.navimee.logger.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
@@ -20,14 +19,10 @@ public class NavimeeApplication extends SpringBootServletInitializer {
     @Autowired
     NotificationsService notificationsService;
 
-    @Autowired
-    PlacesService placesService;
-
     @PostConstruct
     void started() {
         TimeZone.setDefault(TimeZone.getTimeZone("UTC"));
         notificationsService.listenForFeedback();
-        placesService.getFsCategoryTree();
         Logger.isRunning = true;
     }
 
