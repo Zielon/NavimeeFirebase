@@ -29,6 +29,7 @@ public class FsPlaceDetails implements Entity {
     private double locationLng;
 
     private FsPopular popular;
+    private String mainCategory;
 
     private List<String> categories;
 
@@ -188,5 +189,13 @@ public class FsPlaceDetails implements Entity {
 
     public void setTimeZone(String timeZone) {
         this.timeZone = timeZone;
+    }
+
+    public String getMainCategory() {
+        return mainCategory;
+    }
+
+    public void setMainCategory(String mainCategory) {
+        this.mainCategory = mainCategory;
     }
 }
