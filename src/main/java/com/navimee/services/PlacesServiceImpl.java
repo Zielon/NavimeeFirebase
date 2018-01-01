@@ -7,9 +7,12 @@ import com.navimee.contracts.repositories.FirebaseRepository;
 import com.navimee.contracts.repositories.PlacesRepository;
 import com.navimee.contracts.services.HttpClient;
 import com.navimee.contracts.services.PlacesService;
+import com.navimee.foursquareCategories.CategoryNode;
+import com.navimee.foursquareCategories.CategoryTree;
 import com.navimee.general.Collections;
 import com.navimee.logger.LogTypes;
 import com.navimee.logger.Logger;
+import com.navimee.models.dto.categories.FsCategoriesDto;
 import com.navimee.models.dto.geocoding.GooglePlaceDto;
 import com.navimee.models.dto.placeDetails.FsPlaceDetailsDto;
 import com.navimee.models.dto.places.facebook.FbPlaceDto;
@@ -22,9 +25,11 @@ import com.navimee.models.entities.places.facebook.FbPlace;
 import com.navimee.models.entities.places.foursquare.FsPlace;
 import com.navimee.models.entities.places.foursquare.FsPlaceDetails;
 import com.navimee.models.entities.places.foursquare.popularHours.FsPopular;
+import com.navimee.queries.categories.FoursquareCategoryQuery;
 import com.navimee.queries.places.*;
 import com.navimee.queries.places.params.PlaceDetailsParams;
 import com.navimee.queries.places.params.PlacesParams;
+import javafx.util.Pair;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -143,11 +148,21 @@ public class PlacesServiceImpl implements PlacesService {
                 }
             });
 
+            CategoryTree categoryTree = getFsCategoryTree();
+
             List<FsPlaceDetails> entitiesDetails = placesDto.parallelStream()
                     .filter(Objects::nonNull)
                     .map(dto -> modelMapper.map(dto, FsPlaceDetails.class))
                     .filter(distinctByKey(FsPlaceDetails::getId))
                     .filter(d -> d.getStatsCheckinsCount() > 300)
+                    .filter(d -> {
+                        Pair<CategoryNode, Boolean> forbidden = categoryTree.isForbidden(d.getCategories());
+                        if (!forbidden.getValue()) {
+                            d.setMainCategory(forbidden.getKey().getCategoryName());
+                            return true;
+                        }
+                        return false;
+                    })
                     .collect(toList());
 
             // Update timeframes for every place
@@ -170,6 +185,25 @@ public class PlacesServiceImpl implements PlacesService {
             placesRepository.setFoursquarePlacesDetails(entities);
             firebaseRepository.transferPlaces(entities);
         });
+    }
+
+    @Override
+    public CategoryTree getFsCategoryTree() {
+
+        Logger.LOG(new Log(LogTypes.TASK, "Foursquare category tree"));
+
+        FoursquareCategoryQuery foursquareCategoryQuery =
+                new FoursquareCategoryQuery(foursquareConfiguration, executorService, httpClient);
+
+        List<Callable<List<FsCategoriesDto>>> categories = new ArrayList<>();
+        categories.add(foursquareCategoryQuery.execute(null));
+
+        List<FsCategoriesDto> categoriesDtos = waitForManyTasks(executorService, categories)
+                .stream()
+                .filter(Objects::nonNull)
+                .collect(toList());
+
+        return new CategoryTree().build(categoriesDtos);
     }
 
     @Override

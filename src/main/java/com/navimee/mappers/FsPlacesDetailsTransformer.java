@@ -48,7 +48,7 @@ public class FsPlacesDetailsTransformer {
 
                 // Category
                 if (dto.categories != null) {
-                    entity.setCategories(dto.categories.stream().map(c -> c.name).collect(toList()));
+                    entity.setCategories(dto.categories.stream().map(c -> c.name.toUpperCase()).collect(toList()));
                 }
 
                 return entity;

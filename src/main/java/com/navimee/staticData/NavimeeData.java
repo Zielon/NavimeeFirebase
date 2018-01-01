@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.navimee.models.entities.coordinates.City;
 import com.navimee.models.entities.coordinates.Coordinate;
+import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
@@ -55,7 +56,7 @@ public class NavimeeData {
         JSONObject object = getJsonObject(StaticDataEnum.Cities);
         ObjectMapper mapper = new ObjectMapper();
         List<City> cities = new ArrayList<>();
-        object.keySet().stream().forEach(e -> {
+        object.keySet().forEach(e -> {
             City c = null;
             try {
                 c = mapper.readValue(object.getJSONObject(e.toString()).toString(), City.class);
@@ -70,15 +71,20 @@ public class NavimeeData {
 
     public List<String> getCategories() {
         JSONObject object = getJsonObject(StaticDataEnum.Categories);
-        ObjectMapper mapper = new ObjectMapper();
-        return null;
+        JSONArray array = object.getJSONArray("categories");
+        List<String> list = new ArrayList<>();
+        for (int n = 0; n < array.length(); n++) {
+            JSONObject json = array.getJSONObject(n);
+            list.add(json.get("id").toString().toUpperCase());
+        }
+        return list;
     }
 
     public Map<String, List<Coordinate>> getCoordinates() {
         JSONObject object = getJsonObject(StaticDataEnum.Coordinates);
         Map<String, List<Coordinate>> coordinates = new HashMap<>();
         ObjectMapper mapper = new ObjectMapper();
-        object.keySet().stream().forEach(city -> {
+        object.keySet().forEach(city -> {
             try {
                 final List<Coordinate> coords =
                         mapper.readValue(

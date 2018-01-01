@@ -1,5 +1,6 @@
 package com.navimee.contracts.services;
 
+import com.navimee.foursquareCategories.CategoryTree;
 import com.navimee.models.dto.geocoding.GooglePlaceDto;
 import com.navimee.models.entities.coordinates.Coordinate;
 
@@ -12,6 +13,7 @@ public interface PlacesService {
 
     Future saveFoursquarePlacesDetails(String city);
 
+    CategoryTree getFsCategoryTree();
 
     Future<GooglePlaceDto> downloadReverseGeocoding(Coordinate coordinate);
 }
