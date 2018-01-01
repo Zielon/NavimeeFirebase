@@ -1,5 +1,6 @@
 package com.navimee.services;
 
+import com.google.firebase.database.utilities.Pair;
 import com.navimee.configuration.specific.FacebookConfiguration;
 import com.navimee.configuration.specific.FoursquareConfiguration;
 import com.navimee.configuration.specific.GoogleConfiguration;
@@ -29,7 +30,6 @@ import com.navimee.queries.categories.FoursquareCategoryQuery;
 import com.navimee.queries.places.*;
 import com.navimee.queries.places.params.PlaceDetailsParams;
 import com.navimee.queries.places.params.PlacesParams;
-import javafx.util.Pair;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -157,8 +157,8 @@ public class PlacesServiceImpl implements PlacesService {
                     .filter(d -> d.getStatsCheckinsCount() > 300)
                     .filter(d -> {
                         Pair<CategoryNode, Boolean> forbidden = categoryTree.isForbidden(d.getCategories());
-                        if (!forbidden.getValue()) {
-                            d.setMainCategory(forbidden.getKey().getCategoryName());
+                        if (!forbidden.getSecond()) {
+                            d.setMainCategory(forbidden.getFirst().getCategoryName());
                             return true;
                         }
                         return false;
