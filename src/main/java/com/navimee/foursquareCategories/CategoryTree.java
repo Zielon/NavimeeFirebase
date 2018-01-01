@@ -2,12 +2,14 @@ package com.navimee.foursquareCategories;
 
 import com.google.firebase.database.utilities.Pair;
 import com.navimee.models.dto.categories.FsCategoriesDto;
+import com.navimee.models.entities.places.foursquare.FsPlaceDetails;
 import com.navimee.staticData.NavimeeData;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Predicate;
 
 import static java.util.stream.Collectors.toList;
 
@@ -40,6 +42,20 @@ public class CategoryTree {
         });
 
         return available.size() > 0 ? available.get(0) : new Pair<>(null, true);
+    }
+
+    public Predicate<FsPlaceDetails> getPredicate(){
+        return fsPlaceDetails -> {
+            if(fsPlaceDetails.getCategories() == null || fsPlaceDetails.getCategories().isEmpty())
+                return false;
+
+            Pair<CategoryNode, Boolean> forbidden = isForbidden(fsPlaceDetails.getCategories());
+            if (!forbidden.getSecond()) {
+                fsPlaceDetails.setMainCategory(forbidden.getFirst().getCategoryName());
+                return true;
+            }
+            return false;
+        };
     }
 
     private Pair<CategoryNode, Boolean> isForbidden(String category) {

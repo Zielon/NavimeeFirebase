@@ -1,6 +1,5 @@
 package com.navimee.services;
 
-import com.google.firebase.database.utilities.Pair;
 import com.navimee.configuration.specific.FacebookConfiguration;
 import com.navimee.configuration.specific.FoursquareConfiguration;
 import com.navimee.configuration.specific.GoogleConfiguration;
@@ -8,7 +7,6 @@ import com.navimee.contracts.repositories.FirebaseRepository;
 import com.navimee.contracts.repositories.PlacesRepository;
 import com.navimee.contracts.services.HttpClient;
 import com.navimee.contracts.services.PlacesService;
-import com.navimee.foursquareCategories.CategoryNode;
 import com.navimee.foursquareCategories.CategoryTree;
 import com.navimee.general.Collections;
 import com.navimee.logger.LogTypes;
@@ -154,15 +152,8 @@ public class PlacesServiceImpl implements PlacesService {
                     .filter(Objects::nonNull)
                     .map(dto -> modelMapper.map(dto, FsPlaceDetails.class))
                     .filter(distinctByKey(FsPlaceDetails::getId))
-                    .filter(d -> d.getStatsCheckinsCount() > 300)
-                    .filter(d -> {
-                        Pair<CategoryNode, Boolean> forbidden = categoryTree.isForbidden(d.getCategories());
-                        if (!forbidden.getSecond()) {
-                            d.setMainCategory(forbidden.getFirst().getCategoryName());
-                            return true;
-                        }
-                        return false;
-                    })
+                    .filter(d -> d.getStatsCheckinsCount() > 500)
+                    .filter(categoryTree.getPredicate())
                     .collect(toList());
 
             // Update timeframes for every place
