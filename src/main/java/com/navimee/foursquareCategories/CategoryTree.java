@@ -32,7 +32,7 @@ public class CategoryTree {
 
     public Pair<CategoryNode, Boolean> isForbidden(List<String> categories) {
         List<Pair<CategoryNode, Boolean>> available = new ArrayList<>();
-        categories = categories.stream().map(category -> category.toUpperCase()).collect(toList());
+        categories = categories.stream().map(String::toUpperCase).collect(toList());
         categories.forEach(category -> {
             Pair<CategoryNode, Boolean> forbidden = isForbidden(category);
             if (!forbidden.getValue())
