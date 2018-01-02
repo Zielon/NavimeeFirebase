@@ -152,7 +152,7 @@ public class PlacesServiceImpl implements PlacesService {
                     .filter(Objects::nonNull)
                     .map(dto -> modelMapper.map(dto, FsPlaceDetails.class))
                     .filter(distinctByKey(FsPlaceDetails::getId))
-                    .filter(d -> d.getStatsCheckinsCount() > 500)
+                    .filter(d -> d.getStatsCheckinsCount() > 600 || d.getLikesCount() > 1000)
                     .filter(categoryTree.getPredicate())
                     .collect(toList());
 
