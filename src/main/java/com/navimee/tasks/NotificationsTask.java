@@ -19,7 +19,7 @@ public class NotificationsTask {
         notifications.sendDaySchedule().get();
     }
 
-    @Scheduled(fixedDelay = NOTIFICATIONS)
+    //@Scheduled(fixedDelay = NOTIFICATIONS)
     public void task() throws InterruptedException, ExecutionException {
         executeSendNotification();
     }
