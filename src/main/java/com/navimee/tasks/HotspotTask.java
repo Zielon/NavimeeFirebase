@@ -39,7 +39,7 @@ public class HotspotTask {
                 event -> new GeoLocation(event.getGeoPoint().getLatitude(), event.getGeoPoint().getLongitude())).get();
     }
 
-    @Scheduled(fixedDelay = HOTSPOT)
+    //@Scheduled(fixedDelay = HOTSPOT)
     public void task() throws InterruptedException, ExecutionException {
         this.executeHotspotTask();
     }

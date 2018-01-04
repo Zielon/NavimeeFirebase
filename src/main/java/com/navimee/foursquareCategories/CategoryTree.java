@@ -5,7 +5,6 @@ import com.navimee.models.dto.categories.FsCategoriesDto;
 import com.navimee.models.entities.places.foursquare.FsPlaceDetails;
 import com.navimee.staticData.NavimeeData;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -33,15 +32,13 @@ public class CategoryTree {
     }
 
     public Pair<CategoryNode, Boolean> isForbidden(List<String> categories) {
-        List<Pair<CategoryNode, Boolean>> available = new ArrayList<>();
         categories = categories.stream().map(String::toUpperCase).collect(toList());
-        categories.forEach(category -> {
-            Pair<CategoryNode, Boolean> forbidden = isForbidden(category);
-            if (!forbidden.getSecond())
-                available.add(forbidden);
-        });
+        List<Pair<CategoryNode, Boolean>> available = categories.stream()
+                .map(this::isForbidden)
+                .filter(forbidden -> !forbidden.getSecond())
+                .collect(toList());
 
-        return available.size() > 0 ? available.get(0) : new Pair<>(null, true);
+        return !available.isEmpty() ? available.get(0) : new Pair<>(null, true);
     }
 
     public Predicate<FsPlaceDetails> getPredicate(){
@@ -79,7 +76,6 @@ public class CategoryTree {
     }
 
     private void build(FsCategoriesDto dto, CategoryNode node) {
-
         dto.getCategories().forEach(category -> {
             CategoryNode leaf = new CategoryNode();
             nodes.put(category.getName(), leaf);
