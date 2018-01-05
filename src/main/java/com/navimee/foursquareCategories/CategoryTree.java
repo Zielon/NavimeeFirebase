@@ -60,19 +60,19 @@ public class CategoryTree {
         if (!this.nodes.containsKey(category))
             return new Pair<>(null, true);
 
-        CategoryNode node = this.nodes.get(category);
-        while (node.getParent() != null) {
-            if (this.forbiddenCategories.contains(node.getCategoryName()))
-                return new Pair<>(node, true);
+        CategoryNode current = this.nodes.get(category);
+        CategoryNode previous = current;
 
-            node = node.getParent();
+        while (current != null && current.getParent() != null) {
+            if (this.forbiddenCategories.contains(current.getCategoryName()))
+                return new Pair<>(current, true);
 
-            // The last node which is not the root.
-            if (node.getParent().getParent() == null)
-                break;
+            previous = current;
+            current = current.getParent();
         }
 
-        return new Pair<>(node, false);
+        // Return a main category which is a direct root leaf
+        return new Pair<>(previous, false);
     }
 
     private void build(FsCategoriesDto dto, CategoryNode node) {
