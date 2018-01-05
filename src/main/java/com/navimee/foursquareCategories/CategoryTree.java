@@ -41,9 +41,9 @@ public class CategoryTree {
         return !available.isEmpty() ? available.get(0) : new Pair<>(null, true);
     }
 
-    public Predicate<FsPlaceDetails> getPredicate(){
+    public Predicate<FsPlaceDetails> getPredicate() {
         return fsPlaceDetails -> {
-            if(fsPlaceDetails.getCategories() == null || fsPlaceDetails.getCategories().isEmpty())
+            if (fsPlaceDetails.getCategories() == null || fsPlaceDetails.getCategories().isEmpty())
                 return false;
 
             Pair<CategoryNode, Boolean> forbidden = isForbidden(fsPlaceDetails.getCategories());
@@ -76,6 +76,9 @@ public class CategoryTree {
     }
 
     private void build(FsCategoriesDto dto, CategoryNode node) {
+        if (dto.getCategories() == null || dto.getCategories().isEmpty())
+            return;
+
         dto.getCategories().forEach(category -> {
             CategoryNode leaf = new CategoryNode();
             nodes.put(category.getName(), leaf);

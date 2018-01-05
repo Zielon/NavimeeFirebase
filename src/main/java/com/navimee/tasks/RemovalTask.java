@@ -1,6 +1,9 @@
 package com.navimee.tasks;
 
 import com.navimee.contracts.repositories.EventsRepository;
+import com.navimee.logger.LogTypes;
+import com.navimee.logger.Logger;
+import com.navimee.models.entities.Log;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
@@ -15,11 +18,15 @@ public class RemovalTask {
     @Autowired
     EventsRepository eventsRepository;
 
-    public void executeRemoveEventsTask() throws InterruptedException, ExecutionException {
-        eventsRepository.removeEvents().get();
+    public void executeRemoveEventsTask() {
+        try {
+            eventsRepository.removeEvents().get();
+        } catch (Exception e) {
+            Logger.LOG(new Log(LogTypes.EXCEPTION, e));
+        }
     }
 
-    //@Scheduled(fixedDelay = REMOVAL)
+    @Scheduled(fixedDelay = REMOVAL)
     public void task() throws InterruptedException, ExecutionException {
         this.executeRemoveEventsTask();
     }
