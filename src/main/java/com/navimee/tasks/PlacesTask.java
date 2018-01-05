@@ -3,6 +3,9 @@ package com.navimee.tasks;
 import com.navimee.contracts.repositories.FirestoreRepository;
 import com.navimee.contracts.repositories.PlacesRepository;
 import com.navimee.contracts.services.PlacesService;
+import com.navimee.logger.LogTypes;
+import com.navimee.logger.Logger;
+import com.navimee.models.entities.Log;
 import com.navimee.models.entities.coordinates.City;
 import com.navimee.models.entities.coordinates.Coordinate;
 import com.navimee.staticData.NavimeeData;
@@ -26,7 +29,7 @@ public class PlacesTask {
     @Autowired
     FirestoreRepository firestoreRepository;
 
-    public void executePlacesTask() throws ExecutionException, InterruptedException {
+    public void executePlacesTask() {
 
         // Mocked data.
         NavimeeData navimeeData = new NavimeeData();
@@ -43,12 +46,16 @@ public class PlacesTask {
         placesRepository.setCoordinates(coordinates).get();*/
 
         for (City city : placesRepository.getAvailableCities()) {
-            placesService.saveFacebookPlaces(city.getName()).get();
-            placesService.saveFoursquarePlaces(city.getName()).get();
+            try {
+                placesService.saveFacebookPlaces(city.getName()).get();
+                placesService.saveFoursquarePlaces(city.getName()).get();
+            } catch (Exception e) {
+                Logger.LOG(new Log(LogTypes.EXCEPTION, e));
+            }
         }
     }
 
-    //@Scheduled(cron = "0 0 1 2 * ?")
+    @Scheduled(cron = "0 0 1 2 * ?")
     public void task() throws ExecutionException, InterruptedException {
         this.executePlacesTask();
     }

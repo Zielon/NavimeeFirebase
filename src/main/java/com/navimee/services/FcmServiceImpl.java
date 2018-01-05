@@ -42,7 +42,7 @@ public class FcmServiceImpl implements FcmService {
     @Override
     public <T extends FcmSendable> Future send(List<T> sendables, Function<T, Map<String, Object>> function) {
         return executorService.submit(() -> {
-            Logger.LOG(new Log(LogTypes.TASK, "Send notifications"));
+            //Logger.LOG(new Log(LogTypes.TASK, "Send notifications"));
 
             Properties properties = new Properties();
             properties.setProperty("fcm.api.url", googleConfiguration.fmcApiUrl);
