@@ -86,7 +86,7 @@ public class EventsServiceImpl implements EventsService {
                     .filter(Objects::nonNull)
                     .map(dto -> modelMapper.map(dto, FbEvent.class))
                     .filter(distinctByKey(FbEvent::getId))
-                  //  .filter(EventsHelpers.getCompelmentFunction(placesService)::apply)    // Check the right place
+                    .filter(EventsHelpers.getCompelmentFunction(placesService)::apply)    // Check the right place
                     .map(dto -> modelMapper.map(dto, Event.class))
                     .collect(toList());
 
