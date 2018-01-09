@@ -32,8 +32,13 @@ public class FbEventTransformer {
     }
 
     private static int estimateRanking(FbEvent event) {
-        double z = (0.8 * event.getAttendingCount() + 0.2 * event.getMaybeCount()) - 1000.0;
-        // The Sigmoid function
-        return (int) ((1 / (1 + Math.pow(Math.E, -z))) * 100.0);
+        int z = (int)(1.25 * event.getAttendingCount() + 1.25 * event.getMaybeCount());
+
+        if(z >= 5000) return 5;
+        if(z >= 4000) return 4;
+        if(z >= 3000) return 3;
+        if(z >= 2000) return 2;
+
+        return 1;
     }
 }
