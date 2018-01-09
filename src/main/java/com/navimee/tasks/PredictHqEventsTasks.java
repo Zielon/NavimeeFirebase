@@ -32,7 +32,7 @@ public class PredictHqEventsTasks {
         }
     }
 
-    @Scheduled(fixedDelay = EVENTS)
+    //@Scheduled(fixedDelay = EVENTS)
     public void task() throws InterruptedException, ExecutionException {
         this.executeEventsTask();
     }
