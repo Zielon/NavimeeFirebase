@@ -26,7 +26,9 @@ public class Event implements Entity {
 
     @JsonProperty("geoPoint")
     private void getGeoPoint(Map<String, Double> json) {
-        geoPoint = new GeoPoint(json.get("latitude"), json.get("longitude"));
+        double lat = Double.parseDouble(json.get("latitude").toString());
+        double lon = Double.parseDouble(json.get("longitude").toString());
+        geoPoint = new GeoPoint(lat, lon);
     }
 
     @Override

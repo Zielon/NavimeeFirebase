@@ -74,13 +74,15 @@ public class DbGet {
         ObjectMapper mapper = new ObjectMapper();
         mapper.registerModule(new JodaModule());
         List<T> output = new ArrayList<>();
-        try {
-            for (DocumentSnapshot document : documentSnapshots) {
-                T entity = mapper.convertValue(document.getData(), type);
+
+        for (DocumentSnapshot document : documentSnapshots) {
+            T entity;
+            try {
+                entity = mapper.convertValue(document.getData(), type);
                 output.add(entity);
+            } catch (Exception e) {
+                e.printStackTrace();
             }
-        } catch (Exception e) {
-            Logger.LOG(new Log(LogTypes.EXCEPTION, e));
         }
 
         return output;
