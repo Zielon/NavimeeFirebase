@@ -1,6 +1,6 @@
 package com.navimee.services;
 
-import com.navimee.configuration.specific.GoogleConfiguration;
+import com.navimee.configuration.specific.GoogleFcmConfiguration;
 import com.navimee.contracts.services.FcmService;
 import com.navimee.firestore.Database;
 import com.navimee.logger.LogTypes;
@@ -34,7 +34,7 @@ public class FcmServiceImpl implements FcmService {
     ExecutorService executorService;
 
     @Autowired
-    GoogleConfiguration googleConfiguration;
+    GoogleFcmConfiguration googleFcmConfiguration;
 
     @Autowired
     Database database;
@@ -45,8 +45,8 @@ public class FcmServiceImpl implements FcmService {
             //Logger.LOG(new Log(LogTypes.TASK, "Send notifications"));
 
             Properties properties = new Properties();
-            properties.setProperty("fcm.api.url", googleConfiguration.fmcApiUrl);
-            properties.setProperty("fcm.api.key", googleConfiguration.fmcApiKey);
+            properties.setProperty("fcm.api.url", googleFcmConfiguration.getApiUrl());
+            properties.setProperty("fcm.api.key", googleFcmConfiguration.getClientSecret());
 
             try {
                 try (FcmClient client = new FcmClient(PropertiesBasedSettings.createFromProperties(properties))) {

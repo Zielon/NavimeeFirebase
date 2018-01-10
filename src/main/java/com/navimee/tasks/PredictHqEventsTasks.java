@@ -7,12 +7,7 @@ import com.navimee.logger.Logger;
 import com.navimee.models.entities.Log;
 import com.navimee.models.entities.coordinates.City;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
-
-import java.util.concurrent.ExecutionException;
-
-import static com.navimee.tasks.TasksFixedTimes.EVENTS;
 
 @Component
 public class PredictHqEventsTasks {
@@ -33,7 +28,7 @@ public class PredictHqEventsTasks {
     }
 
     //@Scheduled(fixedDelay = EVENTS)
-    public void task() throws InterruptedException, ExecutionException {
+    public void task() {
         this.executeEventsTask();
     }
 }

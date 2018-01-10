@@ -36,11 +36,11 @@ public class FoursquareDetailsQuery extends Query<FsPlaceDetailsDto, FoursquareC
         URI uri = null;
 
         try {
-            URIBuilder builder = new URIBuilder(configuration.apiUrl);
+            URIBuilder builder = new URIBuilder(configuration.getApiUrl());
             builder.setPath("v2/" + params.type + "/" + params.placeId);
             builder.setParameter("v", dtf.print(warsawCurrent));
-            builder.setParameter("client_id", configuration.clientId);
-            builder.setParameter("client_secret", configuration.clientSecret);
+            builder.setParameter("client_id", configuration.getClientId());
+            builder.setParameter("client_secret", configuration.getClientSecret());
             uri = builder.build();
         } catch (URISyntaxException e) {
             e.printStackTrace();

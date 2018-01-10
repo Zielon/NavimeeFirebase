@@ -36,7 +36,7 @@ public class PredictHqEventsQuery extends Query<List<PhqEventDto>, PredictHqConf
 
         URI uri = null;
         try {
-            URIBuilder builder = new URIBuilder(configuration.apiUrl + "/v1/events/");
+            URIBuilder builder = new URIBuilder(configuration.getApiUrl() + "/v1/events/");
             builder.setParameter("start.gte", dtf.print(warsawCurrent));
             builder.setParameter("start.lte", dtf.print(warsawLater));
             builder.setParameter("within", String.format("2km@%f,%f", params.lat, params.lon));
@@ -46,7 +46,7 @@ public class PredictHqEventsQuery extends Query<List<PhqEventDto>, PredictHqConf
         }
 
         HttpGet request = new HttpGet(uri);
-        request.setHeader("Authorization", String.format("Bearer %s", configuration.accessToken));
+        request.setHeader("Authorization", String.format("Bearer %s", configuration.getAccessToken()));
 
         return () -> map(httpClient.GET(request), params);
     }
@@ -65,7 +65,7 @@ public class PredictHqEventsQuery extends Query<List<PhqEventDto>, PredictHqConf
             while (true) {
                 try {
                     HttpGet request = new HttpGet(nextUrl);
-                    request.setHeader("Authorization", String.format("Bearer %s", configuration.accessToken));
+                    request.setHeader("Authorization", String.format("Bearer %s", configuration.getAccessToken()));
 
                     object = httpClient.GET(request).call();
                     if (!object.has("results")) break;

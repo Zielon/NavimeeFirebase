@@ -5,42 +5,38 @@ import com.navimee.configuration.Configuration;
 import org.json.JSONObject;
 import org.springframework.core.io.Resource;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.Arrays;
 
 public class FirebaseConfiguration extends Configuration {
 
-    private final JSONObject config;
-    private final Resource firebaseConfig;
-
-    public final String accessToken;
+    private JSONObject config;
 
     public FirebaseConfiguration(Resource firebaseConfig) throws IOException {
-        this.firebaseConfig = firebaseConfig;
+        super("", getConfigVar("FIREBASE_CLIENT_ID"), getConfigVar("FIREBASE_PRIVATE_KEY"), "");
+
         config = transformConfig(firebaseConfig);
-        accessToken = getAccessToken();
+
+        config.put("private_key", clientSecret);
+        config.put("client_id", clientId);
+        config.put("private_key_id", getConfigVar("FIREBASE_PRIVATE_KEY_ID"));
+        config.put("client_email", getConfigVar("FIREBASE_CLIENT_EMAIL"));
+
+        accessToken = generateAccessToken();
     }
 
-    private String getAccessToken() {
-        GoogleCredential googleCred = null;
-        try {
-            googleCred = GoogleCredential.fromStream(firebaseConfig.getInputStream());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+    private String generateAccessToken() throws IOException {
+        GoogleCredential googleCredential = GoogleCredential.fromStream(new ByteArrayInputStream(config.toString().getBytes()));
 
-        GoogleCredential scoped = googleCred.createScoped(
-                Arrays.asList(
+        GoogleCredential scoped =
+                googleCredential.createScoped(Arrays.asList(
                         "https://www.googleapis.com/auth/firebase.database",
                         "https://www.googleapis.com/auth/userinfo.email"
-                )
-        );
+                ));
 
-        try {
-            scoped.refreshToken();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        scoped.refreshToken();
+
         return scoped.getAccessToken();
     }
 }

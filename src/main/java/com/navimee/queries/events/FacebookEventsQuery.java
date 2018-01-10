@@ -62,10 +62,10 @@ public class FacebookEventsQuery extends Query<List<FbEventDto>, FacebookConfigu
         URI uri = null;
         String ids = params.places.stream().map(Place::getId).collect(Collectors.joining(","));
         try {
-            URIBuilder builder = new URIBuilder(configuration.apiUrl);
+            URIBuilder builder = new URIBuilder(configuration.getApiUrl());
             builder.setParameter("ids", ids);
             builder.setParameter("fields", fields);
-            builder.setParameter("access_token", configuration.accessToken);
+            builder.setParameter("access_token", configuration.getAccessToken());
             uri = builder.build();
         } catch (URISyntaxException e) {
             e.printStackTrace();

@@ -33,10 +33,10 @@ public class PhqEventTransformer {
     private static int estimateRanking(PhqEvent event) {
         int z = event.getRank();
 
-        if(z >= 90) return 5;
-        if(z >= 70) return 4;
-        if(z >= 50) return 3;
-        if(z >= 30) return 2;
+        if (z >= 90) return 5;
+        if (z >= 70) return 4;
+        if (z >= 50) return 3;
+        if (z >= 30) return 2;
 
         return 1;
     }

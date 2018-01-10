@@ -32,12 +32,12 @@ public class FbEventTransformer {
     }
 
     private static int estimateRanking(FbEvent event) {
-        int z = (int)(1.25 * event.getAttendingCount() + 1.25 * event.getMaybeCount());
+        int z = (int) (1.25 * event.getAttendingCount() + 1.25 * event.getMaybeCount());
 
-        if(z >= 4000) return 5;
-        if(z >= 3000) return 4;
-        if(z >= 2000) return 3;
-        if(z >= 1000) return 2;
+        if (z >= 4000) return 5;
+        if (z >= 3000) return 4;
+        if (z >= 2000) return 3;
+        if (z >= 1000) return 2;
 
         return 1;
     }

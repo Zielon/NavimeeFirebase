@@ -2,7 +2,7 @@ package com.navimee.services;
 
 import com.navimee.configuration.specific.FacebookConfiguration;
 import com.navimee.configuration.specific.FoursquareConfiguration;
-import com.navimee.configuration.specific.GoogleConfiguration;
+import com.navimee.configuration.specific.GoogleGeoConfiguration;
 import com.navimee.contracts.repositories.FirebaseRepository;
 import com.navimee.contracts.repositories.PlacesRepository;
 import com.navimee.contracts.services.HttpClient;
@@ -55,7 +55,7 @@ public class PlacesServiceImpl implements PlacesService {
     FoursquareConfiguration foursquareConfiguration;
 
     @Autowired
-    GoogleConfiguration googleConfiguration;
+    GoogleGeoConfiguration googleGeoConfiguration;
 
     @Autowired
     PlacesRepository placesRepository;
@@ -199,7 +199,7 @@ public class PlacesServiceImpl implements PlacesService {
 
     @Override
     public Future<GooglePlaceDto> downloadReverseGeocoding(Coordinate coordinate) {
-        GoogleGeocodingQuery query = new GoogleGeocodingQuery(googleConfiguration, executorService, httpClient);
+        GoogleGeocodingQuery query = new GoogleGeocodingQuery(googleGeoConfiguration, executorService, httpClient);
         return executorService.submit(() -> query.execute(new PlacesParams(coordinate.getLatitude(), coordinate.getLongitude())).call());
     }
 }

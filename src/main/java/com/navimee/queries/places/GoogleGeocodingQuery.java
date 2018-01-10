@@ -1,6 +1,6 @@
 package com.navimee.queries.places;
 
-import com.navimee.configuration.specific.GoogleConfiguration;
+import com.navimee.configuration.specific.GoogleGeoConfiguration;
 import com.navimee.contracts.services.HttpClient;
 import com.navimee.general.JSON;
 import com.navimee.models.dto.geocoding.GooglePlaceDto;
@@ -15,9 +15,9 @@ import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 
-public class GoogleGeocodingQuery extends Query<GooglePlaceDto, GoogleConfiguration, PlacesParams> {
+public class GoogleGeocodingQuery extends Query<GooglePlaceDto, GoogleGeoConfiguration, PlacesParams> {
 
-    public GoogleGeocodingQuery(GoogleConfiguration configuration,
+    public GoogleGeocodingQuery(GoogleGeoConfiguration configuration,
                                 ExecutorService executorService,
                                 HttpClient httpClient) {
         super(configuration, executorService, httpClient);
@@ -28,10 +28,10 @@ public class GoogleGeocodingQuery extends Query<GooglePlaceDto, GoogleConfigurat
 
         URI uri = null;
         try {
-            URIBuilder builder = new URIBuilder(configuration.apiUrl);
+            URIBuilder builder = new URIBuilder(configuration.getApiUrl());
             builder.setPath("/maps/api/geocode/json");
             builder.setParameter("latlng", params.lat + "," + params.lon);
-            builder.setParameter("key", configuration.clientId);
+            builder.setParameter("key", configuration.getClientId());
             uri = builder.build();
         } catch (URISyntaxException e) {
             e.printStackTrace();

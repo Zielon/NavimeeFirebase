@@ -27,44 +27,39 @@ public class Injections {
     @Value(value = "classpath:firestore-services.json")
     private Resource firebaseConfig;
 
-    @Value(value = "classpath:facebook-services.json")
-    private Resource facebookConfig;
-
-    @Value(value = "classpath:foursquare-services.json")
-    private Resource foursquareConfig;
-
-    @Value(value = "classpath:google-geo-services.json")
-    private Resource googleGeoConfig;
-
-    @Value(value = "classpath:google-fmc-services.json")
-    private Resource googleFmcConfig;
-
-    @Value(value = "classpath:predicthq-services.json")
-    private Resource predictHqConfig;
-
     @Bean
     FirebaseConfiguration providerFirebaseConfiguration() throws IOException {
         return new FirebaseConfiguration(firebaseConfig);
     }
 
     @Bean
-    FacebookConfiguration providerFacebookConfiguration() throws IOException {
-        return new FacebookConfiguration(facebookConfig);
+    FacebookConfiguration providerFacebookConfiguration() {
+        return new FacebookConfiguration();
     }
 
     @Bean
     FoursquareConfiguration providerFoursquareConfiguration() throws IOException {
-        return new FoursquareConfiguration(foursquareConfig);
+        return new FoursquareConfiguration();
     }
 
     @Bean
-    GoogleConfiguration providerGoogleConfiguration() throws IOException {
-        return new GoogleConfiguration(googleGeoConfig, googleFmcConfig);
+    GoogleFcmConfiguration providerGoogleFcmConfiguration() {
+        return new GoogleFcmConfiguration();
     }
 
     @Bean
-    PredictHqConfiguration providerPredictHqConfiguration() throws IOException {
-        return new PredictHqConfiguration(predictHqConfig);
+    GoogleGeoConfiguration providerGoogleGeoConfiguration() {
+        return new GoogleGeoConfiguration();
+    }
+
+    @Bean
+    PredictHqConfiguration providerPredictHqConfiguration() {
+        return new PredictHqConfiguration();
+    }
+
+    @Bean
+    FirebaseInitialization providerFirebaseInitialization() throws IOException {
+        return new FirebaseInitialization(firebaseConfig);
     }
 
     @Bean
@@ -81,14 +76,14 @@ public class Injections {
 
     @Bean
     @Scope("singleton")
-    public Firestore providerFirestore() {
-        return FirebaseInitialization.getFirestoreReference(firebaseConfig);
+    public Firestore providerFirestore(FirebaseInitialization firebaseInitialization) {
+        return firebaseInitialization.getFirestore();
     }
 
     @Bean
     @Scope("singleton")
-    public FirebaseDatabase providerFirebase() {
-        return FirebaseInitialization.getFirebaseReference(firebaseConfig);
+    public FirebaseDatabase providerFirebase(FirebaseInitialization firebaseInitialization) {
+        return firebaseInitialization.getFirebase();
     }
 
     @Bean

@@ -15,7 +15,6 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ExecutionException;
 
 @Component
 public class PlacesTask {
@@ -56,7 +55,7 @@ public class PlacesTask {
     }
 
     @Scheduled(cron = "0 0 1 2 * ?")
-    public void task() throws ExecutionException, InterruptedException {
+    public void task() {
         this.executePlacesTask();
     }
 }

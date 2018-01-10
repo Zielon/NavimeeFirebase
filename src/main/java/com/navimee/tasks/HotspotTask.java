@@ -12,8 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
-import java.util.concurrent.ExecutionException;
-
 import static com.navimee.tasks.TasksFixedTimes.HOTSPOT;
 
 @Component
@@ -48,7 +46,7 @@ public class HotspotTask {
     }
 
     @Scheduled(fixedDelay = HOTSPOT)
-    public void task() throws InterruptedException, ExecutionException {
+    public void task() {
         this.executeHotspotTask();
     }
 }

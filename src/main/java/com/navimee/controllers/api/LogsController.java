@@ -2,7 +2,6 @@ package com.navimee.controllers.api;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.cloud.firestore.Firestore;
-import com.navimee.configuration.specific.FirebaseInitialization;
 import com.navimee.contracts.repositories.FirestoreRepository;
 import com.navimee.firestore.Paths;
 import com.navimee.models.entities.Log;
@@ -24,11 +23,12 @@ import static java.util.stream.Collectors.toList;
 @RequestMapping(value = "api/logs")
 public class LogsController {
 
-
     @Autowired
     FirestoreRepository firestoreRepository;
 
-    private Firestore db = FirebaseInitialization.firestore;
+    @Autowired
+    Firestore db;
+
     private ObjectMapper mapper = new ObjectMapper();
 
     @RequestMapping(value = "all", method = RequestMethod.GET, produces = "application/json")

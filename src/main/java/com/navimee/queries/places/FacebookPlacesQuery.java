@@ -30,14 +30,14 @@ public class FacebookPlacesQuery extends Query<List<FbPlaceDto>, FacebookConfigu
         URI uri = null;
 
         try {
-            URIBuilder builder = new URIBuilder(configuration.apiUrl);
+            URIBuilder builder = new URIBuilder(configuration.getApiUrl());
             builder.setPath("v2.10/search");
             builder.setParameter("type", "place");
             builder.setParameter("center", params.lat + "," + params.lon);
             builder.setParameter("distance", "1000");
             builder.setParameter("fields", "name,category,location");
             builder.setParameter("limit", "500");
-            builder.setParameter("access_token", configuration.accessToken);
+            builder.setParameter("access_token", configuration.getAccessToken());
             uri = builder.build();
         } catch (URISyntaxException e) {
             e.printStackTrace();

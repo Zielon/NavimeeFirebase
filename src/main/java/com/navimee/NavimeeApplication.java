@@ -1,5 +1,6 @@
 package com.navimee;
 
+import com.google.cloud.firestore.Firestore;
 import com.navimee.contracts.services.NotificationsService;
 import com.navimee.logger.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,11 +20,16 @@ public class NavimeeApplication extends SpringBootServletInitializer {
     @Autowired
     NotificationsService notificationsService;
 
+    @Autowired
+    Firestore firestore;
+
     @PostConstruct
     void started() {
         TimeZone.setDefault(TimeZone.getTimeZone("UTC"));
         notificationsService.listenForFeedback();
-        Logger.isRunning = true;
+
+        Logger.setDb(firestore);
+        Logger.setRunning(true);
     }
 
     @Override

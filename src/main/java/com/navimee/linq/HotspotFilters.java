@@ -35,18 +35,18 @@ public class HotspotFilters {
 
         boolean isNowPopular = false;
 
-        if(currentTimeFrame != null)
+        if (currentTimeFrame != null)
             isNowPopular = currentTimeFrame.getOpen().stream().anyMatch(nowPopular(placeTime));
 
         boolean isFromDayBeforePopular = false;
 
-        if(beforeTimeFrame != null)
+        if (beforeTimeFrame != null)
             isFromDayBeforePopular = beforeTimeFrame.getOpen().stream().anyMatch(fromDayBeforePopular(placeTime));
 
         return isNowPopular || isFromDayBeforePopular;
     }
 
-    private static Predicate<FsTimeOpen> nowPopular(DateTime placeTime){
+    private static Predicate<FsTimeOpen> nowPopular(DateTime placeTime) {
         return time -> {
             DateTime start = fmt.parseDateTime(time.getStart());
             DateTime end = fmt.parseDateTime(time.getEnd().contains("+") ? time.getEnd().substring(1) : time.getEnd());
@@ -59,9 +59,9 @@ public class HotspotFilters {
         };
     }
 
-    private static Predicate<FsTimeOpen> fromDayBeforePopular(DateTime placeTime){
+    private static Predicate<FsTimeOpen> fromDayBeforePopular(DateTime placeTime) {
         return time -> {
-            if(!time.getEnd().contains("+")) return false;
+            if (!time.getEnd().contains("+")) return false;
 
             DateTime end = fmt.parseDateTime(time.getEnd().contains("+") ? time.getEnd().substring(1) : time.getEnd());
 

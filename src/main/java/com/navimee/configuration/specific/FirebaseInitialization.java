@@ -6,47 +6,48 @@ import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
 import com.google.firebase.cloud.FirestoreClient;
 import com.google.firebase.database.FirebaseDatabase;
+import com.navimee.configuration.Configuration;
+import org.json.JSONObject;
 import org.springframework.core.io.Resource;
 
-import java.io.FileInputStream;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
-public class FirebaseInitialization {
+public class FirebaseInitialization extends Configuration {
 
-    public static Firestore firestore = null;
-    public static FirebaseDatabase firebase = null;
+    private Firestore firestore;
+    private FirebaseDatabase firebase;
+    private JSONObject config;
 
-    private static void initialize(Resource firebaseConfig) {
-        if (firestore == null || firebase == null) {
-            FirebaseOptions options = null;
-            try {
-                InputStream serviceAccount = new FileInputStream(firebaseConfig.getFile());
-                GoogleCredentials credentials = GoogleCredentials.fromStream(serviceAccount);
-                options = new FirebaseOptions.Builder()
-                        .setCredentials(credentials)
-                        .setDatabaseUrl("https://navimee-1a213.firebaseio.com/")
-                        .build();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+    public FirebaseInitialization(Resource firebaseConfig) throws IOException {
+        super("", getConfigVar("FIREBASE_CLIENT_ID"), getConfigVar("FIREBASE_PRIVATE_KEY"), "");
 
-            FirebaseApp.initializeApp(options);
+        config = transformConfig(firebaseConfig);
 
-            firestore = FirestoreClient.getFirestore();
-            firebase = FirebaseDatabase.getInstance();
-        }
+        config.put("private_key", clientSecret);
+        config.put("client_id", clientId);
+        config.put("private_key_id", getConfigVar("FIREBASE_PRIVATE_KEY_ID"));
+        config.put("client_email", getConfigVar("FIREBASE_CLIENT_EMAIL"));
+
+        InputStream inputStream = new ByteArrayInputStream(config.toString().getBytes());
+        GoogleCredentials googleCredentials = GoogleCredentials.fromStream(inputStream);
+        FirebaseOptions options = new FirebaseOptions.Builder()
+                .setCredentials(googleCredentials)
+                .setDatabaseUrl("https://navimee-1a213.firebaseio.com/")
+                .build();
+
+        FirebaseApp.initializeApp(options);
+
+        firestore = FirestoreClient.getFirestore();
+        firebase = FirebaseDatabase.getInstance();
     }
 
-    public static FirebaseDatabase getFirebaseReference(Resource firebaseConfig) {
-        if (firebase == null)
-            initialize(firebaseConfig);
-        return firebase;
-    }
-
-    public static Firestore getFirestoreReference(Resource firebaseConfig) {
-        if (firestore == null)
-            initialize(firebaseConfig);
+    public Firestore getFirestore() {
         return firestore;
+    }
+
+    public FirebaseDatabase getFirebase() {
+        return firebase;
     }
 }

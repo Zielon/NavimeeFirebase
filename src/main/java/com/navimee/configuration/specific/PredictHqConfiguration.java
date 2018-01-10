@@ -1,23 +1,12 @@
 package com.navimee.configuration.specific;
 
 import com.navimee.configuration.Configuration;
-import org.json.JSONObject;
-import org.springframework.core.io.Resource;
-
-import java.io.IOException;
 
 public class PredictHqConfiguration extends Configuration {
 
-    private final JSONObject config;
+    private static final String predicthqApi = "https://api.predicthq.com/";
 
-    public final String accessToken;
-    public final String apiUrl;
-
-    public PredictHqConfiguration(Resource predictHqConfig) throws IOException {
-
-        this.config = transformConfig(predictHqConfig);
-
-        accessToken = config.getString("accessToken");
-        apiUrl = config.getString("apiUrl");
+    public PredictHqConfiguration() {
+        super(getConfigVar("PREDICT_HQ_TOKEN"), getConfigVar("PREDICT_HQ_CLIENT_ID"), getConfigVar("PREDICT_HQ_CLIENT_SECRET"), predicthqApi);
     }
 }
