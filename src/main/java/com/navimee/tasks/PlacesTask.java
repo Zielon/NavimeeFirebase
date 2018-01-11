@@ -1,5 +1,6 @@
 package com.navimee.tasks;
 
+import com.navimee.NavimeeApplication;
 import com.navimee.contracts.repositories.FirestoreRepository;
 import com.navimee.contracts.repositories.PlacesRepository;
 import com.navimee.contracts.services.PlacesService;
@@ -29,7 +30,6 @@ public class PlacesTask {
     FirestoreRepository firestoreRepository;
 
     public void executePlacesTask() {
-
         // Mocked data.
         NavimeeData navimeeData = new NavimeeData();
         Map<String, List<Coordinate>> coordinates = navimeeData.getCoordinates();
@@ -56,6 +56,7 @@ public class PlacesTask {
 
     @Scheduled(cron = "0 0 1 2 * ?")
     public void task() {
+        if(!NavimeeApplication.tasksActive) return;
         this.executePlacesTask();
     }
 }

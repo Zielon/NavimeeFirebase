@@ -1,5 +1,6 @@
 package com.navimee.tasks;
 
+import com.navimee.NavimeeApplication;
 import com.navimee.contracts.services.NotificationsService;
 import com.navimee.logger.LogTypes;
 import com.navimee.logger.Logger;
@@ -26,6 +27,7 @@ public class NotificationsTask {
 
     @Scheduled(fixedDelay = NOTIFICATIONS)
     public void task() {
+        if(!NavimeeApplication.tasksActive) return;
         executeSendNotification();
     }
 }

@@ -1,10 +1,21 @@
 var logs = {};
+var filters = ["ADDITION", "RETRIEVAL", "DELETION", "EXCEPTION", "TRANSFER", "TASK"];
 var intervalId = null;
 var isResetting = false;
 
 function start(){
     document.getElementsByClassName("loader")[0].style.display = "block";
     intervalId = setInterval(function(){ loadDoc();}, 500)
+}
+
+function filterChange(filter){
+    logs = {};
+    document.getElementById("logs").innerHTML = "";
+    var index = filters.indexOf(filter);
+    if (index > -1)
+        filters.splice(index, 1);
+    else
+        filters.push(filter);
 }
 
 function reset(){
@@ -45,6 +56,7 @@ function addLogs(newLogs){
     var arrayLogs = Object.keys(logs).map(key => { return logs[key]; });
     var lastLog = "";
     newLogs.filter(newLog => arrayLogs.every(log => newLog.id != log.id)).forEach(log => {
+        if(!filters.includes(log.type)) return;
         lastLog = log.id;
         var tr = document.createElement('tr');
         tr.setAttribute("id", lastLog)

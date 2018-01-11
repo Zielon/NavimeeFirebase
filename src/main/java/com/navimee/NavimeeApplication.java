@@ -23,6 +23,8 @@ public class NavimeeApplication extends SpringBootServletInitializer {
     @Autowired
     Firestore firestore;
 
+    public static boolean tasksActive = true;
+
     @PostConstruct
     void started() {
         TimeZone.setDefault(TimeZone.getTimeZone("UTC"));
@@ -30,6 +32,7 @@ public class NavimeeApplication extends SpringBootServletInitializer {
 
         Logger.setDb(firestore);
         Logger.setRunning(true);
+        NavimeeApplication.tasksActive = Boolean.getBoolean(System.getenv().get("SERVER_TASKS_ACTIVE"));
     }
 
     @Override

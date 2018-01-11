@@ -1,6 +1,7 @@
 package com.navimee.tasks;
 
 import com.firebase.geofire.GeoLocation;
+import com.navimee.NavimeeApplication;
 import com.navimee.contracts.repositories.EventsRepository;
 import com.navimee.contracts.repositories.FirebaseRepository;
 import com.navimee.contracts.repositories.PlacesRepository;
@@ -47,6 +48,7 @@ public class HotspotTask {
 
     @Scheduled(fixedDelay = HOTSPOT)
     public void task() {
+        if(!NavimeeApplication.tasksActive) return;
         this.executeHotspotTask();
     }
 }

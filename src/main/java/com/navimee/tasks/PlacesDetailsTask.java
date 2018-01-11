@@ -1,5 +1,6 @@
 package com.navimee.tasks;
 
+import com.navimee.NavimeeApplication;
 import com.navimee.contracts.repositories.PlacesRepository;
 import com.navimee.contracts.services.PlacesService;
 import com.navimee.logger.LogTypes;
@@ -31,6 +32,7 @@ public class PlacesDetailsTask {
 
     @Scheduled(cron = "0 0 1 1 * ?")
     public void task() {
+        if(!NavimeeApplication.tasksActive) return;
         this.executeDetailsTask();
     }
 }

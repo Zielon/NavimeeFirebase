@@ -1,6 +1,6 @@
 package com.navimee.tasks;
 
-
+import com.navimee.NavimeeApplication;
 import com.navimee.contracts.repositories.PlacesRepository;
 import com.navimee.contracts.services.EventsService;
 import com.navimee.logger.LogTypes;
@@ -34,6 +34,7 @@ public class FacebookEventsTask {
 
     @Scheduled(fixedDelay = EVENTS)
     public void task() {
+        if(!NavimeeApplication.tasksActive) return;
         this.executeEventsTask();
     }
 }
