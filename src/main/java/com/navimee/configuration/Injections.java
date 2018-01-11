@@ -9,12 +9,10 @@ import com.navimee.mappers.PhqEventTransformer;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.Scope;
-import org.springframework.core.io.Resource;
 
 import java.io.IOException;
 import java.util.concurrent.ExecutorService;
@@ -24,22 +22,19 @@ import java.util.concurrent.ScheduledExecutorService;
 @Configuration
 public class Injections {
 
-    @Value(value = "classpath:firestore-services.json")
-    private Resource firebaseConfig;
-
     @Bean
     FirebaseConfiguration providerFirebaseConfiguration() throws IOException {
-        return new FirebaseConfiguration(firebaseConfig);
+        return new FirebaseConfiguration();
+    }
+
+    @Bean
+    FoursquareConfiguration providerFoursquareConfiguration() {
+        return new FoursquareConfiguration();
     }
 
     @Bean
     FacebookConfiguration providerFacebookConfiguration() {
         return new FacebookConfiguration();
-    }
-
-    @Bean
-    FoursquareConfiguration providerFoursquareConfiguration() throws IOException {
-        return new FoursquareConfiguration();
     }
 
     @Bean
@@ -59,7 +54,7 @@ public class Injections {
 
     @Bean
     FirebaseInitialization providerFirebaseInitialization() throws IOException {
-        return new FirebaseInitialization(firebaseConfig);
+        return new FirebaseInitialization();
     }
 
     @Bean
