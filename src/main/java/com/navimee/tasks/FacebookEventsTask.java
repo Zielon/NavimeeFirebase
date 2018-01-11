@@ -34,7 +34,7 @@ public class FacebookEventsTask {
 
     @Scheduled(fixedDelay = EVENTS)
     public void task() {
-        if(!NavimeeApplication.tasksActive) return;
+        if (!NavimeeApplication.tasksActive) return;
         this.executeEventsTask();
     }
 }

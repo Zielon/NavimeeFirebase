@@ -32,7 +32,7 @@ public class PlacesDetailsTask {
 
     @Scheduled(cron = "0 0 1 1 * ?")
     public void task() {
-        if(!NavimeeApplication.tasksActive) return;
+        if (!NavimeeApplication.tasksActive) return;
         this.executeDetailsTask();
     }
 }

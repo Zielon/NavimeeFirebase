@@ -27,7 +27,7 @@ public class RemovalTask {
 
     @Scheduled(fixedDelay = REMOVAL)
     public void task() {
-        if(!NavimeeApplication.tasksActive) return;
+        if (!NavimeeApplication.tasksActive) return;
         this.executeRemoveEventsTask();
     }
 }
