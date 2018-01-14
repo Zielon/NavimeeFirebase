@@ -48,7 +48,7 @@ public class HotspotTask {
 
     @Scheduled(fixedDelay = HOTSPOT)
     public void task() {
-        if (!NavimeeApplication.tasksActive) return;
+        if (!NavimeeApplication.TASKS_ACTIVE) return;
         this.executeHotspotTask();
     }
 }

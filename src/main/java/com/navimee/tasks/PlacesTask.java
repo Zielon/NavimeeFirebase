@@ -56,7 +56,7 @@ public class PlacesTask {
 
     @Scheduled(cron = "0 0 1 2 * ?")
     public void task() {
-        if (!NavimeeApplication.tasksActive) return;
+        if (!NavimeeApplication.TASKS_ACTIVE) return;
         this.executePlacesTask();
     }
 }
