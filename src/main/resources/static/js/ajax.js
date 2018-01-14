@@ -16,6 +16,8 @@ function filterChange(filter){
         filters.splice(index, 1);
     else
         filters.push(filter);
+
+    loadDoc();
 }
 
 function reset(){
@@ -52,7 +54,6 @@ function loadDoc() {
 };
 
 function addLogs(newLogs){
-
     var arrayLogs = Object.keys(logs).map(key => { return logs[key]; });
     var lastLog = "";
     newLogs.filter(newLog => arrayLogs.every(log => newLog.id != log.id)).forEach(log => {

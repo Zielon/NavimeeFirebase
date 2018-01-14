@@ -3,6 +3,8 @@ package com.navimee.controllers;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 
+import javax.servlet.http.HttpServletRequest;
+
 @Controller
 public class HomeController {
 
@@ -22,7 +24,10 @@ public class HomeController {
     }
 
     @GetMapping("/login")
-    public String login() {
+    public String login(HttpServletRequest httpServletRequest) {
+        if(httpServletRequest.isUserInRole("ADMIN")) {
+            return "/home";
+        }
         return "/login";
     }
 

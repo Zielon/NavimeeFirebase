@@ -32,7 +32,7 @@ public class NavimeeApplication extends SpringBootServletInitializer {
 
         Logger.setDb(firestore);
         Logger.setRunning(true);
-        NavimeeApplication.TASKS_ACTIVE = Boolean.getBoolean(System.getenv().get("SERVER_TASKS_ACTIVE"));
+        NavimeeApplication.TASKS_ACTIVE = Boolean.valueOf(System.getenv().get("SERVER_TASKS_ACTIVE"));
     }
 
     @Override

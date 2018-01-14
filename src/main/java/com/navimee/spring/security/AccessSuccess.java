@@ -17,7 +17,10 @@ public class AccessSuccess implements AuthenticationSuccessHandler {
     private RedirectStrategy redirectStrategy = new DefaultRedirectStrategy();
 
     @Override
-    public void onAuthenticationSuccess(HttpServletRequest servletRequest, HttpServletResponse servletResponse, Authentication authentication) throws IOException, ServletException {
+    public void onAuthenticationSuccess(HttpServletRequest servletRequest,
+                                        HttpServletResponse servletResponse,
+                                        Authentication authentication) throws IOException, ServletException {
+
         redirectStrategy.sendRedirect(servletRequest, servletResponse, "/home");
     }
 }
