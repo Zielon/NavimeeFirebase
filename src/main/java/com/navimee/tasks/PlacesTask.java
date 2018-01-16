@@ -16,6 +16,9 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
+
+import static com.navimee.firestore.Paths.*;
 
 @Component
 public class PlacesTask {
@@ -29,20 +32,20 @@ public class PlacesTask {
     @Autowired
     FirestoreRepository firestoreRepository;
 
-    public void executePlacesTask() {
+    public void executePlacesTask() throws ExecutionException, InterruptedException {
         // Mocked data.
         NavimeeData navimeeData = new NavimeeData();
         Map<String, List<Coordinate>> coordinates = navimeeData.getCoordinates();
         List<City> cities = navimeeData.getCities();
 
-/*        firestoreRepository.deleteCollection(AVAILABLE_CITIES_COLLECTION);
+        firestoreRepository.deleteCollection(AVAILABLE_CITIES_COLLECTION);
         placesRepository.setAvailableCities(cities).get();
 
         firestoreRepository.deleteCollection(COORDINATES_COLLECTION);
         firestoreRepository.deleteCollection(FOURSQUARE_PLACES_COLLECTION);
         firestoreRepository.deleteCollection(FACEBOOK_PLACES_COLLECTION);
 
-        placesRepository.setCoordinates(coordinates).get();*/
+        placesRepository.setCoordinates(coordinates).get();
 
         for (City city : placesRepository.getAvailableCities()) {
             try {
@@ -55,7 +58,7 @@ public class PlacesTask {
     }
 
     @Scheduled(cron = "0 0 1 2 * ?")
-    public void task() {
+    public void task() throws ExecutionException, InterruptedException {
         if (!NavimeeApplication.TASKS_ACTIVE) return;
         this.executePlacesTask();
     }

@@ -35,7 +35,7 @@ public class FirebaseInitialization extends Configuration {
         GoogleCredentials googleCredentials = GoogleCredentials.fromStream(inputStream);
         FirebaseOptions options = new FirebaseOptions.Builder()
                 .setCredentials(googleCredentials)
-                .setDatabaseUrl("https://navimee-1a213.firebaseio.com/")
+                .setDatabaseUrl(getConfigVar("FIREBASE_URL"))
                 .build();
 
         FirebaseApp.initializeApp(options);
