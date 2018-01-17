@@ -1,10 +1,13 @@
 package com.navimee.services;
 
+import com.google.firebase.database.FirebaseDatabase;
 import com.navimee.configuration.specific.GoogleFcmConfiguration;
 import com.navimee.contracts.services.FcmService;
 import com.navimee.firestore.Database;
+import com.navimee.firestore.Paths;
 import com.navimee.logger.LogTypes;
 import com.navimee.logger.Logger;
+import com.navimee.models.entities.Feedback;
 import com.navimee.models.entities.Log;
 import com.navimee.models.entities.Notification;
 import com.navimee.models.entities.contracts.FcmSendable;
@@ -26,6 +29,7 @@ import java.util.concurrent.Future;
 import java.util.function.Function;
 
 import static com.navimee.enums.CollectionType.NOTIFICATIONS;
+import static com.navimee.firestore.Paths.FEEDBACK_COLLECTION;
 
 @Service
 public class FcmServiceImpl implements FcmService {
@@ -38,6 +42,9 @@ public class FcmServiceImpl implements FcmService {
 
     @Autowired
     Database database;
+
+    @Autowired
+    FirebaseDatabase firebaseDatabase;
 
     @Override
     public <T extends FcmSendable> Future send(List<T> sendables, Function<T, Map<String, Object>> function) {
@@ -73,9 +80,11 @@ public class FcmServiceImpl implements FcmService {
                 // To prevent sending multiple times the same event.
                 if (sendables.size() > 0 && sendables.get(0) instanceof Notification)
                     sendables.forEach(data ->
-                            database.getCollection(NOTIFICATIONS)
-                                    .document(data.getId())
-                                    .update("isSent", data.isSent()));
+                            database.getCollection(NOTIFICATIONS).document(data.getId()).set(data.toDictionary()));
+
+                if (sendables.size() > 0 && sendables.get(0) instanceof Feedback)
+                    sendables.forEach(data ->
+                            firebaseDatabase.getReference(String.format("%s/%s", FEEDBACK_COLLECTION, data.getId())).updateChildrenAsync(data.toDictionary()));
             }
         });
     }

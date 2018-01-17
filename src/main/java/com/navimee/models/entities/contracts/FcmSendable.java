@@ -1,5 +1,7 @@
 package com.navimee.models.entities.contracts;
 
+import java.util.Map;
+
 public interface FcmSendable {
     String getToken();
 
@@ -8,4 +10,6 @@ public interface FcmSendable {
     void setSent(boolean sent);
 
     String getId();
+
+    Map<String, Object> toDictionary();
 }

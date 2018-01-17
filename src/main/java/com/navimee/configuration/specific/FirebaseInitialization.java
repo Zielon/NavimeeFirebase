@@ -15,8 +15,8 @@ import java.io.InputStream;
 
 public class FirebaseInitialization extends Configuration {
 
-    private Firestore firestore;
-    private FirebaseDatabase firebase;
+    private static Firestore firestore;
+    private static FirebaseDatabase firebase;
     private JSONObject config;
 
     public FirebaseInitialization() throws IOException {
@@ -38,7 +38,8 @@ public class FirebaseInitialization extends Configuration {
                 .setDatabaseUrl(getConfigVar("FIREBASE_URL"))
                 .build();
 
-        FirebaseApp.initializeApp(options);
+        if(FirebaseApp.getApps().isEmpty())
+            FirebaseApp.initializeApp(options);
 
         firestore = FirestoreClient.getFirestore();
         firebase = FirebaseDatabase.getInstance();

@@ -1,8 +1,11 @@
 package com.navimee.models.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.navimee.models.entities.contracts.Entity;
 import com.navimee.models.entities.contracts.FcmSendable;
+
+import java.util.Map;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Feedback implements Entity, FcmSendable {
@@ -81,6 +84,12 @@ public class Feedback implements Entity, FcmSendable {
     @Override
     public String getId() {
         return id;
+    }
+
+    @Override
+    public Map<String, Object> toDictionary() {
+        ObjectMapper mapper = new ObjectMapper();
+        return mapper.convertValue(this, Map.class);
     }
 
     public void setId(String id) {

@@ -35,11 +35,11 @@ public class NotificationsRepositoryImpl implements NotificationsRepository {
     @Override
     public List<Notification> getAvailableNotifications() {
 
-        DateTime warsaw = DateTime.now(DateTimeZone.UTC);
+        DateTime utc = DateTime.now(DateTimeZone.UTC);
 
         Query query = database.getCollection(NOTIFICATIONS)
-                .whereGreaterThanOrEqualTo("endTime", warsaw.toDate())
-                .whereLessThanOrEqualTo("endTime", warsaw.plusMinutes(45).toDate())
+                .whereGreaterThanOrEqualTo("endTime", utc.toDate())
+                .whereLessThanOrEqualTo("endTime", utc.plusMinutes(45).toDate())
                 .whereEqualTo("isSent", false);
 
         List<Notification> uncheckedNotifications = dbGet.fromCollection(query, Notification.class);
