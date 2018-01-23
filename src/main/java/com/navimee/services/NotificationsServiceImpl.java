@@ -66,7 +66,7 @@ public class NotificationsServiceImpl implements NotificationsService {
     }
 
     @Override
-    public void listenForFeedback() {
+    public void listenToFeedback() {
         firebaseDatabase.getReference(Paths.FEEDBACK_COLLECTION).addChildEventListener(getChildEventListener());
     }
 

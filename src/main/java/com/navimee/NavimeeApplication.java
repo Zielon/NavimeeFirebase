@@ -28,7 +28,7 @@ public class NavimeeApplication extends SpringBootServletInitializer {
     @PostConstruct
     void started() {
         TimeZone.setDefault(TimeZone.getTimeZone("UTC"));
-        notificationsService.listenForFeedback();
+        notificationsService.listenToFeedback();
 
         Logger.setDb(firestore);
         Logger.setRunning(true);
