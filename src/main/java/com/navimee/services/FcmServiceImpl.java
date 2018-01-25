@@ -79,12 +79,10 @@ public class FcmServiceImpl implements FcmService {
                 // Update the notification collection with isSent flag changed.
                 // To prevent sending multiple times the same event.
                 if (sendables.size() > 0 && sendables.get(0) instanceof Notification)
-                    sendables.forEach(data ->
-                            database.getCollection(NOTIFICATIONS).document(data.getId()).set(data.toDictionary()));
+                    sendables.forEach(data -> database.getCollection(NOTIFICATIONS).document(data.getId()).update("isSent", data.isSent()));
 
                 if (sendables.size() > 0 && sendables.get(0) instanceof Feedback)
-                    sendables.forEach(data ->
-                            firebaseDatabase.getReference(String.format("%s/%s", FEEDBACK_COLLECTION, data.getId())).updateChildrenAsync(data.toDictionary()));
+                    sendables.forEach(data -> firebaseDatabase.getReference(String.format("%s/%s", FEEDBACK_COLLECTION, data.getId())).updateChildrenAsync(data.toDictionary()));
             }
         });
     }

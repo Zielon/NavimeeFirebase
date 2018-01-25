@@ -61,8 +61,8 @@ public class Feedback implements Entity, FcmSendable {
         return isSent;
     }
 
-    public void setSent(boolean sent) {
-        isSent = sent;
+    public void setSent(boolean isSent) {
+        this.isSent = isSent;
     }
 
     public int getDistance() {
