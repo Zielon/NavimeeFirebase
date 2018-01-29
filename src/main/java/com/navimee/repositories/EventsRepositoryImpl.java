@@ -79,7 +79,10 @@ public class EventsRepositoryImpl implements EventsRepository {
             Date warsaw = LocalDateTime.now(DateTimeZone.UTC).toDate();
 
             Query hotspot = database.getCollection(HOTSPOT).whereLessThan("endTime", warsaw);
-            Query notification = database.getCollection(NOTIFICATIONS).whereLessThan("endTime", warsaw);
+
+            Query notification = database.getCollection(NOTIFICATIONS)
+                    .whereEqualTo("isSent", true)
+                    .whereLessThan("endTime", warsaw);
 
             delete.document(hotspot);
             delete.document(notification);
