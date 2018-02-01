@@ -33,7 +33,7 @@ public class FirestoreRepositoryImpl implements FirestoreRepository {
 
     @Override
     public void deleteCollection(String collection) {
-        placesRepository.getAvailableCities().forEach(city ->
-                delete.collection(db.collection(collection).document(BY_CITY).collection(city.getName()), 1));
+        placesRepository.getAvailableCities().forEach(city ->{
+                    try{ delete.collection(db.collection(collection).document(BY_CITY).collection(city.getName()), 1); }catch (Exception e){ }});
     }
 }
