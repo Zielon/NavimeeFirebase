@@ -38,7 +38,7 @@ public class FirebaseInitialization extends Configuration {
                 .setDatabaseUrl(getConfigVar("FIREBASE_URL"))
                 .build();
 
-        if(FirebaseApp.getApps().isEmpty())
+        if (FirebaseApp.getApps().isEmpty())
             FirebaseApp.initializeApp(options);
 
         firestore = FirestoreClient.getFirestore();

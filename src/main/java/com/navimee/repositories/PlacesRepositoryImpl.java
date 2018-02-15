@@ -1,12 +1,12 @@
 package com.navimee.repositories;
 
+import com.google.cloud.firestore.SetOptions;
 import com.navimee.contracts.repositories.PlacesRepository;
 import com.navimee.enums.HotspotType;
 import com.navimee.firestore.Database;
 import com.navimee.firestore.operations.DbAdd;
 import com.navimee.firestore.operations.DbDelete;
 import com.navimee.firestore.operations.DbGet;
-import com.navimee.firestore.operations.enums.AdditionEnum;
 import com.navimee.logger.LogTypes;
 import com.navimee.logger.Logger;
 import com.navimee.models.entities.Log;
@@ -15,7 +15,6 @@ import com.navimee.models.entities.coordinates.Coordinate;
 import com.navimee.models.entities.places.facebook.FbPlace;
 import com.navimee.models.entities.places.foursquare.FsPlace;
 import com.navimee.models.entities.places.foursquare.FsPlaceDetails;
-import com.navimee.repositories.inmemory.InMemoryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -47,13 +46,11 @@ public class PlacesRepositoryImpl implements PlacesRepository {
     // SETTERS
     @Override
     public Future setFacebookPlaces(List<FbPlace> places, String city) {
-        InMemoryRepository.SET(city, places, FbPlace.class);
         return add.toCollection(database.getCollectionByCity(FACEBOOK_PLACES, city), places, city);
     }
 
     @Override
     public Future setFoursquarePlaces(List<FsPlace> places, String city) {
-        InMemoryRepository.SET(city, places, FsPlace.class);
         return add.toCollection(database.getCollectionByCity(FOURSQUARE_PLACES, city), places);
     }
 
@@ -88,7 +85,7 @@ public class PlacesRepositoryImpl implements PlacesRepository {
 
     @Override
     public Future addCoordinates(Coordinate coordinate, String city) {
-        return add.toCollection(database.getCollectionByCity(COORDINATES, city), coordinate, AdditionEnum.MERGE);
+        return add.toCollection(database.getCollectionByCity(COORDINATES, city), coordinate, SetOptions.merge());
     }
 
     // DELETE
@@ -100,22 +97,12 @@ public class PlacesRepositoryImpl implements PlacesRepository {
     // GETTERS
     @Override
     public List<FbPlace> getFacebookPlaces(String city) {
-        List<FbPlace> places = InMemoryRepository.GET(city, FbPlace.class);
-        if (places == null) {
-            places = dbGet.fromCollection(database.getCollectionByCity(FACEBOOK_PLACES, city), FbPlace.class);
-            InMemoryRepository.SET(city, places, FbPlace.class);
-        }
-        return places;
+        return dbGet.fromCollection(database.getCollectionByCity(FACEBOOK_PLACES, city), FbPlace.class);
     }
 
     @Override
     public List<FsPlace> getFoursquarePlaces(String city) {
-        List<FsPlace> places = InMemoryRepository.GET(city, FsPlace.class);
-        if (places == null) {
-            places = dbGet.fromCollection(database.getCollectionByCity(FOURSQUARE_PLACES, city), FsPlace.class);
-            InMemoryRepository.SET(city, places, FsPlace.class);
-        }
-        return places;
+        return dbGet.fromCollection(database.getCollectionByCity(FOURSQUARE_PLACES, city), FsPlace.class);
     }
 
     @Override

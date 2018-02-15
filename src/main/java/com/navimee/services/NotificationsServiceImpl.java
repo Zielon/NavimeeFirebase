@@ -76,7 +76,7 @@ public class NotificationsServiceImpl implements NotificationsService {
                 Feedback feedback = dataSnapshot.getValue(Feedback.class);
                 User user = usersRepository.getUser(feedback.getUserId());
 
-                if(feedback.isSent()) return;
+                if (feedback.isSent()) return;
 
                 int waitForFeedbackSend = 60 * 15; // in seconds
 

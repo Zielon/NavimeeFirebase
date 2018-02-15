@@ -36,7 +36,7 @@ public class DbAdd {
                 .collect(Collectors.toMap(Entity::getId, Function.identity()));
 
         String extraInfo = entities.get(0) instanceof Event ? String.format(" %s -> %s", city, ((Event) entities.get(0)).getSource()) : "";
-        return toCollection(collectionReference, entityMap, AdditionEnum.OVERWRITE, extraInfo);
+        return toCollection(collectionReference, entityMap, null, extraInfo);
     }
 
     public <T extends Entity> Future toCollection(CollectionReference collectionReference, List<T> entities) {
@@ -44,22 +44,22 @@ public class DbAdd {
                 .filter(distinctByKey(Entity::getId))
                 .collect(Collectors.toMap(Entity::getId, Function.identity()));
 
-        return toCollection(collectionReference, entityMap, AdditionEnum.OVERWRITE, "");
+        return toCollection(collectionReference, entityMap, null, "");
     }
 
     public <T extends Entity> Future toCollection(CollectionReference collectionReference, T entity) {
         Map<String, T> entityMap = new HashMap<>();
         entityMap.put(entity.getId(), entity);
-        return toCollection(collectionReference, entityMap, AdditionEnum.OVERWRITE, "");
+        return toCollection(collectionReference, entityMap, null, "");
     }
 
-    public <T extends Entity> Future toCollection(CollectionReference collectionReference, T entity, AdditionEnum option) {
+    public <T extends Entity> Future toCollection(CollectionReference collectionReference, T entity, SetOptions option) {
         Map<String, T> entityMap = new HashMap<>();
         entityMap.put(entity.getId(), entity);
         return toCollection(collectionReference, entityMap, option, "");
     }
 
-    private <T extends Entity> Future toCollection(CollectionReference collectionReference, Map<String, T> entities, AdditionEnum options, String extraInfo) {
+    private <T extends Entity> Future toCollection(CollectionReference collectionReference, Map<String, T> entities, SetOptions options, String extraInfo) {
         return executorService.submit(() -> {
             if (entities.size() == 0) return;
             T entity = null;
@@ -67,8 +67,8 @@ public class DbAdd {
                 List<Future<WriteResult>> tasks = new ArrayList<>();
                 for (Map.Entry<String, T> entry : entities.entrySet()) {
                     entity = entry.getValue();
-                    if (options == AdditionEnum.MERGE)
-                        tasks.add(collectionReference.document(entry.getKey()).set(entry.getValue(), SetOptions.merge()));
+                    if(options != null)
+                        tasks.add(collectionReference.document(entry.getKey()).set(entry.getValue(), options));
                     else
                         tasks.add(collectionReference.document(entry.getKey()).set(entry.getValue()));
                 }

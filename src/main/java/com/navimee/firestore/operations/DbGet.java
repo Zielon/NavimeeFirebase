@@ -20,7 +20,7 @@ public class DbGet {
 
     private ObjectMapper mapper;
 
-    public DbGet(){
+    public DbGet() {
         mapper = new ObjectMapper();
         mapper.registerModule(new JodaModule());
     }
@@ -43,7 +43,7 @@ public class DbGet {
         try {
             entity = mapper.convertValue(documentReference.get().get().getData(), type);
         } catch (Exception e) {
-            e.printStackTrace();
+            Logger.LOG(new Log(LogTypes.EXCEPTION, e));
         }
 
         return entity;

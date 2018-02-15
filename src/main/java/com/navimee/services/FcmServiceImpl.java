@@ -4,7 +4,6 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.navimee.configuration.specific.GoogleFcmConfiguration;
 import com.navimee.contracts.services.FcmService;
 import com.navimee.firestore.Database;
-import com.navimee.firestore.Paths;
 import com.navimee.logger.LogTypes;
 import com.navimee.logger.Logger;
 import com.navimee.models.entities.Feedback;

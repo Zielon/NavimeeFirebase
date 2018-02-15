@@ -25,7 +25,7 @@ public class HomeController {
 
     @GetMapping("/login")
     public String login(HttpServletRequest httpServletRequest) {
-        if(httpServletRequest.isUserInRole("ADMIN")) {
+        if (httpServletRequest.isUserInRole("ADMIN")) {
             return "/home";
         }
         return "/login";
