@@ -2,7 +2,7 @@ package com.navimee.tasks;
 
 import com.navimee.NavimeeApplication;
 import com.navimee.contracts.repositories.FirestoreRepository;
-import com.navimee.contracts.repositories.PlacesRepository;
+import com.navimee.contracts.repositories.places.CoordinatesRepository;
 import com.navimee.contracts.services.PlacesService;
 import com.navimee.logger.LogTypes;
 import com.navimee.logger.Logger;
@@ -18,13 +18,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
-import static com.navimee.firestore.Paths.*;
+import static com.navimee.firestore.FirebasePaths.*;
 
 @Component
 public class PlacesTask {
 
     @Autowired
-    PlacesRepository placesRepository;
+    CoordinatesRepository coordinatesRepository;
 
     @Autowired
     PlacesService placesService;
@@ -36,25 +36,27 @@ public class PlacesTask {
         // Mocked data.
         NavimeeData navimeeData = new NavimeeData();
         Map<String, List<Coordinate>> coordinates = navimeeData.getCoordinates();
-        List<City> cities = navimeeData.getCities();
+        List<City> staticData = navimeeData.getCities();
 
-        firestoreRepository.deleteCollection(AVAILABLE_CITIES_COLLECTION);
-        placesRepository.setAvailableCities(cities).get();
+        firestoreRepository.deleteCollection(AVAILABLE_CITIES);
+        coordinatesRepository.setAvailableCities(staticData).join();
 
-        firestoreRepository.deleteCollection(COORDINATES_COLLECTION);
-        firestoreRepository.deleteCollection(FOURSQUARE_PLACES_COLLECTION);
-        firestoreRepository.deleteCollection(FACEBOOK_PLACES_COLLECTION);
+        firestoreRepository.deleteCollection(COORDINATES);
+        firestoreRepository.deleteCollection(FOURSQUARE_PLACES);
+        firestoreRepository.deleteCollection(FACEBOOK_PLACES);
 
-        placesRepository.setCoordinates(coordinates).get();
+        coordinatesRepository.setCoordinates(coordinates).join();
 
-        for (City city : placesRepository.getAvailableCities()) {
-            try {
-                placesService.saveFacebookPlaces(city.getName()).get();
-                placesService.saveFoursquarePlaces(city.getName()).get();
-            } catch (Exception e) {
-                Logger.LOG(new Log(LogTypes.EXCEPTION, e));
+        coordinatesRepository.getAvailableCities().thenAcceptAsync(cities -> {
+            for (City city : cities) {
+                try {
+                    placesService.saveFacebookPlaces(city.getName()).get();
+                    placesService.saveFoursquarePlaces(city.getName()).get();
+                } catch (Exception e) {
+                    Logger.LOG(new Log(LogTypes.EXCEPTION, e));
+                }
             }
-        }
+        });
     }
 
     @Scheduled(cron = "0 0 1 2 * ?")

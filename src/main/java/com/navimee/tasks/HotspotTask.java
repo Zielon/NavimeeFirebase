@@ -4,11 +4,10 @@ import com.firebase.geofire.GeoLocation;
 import com.navimee.NavimeeApplication;
 import com.navimee.contracts.repositories.EventsRepository;
 import com.navimee.contracts.repositories.FirebaseRepository;
-import com.navimee.contracts.repositories.PlacesRepository;
+import com.navimee.contracts.repositories.places.PlacesDetailsRepository;
 import com.navimee.linq.HotspotFilters;
-import com.navimee.logger.LogTypes;
-import com.navimee.logger.Logger;
-import com.navimee.models.entities.Log;
+import com.navimee.models.entities.places.foursquare.FsPlace;
+import com.navimee.models.entities.places.foursquare.FsPlaceDetails;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
@@ -25,25 +24,25 @@ public class HotspotTask {
     FirebaseRepository firebaseRepository;
 
     @Autowired
-    PlacesRepository placesRepository;
+    PlacesDetailsRepository<FsPlaceDetails, FsPlace> foursquareRepository;
 
     public void executeHotspotTask() {
-        try {
-            firebaseRepository.deleteCurrentHotspot();
 
+        firebaseRepository.deleteCurrentHotspot();
+
+        foursquareRepository.getPlacesDetails().thenAcceptAsync(placeDetails -> {
             firebaseRepository.filterAndTransfer(
-                    placesRepository.getFoursquarePlacesDetails(),
+                    placeDetails,
                     HotspotFilters.filterFsPopular(),
-                    fsPlaceDetails -> new GeoLocation(fsPlaceDetails.getLocationLat(), fsPlaceDetails.getLocationLng())).get();
+                    fsPlaceDetails -> new GeoLocation(fsPlaceDetails.getLocationLat(), fsPlaceDetails.getLocationLng()));
+        });
 
+        eventsRepository.getEventsBefore(60 * 2).thenAcceptAsync(events -> {
             firebaseRepository.filterAndTransfer(
-                    eventsRepository.getEventsBefore(60 * 2),
+                    events,
                     event -> true,
-                    event -> new GeoLocation(event.getGeoPoint().getLatitude(), event.getGeoPoint().getLongitude())).get();
-
-        } catch (Exception e) {
-            Logger.LOG(new Log(LogTypes.EXCEPTION, e));
-        }
+                    event -> new GeoLocation(event.getGeoPoint().getLatitude(), event.getGeoPoint().getLongitude()));
+        });
     }
 
     @Scheduled(fixedDelay = HOTSPOT)

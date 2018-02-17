@@ -2,61 +2,44 @@ package com.navimee.controllers.api;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.navimee.contracts.repositories.PlacesRepository;
-import com.navimee.controllers.dto.CoordinateDto;
-import com.navimee.models.entities.coordinates.Coordinate;
+import com.navimee.contracts.repositories.places.CoordinatesRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Random;
-
-import static java.util.stream.Collectors.toList;
+import java.util.concurrent.Future;
 
 @RestController
 @RequestMapping(value = "api/coords")
 public class CoodrinatesController {
 
+    @Autowired
+    CoordinatesRepository coordinatesRepository;
     private ObjectMapper mapper = new ObjectMapper();
 
-    private Random random = new Random();
-
-    @Autowired
-    PlacesRepository placesRepository;
-
     @RequestMapping(value = "actual/{city}", method = RequestMethod.GET, produces = "application/json")
-    public String coordinates(@PathVariable("city") String city) throws JsonProcessingException {
-        return mapper.writeValueAsString(placesRepository.getCoordinates(city.toUpperCase()));
+    public Future<String> coordinates(@PathVariable("city") String city) {
+        return coordinatesRepository.getCoordinates(city.toUpperCase()).thenApplyAsync(coordinates -> {
+            try {
+                return mapper.writeValueAsString(coordinates);
+            } catch (JsonProcessingException e) {
+                e.printStackTrace();
+            }
+            return "Error";
+        });
     }
 
     @RequestMapping(value = "cities", method = RequestMethod.GET, produces = "application/json")
-    public String availableCities() throws JsonProcessingException {
-        return mapper.writeValueAsString(placesRepository.getAvailableCities());
-    }
-
-    @RequestMapping(value = "add/{city}", method = RequestMethod.POST)
-    public ResponseEntity<?> addCoordinate(@PathVariable String city, @RequestBody CoordinateDto dto) {
-        try {
-            Coordinate coordinate = new Coordinate(dto.getLatitude(), dto.getLongitude());
-            List<Integer> ids = placesRepository.getCoordinates(city.toUpperCase()).stream().map(c -> Integer.parseInt(c.getId())).collect(toList());
-            coordinate.setId(Integer.toString(Collections.max(ids) + 1));
-            placesRepository.addCoordinates(coordinate, city.toUpperCase()).get();
-        } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-        return new ResponseEntity<>(HttpStatus.OK);
-    }
-
-    @RequestMapping(value = "delete/{city}/{id}", method = RequestMethod.POST)
-    public ResponseEntity<?> addCoordinate(@PathVariable String city, @PathVariable String id) {
-        try {
-            placesRepository.deleteCoordinates(id, city.toUpperCase()).get();
-        } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-        return new ResponseEntity<>(HttpStatus.OK);
+    public Future<String> availableCities() {
+        return coordinatesRepository.getAvailableCities().thenApplyAsync(cities -> {
+            try {
+                return mapper.writeValueAsString(cities);
+            } catch (JsonProcessingException e) {
+                e.printStackTrace();
+            }
+            return "Error";
+        });
     }
 }

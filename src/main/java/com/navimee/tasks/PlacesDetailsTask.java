@@ -1,7 +1,7 @@
 package com.navimee.tasks;
 
 import com.navimee.NavimeeApplication;
-import com.navimee.contracts.repositories.PlacesRepository;
+import com.navimee.contracts.repositories.places.CoordinatesRepository;
 import com.navimee.contracts.services.PlacesService;
 import com.navimee.logger.LogTypes;
 import com.navimee.logger.Logger;
@@ -15,19 +15,21 @@ import org.springframework.stereotype.Component;
 public class PlacesDetailsTask {
 
     @Autowired
-    PlacesRepository placesRepository;
+    CoordinatesRepository coordinatesRepository;
 
     @Autowired
     PlacesService placesService;
 
     public void executeDetailsTask() {
-        for (City city : placesRepository.getAvailableCities()) {
-            try {
-                placesService.saveFoursquarePlacesDetails(city.getName()).get();
-            } catch (Exception e) {
-                Logger.LOG(new Log(LogTypes.EXCEPTION, e));
+        coordinatesRepository.getAvailableCities().thenAcceptAsync(cities -> {
+            for (City city : cities) {
+                try {
+                    placesService.saveFoursquarePlacesDetails(city.getName()).get();
+                } catch (Exception e) {
+                    Logger.LOG(new Log(LogTypes.EXCEPTION, e));
+                }
             }
-        }
+        });
     }
 
     @Scheduled(cron = "0 0 1 1 * ?")

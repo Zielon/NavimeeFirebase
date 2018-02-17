@@ -2,9 +2,9 @@ package com.navimee.controllers.api;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.navimee.contracts.repositories.places.PlacesDetailsRepository;
-import com.navimee.models.entities.places.foursquare.FsPlace;
-import com.navimee.models.entities.places.foursquare.FsPlaceDetails;
+import com.navimee.contracts.repositories.EventsRepository;
+import com.navimee.contracts.repositories.places.PlacesRepository;
+import com.navimee.models.entities.places.facebook.FbPlace;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -14,20 +14,23 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.concurrent.Future;
 
+
 @RestController
-@RequestMapping(value = "api/4s")
-public class FoursquareController {
+@RequestMapping(value = "api/events")
+public class FacebookController {
 
     @Autowired
-    @Qualifier("foursquare")
-    PlacesDetailsRepository<FsPlaceDetails, FsPlace> foursquareRepository;
+    @Qualifier("facebook")
+    PlacesRepository<FbPlace> facebookRepository;
+    @Autowired
+    EventsRepository eventsRepository;
     private ObjectMapper mapper = new ObjectMapper();
 
     @RequestMapping(value = "places/{city}", method = RequestMethod.GET, produces = "application/json")
-    public Future<String> places(@PathVariable("city") String city) throws JsonProcessingException {
-        return foursquareRepository.getPlaces(city.toUpperCase()).thenApplyAsync(fsPlaces -> {
+    public Future<String> places(@PathVariable("city") String city) {
+        return facebookRepository.getPlaces(city.toUpperCase()).thenApplyAsync(fbPlaces -> {
             try {
-                return mapper.writeValueAsString(fsPlaces);
+                return mapper.writeValueAsString(fbPlaces);
             } catch (JsonProcessingException e) {
                 e.printStackTrace();
             }
@@ -35,11 +38,11 @@ public class FoursquareController {
         });
     }
 
-    @RequestMapping(value = "details", method = RequestMethod.GET, produces = "application/json")
-    public Future<String> details() throws JsonProcessingException {
-        return foursquareRepository.getPlacesDetails().thenApplyAsync(fsDetails -> {
+    @RequestMapping(value = "all", method = RequestMethod.GET, produces = "application/json")
+    public Future<String> events() {
+        return eventsRepository.getEvents().thenApplyAsync(events -> {
             try {
-                return mapper.writeValueAsString(fsDetails);
+                return mapper.writeValueAsString(events);
             } catch (JsonProcessingException e) {
                 e.printStackTrace();
             }

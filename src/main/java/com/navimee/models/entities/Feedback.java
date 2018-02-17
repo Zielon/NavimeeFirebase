@@ -89,14 +89,14 @@ public class Feedback implements Entity, FcmSendable {
         return id;
     }
 
+    public void setId(String id) {
+        this.id = id;
+    }
+
     @Override
     public Map<String, Object> toDictionary() {
         ObjectMapper mapper = new ObjectMapper();
         return mapper.convertValue(this, Map.class);
-    }
-
-    public void setId(String id) {
-        this.id = id;
     }
 
     public int getFeedbackAnswer() {

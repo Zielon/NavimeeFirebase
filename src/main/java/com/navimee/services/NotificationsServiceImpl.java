@@ -9,10 +9,9 @@ import com.navimee.contracts.repositories.UsersRepository;
 import com.navimee.contracts.services.FcmService;
 import com.navimee.contracts.services.NotificationsService;
 import com.navimee.enums.NotificationType;
-import com.navimee.firestore.Paths;
+import com.navimee.firestore.FirebasePaths;
 import com.navimee.models.entities.Feedback;
 import com.navimee.models.entities.Notification;
-import com.navimee.models.entities.User;
 import com.navimee.models.entities.contracts.FcmSendable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -61,42 +60,42 @@ public class NotificationsServiceImpl implements NotificationsService {
 
     @Override
     public Future sendDaySchedule() {
-        List<Notification> notifications = notificationsRepository.getAvailableNotifications();
-        return fcmService.send(notifications, getDataCreator(NotificationType.SCHEDULED_EVENT));
+        return notificationsRepository.getAvailableNotifications().thenAcceptAsync(
+                notifications -> fcmService.send(notifications, getDataCreator(NotificationType.SCHEDULED_EVENT)));
     }
 
     @Override
     public void listenToFeedback() {
-        firebaseDatabase.getReference(Paths.FEEDBACK_COLLECTION).addChildEventListener(getChildEventListener());
+        firebaseDatabase.getReference(FirebasePaths.FEEDBACK_COLLECTION).addChildEventListener(getChildEventListener());
     }
 
     private ChildEventListener getChildEventListener() {
         return new ChildEventListener() {
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                 Feedback feedback = dataSnapshot.getValue(Feedback.class);
-                User user = usersRepository.getUser(feedback.getUserId());
+                usersRepository.getUser(feedback.getUserId()).thenAcceptAsync(user -> {
+                    if (feedback.isSent()) return;
 
-                if (feedback.isSent()) return;
+                    int waitForFeedbackSend = 60 * 15; // in seconds
 
-                int waitForFeedbackSend = 60 * 15; // in seconds
+                    feedback.setId(dataSnapshot.getKey());
+                    feedback.setUserId(user.getId());
+                    feedback.setToken(user.getToken());
 
-                feedback.setId(dataSnapshot.getKey());
-                feedback.setUserId(user.getId());
-                feedback.setToken(user.getToken());
-
-                scheduledExecutorService.schedule(() -> {
-                    List<FcmSendable> sendables = new ArrayList<>();
-                    sendables.add(feedback);
-                    fcmService.send(sendables, fcmSendable -> {
-                        Map<String, Object> data = new HashMap<>();
-                        data.put("id", feedback.getId());
-                        data.put("locationName", feedback.getLocationName());
-                        data.put("locationAddress", feedback.getLocationAddress());
-                        data.put("name", user.getName() != null ? user.getName().split(" ")[0] : "No-name");
-                        data.put("type", NotificationType.FEEDBACK);
-                        return data;
-                    });
-                }, feedback.getDurationInSec() + waitForFeedbackSend, TimeUnit.SECONDS);
+                    scheduledExecutorService.schedule(() -> {
+                        List<FcmSendable> sendables = new ArrayList<>();
+                        sendables.add(feedback);
+                        fcmService.send(sendables, fcmSendable -> {
+                            Map<String, Object> data = new HashMap<>();
+                            data.put("id", feedback.getId());
+                            data.put("locationName", feedback.getLocationName());
+                            data.put("locationAddress", feedback.getLocationAddress());
+                            data.put("name", user.getName() != null ? user.getName().split(" ")[0] : "No-name");
+                            data.put("type", NotificationType.FEEDBACK);
+                            return data;
+                        });
+                    }, feedback.getDurationInSec() + waitForFeedbackSend, TimeUnit.SECONDS);
+                });
             }
 
             public void onChildChanged(DataSnapshot dataSnapshot, String s) {

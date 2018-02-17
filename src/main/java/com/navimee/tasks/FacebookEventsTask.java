@@ -1,7 +1,7 @@
 package com.navimee.tasks;
 
 import com.navimee.NavimeeApplication;
-import com.navimee.contracts.repositories.PlacesRepository;
+import com.navimee.contracts.repositories.places.CoordinatesRepository;
 import com.navimee.contracts.services.EventsService;
 import com.navimee.logger.LogTypes;
 import com.navimee.logger.Logger;
@@ -17,19 +17,22 @@ import static com.navimee.tasks.TasksFixedTimes.EVENTS;
 public class FacebookEventsTask {
 
     @Autowired
-    PlacesRepository placesRepository;
+
+    CoordinatesRepository coordinatesRepository;
 
     @Autowired
     EventsService eventsService;
 
     public void executeEventsTask() {
-        for (City city : placesRepository.getAvailableCities()) {
-            try {
-                eventsService.saveFacebookEvents(city.getName()).get();
-            } catch (Exception e) {
-                Logger.LOG(new Log(LogTypes.EXCEPTION, e));
+        coordinatesRepository.getAvailableCities().thenAcceptAsync(cities -> {
+            for (City city : cities) {
+                try {
+                    eventsService.saveFacebookEvents(city.getName()).get();
+                } catch (Exception e) {
+                    Logger.LOG(new Log(LogTypes.EXCEPTION, e));
+                }
             }
-        }
+        });
     }
 
     @Scheduled(fixedDelay = EVENTS)

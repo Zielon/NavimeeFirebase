@@ -3,9 +3,10 @@ package com.navimee.contracts.repositories;
 import com.navimee.models.entities.User;
 
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 public interface UsersRepository {
-    User getUser(String id);
+    CompletableFuture<User> getUser(String id);
 
-    List<User> getUsersWithBigEventsOn();
+    CompletableFuture<List<User>> getUsersWithBigEventsOn();
 }

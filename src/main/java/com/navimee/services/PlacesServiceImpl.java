@@ -4,7 +4,9 @@ import com.navimee.configuration.specific.FacebookConfiguration;
 import com.navimee.configuration.specific.FoursquareConfiguration;
 import com.navimee.configuration.specific.GoogleGeoConfiguration;
 import com.navimee.contracts.repositories.FirebaseRepository;
-import com.navimee.contracts.repositories.PlacesRepository;
+import com.navimee.contracts.repositories.places.CoordinatesRepository;
+import com.navimee.contracts.repositories.places.PlacesDetailsRepository;
+import com.navimee.contracts.repositories.places.PlacesRepository;
 import com.navimee.contracts.services.HttpClient;
 import com.navimee.contracts.services.PlacesService;
 import com.navimee.foursquareCategories.CategoryTree;
@@ -30,6 +32,7 @@ import com.navimee.queries.places.params.PlaceDetailsParams;
 import com.navimee.queries.places.params.PlacesParams;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -58,7 +61,15 @@ public class PlacesServiceImpl implements PlacesService {
     GoogleGeoConfiguration googleGeoConfiguration;
 
     @Autowired
-    PlacesRepository placesRepository;
+    CoordinatesRepository coordinatesRepository;
+
+    @Autowired
+    @Qualifier("facebook")
+    PlacesRepository<FbPlace> facebookRepository;
+
+    @Autowired
+    @Qualifier("foursquare")
+    PlacesDetailsRepository<FsPlaceDetails, FsPlace> foursquareRepository;
 
     @Autowired
     ModelMapper modelMapper;
@@ -76,24 +87,25 @@ public class PlacesServiceImpl implements PlacesService {
     public Future saveFacebookPlaces(String city) {
         return executorService.submit(() -> {
             Logger.LOG(new Log(LogTypes.TASK, "Facebook places update"));
-            List<Coordinate> coordinates = placesRepository.getCoordinates(city);
 
-            // DbGet data from the external facebook API
-            FacebookPlacesQuery facebookPlacesQuery =
-                    new FacebookPlacesQuery(facebookConfiguration, executorService, httpClient);
+            coordinatesRepository.getCoordinates(city).thenAcceptAsync(coordinates -> {
+                // DbGet data from the external facebook API
+                FacebookPlacesQuery facebookPlacesQuery =
+                        new FacebookPlacesQuery(facebookConfiguration, executorService, httpClient);
 
-            List<Callable<List<FbPlaceDto>>> tasks = coordinates.stream()
-                    .map(c -> facebookPlacesQuery.execute(new PlacesParams(c.getLatitude(), c.getLongitude())))
-                    .collect(toList());
+                List<Callable<List<FbPlaceDto>>> tasks = coordinates.stream()
+                        .map(c -> facebookPlacesQuery.execute(new PlacesParams(c.getLatitude(), c.getLongitude())))
+                        .collect(toList());
 
-            List<FbPlace> entities = waitForManyTasks(executorService, tasks)
-                    .stream()
-                    .filter(Objects::nonNull)
-                    .map(dto -> modelMapper.map(dto, FbPlace.class))
-                    .filter(distinctByKey(Place::getId))
-                    .collect(toList());
+                List<FbPlace> entities = waitForManyTasks(executorService, tasks)
+                        .stream()
+                        .filter(Objects::nonNull)
+                        .map(dto -> modelMapper.map(dto, FbPlace.class))
+                        .filter(distinctByKey(Place::getId))
+                        .collect(toList());
 
-            placesRepository.setFacebookPlaces(entities, city);
+                facebookRepository.setPlaces(entities, city);
+            });
         });
     }
 
@@ -101,24 +113,26 @@ public class PlacesServiceImpl implements PlacesService {
     public Future saveFoursquarePlaces(String city) {
         return executorService.submit(() -> {
             Logger.LOG(new Log(LogTypes.TASK, "Foursquare places update"));
-            List<Coordinate> coordinates = placesRepository.getCoordinates(city);
 
-            // DbGet data from the external foursquare API
-            FoursquarePlacesQuery foursquarePlacesQuery =
-                    new FoursquarePlacesQuery(foursquareConfiguration, executorService, httpClient);
+            coordinatesRepository.getCoordinates(city).thenAcceptAsync(coordinates -> {
 
-            List<Callable<List<FsPlaceDto>>> tasks = coordinates.stream()
-                    .map(c -> foursquarePlacesQuery.execute(new PlaceDetailsParams(c.getLatitude(), c.getLongitude(), "/venues/search")))
-                    .collect(toList());
+                // DbGet data from the external foursquare API
+                FoursquarePlacesQuery foursquarePlacesQuery =
+                        new FoursquarePlacesQuery(foursquareConfiguration, executorService, httpClient);
 
-            List<FsPlace> entities = waitForManyTasks(executorService, tasks)
-                    .stream()
-                    .filter(Objects::nonNull)
-                    .map(dto -> modelMapper.map(dto, FsPlace.class))
-                    .filter(distinctByKey(Place::getId))
-                    .collect(toList());
+                List<Callable<List<FsPlaceDto>>> tasks = coordinates.stream()
+                        .map(c -> foursquarePlacesQuery.execute(new PlaceDetailsParams(c.getLatitude(), c.getLongitude(), "/venues/search")))
+                        .collect(toList());
 
-            placesRepository.setFoursquarePlaces(entities, city);
+                List<FsPlace> entities = waitForManyTasks(executorService, tasks)
+                        .stream()
+                        .filter(Objects::nonNull)
+                        .map(dto -> modelMapper.map(dto, FsPlace.class))
+                        .filter(distinctByKey(Place::getId))
+                        .collect(toList());
+
+                foursquareRepository.setPlaces(entities, city);
+            });
         });
     }
 
@@ -126,55 +140,57 @@ public class PlacesServiceImpl implements PlacesService {
     public Future saveFoursquarePlacesDetails(String city) {
         return executorService.submit(() -> {
             Logger.LOG(new Log(LogTypes.TASK, "Foursquare details update for " + city));
-            List<FsPlace> places = placesRepository.getFoursquarePlaces(city);
 
-            // DbGet data from the external foursquare API
-            FoursquareDetailsQuery placesQuery =
-                    new FoursquareDetailsQuery(foursquareConfiguration, executorService, httpClient);
+            foursquareRepository.getPlaces(city).thenAcceptAsync(places -> {
 
-            List<Callable<FsPlaceDetailsDto>> placesTasks = new ArrayList<>();
-            List<FsPlaceDetailsDto> placesDto = new ArrayList<>();
+                // DbGet data from the external foursquare API
+                FoursquareDetailsQuery placesQuery =
+                        new FoursquareDetailsQuery(foursquareConfiguration, executorService, httpClient);
 
-            Collections.spliter(places, 4000).forEach(subPlaces -> {
-                try {
-                    subPlaces.forEach(p -> placesTasks.add(placesQuery.execute(new PlaceDetailsParams("venues", p.getId()))));
-                    placesDto.addAll(waitForSingleTask(executorService, placesTasks));
-                    TimeUnit.HOURS.sleep(1);
-                    placesTasks.clear();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+                List<Callable<FsPlaceDetailsDto>> placesTasks = new ArrayList<>();
+                List<FsPlaceDetailsDto> placesDto = new ArrayList<>();
+
+                Collections.spliter(places, 4000).forEach(subPlaces -> {
+                    try {
+                        subPlaces.forEach(p -> placesTasks.add(placesQuery.execute(new PlaceDetailsParams("venues", p.getId()))));
+                        placesDto.addAll(waitForSingleTask(executorService, placesTasks));
+                        TimeUnit.HOURS.sleep(1);
+                        placesTasks.clear();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                });
+
+                CategoryTree categoryTree = getFsCategoryTree();
+
+                List<FsPlaceDetails> entitiesDetails = placesDto.parallelStream()
+                        .filter(Objects::nonNull)
+                        .map(dto -> modelMapper.map(dto, FsPlaceDetails.class))
+                        .filter(distinctByKey(FsPlaceDetails::getId))
+                        .filter(d -> d.getStatsCheckinsCount() > 600 || d.getLikesCount() > 1000)
+                        .filter(categoryTree.getPredicate())
+                        .collect(toList());
+
+                // Update timeframes for every place
+                FoursquareTimeFramesQuery timeframeQuery =
+                        new FoursquareTimeFramesQuery(foursquareConfiguration, executorService, httpClient);
+
+                List<Callable<PopularDto>> popularTasks = new ArrayList<>();
+                entitiesDetails.forEach(p -> popularTasks.add(timeframeQuery.execute(new PlaceDetailsParams("venues", p.getId()))));
+
+                waitForSingleTask(executorService, popularTasks).stream()
+                        .filter(Objects::nonNull)
+                        .forEach(dto -> entitiesDetails.stream()
+                                .filter(details -> details.getId().equals(dto.getPlaceId()))
+                                .findFirst().get()
+                                .setPopular(modelMapper.map(dto, FsPopular.class)));
+
+                List<FsPlaceDetails> entities = entitiesDetails.stream()
+                        .filter(details -> details.getPopular() != null).collect(toList());
+
+                foursquareRepository.setPlacesDetails(entities);
+                firebaseRepository.transferPlaces(entities);
             });
-
-            CategoryTree categoryTree = getFsCategoryTree();
-
-            List<FsPlaceDetails> entitiesDetails = placesDto.parallelStream()
-                    .filter(Objects::nonNull)
-                    .map(dto -> modelMapper.map(dto, FsPlaceDetails.class))
-                    .filter(distinctByKey(FsPlaceDetails::getId))
-                    .filter(d -> d.getStatsCheckinsCount() > 600 || d.getLikesCount() > 1000)
-                    .filter(categoryTree.getPredicate())
-                    .collect(toList());
-
-            // Update timeframes for every place
-            FoursquareTimeFramesQuery timeframeQuery =
-                    new FoursquareTimeFramesQuery(foursquareConfiguration, executorService, httpClient);
-
-            List<Callable<PopularDto>> popularTasks = new ArrayList<>();
-            entitiesDetails.forEach(p -> popularTasks.add(timeframeQuery.execute(new PlaceDetailsParams("venues", p.getId()))));
-
-            waitForSingleTask(executorService, popularTasks).stream()
-                    .filter(Objects::nonNull)
-                    .forEach(dto -> entitiesDetails.stream()
-                            .filter(details -> details.getId().equals(dto.getPlaceId()))
-                            .findFirst().get()
-                            .setPopular(modelMapper.map(dto, FsPopular.class)));
-
-            List<FsPlaceDetails> entities = entitiesDetails.stream()
-                    .filter(details -> details.getPopular() != null).collect(toList());
-
-            placesRepository.setFoursquarePlacesDetails(entities);
-            firebaseRepository.transferPlaces(entities);
         });
     }
 

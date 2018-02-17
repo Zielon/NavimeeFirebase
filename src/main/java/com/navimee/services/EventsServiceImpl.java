@@ -4,7 +4,8 @@ import com.navimee.configuration.specific.FacebookConfiguration;
 import com.navimee.configuration.specific.PredictHqConfiguration;
 import com.navimee.contracts.repositories.EventsRepository;
 import com.navimee.contracts.repositories.FirebaseRepository;
-import com.navimee.contracts.repositories.PlacesRepository;
+import com.navimee.contracts.repositories.places.CoordinatesRepository;
+import com.navimee.contracts.repositories.places.PlacesRepository;
 import com.navimee.contracts.services.EventsService;
 import com.navimee.contracts.services.HttpClient;
 import com.navimee.contracts.services.PlacesService;
@@ -17,7 +18,6 @@ import com.navimee.models.dto.events.FbEventDto;
 import com.navimee.models.dto.events.PhqEventDto;
 import com.navimee.models.entities.Event;
 import com.navimee.models.entities.Log;
-import com.navimee.models.entities.coordinates.Coordinate;
 import com.navimee.models.entities.places.facebook.FbPlace;
 import com.navimee.queries.events.EventsHelpers;
 import com.navimee.queries.events.FacebookEventsQuery;
@@ -26,6 +26,7 @@ import com.navimee.queries.events.params.FacebookEventsParams;
 import com.navimee.queries.events.params.PredictHqEventsParams;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -53,7 +54,11 @@ public class EventsServiceImpl implements EventsService {
     PlacesService placesService;
 
     @Autowired
-    PlacesRepository placesRepository;
+    @Qualifier("facebook")
+    PlacesRepository<FbPlace> facebookRepository;
+
+    @Autowired
+    CoordinatesRepository coordinatesRepository;
 
     @Autowired
     EventsRepository eventsRepository;
@@ -74,24 +79,24 @@ public class EventsServiceImpl implements EventsService {
     public Future saveFacebookEvents(String city) {
         return executorService.submit(() -> {
             Logger.LOG(new Log(LogTypes.TASK, "Events update for " + city + " [FB]"));
-            List<FbPlace> fbPlaces = placesRepository.getFacebookPlaces(city);
+            facebookRepository.getPlaces(city).thenAcceptAsync(fbPlaces -> {
+                // DbGet data from the external facebook API
+                List<Callable<List<FbEventDto>>> events = new ArrayList<>();
+                FacebookEventsQuery query = new FacebookEventsQuery(facebookConfiguration, executorService, httpClient);
+                Collections.spliter(fbPlaces, 50).forEach(places -> events.add(query.execute(new FacebookEventsParams(places))));
 
-            // DbGet data from the external facebook API
-            List<Callable<List<FbEventDto>>> events = new ArrayList<>();
-            FacebookEventsQuery query = new FacebookEventsQuery(facebookConfiguration, executorService, httpClient);
-            Collections.spliter(fbPlaces, 50).forEach(places -> events.add(query.execute(new FacebookEventsParams(places))));
+                List<Event> entities = waitForManyTasks(executorService, events)
+                        .parallelStream()
+                        .filter(Objects::nonNull)
+                        .map(dto -> modelMapper.map(dto, FbEvent.class))
+                        .filter(distinctByKey(FbEvent::getId))
+                        .filter(EventsHelpers.getCompelmentFunction(placesService)::apply)    // Check the right place
+                        .map(dto -> modelMapper.map(dto, Event.class))
+                        .collect(toList());
 
-            List<Event> entities = waitForManyTasks(executorService, events)
-                    .parallelStream()
-                    .filter(Objects::nonNull)
-                    .map(dto -> modelMapper.map(dto, FbEvent.class))
-                    .filter(distinctByKey(FbEvent::getId))
-                    .filter(EventsHelpers.getCompelmentFunction(placesService)::apply)    // Check the right place
-                    .map(dto -> modelMapper.map(dto, Event.class))
-                    .collect(toList());
-
-            eventsRepository.setEvents(entities, city);
-            firebaseRepository.transferEvents(entities);
+                eventsRepository.setEvents(entities, city);
+                firebaseRepository.transferEvents(entities);
+            });
         });
     }
 
@@ -99,34 +104,34 @@ public class EventsServiceImpl implements EventsService {
     public Future savePredictHqEvents(String city) {
         return executorService.submit(() -> {
             Logger.LOG(new Log(LogTypes.TASK, "Events update for " + city + " [P_HQ]"));
-            List<Coordinate> coordinates = placesRepository.getCoordinates(city);
+            coordinatesRepository.getCoordinates(city).thenAcceptAsync(coordinates -> {
+                List<Callable<List<PhqEventDto>>> events = new ArrayList<>();
+                List<PhqEventDto> eventsDto = new ArrayList<>();
 
-            List<Callable<List<PhqEventDto>>> events = new ArrayList<>();
-            List<PhqEventDto> eventsDto = new ArrayList<>();
+                PredictHqEventsQuery query = new PredictHqEventsQuery(predictHqConfiguration, executorService, httpClient);
+                Collections.spliter(coordinates, 80).forEach(coods -> {
+                    try {
+                        coods.forEach(c -> events.add(query.execute(new PredictHqEventsParams(c.getLatitude(), c.getLongitude()))));
+                        eventsDto.addAll(waitForManyTasks(executorService, events));
+                        TimeUnit.MINUTES.sleep(3);
+                        events.clear();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                });
 
-            PredictHqEventsQuery query = new PredictHqEventsQuery(predictHqConfiguration, executorService, httpClient);
-            Collections.spliter(coordinates, 80).forEach(coods -> {
-                try {
-                    coods.forEach(c -> events.add(query.execute(new PredictHqEventsParams(c.getLatitude(), c.getLongitude()))));
-                    eventsDto.addAll(waitForManyTasks(executorService, events));
-                    TimeUnit.MINUTES.sleep(3);
-                    events.clear();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+                List<Event> entities = eventsDto
+                        .parallelStream()
+                        .filter(Objects::nonNull)
+                        .map(dto -> modelMapper.map(dto, PhqEvent.class))
+                        .filter(distinctByKey(PhqEvent::getId))
+                        .map(dto -> modelMapper.map(dto, Event.class))
+                        .map(event -> EventsHelpers.setAddress(placesService).apply(event)) // Set address for PredictHQ
+                        .collect(toList());
+
+                firebaseRepository.transferEvents(entities);
+                eventsRepository.setEvents(entities, city);
             });
-
-            List<Event> entities = eventsDto
-                    .parallelStream()
-                    .filter(Objects::nonNull)
-                    .map(dto -> modelMapper.map(dto, PhqEvent.class))
-                    .filter(distinctByKey(PhqEvent::getId))
-                    .map(dto -> modelMapper.map(dto, Event.class))
-                    .map(event -> EventsHelpers.setAddress(placesService).apply(event)) // Set address for PredictHQ
-                    .collect(toList());
-
-            eventsRepository.setEvents(entities, city);
-            firebaseRepository.transferEvents(entities);
         });
     }
 }

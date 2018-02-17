@@ -21,8 +21,8 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-import static com.navimee.firestore.Paths.HOTSPOT_COLLECTION;
-import static com.navimee.firestore.Paths.HOTSPOT_CURRENT_COLLECTION;
+import static com.navimee.firestore.FirebasePaths.HOTSPOT;
+import static com.navimee.firestore.FirebasePaths.HOTSPOT_CURRENT;
 
 @Repository
 public class FirebaseRepositoryImpl implements FirebaseRepository {
@@ -36,7 +36,7 @@ public class FirebaseRepositoryImpl implements FirebaseRepository {
     @Override
     public Future transferEvents(List<Event> events) {
         return executorService.submit(() -> {
-            GeoFire geoFire = new GeoFire(firebaseDatabase.getReference(HOTSPOT_COLLECTION));
+            GeoFire geoFire = new GeoFire(firebaseDatabase.getReference(HOTSPOT));
             Map<String, Event> entities = events.stream().collect(Collectors.toMap(Entity::getId, Function.identity()));
             entities.forEach((key, v) -> geoFire.setLocation(key, new GeoLocation(v.getGeoPoint().getLatitude(), v.getGeoPoint().getLongitude())));
             Logger.LOG(new Log(LogTypes.TRANSFER, "Transfer facebook events details [Firebase]", events.size()));
@@ -46,7 +46,7 @@ public class FirebaseRepositoryImpl implements FirebaseRepository {
     @Override
     public Future transferPlaces(List<FsPlaceDetails> placeDetails) {
         return executorService.submit(() -> {
-            GeoFire geoFire = new GeoFire(firebaseDatabase.getReference(HOTSPOT_COLLECTION));
+            GeoFire geoFire = new GeoFire(firebaseDatabase.getReference(HOTSPOT));
             Map<String, FsPlaceDetails> entities = placeDetails.stream().collect(Collectors.toMap(Entity::getId, Function.identity()));
             entities.forEach((key, v) -> geoFire.setLocation(key, new GeoLocation(v.getLocationLat(), v.getLocationLng())));
             Logger.LOG(new Log(LogTypes.TRANSFER, "Transfer foursquare details [Firebase]", placeDetails.size()));
@@ -56,7 +56,7 @@ public class FirebaseRepositoryImpl implements FirebaseRepository {
     @Override
     public void deleteCurrentHotspot() {
         try {
-            firebaseDatabase.getReference(HOTSPOT_CURRENT_COLLECTION).removeValueAsync().get();
+            firebaseDatabase.getReference(HOTSPOT_CURRENT).removeValueAsync().get();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -66,7 +66,7 @@ public class FirebaseRepositoryImpl implements FirebaseRepository {
     public <T extends Entity> Future filterAndTransfer(List<T> entities, Predicate<T> predicate, Function<T, GeoLocation> function) {
         return executorService.submit(() -> {
             if (entities.isEmpty()) return;
-            GeoFire geoFire = new GeoFire(firebaseDatabase.getReference(HOTSPOT_CURRENT_COLLECTION));
+            GeoFire geoFire = new GeoFire(firebaseDatabase.getReference(HOTSPOT_CURRENT));
             Map<String, T> filtered = entities.stream().filter(predicate).collect(Collectors.toMap(Entity::getId, Function.identity()));
             Logger.LOG(new Log(LogTypes.TRANSFER, String.format("Transfer %s [Firebase]", entities.get(0).getClass().getSimpleName(), filtered.size())));
             filtered.forEach((key, value) -> geoFire.setLocation(key, function.apply(value)));
@@ -76,8 +76,8 @@ public class FirebaseRepositoryImpl implements FirebaseRepository {
     @Override
     public Future deleteEvents(List<Event> events) {
         return executorService.submit(() -> {
-            events.forEach(event -> firebaseDatabase.getReference(String.format("%s/%s", HOTSPOT_COLLECTION, event.getId())).removeValueAsync());
-            events.forEach(event -> firebaseDatabase.getReference(String.format("%s/%s", HOTSPOT_CURRENT_COLLECTION, event.getId())).removeValueAsync());
+            events.forEach(event -> firebaseDatabase.getReference(String.format("%s/%s", HOTSPOT, event.getId())).removeValueAsync());
+            events.forEach(event -> firebaseDatabase.getReference(String.format("%s/%s", HOTSPOT_CURRENT, event.getId())).removeValueAsync());
         });
     }
 }

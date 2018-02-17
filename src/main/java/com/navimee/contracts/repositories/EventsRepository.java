@@ -3,17 +3,15 @@ package com.navimee.contracts.repositories;
 import com.navimee.models.entities.Event;
 
 import java.util.List;
-import java.util.concurrent.Future;
+import java.util.concurrent.CompletableFuture;
 
 public interface EventsRepository {
 
-    // GETTERS
-    List<Event> getEvents();
+    CompletableFuture<List<Event>> getEvents();
 
-    List<Event> getEventsBefore(int timeToEnd);
+    CompletableFuture<List<Event>> getEventsBefore(int timeToEnd);
 
-    // SETTERS
-    Future setEvents(List<Event> events, String city);
+    CompletableFuture<Void> setEvents(List<Event> events, String city);
 
-    Future removeEvents();
+    CompletableFuture<Void> removeEvents();
 }

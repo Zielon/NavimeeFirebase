@@ -3,7 +3,7 @@ package com.navimee.controllers.api;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.cloud.firestore.Firestore;
 import com.navimee.contracts.repositories.FirestoreRepository;
-import com.navimee.firestore.Paths;
+import com.navimee.firestore.FirebasePaths;
 import com.navimee.models.entities.Log;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -33,7 +33,7 @@ public class LogsController {
 
     @RequestMapping(value = "all", method = RequestMethod.GET, produces = "application/json")
     public String allLogs() throws Exception {
-        List<Log> logs = db.collection(Paths.LOGS).get().get()
+        List<Log> logs = db.collection(FirebasePaths.LOGS).get().get()
                 .getDocuments()
                 .stream()
                 .map(document -> {
@@ -49,7 +49,7 @@ public class LogsController {
 
     @RequestMapping(value = "period", method = RequestMethod.GET, produces = "application/json")
     public String specificLogs(@RequestParam("startDate") @DateTimeFormat(pattern = "yyyy-MM-dd") Date startDate) throws Exception {
-        List<Log> logs = db.collection(Paths.LOGS)
+        List<Log> logs = db.collection(FirebasePaths.LOGS)
                 .whereGreaterThan("time", startDate)
                 .get().get().getDocuments()
                 .stream()
@@ -67,7 +67,7 @@ public class LogsController {
     @RequestMapping(value = "delete", method = RequestMethod.POST)
     public ResponseEntity<?> delete() {
         try {
-            firestoreRepository.deleteDocument(Paths.LOGS);
+            firestoreRepository.deleteDocument(FirebasePaths.LOGS);
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }

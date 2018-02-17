@@ -1,9 +1,9 @@
 package com.navimee.services;
 
+import com.google.cloud.firestore.Firestore;
 import com.google.firebase.database.FirebaseDatabase;
 import com.navimee.configuration.specific.GoogleFcmConfiguration;
 import com.navimee.contracts.services.FcmService;
-import com.navimee.firestore.Database;
 import com.navimee.logger.LogTypes;
 import com.navimee.logger.Logger;
 import com.navimee.models.entities.Feedback;
@@ -27,8 +27,8 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 import java.util.function.Function;
 
-import static com.navimee.enums.CollectionType.NOTIFICATIONS;
-import static com.navimee.firestore.Paths.FEEDBACK_COLLECTION;
+import static com.navimee.firestore.FirebasePaths.FEEDBACK_COLLECTION;
+import static com.navimee.firestore.FirebasePaths.NOTIFICATIONS;
 
 @Service
 public class FcmServiceImpl implements FcmService {
@@ -40,7 +40,7 @@ public class FcmServiceImpl implements FcmService {
     GoogleFcmConfiguration googleFcmConfiguration;
 
     @Autowired
-    Database database;
+    Firestore database;
 
     @Autowired
     FirebaseDatabase firebaseDatabase;
@@ -78,7 +78,7 @@ public class FcmServiceImpl implements FcmService {
                 // Update the notification collection with isSent flag changed.
                 // To prevent sending multiple times the same event.
                 if (sendables.size() > 0 && sendables.get(0) instanceof Notification)
-                    sendables.forEach(data -> database.getCollection(NOTIFICATIONS).document(data.getId()).update("isSent", data.isSent()));
+                    sendables.forEach(data -> database.collection(NOTIFICATIONS).document(data.getId()).update("isSent", data.isSent()));
 
                 if (sendables.size() > 0 && sendables.get(0) instanceof Feedback)
                     sendables.forEach(data -> firebaseDatabase.getReference(String.format("%s/%s", FEEDBACK_COLLECTION, data.getId())).updateChildrenAsync(data.toDictionary()));
