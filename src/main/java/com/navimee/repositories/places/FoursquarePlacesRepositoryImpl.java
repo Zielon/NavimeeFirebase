@@ -1,6 +1,7 @@
 package com.navimee.repositories.places;
 
 import com.google.cloud.firestore.Firestore;
+import com.navimee.configuration.Qualifiers;
 import com.navimee.contracts.repositories.places.PlacesDetailsRepository;
 import com.navimee.enums.HotspotType;
 import com.navimee.firestore.PathBuilder;
@@ -19,7 +20,7 @@ import static com.navimee.firestore.FirebasePaths.FOURSQUARE_PLACES;
 import static com.navimee.firestore.FirebasePaths.HOTSPOT;
 
 @Repository
-@Qualifier("foursquare")
+@Qualifier(Qualifiers.FOURSQUARE)
 public class FoursquarePlacesRepositoryImpl implements PlacesDetailsRepository<FsPlaceDetails, FsPlace> {
 
     @Autowired

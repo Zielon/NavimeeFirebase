@@ -67,7 +67,7 @@ public class LogsController {
     @RequestMapping(value = "delete", method = RequestMethod.POST)
     public ResponseEntity<?> delete() {
         try {
-            firestoreRepository.deleteCollection(FirebasePaths.LOGS);
+            firestoreRepository.deleteDocument(FirebasePaths.LOGS);
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }

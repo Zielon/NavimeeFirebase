@@ -24,7 +24,7 @@ public class Log implements Comparable<Log>, Entity {
         DateTime warsaw = DateTime.now(DateTimeZone.UTC);
 
         this.type = type;
-        this.reference = String.format(format, args);
+        this.reference = String.format(format, args).toUpperCase();
         this.time = warsaw.toDate();
     }
 

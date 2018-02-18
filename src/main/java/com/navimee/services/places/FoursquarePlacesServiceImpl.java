@@ -32,11 +32,11 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.TimeUnit;
 
 import static com.navimee.asyncCollectors.Completable.sequence;
 import static com.navimee.linq.Distinct.distinctByKey;
@@ -84,7 +84,7 @@ public class FoursquarePlacesServiceImpl implements PlacesDetailsService {
             try {
                 subPlaces.forEach(p -> placesTasks.add(placesQuery.execute(new PlaceDetailsParams("venues", p.getId()))));
                 sequence(placesTasks).thenAcceptAsync(placesDto::addAll);
-                TimeUnit.HOURS.sleep(1);
+                //TimeUnit.HOURS.sleep(1);
                 placesTasks.clear();
             } catch (Exception e) {
                 e.printStackTrace();
@@ -119,7 +119,7 @@ public class FoursquarePlacesServiceImpl implements PlacesDetailsService {
                 List<FsPlaceDetails> entities = entitiesDetails.stream()
                         .filter(details -> details.getPopular() != null).collect(toList());
 
-                foursquareRepository.setPlacesDetails(entities);
+                foursquareRepository.setPlacesDetails(entities).join();
                 firebaseRepository.transferPlaces(entities);
             }).thenRunAsync(() -> Logger.LOG(new Log(LogTypes.TASK, "Foursquare details update for %s [FS]", city)));
         });
@@ -152,6 +152,7 @@ public class FoursquarePlacesServiceImpl implements PlacesDetailsService {
 
         return sequence(tasks).thenAcceptAsync(places -> {
             List<FsPlace> entities = places.stream()
+                    .flatMap(Collection::stream)
                     .filter(Objects::nonNull)
                     .map(dto -> modelMapper.map(dto, FsPlace.class))
                     .filter(distinctByKey(Place::getId))

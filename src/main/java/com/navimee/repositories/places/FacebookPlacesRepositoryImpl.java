@@ -1,6 +1,7 @@
 package com.navimee.repositories.places;
 
 import com.google.cloud.firestore.Firestore;
+import com.navimee.configuration.Qualifiers;
 import com.navimee.contracts.repositories.places.PlacesRepository;
 import com.navimee.firestore.PathBuilder;
 import com.navimee.firestore.operations.DbAdd;
@@ -16,7 +17,7 @@ import java.util.concurrent.CompletableFuture;
 import static com.navimee.firestore.FirebasePaths.FACEBOOK_PLACES;
 
 @Repository
-@Qualifier("facebook")
+@Qualifier(Qualifiers.FACEBOOK)
 public class FacebookPlacesRepositoryImpl implements PlacesRepository<FbPlace> {
 
     @Autowired

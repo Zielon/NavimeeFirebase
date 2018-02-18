@@ -23,11 +23,12 @@ public class PlacesDetailsTask {
     public void executeDetailsTask() {
         coordinatesRepository.getAvailableCities().thenAcceptAsync(cities -> {
             for (City city : cities) {
-                try {
-                    placesService.savePlacesDetails(city.getName()).get();
-                } catch (Exception e) {
-                    Logger.LOG(new Log(LogTypes.EXCEPTION, e));
-                }
+                if (city.getName().equals("SOPOT"))
+                    try {
+                        placesService.savePlacesDetails(city.getName()).join();
+                    } catch (Exception e) {
+                        Logger.LOG(new Log(LogTypes.EXCEPTION, e));
+                    }
             }
         });
     }
