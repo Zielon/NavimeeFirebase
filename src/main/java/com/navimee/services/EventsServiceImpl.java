@@ -86,8 +86,9 @@ public class EventsServiceImpl implements EventsService {
                     .map(dto -> modelMapper.map(dto, Event.class))
                     .collect(toList());
 
-            eventsRepository.setEvents(entities, city);
-            firebaseRepository.transferEvents(entities);
+            eventsRepository.setEvents(entities, city).join();
+            firebaseRepository.transferEvents(entities).join();
+
         }).thenRunAsync(() -> Logger.LOG(new Log(LogTypes.TASK, "Facebook events update for %s [FB]", city)));
     }
 

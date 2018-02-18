@@ -73,7 +73,7 @@ public class FacebookPlacesServiceImpl implements PlacesService {
                     .filter(distinctByKey(Place::getId))
                     .collect(toList());
 
-            facebookRepository.setPlaces(entities, city);
+            facebookRepository.setPlaces(entities, city).join();
 
         }).thenRunAsync(() -> Logger.LOG(new Log(LogTypes.TASK, "Facebook places update for %s [FB]", city)));
     }

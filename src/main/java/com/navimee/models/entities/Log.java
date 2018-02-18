@@ -14,8 +14,8 @@ public class Log implements Comparable<Log>, Entity {
     private LogTypes type;
     private Date time;
     private String reference;
-    private Integer count;
     private String id;
+    private String country;
 
     public Log() {
     }
@@ -26,6 +26,7 @@ public class Log implements Comparable<Log>, Entity {
         this.type = type;
         this.reference = String.format(format, args).toUpperCase();
         this.time = warsaw.toDate();
+        this.country = System.getenv().get("COUNTRY");
     }
 
     public Log(LogTypes type, Exception exception) {
@@ -39,7 +40,7 @@ public class Log implements Comparable<Log>, Entity {
         this.type = type;
         this.reference = sw.toString();
         this.time = warsaw.toDate();
-        this.count = null;
+        this.country = System.getenv().get("COUNTRY");
     }
 
     public LogTypes getType() {
@@ -56,14 +57,6 @@ public class Log implements Comparable<Log>, Entity {
 
     public void setTime(Date time) {
         this.time = time;
-    }
-
-    public Integer getCount() {
-        return count;
-    }
-
-    public void setCount(Integer count) {
-        this.count = count;
     }
 
     public String getId() {
@@ -85,5 +78,13 @@ public class Log implements Comparable<Log>, Entity {
     @Override
     public int compareTo(Log o) {
         return time.compareTo(o.time);
+    }
+
+    public String getCountry() {
+        return country;
+    }
+
+    public void setCountry(String country) {
+        this.country = country;
     }
 }
