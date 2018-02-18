@@ -10,12 +10,10 @@ import com.navimee.models.entities.coordinates.Coordinate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
-import static com.navimee.asyncCollectors.CompletionCollector.sequence;
 import static com.navimee.firestore.FirebasePaths.AVAILABLE_CITIES;
 import static com.navimee.firestore.FirebasePaths.COORDINATES;
 
@@ -32,34 +30,30 @@ public class CoordinatesRepositoryImpl implements CoordinatesRepository {
     DbGet dbGet;
 
     @Override
-    public CompletableFuture<List<Void>> setCoordinates(Map<String, List<Coordinate>> coordinatesMap) {
-        List<CompletableFuture<Void>> tasks = new ArrayList<>();
-        coordinatesMap.forEach((city, value) -> {
-            String path = new PathBuilder(1).add(COORDINATES).add(city).build();
-            tasks.add(dbAdd.toCollection(database.collection(path), value));
-        });
-        return sequence(tasks);
+    public CompletableFuture<Void> setCoordinates(Map<String, List<Coordinate>> coordinatesMap) {
+        return CompletableFuture.runAsync(() -> coordinatesMap.forEach((city, value) -> {
+            String path = new PathBuilder().add(COORDINATES).addCountry().add(city).build();
+            dbAdd.toCollection(database.collection(path), value).join();
+        }));
     }
 
     @Override
     public CompletableFuture<List<Coordinate>> getCoordinates(String city) {
-        String path = new PathBuilder(1).add(COORDINATES).add(city).build();
+        String path = new PathBuilder().add(COORDINATES).addCountry().add(city).build();
         return dbGet.fromCollection(database.collection(path), Coordinate.class);
     }
 
     @Override
     public CompletableFuture<List<City>> getAvailableCities() {
-        String path = new PathBuilder(1).add(AVAILABLE_CITIES).build();
-        return dbGet.fromCollection(database.collection(path), City.class);
+        String path = new PathBuilder().add(AVAILABLE_CITIES).addCountry().build();
+        return dbGet.fromDocumentCollection(database.document(path), City.class);
     }
 
     @Override
-    public CompletableFuture<List<Void>> setAvailableCities(List<City> cities) {
-        List<CompletableFuture<Void>> tasks = new ArrayList<>();
-        cities.forEach(city -> {
-            String path = new PathBuilder(1).add(AVAILABLE_CITIES).add(city.getName()).build();
-            tasks.add(dbAdd.toCollection(database.collection(path), city));
-        });
-        return sequence(tasks);
+    public CompletableFuture<Void> setAvailableCities(List<City> cities) {
+        return CompletableFuture.runAsync(() -> cities.forEach(city -> {
+            String path = new PathBuilder().add(AVAILABLE_CITIES).addCountry().add(city.getName()).build();
+            dbAdd.toCollection(database.collection(path), city).join();
+        }));
     }
 }

@@ -3,13 +3,14 @@ package com.navimee.tasks;
 import com.navimee.NavimeeApplication;
 import com.navimee.contracts.repositories.places.PlacesRepository;
 import com.navimee.contracts.services.EventsService;
+import com.navimee.models.entities.places.facebook.FbPlace;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
 public class PredictHqEventsTasks {
     @Autowired
-    PlacesRepository placesRepository;
+    PlacesRepository<FbPlace> placesRepository;
 
     @Autowired
     EventsService eventsService;

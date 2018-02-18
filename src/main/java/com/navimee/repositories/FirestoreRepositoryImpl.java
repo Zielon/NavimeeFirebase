@@ -2,34 +2,34 @@ package com.navimee.repositories;
 
 import com.google.cloud.firestore.Firestore;
 import com.navimee.contracts.repositories.FirestoreRepository;
-import com.navimee.contracts.repositories.places.CoordinatesRepository;
 import com.navimee.firestore.operations.DbDelete;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import static com.navimee.firestore.FirebasePaths.BY_CITY;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutorService;
 
 @Repository
 public class FirestoreRepositoryImpl implements FirestoreRepository {
 
     @Autowired
-    CoordinatesRepository coordinatesRepository;
+    DbDelete dbDelete;
 
     @Autowired
-    DbDelete delete;
+    Firestore firestore;
 
     @Autowired
-    Firestore db;
+    ExecutorService executorService;
 
     @Override
-    public void deleteDocument(String document) {
-        delete.collection(db.collection(document), 1);
+    public CompletableFuture<Void> deleteDocument(String document) {
+        return CompletableFuture.runAsync(
+                () -> dbDelete.document(firestore.document(document)), executorService);
     }
 
     @Override
-    public void deleteCollection(String collection) {
-        coordinatesRepository.getAvailableCities()
-                .thenAcceptAsync(cities -> cities.forEach(city ->
-                        delete.collection(db.collection(collection).document(BY_CITY).collection(city.getName()), 1)));
+    public CompletableFuture<Void> deleteCollection(String collection) {
+        return CompletableFuture.runAsync(
+                () -> dbDelete.collection(firestore.collection(collection), 1), executorService);
     }
 }

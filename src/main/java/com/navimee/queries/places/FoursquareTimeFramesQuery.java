@@ -15,7 +15,7 @@ import org.json.JSONObject;
 
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.concurrent.Callable;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 
 public class FoursquareTimeFramesQuery extends Query<PopularDto, FoursquareConfiguration, PlaceDetailsParams> {
@@ -27,13 +27,12 @@ public class FoursquareTimeFramesQuery extends Query<PopularDto, FoursquareConfi
     }
 
     @Override
-    public Callable<PopularDto> execute(PlaceDetailsParams params) {
+    public CompletableFuture<PopularDto> execute(PlaceDetailsParams params) {
 
         DateTime warsawCurrent = DateTime.now(DateTimeZone.UTC);
         DateTimeFormatter fmt = DateTimeFormat.forPattern("yyyyddMM");
 
         URI uri = null;
-
         try {
             URIBuilder builder = new URIBuilder(configuration.getApiUrl());
             builder.setPath("v2/" + params.type + "/" + params.placeId + "/hours");
@@ -46,15 +45,15 @@ public class FoursquareTimeFramesQuery extends Query<PopularDto, FoursquareConfi
         }
 
         URI finalUri = uri;
-        return () -> map(httpClient.GET(finalUri), params);
+        return CompletableFuture.supplyAsync(() -> map(httpClient.GET(finalUri), params), executorService);
     }
 
     @Override
-    protected PopularDto map(Callable<JSONObject> task, PlaceDetailsParams params) {
+    protected PopularDto map(CompletableFuture<JSONObject> task, PlaceDetailsParams params) {
         ObjectMapper mapper = new ObjectMapper();
         PopularDto popular = null;
         try {
-            JSONObject object = task.call();
+            JSONObject object = task.join();
             JSONObject json = object.getJSONObject("response").getJSONObject("popular");
             if (!json.has("timeframes")) return popular;
             popular = mapper.readValue(json.toString(), PopularDto.class);

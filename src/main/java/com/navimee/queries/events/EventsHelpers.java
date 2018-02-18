@@ -1,7 +1,7 @@
 package com.navimee.queries.events;
 
 import com.google.cloud.firestore.GeoPoint;
-import com.navimee.contracts.services.PlacesService;
+import com.navimee.contracts.services.places.GeoService;
 import com.navimee.logger.LogTypes;
 import com.navimee.logger.Logger;
 import com.navimee.models.bo.FbEvent;
@@ -19,7 +19,7 @@ import static com.navimee.queries.places.googleGeocoding.GoogleGeoTypeGetter.get
 
 public class EventsHelpers {
 
-    public static Function<FbEvent, Boolean> getCompelmentFunction(PlacesService placesService) {
+    public static Function<FbEvent, Boolean> getCompelmentFunction(GeoService<GooglePlaceDto> placesService) {
         return event -> {
             if (event.getPlace() == null || event.getPlace().getGeoPoint() == null) return false;
             if (event.getSearchPlace() == null || event.getSearchPlace().getGeoPoint() == null) return false;
@@ -38,7 +38,7 @@ public class EventsHelpers {
         };
     }
 
-    public static Function<Event, Event> setAddress(PlacesService placesService) {
+    public static Function<Event, Event> setAddress(GeoService<GooglePlaceDto> placesService) {
         return event -> {
             try {
                 GooglePlaceDto googlePlace = placesService.downloadReverseGeocoding(new Coordinate(event.getGeoPoint().getLatitude(), event.getGeoPoint().getLongitude())).get();

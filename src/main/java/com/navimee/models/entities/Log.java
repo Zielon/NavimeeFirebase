@@ -1,6 +1,5 @@
 package com.navimee.models.entities;
 
-import com.navimee.firestore.FirebasePaths;
 import com.navimee.logger.LogTypes;
 import com.navimee.models.entities.contracts.Entity;
 import org.joda.time.DateTime;
@@ -21,12 +20,11 @@ public class Log implements Comparable<Log>, Entity {
     public Log() {
     }
 
-    public Log(LogTypes type, String reference, Integer count) {
+    public Log(LogTypes type, String format, Object... args) {
         DateTime warsaw = DateTime.now(DateTimeZone.UTC);
 
         this.type = type;
-        this.reference = FirebasePaths.get(reference);
-        this.count = count;
+        this.reference = String.format(format, args);
         this.time = warsaw.toDate();
     }
 
@@ -42,10 +40,6 @@ public class Log implements Comparable<Log>, Entity {
         this.reference = sw.toString();
         this.time = warsaw.toDate();
         this.count = null;
-    }
-
-    public Log(LogTypes type, String reference) {
-        this(type, reference, null);
     }
 
     public LogTypes getType() {

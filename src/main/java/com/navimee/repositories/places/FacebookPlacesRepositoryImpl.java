@@ -30,13 +30,13 @@ public class FacebookPlacesRepositoryImpl implements PlacesRepository<FbPlace> {
 
     @Override
     public CompletableFuture<Void> setPlaces(List<FbPlace> places, String city) {
-        String path = new PathBuilder().add(FACEBOOK_PLACES).add(city).build();
+        String path = new PathBuilder().add(FACEBOOK_PLACES).addCountry().add(city).build();
         return add.toCollection(database.collection(path), places);
     }
 
     @Override
     public CompletableFuture<List<FbPlace>> getPlaces(String city) {
-        String path = new PathBuilder().add(FACEBOOK_PLACES).add(city).build();
+        String path = new PathBuilder().add(FACEBOOK_PLACES).addCountry().add(city).build();
         return dbGet.fromCollection(database.collection(path), FbPlace.class);
     }
 }

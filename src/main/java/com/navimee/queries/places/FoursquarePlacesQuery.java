@@ -16,7 +16,7 @@ import org.json.JSONObject;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
-import java.util.concurrent.Callable;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 
 public class FoursquarePlacesQuery extends Query<List<FsPlaceDto>, FoursquareConfiguration, PlaceDetailsParams> {
@@ -28,13 +28,12 @@ public class FoursquarePlacesQuery extends Query<List<FsPlaceDto>, FoursquareCon
     }
 
     @Override
-    public Callable<List<FsPlaceDto>> execute(PlaceDetailsParams params) {
+    public CompletableFuture<List<FsPlaceDto>> execute(PlaceDetailsParams params) {
 
         DateTime warsawCurrent = DateTime.now(DateTimeZone.UTC);
         DateTimeFormatter fmt = DateTimeFormat.forPattern("yyyyddMM");
 
         URI uri = null;
-
         try {
             URIBuilder builder = new URIBuilder(configuration.getApiUrl());
             builder.setPath("v2/" + params.type);
@@ -48,14 +47,14 @@ public class FoursquarePlacesQuery extends Query<List<FsPlaceDto>, FoursquareCon
         }
 
         URI finalUri = uri;
-        return () -> map(httpClient.GET(finalUri), params);
+        return CompletableFuture.supplyAsync(() -> map(httpClient.GET(finalUri), params), executorService);
     }
 
     @Override
-    protected List<FsPlaceDto> map(Callable<JSONObject> task, PlaceDetailsParams params) {
+    protected List<FsPlaceDto> map(CompletableFuture<JSONObject> task, PlaceDetailsParams params) {
         List<FsPlaceDto> output = null;
         try {
-            JSONObject object = task.call();
+            JSONObject object = task.join();
             output = JSON.arrayMapper(object.getJSONObject("response").getJSONArray("venues"), FsPlaceDto.class);
         } catch (Exception e) {
             e.printStackTrace();

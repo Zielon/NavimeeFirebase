@@ -3,6 +3,7 @@ package com.navimee.firestore.operations;
 import com.google.cloud.firestore.CollectionReference;
 import com.google.cloud.firestore.SetOptions;
 import com.google.cloud.firestore.WriteResult;
+import com.navimee.asyncCollectors.Completable;
 import com.navimee.logger.LogTypes;
 import com.navimee.logger.Logger;
 import com.navimee.models.entities.Log;
@@ -20,7 +21,6 @@ import java.util.concurrent.Future;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import static com.navimee.asyncCollectors.CompletionCollector.waitForFutures;
 import static com.navimee.linq.Distinct.distinctByKey;
 
 @Component
@@ -43,12 +43,6 @@ public class DbAdd {
         return toCollection(collectionReference, entityMap, null);
     }
 
-    public <T extends Entity> CompletableFuture<Void> toCollection(CollectionReference collectionReference, T entity, SetOptions option) {
-        Map<String, T> entityMap = new HashMap<>();
-        entityMap.put(entity.getId(), entity);
-        return toCollection(collectionReference, entityMap, option);
-    }
-
     public <T extends Entity> CompletableFuture<Void> toCollection(CollectionReference collectionReference, Map<String, T> entities, SetOptions options) {
         return CompletableFuture.runAsync(() -> {
             if (entities.size() == 0) return;
@@ -62,7 +56,7 @@ public class DbAdd {
                         tasks.add(collectionReference.document(entry.getKey()).set(entry.getValue()));
                 }
                 // Wait for all tasks to finish.
-                waitForFutures(executorService, tasks);
+                Completable.wait(executorService, tasks);
 
             } catch (Exception e) {
                 Logger.LOG(new Log(LogTypes.EXCEPTION, e));

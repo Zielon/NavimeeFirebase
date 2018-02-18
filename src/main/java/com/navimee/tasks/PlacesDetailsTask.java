@@ -2,7 +2,7 @@ package com.navimee.tasks;
 
 import com.navimee.NavimeeApplication;
 import com.navimee.contracts.repositories.places.CoordinatesRepository;
-import com.navimee.contracts.services.PlacesService;
+import com.navimee.contracts.services.places.PlacesDetailsService;
 import com.navimee.logger.LogTypes;
 import com.navimee.logger.Logger;
 import com.navimee.models.entities.Log;
@@ -18,13 +18,13 @@ public class PlacesDetailsTask {
     CoordinatesRepository coordinatesRepository;
 
     @Autowired
-    PlacesService placesService;
+    PlacesDetailsService placesService;
 
     public void executeDetailsTask() {
         coordinatesRepository.getAvailableCities().thenAcceptAsync(cities -> {
             for (City city : cities) {
                 try {
-                    placesService.saveFoursquarePlacesDetails(city.getName()).get();
+                    placesService.savePlacesDetails(city.getName()).get();
                 } catch (Exception e) {
                     Logger.LOG(new Log(LogTypes.EXCEPTION, e));
                 }

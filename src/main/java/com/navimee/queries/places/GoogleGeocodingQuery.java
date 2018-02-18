@@ -12,7 +12,7 @@ import org.json.JSONObject;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
-import java.util.concurrent.Callable;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 
 public class GoogleGeocodingQuery extends Query<GooglePlaceDto, GoogleGeoConfiguration, PlacesParams> {
@@ -24,7 +24,7 @@ public class GoogleGeocodingQuery extends Query<GooglePlaceDto, GoogleGeoConfigu
     }
 
     @Override
-    public Callable<GooglePlaceDto> execute(PlacesParams params) {
+    public CompletableFuture<GooglePlaceDto> execute(PlacesParams params) {
 
         URI uri = null;
         try {
@@ -38,14 +38,14 @@ public class GoogleGeocodingQuery extends Query<GooglePlaceDto, GoogleGeoConfigu
         }
 
         URI finalUri = uri;
-        return () -> map(httpClient.GET(finalUri), params);
+        return CompletableFuture.supplyAsync(() -> map(httpClient.GET(finalUri), params), executorService);
     }
 
     @Override
-    protected GooglePlaceDto map(Callable<JSONObject> task, PlacesParams params) {
+    protected GooglePlaceDto map(CompletableFuture<JSONObject> task, PlacesParams params) {
         List<GooglePlaceDto> output = null;
         try {
-            JSONObject object = task.call();
+            JSONObject object = task.join();
             output = JSON.arrayMapper(object.getJSONArray("results"), GooglePlaceDto.class);
         } catch (Exception e) {
             e.printStackTrace();

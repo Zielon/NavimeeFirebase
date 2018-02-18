@@ -1,43 +1,39 @@
 package com.navimee.services;
 
+import com.navimee.configuration.Qualifiers;
 import com.navimee.configuration.specific.FacebookConfiguration;
-import com.navimee.configuration.specific.PredictHqConfiguration;
 import com.navimee.contracts.repositories.EventsRepository;
 import com.navimee.contracts.repositories.FirebaseRepository;
-import com.navimee.contracts.repositories.places.CoordinatesRepository;
 import com.navimee.contracts.repositories.places.PlacesRepository;
 import com.navimee.contracts.services.EventsService;
 import com.navimee.contracts.services.HttpClient;
-import com.navimee.contracts.services.PlacesService;
+import com.navimee.contracts.services.places.GeoService;
 import com.navimee.general.Collections;
 import com.navimee.logger.LogTypes;
 import com.navimee.logger.Logger;
 import com.navimee.models.bo.FbEvent;
-import com.navimee.models.bo.PhqEvent;
 import com.navimee.models.dto.events.FbEventDto;
-import com.navimee.models.dto.events.PhqEventDto;
+import com.navimee.models.dto.geocoding.GooglePlaceDto;
 import com.navimee.models.entities.Event;
 import com.navimee.models.entities.Log;
 import com.navimee.models.entities.places.facebook.FbPlace;
 import com.navimee.queries.events.EventsHelpers;
 import com.navimee.queries.events.FacebookEventsQuery;
-import com.navimee.queries.events.PredictHqEventsQuery;
 import com.navimee.queries.events.params.FacebookEventsParams;
-import com.navimee.queries.events.params.PredictHqEventsParams;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
-import java.util.concurrent.Callable;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
 
-import static com.navimee.asyncCollectors.CompletionCollector.waitForManyTasks;
+import static com.navimee.asyncCollectors.Completable.sequence;
 import static com.navimee.linq.Distinct.distinctByKey;
 import static java.util.stream.Collectors.toList;
 
@@ -48,23 +44,17 @@ public class EventsServiceImpl implements EventsService {
     FacebookConfiguration facebookConfiguration;
 
     @Autowired
-    PredictHqConfiguration predictHqConfiguration;
-
-    @Autowired
-    PlacesService placesService;
-
-    @Autowired
-    @Qualifier("facebook")
+    @Qualifier(Qualifiers.FACEBOOK)
     PlacesRepository<FbPlace> facebookRepository;
-
-    @Autowired
-    CoordinatesRepository coordinatesRepository;
 
     @Autowired
     EventsRepository eventsRepository;
 
     @Autowired
     ModelMapper modelMapper;
+
+    @Autowired
+    GeoService<GooglePlaceDto> geoService;
 
     @Autowired
     ExecutorService executorService;
@@ -76,62 +66,33 @@ public class EventsServiceImpl implements EventsService {
     FirebaseRepository firebaseRepository;
 
     @Override
-    public Future saveFacebookEvents(String city) {
-        return executorService.submit(() -> {
-            Logger.LOG(new Log(LogTypes.TASK, "Events update for " + city + " [FB]"));
-            facebookRepository.getPlaces(city).thenAcceptAsync(fbPlaces -> {
-                // DbGet data from the external facebook API
-                List<Callable<List<FbEventDto>>> events = new ArrayList<>();
-                FacebookEventsQuery query = new FacebookEventsQuery(facebookConfiguration, executorService, httpClient);
-                Collections.spliter(fbPlaces, 50).forEach(places -> events.add(query.execute(new FacebookEventsParams(places))));
+    public CompletableFuture<Void> saveFacebookEvents(String city) {
 
-                List<Event> entities = waitForManyTasks(executorService, events)
-                        .parallelStream()
-                        .filter(Objects::nonNull)
-                        .map(dto -> modelMapper.map(dto, FbEvent.class))
-                        .filter(distinctByKey(FbEvent::getId))
-                        .filter(EventsHelpers.getCompelmentFunction(placesService)::apply)    // Check the right place
-                        .map(dto -> modelMapper.map(dto, Event.class))
-                        .collect(toList());
+        List<FbPlace> fbPlaces = facebookRepository.getPlaces(city).join();
 
-                eventsRepository.setEvents(entities, city);
-                firebaseRepository.transferEvents(entities);
-            });
-        });
+        // DbGet data from the external facebook API
+        List<CompletableFuture<List<FbEventDto>>> tasks = new ArrayList<>();
+        FacebookEventsQuery query = new FacebookEventsQuery(facebookConfiguration, executorService, httpClient);
+        Collections.spliter(fbPlaces, 50)
+                .forEach(places -> tasks.add(query.execute(new FacebookEventsParams(places))));
+
+        return sequence(tasks).thenAcceptAsync(events -> {
+            List<Event> entities = events.stream()
+                    .flatMap(Collection::stream)
+                    .filter(Objects::nonNull)
+                    .map(dto -> modelMapper.map(dto, FbEvent.class))
+                    .filter(distinctByKey(FbEvent::getId))
+                    .filter(EventsHelpers.getCompelmentFunction(geoService)::apply)    // Check the right place
+                    .map(dto -> modelMapper.map(dto, Event.class))
+                    .collect(toList());
+
+            eventsRepository.setEvents(entities, city);
+            firebaseRepository.transferEvents(entities);
+        }).thenRunAsync(() -> Logger.LOG(new Log(LogTypes.TASK, "Facebook events update for %s [FB]", city)));
     }
 
     @Override
-    public Future savePredictHqEvents(String city) {
-        return executorService.submit(() -> {
-            Logger.LOG(new Log(LogTypes.TASK, "Events update for " + city + " [P_HQ]"));
-            coordinatesRepository.getCoordinates(city).thenAcceptAsync(coordinates -> {
-                List<Callable<List<PhqEventDto>>> events = new ArrayList<>();
-                List<PhqEventDto> eventsDto = new ArrayList<>();
-
-                PredictHqEventsQuery query = new PredictHqEventsQuery(predictHqConfiguration, executorService, httpClient);
-                Collections.spliter(coordinates, 80).forEach(coods -> {
-                    try {
-                        coods.forEach(c -> events.add(query.execute(new PredictHqEventsParams(c.getLatitude(), c.getLongitude()))));
-                        eventsDto.addAll(waitForManyTasks(executorService, events));
-                        TimeUnit.MINUTES.sleep(3);
-                        events.clear();
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                });
-
-                List<Event> entities = eventsDto
-                        .parallelStream()
-                        .filter(Objects::nonNull)
-                        .map(dto -> modelMapper.map(dto, PhqEvent.class))
-                        .filter(distinctByKey(PhqEvent::getId))
-                        .map(dto -> modelMapper.map(dto, Event.class))
-                        .map(event -> EventsHelpers.setAddress(placesService).apply(event)) // Set address for PredictHQ
-                        .collect(toList());
-
-                firebaseRepository.transferEvents(entities);
-                eventsRepository.setEvents(entities, city);
-            });
-        });
+    public CompletableFuture<Void> savePredictHqEvents(String city) {
+        throw new NotImplementedException();
     }
 }

@@ -38,18 +38,19 @@ public class FoursquarePlacesRepositoryImpl implements PlacesDetailsRepository<F
 
     @Override
     public CompletableFuture<List<FsPlaceDetails>> getPlacesDetails() {
-        return dbGet.fromQuery(database.collection(HOTSPOT).whereEqualTo("hotspotType", HotspotType.FOURSQUARE_PLACE), FsPlaceDetails.class);
+        return dbGet.fromQuery(database.collection(HOTSPOT)
+                .whereEqualTo("hotspotType", HotspotType.FOURSQUARE_PLACE), FsPlaceDetails.class);
     }
 
     @Override
     public CompletableFuture<List<FsPlace>> getPlaces(String city) {
-        String path = new PathBuilder().add(FOURSQUARE_PLACES).add(city).build();
+        String path = new PathBuilder().add(FOURSQUARE_PLACES).addCountry().add(city).build();
         return dbGet.fromCollection(database.collection(path), FsPlace.class);
     }
 
     @Override
     public CompletableFuture<Void> setPlaces(List<FsPlace> places, String city) {
-        String path = new PathBuilder().add(FOURSQUARE_PLACES).add(city).build();
+        String path = new PathBuilder().add(FOURSQUARE_PLACES).addCountry().add(city).build();
         return add.toCollection(database.collection(path), places);
     }
 }

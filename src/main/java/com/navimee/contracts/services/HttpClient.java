@@ -4,12 +4,12 @@ import org.apache.http.client.methods.HttpGet;
 import org.json.JSONObject;
 
 import java.net.URI;
-import java.util.concurrent.Callable;
+import java.util.concurrent.CompletableFuture;
 
 public interface HttpClient {
-    Callable<JSONObject> GET(URI uri);
+    CompletableFuture<JSONObject> GET(URI uri);
 
-    Callable<JSONObject> GET(HttpGet httpGet);
+    CompletableFuture<JSONObject> GET(HttpGet httpGet);
 
     void close();
 }

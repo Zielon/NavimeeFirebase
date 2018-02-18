@@ -1,9 +1,9 @@
 package com.navimee.contracts.services;
 
-import java.util.concurrent.Future;
+import java.util.concurrent.CompletableFuture;
 
 public interface EventsService {
-    Future saveFacebookEvents(String city);
+    CompletableFuture<Void> saveFacebookEvents(String city);
 
-    Future savePredictHqEvents(String city);
+    CompletableFuture<Void> savePredictHqEvents(String city);
 }

@@ -15,7 +15,7 @@ import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
-import static com.navimee.asyncCollectors.CompletionCollector.sequence;
+import static com.navimee.asyncCollectors.Completable.sequence;
 import static com.navimee.firestore.FirebasePaths.NOTIFICATIONS;
 import static java.util.stream.Collectors.toList;
 

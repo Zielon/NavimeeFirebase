@@ -2,10 +2,7 @@ package com.navimee.firestore.operations;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.joda.JodaModule;
-import com.google.cloud.firestore.CollectionReference;
-import com.google.cloud.firestore.DocumentReference;
-import com.google.cloud.firestore.DocumentSnapshot;
-import com.google.cloud.firestore.Query;
+import com.google.cloud.firestore.*;
 import com.navimee.logger.LogTypes;
 import com.navimee.logger.Logger;
 import com.navimee.models.entities.Log;
@@ -65,7 +62,17 @@ public class DbGet {
         }, executorService);
     }
 
-    private <T extends Entity> CompletableFuture<List<T>> getData(List<DocumentSnapshot> documentSnapshots, Class<T> type) {
+    public <T extends Entity> CompletableFuture<List<T>> fromDocumentCollection(DocumentReference documentReference, Class<T> type) {
+        return CompletableFuture.supplyAsync(() -> {
+            List<T> output = new ArrayList<>();
+            documentReference.getCollections().forEach(collectionReference -> {
+                output.addAll(fromCollection(collectionReference, type).join());
+            });
+            return output;
+        }, executorService);
+    }
+
+    private <T extends Entity> CompletableFuture<List<T>> getData(List<QueryDocumentSnapshot> documentSnapshots, Class<T> type) {
         return CompletableFuture.supplyAsync(() -> {
             List<T> output = new ArrayList<>();
             try {
