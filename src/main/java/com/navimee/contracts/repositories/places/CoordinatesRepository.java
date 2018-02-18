@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
 public interface CoordinatesRepository {
+
     CompletableFuture<Void> setCoordinates(Map<String, List<Coordinate>> coordinatesMap);
 
     CompletableFuture<List<Coordinate>> getCoordinates(String city);

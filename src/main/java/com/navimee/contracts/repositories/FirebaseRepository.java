@@ -11,6 +11,7 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 
 public interface FirebaseRepository {
+
     CompletableFuture<Void> transferEvents(List<Event> events);
 
     CompletableFuture<Void> transferPlaces(List<FsPlaceDetails> placeDetails);
