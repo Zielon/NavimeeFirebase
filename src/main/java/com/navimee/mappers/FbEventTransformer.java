@@ -1,5 +1,6 @@
 package com.navimee.mappers;
 
+import com.google.cloud.firestore.GeoPoint;
 import com.navimee.models.bo.FbEvent;
 import com.navimee.models.entities.Event;
 import org.modelmapper.Converter;
@@ -19,7 +20,7 @@ public class FbEventTransformer {
                 entity.setCategory(bo.getCategory());
                 entity.setTimezone(bo.getTimezone());
                 entity.setRank(estimateRanking(bo));
-                entity.setGeoPoint(bo.getPlace().getGeoPoint());
+                entity.setGeoPoint(new GeoPoint(bo.getPlace().getLat(), bo.getPlace().getLon()));
                 entity.setStartTime(bo.getStartTime());
                 entity.setEndTime(bo.getEndTime());
                 entity.setHotspotType(bo.getHotspotType());

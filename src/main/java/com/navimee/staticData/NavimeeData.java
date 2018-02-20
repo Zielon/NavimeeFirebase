@@ -32,6 +32,9 @@ public class NavimeeData {
             case Categories:
                 selected = new ClassPathResource("navimeeData/forbiddenCategories.json");
                 break;
+            case Distributors:
+                selected = new ClassPathResource("navimeeData/eventsDistributors.json");
+                break;
         }
 
         BufferedReader streamReader = null;
@@ -67,6 +70,16 @@ public class NavimeeData {
         });
 
         return cities;
+    }
+
+    public List<String> getDistributors() {
+        JSONObject object = getJsonObject(StaticDataEnum.Distributors);
+        JSONArray array = object.getJSONArray("distributors");
+        List<String> list = new ArrayList<>();
+        for (int n = 0; n < array.length(); n++) {
+            list.add(array.get(n).toString());
+        }
+        return list;
     }
 
     public List<String> getCategories() {

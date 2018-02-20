@@ -47,12 +47,7 @@ public class NotificationsServiceImpl implements NotificationsService {
 
     private Function<Notification, Map<String, Object>> getDataCreator(NotificationType type) {
         return notification -> {
-            Map<String, Object> data = new HashMap<>();
-            data.put("title", notification.getTitle());
-            data.put("endTime", notification.getEndTime());
-            data.put("lat", notification.getGeoPoint().getLatitude());
-            data.put("lng", notification.getGeoPoint().getLongitude());
-            data.put("rank", notification.getRank());
+            Map<String, Object> data = notification.toDictionary();
             data.put("type", type);
             return data;
         };
@@ -74,7 +69,7 @@ public class NotificationsServiceImpl implements NotificationsService {
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                 Feedback feedback = dataSnapshot.getValue(Feedback.class);
                 usersRepository.getUser(feedback.getUserId()).thenAcceptAsync(user -> {
-                    if (feedback.isSent()) return;
+                    if (user == null || feedback.isSent()) return;
 
                     int waitForFeedbackSend = 60 * 15; // in seconds
 

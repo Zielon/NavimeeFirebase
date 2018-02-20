@@ -65,7 +65,7 @@ public class EventsRepositoryImpl implements EventsRepository {
     }
 
     @Override
-    public CompletableFuture<Void> setEvents(List<Event> events, String city) {
+    public CompletableFuture<Void> setEvents(List<? extends Event> events) {
         return dbAdd.toCollection(database.collection(HOTSPOT), events);
     }
 

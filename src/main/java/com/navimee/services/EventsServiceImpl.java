@@ -1,10 +1,8 @@
 package com.navimee.services;
 
-import com.navimee.configuration.Qualifiers;
 import com.navimee.configuration.specific.FacebookConfiguration;
 import com.navimee.contracts.repositories.EventsRepository;
 import com.navimee.contracts.repositories.FirebaseRepository;
-import com.navimee.contracts.repositories.places.PlacesRepository;
 import com.navimee.contracts.services.EventsService;
 import com.navimee.contracts.services.HttpClient;
 import com.navimee.contracts.services.places.GeoService;
@@ -22,7 +20,6 @@ import com.navimee.queries.events.FacebookEventsQuery;
 import com.navimee.queries.events.params.FacebookEventsParams;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
@@ -44,10 +41,6 @@ public class EventsServiceImpl implements EventsService {
     FacebookConfiguration facebookConfiguration;
 
     @Autowired
-    @Qualifier(Qualifiers.FACEBOOK)
-    PlacesRepository<FbPlace> facebookRepository;
-
-    @Autowired
     EventsRepository eventsRepository;
 
     @Autowired
@@ -66,9 +59,7 @@ public class EventsServiceImpl implements EventsService {
     FirebaseRepository firebaseRepository;
 
     @Override
-    public CompletableFuture<Void> saveFacebookEvents(String city) {
-
-        List<FbPlace> fbPlaces = facebookRepository.getPlaces(city).join();
+    public CompletableFuture<Void> saveFacebookEvents(List<FbPlace> fbPlaces, boolean complement) {
 
         // DbGet data from the external facebook API
         List<CompletableFuture<List<FbEventDto>>> tasks = new ArrayList<>();
@@ -80,16 +71,17 @@ public class EventsServiceImpl implements EventsService {
             List<Event> entities = events.stream()
                     .flatMap(Collection::stream)
                     .filter(Objects::nonNull)
+                    .filter(distinctByKey(FbEventDto::getId))
+                    .filter(dto -> !complement | EventsHelpers.getCompelmentFunction(geoService).apply(dto))    // Check the right place
                     .map(dto -> modelMapper.map(dto, FbEvent.class))
-                    .filter(distinctByKey(FbEvent::getId))
-                    .filter(EventsHelpers.getCompelmentFunction(geoService)::apply)    // Check the right place
-                    .map(dto -> modelMapper.map(dto, Event.class))
+                    .filter(bo -> bo.getPlace() != null)
+                    .map(bo -> modelMapper.map(bo, Event.class))
                     .collect(toList());
 
-            eventsRepository.setEvents(entities, city).join();
+            eventsRepository.setEvents(entities).join();
             firebaseRepository.transferEvents(entities).join();
 
-        }).thenRunAsync(() -> Logger.LOG(new Log(LogTypes.TASK, "Facebook events update for %s [FB]", city)));
+        }).thenRunAsync(() -> Logger.LOG(new Log(LogTypes.TASK, "Facebook events update for %s [FB]", fbPlaces.get(0).getCity())));
     }
 
     @Override

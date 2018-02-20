@@ -51,7 +51,7 @@ public class FacebookEventsQuery extends Query<List<FbEventDto>, FacebookConfigu
         joiner.add("picture.type(large)");
 
         DateTime warsawCurrent = DateTime.now(DateTimeZone.UTC);
-        DateTime warsawLater = warsawCurrent.plusDays(14);
+        DateTime warsawLater = warsawCurrent.plusDays(30);
         DateTimeFormatter dtf = ISODateTimeFormat.dateTime();
 
         String fields =
@@ -96,6 +96,6 @@ public class FacebookEventsQuery extends Query<List<FbEventDto>, FacebookConfigu
             e.printStackTrace();
         }
 
-        return events.stream().filter(e -> e.getAttendingCount() > 100).collect(toList());
+        return events.stream().filter(e -> e.getAttendingCount() > 150).collect(toList());
     }
 }

@@ -5,6 +5,7 @@ import com.navimee.contracts.services.HttpClient;
 import com.navimee.general.JSON;
 import com.navimee.models.dto.geocoding.GooglePlaceDto;
 import com.navimee.queries.Query;
+import com.navimee.queries.places.googleGeocoding.params.GeoParams;
 import com.navimee.queries.places.params.PlacesParams;
 import org.apache.http.client.utils.URIBuilder;
 import org.json.JSONObject;
@@ -15,7 +16,7 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 
-public class GoogleGeocodingQuery extends Query<GooglePlaceDto, GoogleGeoConfiguration, PlacesParams> {
+public class GoogleGeocodingQuery extends Query<GooglePlaceDto, GoogleGeoConfiguration, GeoParams> {
 
     public GoogleGeocodingQuery(GoogleGeoConfiguration configuration,
                                 ExecutorService executorService,
@@ -24,14 +25,14 @@ public class GoogleGeocodingQuery extends Query<GooglePlaceDto, GoogleGeoConfigu
     }
 
     @Override
-    public CompletableFuture<GooglePlaceDto> execute(PlacesParams params) {
+    public CompletableFuture<GooglePlaceDto> execute(GeoParams params) {
 
         URI uri = null;
         try {
             URIBuilder builder = new URIBuilder(configuration.getApiUrl());
             builder.setPath("/maps/api/geocode/json");
-            builder.setParameter("latlng", params.lat + "," + params.lon);
-            builder.setParameter("key", configuration.getClientId());
+            params.paramsList.forEach(param -> builder.setParameter(param.getFirst(), param.getSecond()));
+            builder.setParameter("key", configuration.getClientSecret());
             uri = builder.build();
         } catch (URISyntaxException e) {
             e.printStackTrace();
@@ -42,7 +43,7 @@ public class GoogleGeocodingQuery extends Query<GooglePlaceDto, GoogleGeoConfigu
     }
 
     @Override
-    protected GooglePlaceDto map(CompletableFuture<JSONObject> task, PlacesParams params) {
+    protected GooglePlaceDto map(CompletableFuture<JSONObject> task, GeoParams params) {
         List<GooglePlaceDto> output = null;
         try {
             JSONObject object = task.join();

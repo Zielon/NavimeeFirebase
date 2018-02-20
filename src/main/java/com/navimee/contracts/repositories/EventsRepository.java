@@ -11,7 +11,7 @@ public interface EventsRepository {
 
     CompletableFuture<List<Event>> getEventsBefore(int timeToEnd);
 
-    CompletableFuture<Void> setEvents(List<Event> events, String city);
+    CompletableFuture<Void> setEvents(List<? extends Event> events);
 
     CompletableFuture<Void> removeEvents();
 }
