@@ -27,7 +27,7 @@ public class FacebookEventsTask {
         coordinatesRepository.getAvailableCities().thenAcceptAsync(cities -> {
             for (City city : cities) {
                 try {
-                    eventsService.saveFacebookEvents(city.getName()).get();
+                    eventsService.saveFacebookEvents(city.getName()).join();
                 } catch (Exception e) {
                     Logger.LOG(new Log(LogTypes.EXCEPTION, e));
                 }

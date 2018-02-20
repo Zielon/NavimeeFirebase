@@ -72,7 +72,7 @@ public class EventsRepositoryImpl implements EventsRepository {
     @Override
     public CompletableFuture<Void> removeEvents() {
         return CompletableFuture.runAsync(() -> {
-            Logger.LOG(new Log(LogTypes.DELETION, "Delete old events"));
+
 
             Date warsaw = LocalDateTime.now(DateTimeZone.UTC).toDate();
 
@@ -84,6 +84,6 @@ public class EventsRepositoryImpl implements EventsRepository {
 
             dbGet.fromQuery(hotspot, Event.class).thenAcceptAsync(events -> firebaseRepository.deleteEvents(events));
 
-        }, executorService);
+        }, executorService).thenRunAsync(() -> Logger.LOG(new Log(LogTypes.DELETION, "Delete old facebook events")));
     }
 }

@@ -75,6 +75,6 @@ public class FacebookPlacesServiceImpl implements PlacesService {
 
             facebookRepository.setPlaces(entities, city).join();
 
-        }).thenRunAsync(() -> Logger.LOG(new Log(LogTypes.TASK, "Facebook places update for %s [FB]", city)));
+        }, executorService).thenRunAsync(() -> Logger.LOG(new Log(LogTypes.TASK, "Facebook places update for %s [FB]", city)));
     }
 }

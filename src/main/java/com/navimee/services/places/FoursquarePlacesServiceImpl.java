@@ -85,7 +85,7 @@ public class FoursquarePlacesServiceImpl implements PlacesDetailsService {
                 placesTasks.addAll(subPlaces.stream()
                         .map(p -> placesQuery.execute(new PlaceDetailsParams("venues", p.getId())))
                         .collect(toList()));
-                TimeUnit.HOURS.sleep(1);
+                //TimeUnit.HOURS.sleep(1);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -124,7 +124,7 @@ public class FoursquarePlacesServiceImpl implements PlacesDetailsService {
                         foursquareRepository.setPlacesDetails(entities).join();
                         firebaseRepository.transferPlaces(entities).join();
 
-                    }).thenRunAsync(() -> Logger.LOG(new Log(LogTypes.TASK, "Foursquare details update for %s [FS]", city)));
+                    }, executorService).thenRunAsync(() -> Logger.LOG(new Log(LogTypes.TASK, "Foursquare details update for %s [FS]", city)));
                 })
         );
     }
@@ -164,6 +164,6 @@ public class FoursquarePlacesServiceImpl implements PlacesDetailsService {
 
             foursquareRepository.setPlaces(entities, city).join();
 
-        }).thenRunAsync(() -> Logger.LOG(new Log(LogTypes.TASK, "Foursquare places update for %s [FS]", city)));
+        }, executorService).thenRunAsync(() -> Logger.LOG(new Log(LogTypes.TASK, "Foursquare places update for %s [FS]", city)));
     }
 }

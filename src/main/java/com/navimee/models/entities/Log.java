@@ -1,5 +1,6 @@
 package com.navimee.models.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.navimee.logger.LogTypes;
 import com.navimee.models.entities.contracts.Entity;
 import org.joda.time.DateTime;
@@ -9,6 +10,7 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Date;
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Log implements Comparable<Log>, Entity {
 
     private LogTypes type;
