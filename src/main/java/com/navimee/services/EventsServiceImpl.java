@@ -68,7 +68,7 @@ public class EventsServiceImpl implements EventsService {
                 .forEach(places -> tasks.add(query.execute(new FacebookEventsParams(places))));
 
         return sequence(tasks).thenAcceptAsync(events -> {
-            List<Event> entities = events.stream()
+            List<Event> entities = events.parallelStream()
                     .flatMap(Collection::stream)
                     .filter(Objects::nonNull)
                     .filter(distinctByKey(FbEventDto::getId))
@@ -81,7 +81,10 @@ public class EventsServiceImpl implements EventsService {
             eventsRepository.setEvents(entities).join();
             firebaseRepository.transferEvents(entities).join();
 
-        }).thenRunAsync(() -> Logger.LOG(new Log(LogTypes.TASK, "Facebook events update for %s [FB]", fbPlaces.get(0).getCity())));
+        }, executorService).exceptionally(throwable -> {
+            Logger.LOG(new Log(LogTypes.EXCEPTION, throwable));
+            return null;
+        });
     }
 
     @Override

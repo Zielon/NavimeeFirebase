@@ -7,12 +7,12 @@ import java.util.StringJoiner;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Place implements Entity {
+    protected double lat;
+    protected double lon;
     private String name;
     private String id;
     private String city;
     private String address;
-    protected double lat;
-    protected double lon;
 
     public String getName() {
         return name;
@@ -62,7 +62,7 @@ public class Place implements Entity {
         this.lat = lat;
     }
 
-    public String getFullAddress(){
+    public String getFullAddress() {
         String address = new StringJoiner(",").add(this.city).add(this.address).toString();
         return address.split("null").length > 1 ? "" : address;
     }

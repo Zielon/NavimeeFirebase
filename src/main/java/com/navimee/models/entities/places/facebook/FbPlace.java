@@ -17,8 +17,8 @@ public class FbPlace extends Place {
 
     @JsonProperty("geoPoint")
     private void getGeoPoint(Map<String, Double> json) {
-       lat = json.get("latitude");
-       lon = json.get("longitude");
+        lat = json.get("latitude");
+        lon = json.get("longitude");
     }
 
     public String getCategory() {

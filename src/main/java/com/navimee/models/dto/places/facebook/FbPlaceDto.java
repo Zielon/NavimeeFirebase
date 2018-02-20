@@ -2,7 +2,6 @@ package com.navimee.models.dto.places.facebook;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.google.cloud.firestore.GeoPoint;
 import com.navimee.models.dto.places.PlaceDto;
 
 import java.util.Map;

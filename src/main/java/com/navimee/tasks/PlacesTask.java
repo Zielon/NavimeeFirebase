@@ -21,8 +21,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
 
-import static com.navimee.firestore.FirebasePaths.*;
+import static com.navimee.firestore.FirebasePaths.AVAILABLE_CITIES;
 
 @Component
 public class PlacesTask {
@@ -41,6 +42,9 @@ public class PlacesTask {
     @Autowired
     FirestoreRepository firestoreRepository;
 
+    @Autowired
+    ExecutorService executorService;
+
     public void executePlacesTask() throws ExecutionException, InterruptedException {
         // Mocked data.
         NavimeeData navimeeData = new NavimeeData();
@@ -51,23 +55,23 @@ public class PlacesTask {
 
         CompletableFuture<Void> allDone = CompletableFuture.allOf(
                 coordinatesRepository.setAvailableCities(staticData),
-                firestoreRepository.deleteDocument(new PathBuilder().add(FACEBOOK_PLACES).addCountry().build()),
+    /*            firestoreRepository.deleteDocument(new PathBuilder().add(FACEBOOK_PLACES).addCountry().build()),
                 firestoreRepository.deleteDocument(new PathBuilder().add(FOURSQUARE_PLACES).addCountry().build()),
-                firestoreRepository.deleteDocument(new PathBuilder().add(COORDINATES).addCountry().build()),
+                firestoreRepository.deleteDocument(new PathBuilder().add(COORDINATES).addCountry().build()),*/
                 coordinatesRepository.setCoordinates(coordinates));
 
         allDone.thenAcceptAsync(results -> {
             coordinatesRepository.getAvailableCities().thenAcceptAsync(cities -> {
                 for (City city : cities) {
                     try {
-                        facebookService.savePlaces(city.getName()).join();
-                        foursquareService.savePlaces(city.getName()).join();
+                        facebookService.savePlaces(city.getName());
+                        foursquareService.savePlaces(city.getName());
                     } catch (Exception e) {
                         Logger.LOG(new Log(LogTypes.EXCEPTION, e));
                     }
                 }
             });
-        });
+        }, executorService);
     }
 
     @Scheduled(cron = "0 0 1 2 * ?")

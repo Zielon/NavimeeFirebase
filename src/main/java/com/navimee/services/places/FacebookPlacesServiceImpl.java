@@ -66,7 +66,7 @@ public class FacebookPlacesServiceImpl implements PlacesService {
                 .collect(toList());
 
         return sequence(tasks).thenAcceptAsync(places -> {
-            List<FbPlace> entities = places.stream()
+            List<FbPlace> entities = places.parallelStream()
                     .flatMap(Collection::stream)
                     .filter(Objects::nonNull)
                     .map(dto -> modelMapper.map(dto, FbPlace.class))
@@ -75,6 +75,9 @@ public class FacebookPlacesServiceImpl implements PlacesService {
 
             facebookRepository.setPlaces(entities, city).join();
 
-        }, executorService).thenRunAsync(() -> Logger.LOG(new Log(LogTypes.TASK, "Facebook places update for %s [FB]", city)));
+        }, executorService).exceptionally(throwable -> {
+            Logger.LOG(new Log(LogTypes.EXCEPTION, throwable));
+            return null;
+        }).thenRunAsync(() -> Logger.LOG(new Log(LogTypes.TASK, "Facebook places update for %s [FB]", city)));
     }
 }

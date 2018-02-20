@@ -62,7 +62,7 @@ public class PlaceDto implements Dto {
         this.lon = lon;
     }
 
-    public String getFullAddress(){
+    public String getFullAddress() {
         String address = new StringJoiner(",").add(this.city).add(this.address).toString();
         return address.split("null").length > 1 ? "" : address;
     }

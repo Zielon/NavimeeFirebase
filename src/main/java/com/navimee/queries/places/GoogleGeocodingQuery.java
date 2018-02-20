@@ -6,7 +6,6 @@ import com.navimee.general.JSON;
 import com.navimee.models.dto.geocoding.GooglePlaceDto;
 import com.navimee.queries.Query;
 import com.navimee.queries.places.googleGeocoding.params.GeoParams;
-import com.navimee.queries.places.params.PlacesParams;
 import org.apache.http.client.utils.URIBuilder;
 import org.json.JSONObject;
 

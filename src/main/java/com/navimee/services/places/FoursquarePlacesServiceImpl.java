@@ -154,7 +154,7 @@ public class FoursquarePlacesServiceImpl implements PlacesDetailsService {
                 .collect(toList());
 
         return sequence(tasks).thenAcceptAsync(places -> {
-            List<FsPlace> entities = places.stream()
+            List<FsPlace> entities = places.parallelStream()
                     .flatMap(Collection::stream)
                     .filter(Objects::nonNull)
                     .map(dto -> modelMapper.map(dto, FsPlace.class))
@@ -163,6 +163,9 @@ public class FoursquarePlacesServiceImpl implements PlacesDetailsService {
 
             foursquareRepository.setPlaces(entities, city).join();
 
-        }, executorService).thenRunAsync(() -> Logger.LOG(new Log(LogTypes.TASK, "Foursquare places update for %s [FS]", city)));
+        }, executorService).exceptionally(throwable -> {
+            Logger.LOG(new Log(LogTypes.EXCEPTION, throwable));
+            return null;
+        }).thenRunAsync(() -> Logger.LOG(new Log(LogTypes.TASK, "Foursquare places update for %s [FS]", city)));
     }
 }

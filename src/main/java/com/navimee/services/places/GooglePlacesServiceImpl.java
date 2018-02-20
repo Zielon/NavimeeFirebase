@@ -7,7 +7,6 @@ import com.navimee.models.dto.geocoding.GooglePlaceDto;
 import com.navimee.models.entities.coordinates.Coordinate;
 import com.navimee.queries.places.GoogleGeocodingQuery;
 import com.navimee.queries.places.googleGeocoding.params.GeoParams;
-import com.navimee.queries.places.params.PlacesParams;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

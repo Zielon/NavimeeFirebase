@@ -9,11 +9,11 @@ import java.util.List;
 public class GeoParams implements QueryParams {
     public List<Pair<String, String>> paramsList;
 
-    public GeoParams(){
+    public GeoParams() {
         paramsList = new ArrayList<>();
     }
 
-    public GeoParams add(String param, String value){
+    public GeoParams add(String param, String value) {
         paramsList.add(new Pair<>(param, value));
         return this;
     }

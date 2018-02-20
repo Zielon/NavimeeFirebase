@@ -31,6 +31,10 @@ public class Log implements Comparable<Log>, Entity {
         this.country = System.getenv().get("COUNTRY");
     }
 
+    public Log(LogTypes type, Throwable exception) {
+        this(type, new Exception(exception));
+    }
+
     public Log(LogTypes type, Exception exception) {
         StringWriter sw = new StringWriter();
         exception.printStackTrace(new PrintWriter(sw));
