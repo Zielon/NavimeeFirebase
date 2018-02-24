@@ -73,7 +73,6 @@ public class EventsRepositoryImpl implements EventsRepository {
     public CompletableFuture<Void> removeEvents() {
         return CompletableFuture.runAsync(() -> {
 
-
             Date warsaw = LocalDateTime.now(DateTimeZone.UTC).toDate();
 
             Query hotspot = database.collection(HOTSPOT).whereLessThan("endTime", warsaw);
@@ -82,7 +81,8 @@ public class EventsRepositoryImpl implements EventsRepository {
             delete.document(hotspot);
             delete.document(notification);
 
-            dbGet.fromQuery(hotspot, Event.class).thenAcceptAsync(events -> firebaseRepository.deleteEvents(events));
+            dbGet.fromQuery(hotspot, Event.class)
+                    .thenAcceptAsync(events -> firebaseRepository.deleteEvents(events));
 
         }, executorService).thenRunAsync(() -> Logger.LOG(new Log(LogTypes.DELETION, "Delete old facebook events")));
     }

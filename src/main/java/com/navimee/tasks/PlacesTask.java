@@ -23,7 +23,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 
-import static com.navimee.firestore.FirebasePaths.AVAILABLE_CITIES;
+import static com.navimee.firestore.FirebasePaths.*;
 
 @Component
 public class PlacesTask {
@@ -54,11 +54,13 @@ public class PlacesTask {
         firestoreRepository.deleteDocument(new PathBuilder().add(AVAILABLE_CITIES).addCountry().build()).join();
 
         CompletableFuture<Void> allDone = CompletableFuture.allOf(
-                coordinatesRepository.setAvailableCities(staticData),
-    /*            firestoreRepository.deleteDocument(new PathBuilder().add(FACEBOOK_PLACES).addCountry().build()),
+                firestoreRepository.deleteDocument(new PathBuilder().add(FACEBOOK_PLACES).addCountry().build()),
                 firestoreRepository.deleteDocument(new PathBuilder().add(FOURSQUARE_PLACES).addCountry().build()),
-                firestoreRepository.deleteDocument(new PathBuilder().add(COORDINATES).addCountry().build()),*/
-                coordinatesRepository.setCoordinates(coordinates));
+                firestoreRepository.deleteDocument(new PathBuilder().add(COORDINATES).addCountry().build()))
+                .thenRunAsync(()->{
+                    coordinatesRepository.setCoordinates(coordinates).join();
+                    coordinatesRepository.setAvailableCities(staticData).join();
+                });
 
         allDone.thenAcceptAsync(results -> {
             coordinatesRepository.getAvailableCities().thenAcceptAsync(cities -> {

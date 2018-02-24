@@ -40,7 +40,7 @@ public class FirebaseRepositoryImpl implements FirebaseRepository {
             GeoFire geoFire = new GeoFire(firebaseDatabase.getReference(HOTSPOT));
             Map<String, Event> entities = events.stream().collect(Collectors.toMap(Entity::getId, Function.identity()));
             entities.forEach((key, v) -> geoFire.setLocation(key, new GeoLocation(v.getGeoPoint().getLatitude(), v.getGeoPoint().getLongitude())));
-        }, executorService).thenRunAsync(() -> Logger.LOG(new Log(LogTypes.TRANSFER, "Transfer facebook events details [Firebase]", events.size())));
+        }, executorService).thenRunAsync(() -> Logger.LOG(new Log(LogTypes.TRANSFER, "Transfer facebook events (%d) details [Firebase]", events.size())));
     }
 
     @Override
@@ -49,7 +49,7 @@ public class FirebaseRepositoryImpl implements FirebaseRepository {
             GeoFire geoFire = new GeoFire(firebaseDatabase.getReference(HOTSPOT));
             Map<String, FsPlaceDetails> entities = placeDetails.stream().collect(Collectors.toMap(Entity::getId, Function.identity()));
             entities.forEach((key, v) -> geoFire.setLocation(key, new GeoLocation(v.getLocationLat(), v.getLocationLng())));
-        }, executorService).thenRunAsync(() -> Logger.LOG(new Log(LogTypes.TRANSFER, "Transfer foursquare details [Firebase]", placeDetails.size())));
+        }, executorService).thenRunAsync(() -> Logger.LOG(new Log(LogTypes.TRANSFER, "Transfer foursquare details (%d) [Firebase]", placeDetails.size())));
     }
 
     @Override
