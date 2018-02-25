@@ -1,8 +1,11 @@
 package com.navimee.repositories;
 
+import com.google.cloud.firestore.FieldValue;
 import com.google.cloud.firestore.Firestore;
 import com.google.cloud.firestore.Query;
+import com.google.cloud.firestore.SetOptions;
 import com.navimee.contracts.repositories.UsersRepository;
+import com.navimee.firestore.PathBuilder;
 import com.navimee.firestore.operations.DbGet;
 import com.navimee.models.entities.User;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,8 +13,10 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutorService;
 
 import static com.navimee.firestore.FirebasePaths.USERS;
+import static com.navimee.reflection.Utils.nameof;
 
 @Repository
 public class UsersRepositoryImpl implements UsersRepository {
@@ -22,9 +27,33 @@ public class UsersRepositoryImpl implements UsersRepository {
     @Autowired
     DbGet dbGet;
 
+    @Autowired
+    ExecutorService executorService;
+
     @Override
     public CompletableFuture<User> getUser(String id) {
         return dbGet.fromDocument(database.collection(USERS).document(id), User.class);
+    }
+
+    @Override
+    public CompletableFuture<List<User>> getAllUsers() {
+        return dbGet.fromCollection(database.collection(USERS), User.class);
+    }
+
+    @Override
+    public CompletableFuture<Void> updateUsersField(String fieldName, Object value) throws NoSuchFieldException {
+        return CompletableFuture.runAsync(
+                () -> getAllUsers().join().forEach(
+                        user -> database.document(new PathBuilder().add(USERS).add(user.getId()).build())
+                                .update(fieldName, value)), executorService);
+    }
+
+    @Override
+    public CompletableFuture<Void> deleteUsersField(String fieldName) throws NoSuchFieldException {
+        return CompletableFuture.runAsync(
+                () -> getAllUsers().join().forEach(
+                        user -> database.document(new PathBuilder().add(USERS).add(user.getId()).build())
+                                .update(fieldName, FieldValue.delete())), executorService);
     }
 
     @Override

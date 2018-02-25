@@ -9,5 +9,11 @@ public interface UsersRepository {
 
     CompletableFuture<User> getUser(String id);
 
+    CompletableFuture<List<User>> getAllUsers();
+
+    CompletableFuture<Void> updateUsersField(String fieldName, Object value) throws NoSuchFieldException;
+
+    CompletableFuture<Void> deleteUsersField(String fieldName) throws NoSuchFieldException;
+
     CompletableFuture<List<User>> getUsersWithBigEventsOn();
 }
