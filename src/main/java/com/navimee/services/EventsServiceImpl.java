@@ -18,6 +18,7 @@ import com.navimee.models.entities.places.facebook.FbPlace;
 import com.navimee.queries.events.EventsHelpers;
 import com.navimee.queries.events.FacebookEventsQuery;
 import com.navimee.queries.events.params.FacebookEventsParams;
+import com.navimee.staticData.NavimeeData;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -29,6 +30,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
+import java.util.stream.Collectors;
 
 import static com.navimee.asyncCollectors.Completable.sequence;
 import static com.navimee.linq.Distinct.distinctByKey;
@@ -60,6 +62,10 @@ public class EventsServiceImpl implements EventsService {
 
     @Override
     public CompletableFuture<Void> saveFacebookEvents(List<FbPlace> fbPlaces, boolean complement) {
+
+        List<String> forbiddenPlaces = new NavimeeData().getPlacesBlackList();
+
+        fbPlaces = fbPlaces.stream().filter(fbPlace -> !forbiddenPlaces.contains(fbPlace.getId())).collect(toList());
 
         // DbGet data from the external facebook API
         List<CompletableFuture<List<FbEventDto>>> tasks = new ArrayList<>();
