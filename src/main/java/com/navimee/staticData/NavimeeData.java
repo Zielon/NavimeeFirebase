@@ -2,6 +2,7 @@ package com.navimee.staticData;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.navimee.firestore.FirebasePaths;
+import com.navimee.general.JSON;
 import com.navimee.models.entities.coordinates.City;
 import com.navimee.models.entities.coordinates.Coordinate;
 import org.json.JSONArray;
@@ -28,7 +29,7 @@ public class NavimeeData {
 
     public List<City> getCities() {
         JSONArray array = getJsonObject(COUNTRY).getJSONArray(AVAILABLE_CITIES);
-        return getList(array, City.class);
+        return JSON.arrayMapper(array, City.class);
     }
 
     public List<String> getEventsDistributors() {
@@ -37,6 +38,10 @@ public class NavimeeData {
 
     public List<String> getPlacesBlackList() {
         return getStringList("PLACES_BLACKLIST", getJsonObject(COUNTRY));
+    }
+
+    public List<String> getChatDefault() {
+        return getStringList("CHAT_DEFAULT", getJsonObject(COUNTRY));
     }
 
     public List<String> getCategories() {
@@ -49,7 +54,7 @@ public class NavimeeData {
 
         object.keySet().forEach(city -> {
             JSONArray array = object.getJSONArray(city.toString());
-            coordinates.put(city.toString(), getList(array, Coordinate.class));
+            coordinates.put(city.toString(), JSON.arrayMapper(array, Coordinate.class));
         });
 
         return coordinates;
@@ -57,17 +62,9 @@ public class NavimeeData {
 
     private List<String> getStringList(String path, JSONObject object) {
         JSONArray array = object.getJSONArray(path);
-        return getList(array, String.class);
-    }
-
-    private <T> List<T> getList(JSONArray array, Class<T> type) {
-        List<T> list = new ArrayList<>();
+        List<String> list = new ArrayList<>();
         for (int n = 0; n < array.length(); n++) {
-            try {
-                list.add(mapper.readValue(array.get(n).toString(), type));
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            list.add(array.get(n).toString());
         }
         return list;
     }

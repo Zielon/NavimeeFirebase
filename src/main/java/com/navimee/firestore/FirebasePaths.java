@@ -10,6 +10,8 @@ public class FirebasePaths {
     public static final String FACEBOOK_PLACES = "FACEBOOK_PLACES";
     public static final String FOURSQUARE_PLACES = "FOURSQUARE_PLACES";
     public static final String FOURSQUARE_PLACES_DETAILS = "FOURSQUARE_PLACES_DETAILS";
+    public static final String ROOM_DETAILS = "ROOM_DETAILS";
+    public static final String GROUP = "GROUP";
 
     // Documents
     public static final String NOTIFICATIONS = "NOTIFICATIONS";

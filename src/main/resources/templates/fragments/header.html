@@ -2,30 +2,32 @@
 <head>
     <div th:fragment="header-css">
         <link rel="stylesheet" type="text/css" href="css/main.css"/>
-        <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" />
+        <link rel="stylesheet" type="text/css"
+              href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"/>
     </div>
 </head>
-    <body>
-        <div th:fragment="header">
-            <nav class="navbar navbar-ligh">
-                <div class="container">
-                    <div id="navbar" class="collapse navbar-collapse">
-                        <div sec:authorize="isAuthenticated()">
-                            <ul class="nav navbar-nav navbar-right">
-                                <li><a href="/"><span class="glyphicon glyphicon-globe"></span> Main</a></li>
-                                <li><a href="/admin"><span class="glyphicon glyphicon-king"></span> Admin</a></li>
-                                <li><a href="/swagger-ui.html"><span class="glyphicon glyphicon-list-alt"></span> About API</a></li>
-                                <li><a href="/logout"><span class="glyphicon glyphicon-user"></span> Log out</a></li>
-                            </ul>
-                        </div>
-                        <div sec:authorize="isAnonymous()">
-                            <ul class="nav navbar-nav navbar-right">
-                                <li><a href="/login"><span class="glyphicon glyphicon-log-in"></span> Log in</a></li>
-                            </ul>
-                        </div>
-                    </div>
+<body>
+<div th:fragment="header">
+    <nav class="navbar navbar-ligh">
+        <div class="container">
+            <div id="navbar" class="collapse navbar-collapse">
+                <div sec:authorize="isAuthenticated()">
+                    <ul class="nav navbar-nav navbar-right">
+                        <li><a href="/"><span class="glyphicon glyphicon-globe"></span> Main</a></li>
+                        <li><a href="/admin"><span class="glyphicon glyphicon-king"></span> Admin</a></li>
+                        <li><a href="/swagger-ui.html"><span class="glyphicon glyphicon-list-alt"></span> About API</a>
+                        </li>
+                        <li><a href="/logout"><span class="glyphicon glyphicon-user"></span> Log out</a></li>
+                    </ul>
                 </div>
-            </nav>
+                <div sec:authorize="isAnonymous()">
+                    <ul class="nav navbar-nav navbar-right">
+                        <li><a href="/login"><span class="glyphicon glyphicon-log-in"></span> Log in</a></li>
+                    </ul>
+                </div>
+            </div>
         </div>
-    </body>
+    </nav>
+</div>
+</body>
 </html>
