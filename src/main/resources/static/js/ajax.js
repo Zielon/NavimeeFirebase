@@ -16,8 +16,6 @@ function filterChange(filter){
         filters.splice(index, 1);
     else
         filters.push(filter);
-
-    loadDoc();
 }
 
 function reset(){

@@ -1,17 +1,14 @@
 package com.navimee.models.entities.coordinates;
 
+import com.google.cloud.firestore.annotation.Exclude;
 import com.navimee.models.entities.contracts.Entity;
 
 public class City implements Entity {
-    private String id;
     private String name;
 
+    @Exclude
     public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
+        return Integer.toString(name.hashCode());
     }
 
     public String getName() {

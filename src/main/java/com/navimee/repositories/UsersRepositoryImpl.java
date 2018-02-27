@@ -3,7 +3,6 @@ package com.navimee.repositories;
 import com.google.cloud.firestore.FieldValue;
 import com.google.cloud.firestore.Firestore;
 import com.google.cloud.firestore.Query;
-import com.google.cloud.firestore.SetOptions;
 import com.navimee.contracts.repositories.UsersRepository;
 import com.navimee.firestore.PathBuilder;
 import com.navimee.firestore.operations.DbGet;
@@ -16,7 +15,6 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 
 import static com.navimee.firestore.FirebasePaths.USERS;
-import static com.navimee.reflection.Utils.nameof;
 
 @Repository
 public class UsersRepositoryImpl implements UsersRepository {

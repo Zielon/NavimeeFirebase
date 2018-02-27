@@ -43,7 +43,7 @@ public class FacebookEventsTask {
                         .thenRunAsync(() -> Logger.LOG(new Log(LogTypes.TASK, "Facebook events update for %s [FB]", city.getName())));
             }
         }).thenRunAsync(() -> {
-            List<FbPlace> places = new NavimeeData().getDistributors().stream().map(FbPlace::new).collect(toList());
+            List<FbPlace> places = new NavimeeData().getEventsDistributors().stream().map(FbPlace::new).collect(toList());
             eventsService.saveFacebookEvents(places, false);
         });
     }

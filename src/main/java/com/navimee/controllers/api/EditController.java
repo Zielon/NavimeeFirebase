@@ -20,7 +20,7 @@ public class EditController {
         String type = dto.getClassType().toUpperCase();
         Object value;
 
-        switch (type){
+        switch (type) {
             case "BOOLEAN":
                 value = Boolean.parseBoolean(dto.getValue());
                 break;
@@ -34,7 +34,7 @@ public class EditController {
                 throw new Exception("The given type is not supported!");
         }
 
-        if(value == null)
+        if (value == null)
             throw new Exception("The value is null!");
 
         return usersRepository.updateUsersField(dto.getFiled(), value);

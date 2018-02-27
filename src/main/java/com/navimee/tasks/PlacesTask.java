@@ -57,9 +57,12 @@ public class PlacesTask {
                 firestoreRepository.deleteDocument(new PathBuilder().add(FACEBOOK_PLACES).addCountry().build()),
                 firestoreRepository.deleteDocument(new PathBuilder().add(FOURSQUARE_PLACES).addCountry().build()),
                 firestoreRepository.deleteDocument(new PathBuilder().add(COORDINATES).addCountry().build()))
-                .thenRunAsync(()->{
+                .thenRunAsync(() -> {
                     coordinatesRepository.setCoordinates(coordinates).join();
                     coordinatesRepository.setAvailableCities(staticData).join();
+                }).exceptionally(e -> {
+                    e.printStackTrace();
+                    return null;
                 });
 
         allDone.thenAcceptAsync(results -> {
