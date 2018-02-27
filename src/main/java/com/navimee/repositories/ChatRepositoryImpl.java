@@ -1,6 +1,7 @@
 package com.navimee.repositories;
 
 import com.google.cloud.firestore.Firestore;
+import com.google.cloud.firestore.SetOptions;
 import com.navimee.contracts.repositories.ChatRepository;
 import com.navimee.contracts.repositories.places.CoordinatesRepository;
 import com.navimee.firestore.PathBuilder;
@@ -42,7 +43,7 @@ public class ChatRepositoryImpl implements ChatRepository {
                 room.setName(name);
                 room.setEditable(false);
 
-                database.document(new PathBuilder().add(GROUP).addCountry().add(chat.toUpperCase()).add(ROOM_DETAILS).build()).set(room);
+                database.document(new PathBuilder().add(GROUP).addCountry().add(chat.toUpperCase()).add(ROOM_DETAILS).build()).set(room, SetOptions.merge());
             });
         });
     }

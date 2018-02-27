@@ -46,7 +46,6 @@ public class PlacesTask {
     ExecutorService executorService;
 
     public void executePlacesTask() throws ExecutionException, InterruptedException {
-        // Mocked data.
         NavimeeData navimeeData = new NavimeeData();
         Map<String, List<Coordinate>> coordinates = navimeeData.getCoordinates();
         List<City> staticData = navimeeData.getCities();
