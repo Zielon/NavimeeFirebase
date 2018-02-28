@@ -4,8 +4,10 @@ import com.google.cloud.firestore.Firestore;
 import com.google.cloud.firestore.Query;
 import com.navimee.contracts.repositories.NotificationsRepository;
 import com.navimee.contracts.repositories.UsersRepository;
+import com.navimee.firestore.PathBuilder;
 import com.navimee.firestore.operations.DbGet;
 import com.navimee.models.entities.Notification;
+import com.navimee.models.entities.User;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,8 +17,9 @@ import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
-import static com.navimee.asyncCollectors.Completable.sequence;
+import static com.navimee.firestore.FirebasePaths.EVENTS_NOTIFICATION;
 import static com.navimee.firestore.FirebasePaths.NOTIFICATIONS;
+import static com.navimee.reflection.Utils.nameof;
 import static java.util.stream.Collectors.toList;
 
 @Repository
@@ -33,28 +36,34 @@ public class NotificationsRepositoryImpl implements NotificationsRepository {
 
     @Override
     public CompletableFuture<List<Notification>> getAvailableNotifications() {
+        return CompletableFuture.supplyAsync(() -> {
+            DateTime utc = DateTime.now(DateTimeZone.UTC);
+            List<Notification> notifications = null;
+            try {
+                String isSent = nameof(Notification.class, "sent");
+                String endTime = nameof(Notification.class, "endTime");
+                String path = new PathBuilder().add(NOTIFICATIONS).addCountry().add(EVENTS_NOTIFICATION).build();
 
-        DateTime utc = DateTime.now(DateTimeZone.UTC);
+                Query query = database.collection(path)
+                        .whereGreaterThanOrEqualTo(endTime, utc.toDate())
+                        .whereLessThanOrEqualTo(endTime, utc.plusMinutes(45).toDate())
+                        .whereEqualTo(isSent, false);
 
-        Query query = database.collection(NOTIFICATIONS)
-                .whereGreaterThanOrEqualTo("endTime", utc.toDate())
-                .whereLessThanOrEqualTo("endTime", utc.plusMinutes(45).toDate())
-                .whereEqualTo("isSent", false);
+                notifications = dbGet.fromQuery(query, Notification.class).join();
 
-        List<CompletableFuture<Notification>> notifications = dbGet.fromQuery(query, Notification.class)
-                .thenApplyAsync(uncheckedNotifications ->
-                        uncheckedNotifications.stream().map(
-                                notification -> usersRepository.getUser(notification.getUserId())
-                                        .thenApplyAsync(user -> {
-                                            if (user.getToken() != null && user.isDayScheduleNotification()) {
-                                                notification.setToken(user.getToken());
-                                                return notification;
-                                            }
-                                            return null;
-                                        })).collect(toList())
-                ).join();
+            } catch (NoSuchFieldException e) {
+                e.printStackTrace();
+            }
 
-        return sequence(notifications);
+            return notifications.stream().filter(notification -> {
+                User user = usersRepository.getUser(notification.getUserId()).join();
+                if (user.getToken() != null && user.isDayScheduleNotification()) {
+                    notification.setToken(user.getToken());
+                    return true;
+                }
+                return false;
+            }).collect(toList());
+        });
     }
 
     @Override

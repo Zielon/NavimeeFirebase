@@ -15,7 +15,7 @@ public class Feedback implements Entity, FcmSendable {
     private String locationAddress;
     private int distance;
     private String userId;
-    private boolean isSent;
+    private boolean sent;
     private String id;
     private int feedbackAnswer;
 
@@ -59,15 +59,6 @@ public class Feedback implements Entity, FcmSendable {
         this.token = token;
     }
 
-    @Override
-    public boolean isSent() {
-        return isSent;
-    }
-
-    public void setSent(boolean isSent) {
-        this.isSent = isSent;
-    }
-
     public int getDistance() {
         return distance;
     }
@@ -105,5 +96,15 @@ public class Feedback implements Entity, FcmSendable {
 
     public void setFeedbackAnswer(int feedbackAnswer) {
         this.feedbackAnswer = feedbackAnswer;
+    }
+
+    @Override
+    public boolean isSent() {
+        return sent;
+    }
+
+    @Override
+    public void setSent(boolean sent) {
+        this.sent = sent;
     }
 }

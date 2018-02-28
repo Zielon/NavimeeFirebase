@@ -15,6 +15,7 @@ public class FirebasePaths {
 
     // Documents
     public static final String NOTIFICATIONS = "NOTIFICATIONS";
+    public static final String EVENTS_NOTIFICATION = "EVENTS_NOTIFICATION";
 
     // Users
     public static final String USERS = "USERS";

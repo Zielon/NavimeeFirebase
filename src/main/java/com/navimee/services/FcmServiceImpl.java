@@ -4,6 +4,7 @@ import com.google.cloud.firestore.Firestore;
 import com.google.firebase.database.FirebaseDatabase;
 import com.navimee.configuration.specific.GoogleFcmConfiguration;
 import com.navimee.contracts.services.FcmService;
+import com.navimee.firestore.PathBuilder;
 import com.navimee.logger.LogTypes;
 import com.navimee.logger.Logger;
 import com.navimee.models.entities.Feedback;
@@ -29,6 +30,7 @@ import java.util.function.Function;
 
 import static com.navimee.firestore.FirebasePaths.FEEDBACK_COLLECTION;
 import static com.navimee.firestore.FirebasePaths.NOTIFICATIONS;
+import static com.navimee.reflection.Utils.nameof;
 
 @Service
 public class FcmServiceImpl implements FcmService {
@@ -77,11 +79,16 @@ public class FcmServiceImpl implements FcmService {
             } finally {
                 // Update the notification collection with isSent flag changed.
                 // To prevent sending multiple times the same event.
-                if (sendables.size() > 0 && sendables.get(0) instanceof Notification)
-                    sendables.forEach(data -> database.collection(NOTIFICATIONS).document(data.getId()).update("isSent", data.isSent()));
+                try {
+                    String isSent = nameof(Notification.class, "sent");
+                    if (sendables.size() > 0 && sendables.get(0) instanceof Notification)
+                        sendables.forEach(data -> database.collection(NOTIFICATIONS).document(data.getId()).update(isSent, data.isSent()));
 
-                if (sendables.size() > 0 && sendables.get(0) instanceof Feedback)
-                    sendables.forEach(data -> firebaseDatabase.getReference(String.format("%s/%s", FEEDBACK_COLLECTION, data.getId())).updateChildrenAsync(data.toDictionary()));
+                    if (sendables.size() > 0 && sendables.get(0) instanceof Feedback)
+                        sendables.forEach(data -> firebaseDatabase.getReference(new PathBuilder().add(FEEDBACK_COLLECTION).add(data.getId()).build()).updateChildrenAsync(data.toDictionary()));
+                } catch (NoSuchFieldException e) {
+                    e.printStackTrace();
+                }
             }
         });
     }

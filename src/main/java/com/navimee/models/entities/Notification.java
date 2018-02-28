@@ -21,15 +21,14 @@ public class Notification implements Entity, FcmSendable {
     private Date startTime;
     private Date endTime;
     private int rank;
-    private boolean isSent;
-    private GeoPoint geoPoint;
+    private boolean sent;
+    private Double lat;
+    private Double lon;
 
     @JsonProperty("place")
     private void getGeoPoint(Map<String, Object> json) {
-        HashMap point = ((HashMap) json.get("geoPoint"));
-        double lat = Double.parseDouble(point.get("latitude").toString());
-        double lon = Double.parseDouble(point.get("longitude").toString());
-        geoPoint = new GeoPoint(lat, lon);
+        lat = Double.parseDouble(json.get("lat").toString());
+        lon = Double.parseDouble(json.get("lon").toString());
     }
 
     @Override
@@ -89,22 +88,6 @@ public class Notification implements Entity, FcmSendable {
         this.endTime = endTime;
     }
 
-    public boolean isSent() {
-        return isSent;
-    }
-
-    public void setSent(boolean isSent) {
-        this.isSent = isSent;
-    }
-
-    public GeoPoint getGeoPoint() {
-        return geoPoint;
-    }
-
-    public void setGeoPoint(GeoPoint geoPoint) {
-        this.geoPoint = geoPoint;
-    }
-
     public int getRank() {
         return rank;
     }
@@ -113,9 +96,35 @@ public class Notification implements Entity, FcmSendable {
         this.rank = rank;
     }
 
+    public Double getLat() {
+        return lat;
+    }
+
+    public void setLat(Double lat) {
+        this.lat = lat;
+    }
+
+    public Double getLon() {
+        return lon;
+    }
+
+    public void setLon(Double lon) {
+        this.lon = lon;
+    }
+
     @Override
     public Map<String, Object> toDictionary() {
         ObjectMapper mapper = new ObjectMapper();
         return mapper.convertValue(this, Map.class);
+    }
+
+    @Override
+    public boolean isSent() {
+        return sent;
+    }
+
+    @Override
+    public void setSent(boolean sent) {
+        this.sent = sent;
     }
 }
