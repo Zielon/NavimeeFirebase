@@ -3,12 +3,10 @@ package com.navimee.models.entities;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.cloud.firestore.GeoPoint;
 import com.navimee.models.entities.contracts.Entity;
 import com.navimee.models.entities.contracts.FcmSendable;
 
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Map;
 
 @JsonIgnoreProperties(ignoreUnknown = true)

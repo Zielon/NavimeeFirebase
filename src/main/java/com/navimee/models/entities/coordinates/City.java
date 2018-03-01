@@ -11,6 +11,11 @@ public class City implements Entity {
         return id;
     }
 
+    public void setId(String id) {
+
+        this.id = id;
+    }
+
     public String getName() {
 
         return name;
@@ -18,10 +23,5 @@ public class City implements Entity {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public void setId(String id) {
-
-        this.id = id;
     }
 }

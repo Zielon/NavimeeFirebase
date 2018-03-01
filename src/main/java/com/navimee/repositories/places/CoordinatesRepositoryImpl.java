@@ -14,9 +14,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
-import static com.navimee.firestore.FirebasePaths.AVAILABLE_CITIES;
-import static com.navimee.firestore.FirebasePaths.CITIES;
-import static com.navimee.firestore.FirebasePaths.COORDINATES;
+import static com.navimee.firestore.FirebasePaths.*;
 
 @Repository
 public class CoordinatesRepositoryImpl implements CoordinatesRepository {

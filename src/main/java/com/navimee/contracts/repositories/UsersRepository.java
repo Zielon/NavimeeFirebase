@@ -15,5 +15,7 @@ public interface UsersRepository {
 
     CompletableFuture<Void> deleteUsersField(String fieldName) throws NoSuchFieldException;
 
+    CompletableFuture<Void> deleteUsersCollection(String collection);
+
     CompletableFuture<List<User>> getUsersWithBigEventsOn();
 }

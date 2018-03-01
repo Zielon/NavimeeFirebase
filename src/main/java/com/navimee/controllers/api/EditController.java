@@ -44,4 +44,9 @@ public class EditController {
     public Future<Void> deleteUsersFileds(@PathVariable String field) throws NoSuchFieldException {
         return usersRepository.deleteUsersField(field);
     }
+
+    @RequestMapping(value = "delete/usersCollection/{collection}", method = RequestMethod.POST)
+    public Future<Void> deleteUsersCollection(@PathVariable String collection) throws NoSuchFieldException {
+        return usersRepository.deleteUsersCollection(collection);
+    }
 }

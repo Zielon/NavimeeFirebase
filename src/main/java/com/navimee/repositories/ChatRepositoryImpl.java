@@ -11,6 +11,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutorService;
 
 import static com.navimee.firestore.FirebasePaths.GROUP;
 import static com.navimee.firestore.FirebasePaths.ROOM_DETAILS;
@@ -20,6 +21,9 @@ public class ChatRepositoryImpl implements ChatRepository {
 
     @Autowired
     Firestore database;
+
+    @Autowired
+    ExecutorService executorService;
 
     @Override
     public CompletableFuture<Void> setDefaultRooms() {
@@ -32,13 +36,13 @@ public class ChatRepositoryImpl implements ChatRepository {
                 database.document(new PathBuilder().add(GROUP).addCountry().add(chat.getId()).add(ROOM_DETAILS).build())
                         .set(chat, SetOptions.merge());
 
-                if(chat.isAdvertisement()){
+                if (chat.isAdvertisement()) {
                     chat.setId(chat.getId() + "_OGLOSZENIA");
                     chat.setName(chat.getName() + " ogłoszenia");
                     database.document(new PathBuilder().add(GROUP).addCountry().add(chat.getId()).add(ROOM_DETAILS).build())
                             .set(chat, SetOptions.merge());
                 }
             });
-        });
+        }, executorService);
     }
 }

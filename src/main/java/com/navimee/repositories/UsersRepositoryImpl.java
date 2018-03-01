@@ -1,10 +1,12 @@
 package com.navimee.repositories;
 
+import com.google.cloud.firestore.CollectionReference;
 import com.google.cloud.firestore.FieldValue;
 import com.google.cloud.firestore.Firestore;
 import com.google.cloud.firestore.Query;
 import com.navimee.contracts.repositories.UsersRepository;
 import com.navimee.firestore.PathBuilder;
+import com.navimee.firestore.operations.DbDelete;
 import com.navimee.firestore.operations.DbGet;
 import com.navimee.models.entities.User;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +26,9 @@ public class UsersRepositoryImpl implements UsersRepository {
 
     @Autowired
     DbGet dbGet;
+
+    @Autowired
+    DbDelete dbDelete;
 
     @Autowired
     ExecutorService executorService;
@@ -52,6 +57,16 @@ public class UsersRepositoryImpl implements UsersRepository {
                 () -> getAllUsers().join().forEach(
                         user -> database.document(new PathBuilder().add(USERS).add(user.getId()).build())
                                 .update(fieldName, FieldValue.delete())), executorService);
+    }
+
+    @Override
+    public CompletableFuture<Void> deleteUsersCollection(String collection) {
+        return CompletableFuture.runAsync(
+                () -> getAllUsers().join().forEach(
+                        user -> {
+                            CollectionReference reference = database.collection(new PathBuilder().add(USERS).add(user.getId()).add(collection).build());
+                            dbDelete.collection(reference, 0);
+                        }), executorService);
     }
 
     @Override
