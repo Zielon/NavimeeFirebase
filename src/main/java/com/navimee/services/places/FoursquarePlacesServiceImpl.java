@@ -37,6 +37,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.TimeUnit;
 
 import static com.navimee.asyncCollectors.Completable.sequence;
 import static com.navimee.linq.Distinct.distinctByKey;
@@ -84,7 +85,7 @@ public class FoursquarePlacesServiceImpl implements PlacesDetailsService {
                 placesTasks.addAll(subPlaces.stream()
                         .map(p -> placesQuery.execute(new PlaceDetailsParams("venues", p.getId())))
                         .collect(toList()));
-                //TimeUnit.HOURS.sleep(1);
+                TimeUnit.HOURS.sleep(1);
             } catch (Exception e) {
                 e.printStackTrace();
             }
