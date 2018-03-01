@@ -15,6 +15,7 @@ import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
 import static com.navimee.firestore.FirebasePaths.AVAILABLE_CITIES;
+import static com.navimee.firestore.FirebasePaths.CITIES;
 import static com.navimee.firestore.FirebasePaths.COORDINATES;
 
 @Repository
@@ -45,14 +46,14 @@ public class CoordinatesRepositoryImpl implements CoordinatesRepository {
 
     @Override
     public CompletableFuture<List<City>> getAvailableCities() {
-        String path = new PathBuilder().add(AVAILABLE_CITIES).addCountry().build();
-        return dbGet.fromDocumentCollection(database.document(path), City.class);
+        String path = new PathBuilder().add(AVAILABLE_CITIES).addCountry().add(CITIES).build();
+        return dbGet.fromCollection(database.collection(path), City.class);
     }
 
     @Override
     public CompletableFuture<Void> setAvailableCities(List<City> cities) {
+        String path = new PathBuilder().add(AVAILABLE_CITIES).addCountry().add(CITIES).build();
         return CompletableFuture.runAsync(() -> cities.forEach(city -> {
-            String path = new PathBuilder().add(AVAILABLE_CITIES).addCountry().add(city.getName()).build();
             dbAdd.toCollection(database.collection(path), city).join();
         }));
     }

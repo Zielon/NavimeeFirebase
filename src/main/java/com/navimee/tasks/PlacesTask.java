@@ -68,8 +68,8 @@ public class PlacesTask {
             coordinatesRepository.getAvailableCities().thenAcceptAsync(cities -> {
                 for (City city : cities) {
                     try {
-                        facebookService.savePlaces(city.getName());
-                        foursquareService.savePlaces(city.getName());
+                        facebookService.savePlaces(city.getId());
+                        foursquareService.savePlaces(city.getId());
                     } catch (Exception e) {
                         Logger.LOG(new Log(LogTypes.EXCEPTION, e));
                     }

@@ -62,16 +62,6 @@ public class DbGet {
         }, executorService);
     }
 
-    public <T extends Entity> CompletableFuture<List<T>> fromDocumentCollection(DocumentReference documentReference, Class<T> type) {
-        return CompletableFuture.supplyAsync(() -> {
-            List<T> output = new ArrayList<>();
-            documentReference.getCollections().forEach(collectionReference -> {
-                output.addAll(fromCollection(collectionReference, type).join());
-            });
-            return output;
-        }, executorService);
-    }
-
     private <T extends Entity> CompletableFuture<List<T>> getData(List<QueryDocumentSnapshot> documentSnapshots, Class<T> type) {
         return CompletableFuture.supplyAsync(() -> {
             List<T> output = new ArrayList<>();

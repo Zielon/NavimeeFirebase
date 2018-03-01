@@ -21,7 +21,7 @@ public class FirebasePaths {
     public static final String USERS = "USERS";
 
     // Path
-    public static final String BY_CITY = "BY_CITY";
+    public static final String CITIES = "CITIES";
 
     // Feedback
     public static final String FEEDBACK_COLLECTION = "FEEDBACK";

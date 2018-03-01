@@ -7,7 +7,9 @@ import com.google.cloud.firestore.annotation.IgnoreExtraProperties;
 public class Room {
     private String admin;
     private String name;
-    private boolean isEditable;
+    private String id;
+    private boolean editable;
+    private boolean advertisement;
 
     public String getAdmin() {
         return admin;
@@ -25,16 +27,29 @@ public class Room {
         this.name = name;
     }
 
+    public String getId() {
+        return this.id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
     public boolean isEditable() {
-        return isEditable;
+        return editable;
     }
 
     public void setEditable(boolean editable) {
-        isEditable = editable;
+        this.editable = editable;
     }
 
     @Exclude
-    public String getId() {
-        return Integer.toString(name.hashCode());
+    public boolean isAdvertisement() {
+        return advertisement;
+    }
+
+    @Exclude
+    public void setAdvertisement(boolean advertisement) {
+        this.advertisement = advertisement;
     }
 }

@@ -1,28 +1,108 @@
 {
   "AVAILABLE_CITIES": [
     {
-      "name": "SOPOT"
+      "id": "SOPOT",
+      "name": "Sopot"
     },
     {
-      "name": "GDAŃSK"
+      "id": "GDANSK",
+      "name": "Gdańsk"
     },
     {
-      "name": "GDYNIA"
+      "id": "GDYNIA",
+      "name": "Gdynia"
     },
     {
-      "name": "WARSZAWA"
+      "id": "WARSZAWA",
+      "name": "Warszawa"
     },
     {
-      "name": "WROCŁAW"
+      "id": "WROCLAW",
+      "name": "Wrocław"
     },
     {
-      "name": "KRAKÓW"
+      "id": "KRAKOW",
+      "name": "Kraków"
     },
     {
-      "name": "POZNAŃ"
+      "id": "POZNAN",
+      "name": "Poznań"
     },
     {
-      "name": "ŁÓDŹ"
+      "id": "LODZ",
+      "name": "Łódź"
+    }
+  ],
+  "CHAT_DEFAULT": [
+    {
+      "id": "OGOLNY",
+      "name": "Ogólny",
+      "admin": "ADMIN_DRIVELY",
+      "editable": false,
+      "advertisement": false
+    },
+    {
+      "id": "DRIVELY",
+      "name": "Drively",
+      "admin": "ADMIN_DRIVELY",
+      "editable": false,
+      "advertisement": false
+    },
+    {
+      "id": "SOPOT",
+      "name": "Sopot",
+      "admin": "ADMIN_DRIVELY",
+      "editable": false,
+      "advertisement": true
+    },
+    {
+      "id": "GDANSK",
+      "name": "Gdańsk",
+      "admin": "ADMIN_DRIVELY",
+      "editable": false,
+      "advertisement": true
+    },
+    {
+      "id": "GDYNIA",
+      "name": "Gdynia",
+      "admin": "ADMIN_DRIVELY",
+      "editable": false,
+      "advertisement": true
+    },
+    {
+      "id": "WARSZAWA",
+      "name": "Warszawa",
+      "admin": "ADMIN_DRIVELY",
+      "editable": false,
+      "advertisement": true
+    },
+    {
+      "id": "WROCLAW",
+      "name": "Wrocław",
+      "admin": "ADMIN_DRIVELY",
+      "editable": false,
+      "advertisement": true
+    },
+    {
+      "id": "KRAKOW",
+      "name": "Kraków",
+      "admin": "ADMIN_DRIVELY",
+      "editable": false,
+      "advertisement": true
+    },
+    {
+      "id": "POZNAN",
+      "name": "Poznań",
+      "admin": "ADMIN_DRIVELY",
+      "editable": false,
+      "advertisement": true
+    },
+    {
+      "id": "LODZ",
+      "name": "Łódź",
+      "admin": "ADMIN_DRIVELY",
+      "editable": false,
+      "advertisement": true
     }
   ],
   "EVENTS_DISTRIBUTORS": [
@@ -63,10 +143,6 @@
     "156371931235007",
     "286525374871925",
     "1824846164429711"
-  ],
-  "CHAT_DEFAULT": [
-    "Ogólny",
-    "Drively"
   ],
   "COORDINATES": {
     "SOPOT": [

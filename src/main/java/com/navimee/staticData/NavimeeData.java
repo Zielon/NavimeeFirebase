@@ -3,6 +3,7 @@ package com.navimee.staticData;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.navimee.firestore.FirebasePaths;
 import com.navimee.general.JSON;
+import com.navimee.models.entities.chat.Room;
 import com.navimee.models.entities.coordinates.City;
 import com.navimee.models.entities.coordinates.Coordinate;
 import org.json.JSONArray;
@@ -19,6 +20,7 @@ import java.util.List;
 import java.util.Map;
 
 import static com.navimee.firestore.FirebasePaths.AVAILABLE_CITIES;
+import static com.navimee.general.StringNormalizer.stripAccents;
 
 public class NavimeeData {
 
@@ -40,8 +42,9 @@ public class NavimeeData {
         return getStringList("PLACES_BLACKLIST", getJsonObject(COUNTRY));
     }
 
-    public List<String> getChatDefault() {
-        return getStringList("CHAT_DEFAULT", getJsonObject(COUNTRY));
+    public List<Room> getChatDefault() {
+        JSONArray array = getJsonObject(COUNTRY).getJSONArray("CHAT_DEFAULT");
+        return JSON.arrayMapper(array, Room.class);
     }
 
     public List<String> getCategories() {
@@ -54,7 +57,7 @@ public class NavimeeData {
 
         object.keySet().forEach(city -> {
             JSONArray array = object.getJSONArray(city.toString());
-            coordinates.put(city.toString(), JSON.arrayMapper(array, Coordinate.class));
+            coordinates.put(stripAccents(city.toString()), JSON.arrayMapper(array, Coordinate.class));
         });
 
         return coordinates;
