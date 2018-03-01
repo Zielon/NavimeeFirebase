@@ -83,8 +83,8 @@ public class EventsServiceImpl implements EventsService {
                     .map(bo -> modelMapper.map(bo, Event.class))
                     .collect(toList());
 
-            eventsRepository.setEvents(entities).join();
-            firebaseRepository.transferEvents(entities).join();
+            eventsRepository.setEvents(entities);
+            firebaseRepository.transferEvents(entities);
 
         }, executorService).exceptionally(throwable -> {
             Logger.LOG(new Log(LogTypes.EXCEPTION, throwable));

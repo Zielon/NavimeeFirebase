@@ -73,7 +73,7 @@ public class FacebookPlacesServiceImpl implements PlacesService {
                     .filter(distinctByKey(Place::getId))
                     .collect(toList());
 
-            facebookRepository.setPlaces(entities, city).join();
+            facebookRepository.setPlaces(entities, city);
 
         }, executorService).exceptionally(throwable -> {
             Logger.LOG(new Log(LogTypes.EXCEPTION, throwable));

@@ -14,14 +14,19 @@ import org.apache.http.impl.nio.client.HttpAsyncClientBuilder;
 import org.apache.http.impl.nio.client.HttpAsyncClients;
 import org.apache.http.util.EntityUtils;
 import org.json.JSONObject;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.net.URI;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutorService;
 
 @Service
 public class HttpClientImpl implements HttpClient {
+
+    @Autowired
+    ExecutorService executorService;
 
     private CloseableHttpAsyncClient client;
 
@@ -31,12 +36,12 @@ public class HttpClientImpl implements HttpClient {
 
     @Override
     public CompletableFuture<JSONObject> GET(URI uri) {
-        return CompletableFuture.supplyAsync(() -> runRequest(new HttpGet(uri)));
+        return CompletableFuture.supplyAsync(() -> runRequest(new HttpGet(uri)), executorService);
     }
 
     @Override
     public CompletableFuture<JSONObject> GET(HttpGet httpGet) {
-        return CompletableFuture.supplyAsync(() -> runRequest(httpGet));
+        return CompletableFuture.supplyAsync(() -> runRequest(httpGet), executorService);
     }
 
     @Override

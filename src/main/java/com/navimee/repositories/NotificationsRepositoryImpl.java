@@ -16,6 +16,7 @@ import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutorService;
 
 import static com.navimee.firestore.FirebasePaths.EVENTS_NOTIFICATION;
 import static com.navimee.firestore.FirebasePaths.NOTIFICATIONS;
@@ -33,6 +34,9 @@ public class NotificationsRepositoryImpl implements NotificationsRepository {
 
     @Autowired
     Firestore database;
+
+    @Autowired
+    ExecutorService executorService;
 
     @Override
     public CompletableFuture<List<Notification>> getAvailableNotifications() {
@@ -63,7 +67,7 @@ public class NotificationsRepositoryImpl implements NotificationsRepository {
                 }
                 return false;
             }).collect(toList());
-        });
+        }, executorService);
     }
 
     @Override
