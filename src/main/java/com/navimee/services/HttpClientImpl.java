@@ -18,7 +18,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.net.URI;
-import java.util.concurrent.Callable;
+import java.util.concurrent.CompletableFuture;
 
 @Service
 public class HttpClientImpl implements HttpClient {
@@ -30,13 +30,13 @@ public class HttpClientImpl implements HttpClient {
     }
 
     @Override
-    public Callable<JSONObject> GET(URI uri) {
-        return () -> runRequest(new HttpGet(uri));
+    public CompletableFuture<JSONObject> GET(URI uri) {
+        return CompletableFuture.supplyAsync(() -> runRequest(new HttpGet(uri)));
     }
 
     @Override
-    public Callable<JSONObject> GET(HttpGet httpGet) {
-        return () -> runRequest(httpGet);
+    public CompletableFuture<JSONObject> GET(HttpGet httpGet) {
+        return CompletableFuture.supplyAsync(() -> runRequest(httpGet));
     }
 
     @Override

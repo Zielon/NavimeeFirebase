@@ -1,7 +1,9 @@
 package com.navimee.staticData;
 
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.navimee.firestore.FirebasePaths;
+import com.navimee.general.JSON;
+import com.navimee.models.entities.chat.Room;
 import com.navimee.models.entities.coordinates.City;
 import com.navimee.models.entities.coordinates.Coordinate;
 import org.json.JSONArray;
@@ -17,22 +19,61 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static com.navimee.firestore.FirebasePaths.AVAILABLE_CITIES;
+import static com.navimee.general.StringNormalizer.stripAccents;
+
 public class NavimeeData {
 
-    private JSONObject getJsonObject(StaticDataEnum mocks) {
-        Resource selected = null;
+    private String COUNTRY = String.format("navimeeData/%s.json", System.getenv().get("COUNTRY").toLowerCase());
+    private String CATEGORIES = "navimeeData/foursquare.json";
 
-        switch (mocks) {
-            case Cities:
-                selected = new ClassPathResource("navimeeData/availableCities.json");
-                break;
-            case Coordinates:
-                selected = new ClassPathResource("navimeeData/coordinates.json");
-                break;
-            case Categories:
-                selected = new ClassPathResource("navimeeData/forbiddenCategories.json");
-                break;
+    private ObjectMapper mapper = new ObjectMapper();
+
+    public List<City> getCities() {
+        JSONArray array = getJsonObject(COUNTRY).getJSONArray(AVAILABLE_CITIES);
+        return JSON.arrayMapper(array, City.class);
+    }
+
+    public List<String> getEventsDistributors() {
+        return getStringList("EVENTS_DISTRIBUTORS", getJsonObject(COUNTRY));
+    }
+
+    public List<String> getPlacesBlackList() {
+        return getStringList("PLACES_BLACKLIST", getJsonObject(COUNTRY));
+    }
+
+    public List<Room> getChatDefault() {
+        JSONArray array = getJsonObject(COUNTRY).getJSONArray("CHAT_DEFAULT");
+        return JSON.arrayMapper(array, Room.class);
+    }
+
+    public List<String> getCategories() {
+        return getStringList("FOURSQUARE_FORBIDDEN_CATEGORIES", getJsonObject(CATEGORIES));
+    }
+
+    public Map<String, List<Coordinate>> getCoordinates() {
+        JSONObject object = getJsonObject(COUNTRY).getJSONObject(FirebasePaths.COORDINATES);
+        Map<String, List<Coordinate>> coordinates = new HashMap<>();
+
+        object.keySet().forEach(city -> {
+            JSONArray array = object.getJSONArray(city.toString());
+            coordinates.put(stripAccents(city.toString()), JSON.arrayMapper(array, Coordinate.class));
+        });
+
+        return coordinates;
+    }
+
+    private List<String> getStringList(String path, JSONObject object) {
+        JSONArray array = object.getJSONArray(path);
+        List<String> list = new ArrayList<>();
+        for (int n = 0; n < array.length(); n++) {
+            list.add(array.get(n).toString());
         }
+        return list;
+    }
+
+    private JSONObject getJsonObject(String path) {
+        Resource selected = new ClassPathResource(path);
 
         BufferedReader streamReader = null;
         try {
@@ -50,54 +91,5 @@ public class NavimeeData {
         }
 
         return new JSONObject(responseStrBuilder.toString());
-    }
-
-    public List<City> getCities() {
-        JSONObject object = getJsonObject(StaticDataEnum.Cities);
-        ObjectMapper mapper = new ObjectMapper();
-        List<City> cities = new ArrayList<>();
-        object.keySet().forEach(e -> {
-            City c = null;
-            try {
-                c = mapper.readValue(object.getJSONObject(e.toString()).toString(), City.class);
-            } catch (IOException e1) {
-                e1.printStackTrace();
-            }
-            cities.add(c);
-        });
-
-        return cities;
-    }
-
-    public List<String> getCategories() {
-        JSONObject object = getJsonObject(StaticDataEnum.Categories);
-        JSONArray array = object.getJSONArray("categories");
-        List<String> list = new ArrayList<>();
-        for (int n = 0; n < array.length(); n++) {
-            JSONObject json = array.getJSONObject(n);
-            list.add(json.get("id").toString().toUpperCase());
-        }
-        return list;
-    }
-
-    public Map<String, List<Coordinate>> getCoordinates() {
-        JSONObject object = getJsonObject(StaticDataEnum.Coordinates);
-        Map<String, List<Coordinate>> coordinates = new HashMap<>();
-        ObjectMapper mapper = new ObjectMapper();
-        object.keySet().forEach(city -> {
-            try {
-                final List<Coordinate> coords =
-                        mapper.readValue(
-                                object.getJSONObject(city.toString()).getJSONArray("points").toString(),
-                                new TypeReference<List<Coordinate>>() {
-                                });
-                int i = 0;
-                for (Coordinate c : coords) c.setId(Integer.toString(i++));
-                coordinates.put(city.toString(), coords);
-            } catch (IOException e1) {
-                e1.printStackTrace();
-            }
-        });
-        return coordinates;
     }
 }

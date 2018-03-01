@@ -1,7 +1,7 @@
 package com.navimee.logger;
 
 import com.google.cloud.firestore.Firestore;
-import com.navimee.firestore.Paths;
+import com.navimee.firestore.FirebasePaths;
 import com.navimee.models.entities.Log;
 
 import java.util.concurrent.Future;
@@ -22,7 +22,7 @@ public class Logger {
 
     public static synchronized Future LOG(Log log) {
         if (isRunning)
-            return db != null ? db.collection(Paths.LOGS).document().set(log) : null;
+            return db != null ? db.collection(FirebasePaths.LOGS).document().set(log) : null;
         else return null;
     }
 }

@@ -13,7 +13,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.Callable;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 
 public class FacebookPlacesQuery extends Query<List<FbPlaceDto>, FacebookConfiguration, PlacesParams> {
@@ -25,10 +25,9 @@ public class FacebookPlacesQuery extends Query<List<FbPlaceDto>, FacebookConfigu
     }
 
     @Override
-    public Callable<List<FbPlaceDto>> execute(PlacesParams params) {
+    public CompletableFuture<List<FbPlaceDto>> execute(PlacesParams params) {
 
         URI uri = null;
-
         try {
             URIBuilder builder = new URIBuilder(configuration.getApiUrl());
             builder.setPath("v2.10/search");
@@ -44,15 +43,15 @@ public class FacebookPlacesQuery extends Query<List<FbPlaceDto>, FacebookConfigu
         }
 
         URI finalUri = uri;
-        return () -> map(httpClient.GET(finalUri), params);
+        return CompletableFuture.supplyAsync(() -> map(httpClient.GET(finalUri), params), executorService);
     }
 
     @Override
-    protected List<FbPlaceDto> map(Callable<JSONObject> task, PlacesParams params) {
+    protected List<FbPlaceDto> map(CompletableFuture<JSONObject> task, PlacesParams params) {
         List<FbPlaceDto> list = new ArrayList<>();
 
         try {
-            JSONObject object = task.call();
+            JSONObject object = task.join();
             list.addAll(JSON.arrayMapper(object.getJSONArray("data"), FbPlaceDto.class));
 
             if (!JSON.hasPaging(object)) return list;
@@ -61,7 +60,7 @@ public class FacebookPlacesQuery extends Query<List<FbPlaceDto>, FacebookConfigu
             // Read all places from paging
             while (true) {
                 try {
-                    object = httpClient.GET(new URI(nextUrl)).call();
+                    object = httpClient.GET(new URI(nextUrl)).join();
                     list.addAll(JSON.arrayMapper(object.getJSONArray("data"), FbPlaceDto.class));
 
                     if (!JSON.hasPaging(object)) break;

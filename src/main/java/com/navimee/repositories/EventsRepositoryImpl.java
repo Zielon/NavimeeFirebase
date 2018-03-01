@@ -1,10 +1,10 @@
 package com.navimee.repositories;
 
+import com.google.cloud.firestore.Firestore;
 import com.google.cloud.firestore.Query;
 import com.navimee.contracts.repositories.EventsRepository;
 import com.navimee.contracts.repositories.FirebaseRepository;
 import com.navimee.enums.HotspotType;
-import com.navimee.firestore.Database;
 import com.navimee.firestore.operations.DbAdd;
 import com.navimee.firestore.operations.DbDelete;
 import com.navimee.firestore.operations.DbGet;
@@ -20,17 +20,16 @@ import org.springframework.stereotype.Repository;
 
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Future;
 
-import static com.navimee.enums.CollectionType.HOTSPOT;
-import static com.navimee.enums.CollectionType.NOTIFICATIONS;
+import static com.navimee.firestore.FirebasePaths.HOTSPOT;
 
 @Repository
 public class EventsRepositoryImpl implements EventsRepository {
 
     @Autowired
-    Database database;
+    Firestore database;
 
     @Autowired
     ExecutorService executorService;
@@ -48,46 +47,43 @@ public class EventsRepositoryImpl implements EventsRepository {
     DbDelete delete;
 
     @Override
-    public List<Event> getEvents() {
-        return dbGet.fromCollection(
-                database.getCollection(HOTSPOT)
+    public CompletableFuture<List<Event>> getEvents() {
+        return dbGet.fromQuery(
+                database.collection(HOTSPOT)
                         .whereEqualTo("hotspotType", HotspotType.EVENT), Event.class);
     }
 
     @Override
-    public List<Event> getEventsBefore(int minutesBeforeEnd) {
+    public CompletableFuture<List<Event>> getEventsBefore(int minutesBeforeEnd) {
         DateTime warsaw = LocalDateTime.now(DateTimeZone.UTC).toDateTime();
 
-        return dbGet.fromCollection(
-                database.getCollection(HOTSPOT)
+        return dbGet.fromQuery(
+                database.collection(HOTSPOT)
                         .whereEqualTo("hotspotType", HotspotType.EVENT)
                         .whereGreaterThanOrEqualTo("endTime", warsaw.toDate())
-                        .whereLessThanOrEqualTo("endTime", warsaw.plusMinutes(minutesBeforeEnd).toDate())
-                , Event.class);
+                        .whereLessThanOrEqualTo("endTime", warsaw.plusMinutes(minutesBeforeEnd).toDate()), Event.class);
     }
 
     @Override
-    public Future setEvents(List<Event> events, String city) {
-        return dbAdd.toCollection(database.getCollection(HOTSPOT), events, city);
+    public CompletableFuture<Void> setEvents(List<? extends Event> events) {
+        return dbAdd.toCollection(database.collection(HOTSPOT), events);
     }
 
     @Override
-    public Future removeEvents() {
-        return executorService.submit(() -> {
-            Logger.LOG(new Log(LogTypes.DELETION, "Delete old events"));
+    public CompletableFuture<Void> removeEvents() {
+        return CompletableFuture.runAsync(() -> {
 
             Date warsaw = LocalDateTime.now(DateTimeZone.UTC).toDate();
 
-            Query hotspot = database.getCollection(HOTSPOT).whereLessThan("endTime", warsaw);
-
-            Query notification = database.getCollection(NOTIFICATIONS)
-                    .whereEqualTo("isSent", true)
-                    .whereLessThan("endTime", warsaw);
+            Query hotspot = database.collection(HOTSPOT).whereLessThan("endTime", warsaw);
+            Query notification = database.collection(HOTSPOT).whereLessThan("endTime", warsaw);
 
             delete.document(hotspot);
             delete.document(notification);
 
-            firebaseRepository.deleteEvents(dbGet.fromCollection(hotspot, Event.class));
-        });
+            dbGet.fromQuery(hotspot, Event.class)
+                    .thenAcceptAsync(events -> firebaseRepository.deleteEvents(events));
+
+        }, executorService).thenRunAsync(() -> Logger.LOG(new Log(LogTypes.DELETION, "Delete old facebook events")));
     }
 }

@@ -20,7 +20,7 @@ import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.StringJoiner;
-import java.util.concurrent.Callable;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.stream.Collectors;
 
@@ -35,9 +35,10 @@ public class FacebookEventsQuery extends Query<List<FbEventDto>, FacebookConfigu
     }
 
     @Override
-    public Callable<List<FbEventDto>> execute(FacebookEventsParams params) {
+    public CompletableFuture<List<FbEventDto>> execute(FacebookEventsParams params) {
 
         StringJoiner joiner = new StringJoiner(",");
+
         joiner.add("place.fields(id,name,location)");
         joiner.add("id");
         joiner.add("name");
@@ -50,7 +51,7 @@ public class FacebookEventsQuery extends Query<List<FbEventDto>, FacebookConfigu
         joiner.add("picture.type(large)");
 
         DateTime warsawCurrent = DateTime.now(DateTimeZone.UTC);
-        DateTime warsawLater = warsawCurrent.plusDays(14);
+        DateTime warsawLater = warsawCurrent.plusDays(30);
         DateTimeFormatter dtf = ISODateTimeFormat.dateTime();
 
         String fields =
@@ -72,20 +73,22 @@ public class FacebookEventsQuery extends Query<List<FbEventDto>, FacebookConfigu
         }
 
         URI finalUri = uri;
-        return () -> map(httpClient.GET(finalUri), params);
+        return CompletableFuture.supplyAsync(() -> map(httpClient.GET(finalUri), params), executorService);
     }
 
     @Override
-    protected List<FbEventDto> map(Callable<JSONObject> task, FacebookEventsParams params) {
+    protected List<FbEventDto> map(CompletableFuture<JSONObject> task, FacebookEventsParams params) {
         List<FbEventDto> events = new ArrayList<>();
 
         try {
-            JSONObject object = task.call();
+            JSONObject object = task.join();
             for (Object key : object.keySet()) {
                 JSONObject event = object.getJSONObject(key.toString());
                 if (!event.has("events")) continue;
-                List<FbEventDto> dto = JSON.arrayMapper(event.getJSONObject("events").getJSONArray("data"), FbEventDto.class);
-                FbPlace searchPlace = params.places.stream().filter(p -> p.getId().equals(key.toString())).findFirst().get();
+                List<FbEventDto> dto =
+                        JSON.arrayMapper(event.getJSONObject("events").getJSONArray("data"), FbEventDto.class);
+                FbPlace searchPlace =
+                        params.places.stream().filter(p -> p.getId().equals(key.toString())).findFirst().get();
                 dto.forEach(d -> d.setSearchPlace(searchPlace));
                 events.addAll(dto);
             }
@@ -93,6 +96,6 @@ public class FacebookEventsQuery extends Query<List<FbEventDto>, FacebookConfigu
             e.printStackTrace();
         }
 
-        return events.stream().filter(e -> e.getAttendingCount() > 50).collect(toList());
+        return events.stream().filter(e -> e.getAttendingCount() > 150).collect(toList());
     }
 }

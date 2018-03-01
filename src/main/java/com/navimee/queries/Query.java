@@ -4,7 +4,7 @@ import com.navimee.configuration.Configuration;
 import com.navimee.contracts.services.HttpClient;
 import org.json.JSONObject;
 
-import java.util.concurrent.Callable;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 
 public abstract class Query<T, C extends Configuration, P extends QueryParams> {
@@ -19,7 +19,7 @@ public abstract class Query<T, C extends Configuration, P extends QueryParams> {
         this.httpClient = httpClient;
     }
 
-    public abstract Callable<T> execute(P params);
+    public abstract CompletableFuture<T> execute(P params);
 
-    protected abstract T map(Callable<JSONObject> object, P params);
+    protected abstract T map(CompletableFuture<JSONObject> object, P params);
 }

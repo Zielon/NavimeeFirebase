@@ -1,11 +1,11 @@
 package com.navimee.models.entities.coordinates;
 
+import com.google.cloud.firestore.annotation.Exclude;
 import com.navimee.models.entities.contracts.Entity;
 
 public class Coordinate implements Entity {
     private Double latitude;
     private Double longitude;
-    private String id;
 
     public Coordinate() {
     }
@@ -31,13 +31,8 @@ public class Coordinate implements Entity {
         this.longitude = longitude;
     }
 
+    @Exclude
     public String getId() {
-        return id;
+        return Integer.toString(latitude.hashCode() + longitude.hashCode());
     }
-
-    public void setId(String id) {
-        this.id = id;
-    }
-
-
 }

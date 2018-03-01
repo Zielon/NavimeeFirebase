@@ -18,7 +18,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.Callable;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 
 public class PredictHqEventsQuery extends Query<List<PhqEventDto>, PredictHqConfiguration, PredictHqEventsParams> {
@@ -28,7 +28,7 @@ public class PredictHqEventsQuery extends Query<List<PhqEventDto>, PredictHqConf
     }
 
     @Override
-    public Callable<List<PhqEventDto>> execute(PredictHqEventsParams params) {
+    public CompletableFuture<List<PhqEventDto>> execute(PredictHqEventsParams params) {
 
         DateTime warsawCurrent = DateTime.now(DateTimeZone.UTC);
         DateTime warsawLater = warsawCurrent.plusDays(14);
@@ -48,15 +48,15 @@ public class PredictHqEventsQuery extends Query<List<PhqEventDto>, PredictHqConf
         HttpGet request = new HttpGet(uri);
         request.setHeader("Authorization", String.format("Bearer %s", configuration.getAccessToken()));
 
-        return () -> map(httpClient.GET(request), params);
+        return CompletableFuture.supplyAsync(() -> map(httpClient.GET(request), params));
     }
 
     @Override
-    protected List<PhqEventDto> map(Callable<JSONObject> task, PredictHqEventsParams params) {
+    protected List<PhqEventDto> map(CompletableFuture<JSONObject> task, PredictHqEventsParams params) {
         List<PhqEventDto> list = new ArrayList<>();
 
         try {
-            JSONObject object = task.call();
+            JSONObject object = task.join();
             list.addAll(JSON.arrayMapper(object.getJSONArray("results"), PhqEventDto.class));
 
             if (object.get("next").toString().equals("null")) return list;
@@ -67,7 +67,7 @@ public class PredictHqEventsQuery extends Query<List<PhqEventDto>, PredictHqConf
                     HttpGet request = new HttpGet(nextUrl);
                     request.setHeader("Authorization", String.format("Bearer %s", configuration.getAccessToken()));
 
-                    object = httpClient.GET(request).call();
+                    object = httpClient.GET(request).join();
                     if (!object.has("results")) break;
 
                     list.addAll(JSON.arrayMapper(object.getJSONArray("results"), PhqEventDto.class));

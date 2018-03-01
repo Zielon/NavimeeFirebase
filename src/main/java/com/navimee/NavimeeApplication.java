@@ -17,13 +17,15 @@ import java.util.TimeZone;
 @EnableScheduling
 public class NavimeeApplication extends SpringBootServletInitializer {
 
+    public static boolean TASKS_ACTIVE = true;
     @Autowired
     NotificationsService notificationsService;
-
     @Autowired
     Firestore firestore;
 
-    public static boolean TASKS_ACTIVE = true;
+    public static void main(String[] args) throws Exception {
+        SpringApplication.run(NavimeeApplication.class, args);
+    }
 
     @PostConstruct
     void started() {
@@ -38,9 +40,5 @@ public class NavimeeApplication extends SpringBootServletInitializer {
     @Override
     protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {
         return application.sources(NavimeeApplication.class);
-    }
-
-    public static void main(String[] args) throws Exception {
-        SpringApplication.run(NavimeeApplication.class, args);
     }
 }

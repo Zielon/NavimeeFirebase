@@ -11,6 +11,8 @@ public class User implements Entity {
     private String name;
     private boolean bigEventsNotification;
     private boolean dayScheduleNotification;
+    private boolean chatPrivateNotification;
+    private boolean chatGroupNotification;
 
     public String getEmail() {
         return email;
@@ -58,5 +60,21 @@ public class User implements Entity {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public boolean isChatGroupNotification() {
+        return chatGroupNotification;
+    }
+
+    public void setChatGroupNotification(boolean chatGroupNotification) {
+        this.chatGroupNotification = chatGroupNotification;
+    }
+
+    public boolean isChatPrivateNotification() {
+        return chatPrivateNotification;
+    }
+
+    public void setChatPrivateNotification(boolean chatPrivateNotification) {
+        this.chatPrivateNotification = chatPrivateNotification;
     }
 }

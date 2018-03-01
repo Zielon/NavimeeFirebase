@@ -1,7 +1,11 @@
 package com.navimee.contracts.repositories;
 
-public interface FirestoreRepository {
-    void deleteDocument(String document);
+import java.util.concurrent.CompletableFuture;
 
-    void deleteCollection(String collection);
+public interface FirestoreRepository {
+
+    CompletableFuture<Void> deleteDocument(String document);
+
+    CompletableFuture<Void> deleteCollection(String collection);
+
 }

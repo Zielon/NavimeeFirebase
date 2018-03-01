@@ -16,23 +16,24 @@ import org.json.JSONObject;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
-import java.util.concurrent.Callable;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 
 public class FoursquareCategoryQuery extends Query<List<FsCategoriesDto>, FoursquareConfiguration, QueryParams> {
 
-    public FoursquareCategoryQuery(FoursquareConfiguration configuration, ExecutorService executorService, HttpClient httpClient) {
+    public FoursquareCategoryQuery(FoursquareConfiguration configuration,
+                                   ExecutorService executorService,
+                                   HttpClient httpClient) {
         super(configuration, executorService, httpClient);
     }
 
     @Override
-    public Callable<List<FsCategoriesDto>> execute(QueryParams params) {
+    public CompletableFuture<List<FsCategoriesDto>> execute(QueryParams params) {
 
         DateTime warsawCurrent = DateTime.now(DateTimeZone.UTC);
         DateTimeFormatter dtf = DateTimeFormat.forPattern("yyyyddMM");
 
         URI uri = null;
-
         try {
             URIBuilder builder = new URIBuilder(configuration.getApiUrl());
             builder.setPath("v2/venues/categories");
@@ -45,14 +46,14 @@ public class FoursquareCategoryQuery extends Query<List<FsCategoriesDto>, Foursq
         }
 
         URI finalUri = uri;
-        return () -> map(httpClient.GET(finalUri), params);
+        return CompletableFuture.supplyAsync(() -> map(httpClient.GET(finalUri), params), executorService);
     }
 
     @Override
-    protected List<FsCategoriesDto> map(Callable<JSONObject> task, QueryParams params) {
+    protected List<FsCategoriesDto> map(CompletableFuture<JSONObject> task, QueryParams params) {
         List<FsCategoriesDto> output = null;
         try {
-            JSONObject object = task.call();
+            JSONObject object = task.join();
             output = JSON.arrayMapper(object.getJSONObject("response").getJSONArray("categories"), FsCategoriesDto.class);
         } catch (Exception e) {
             e.printStackTrace();

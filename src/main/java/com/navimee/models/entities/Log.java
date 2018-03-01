@@ -1,6 +1,6 @@
 package com.navimee.models.entities;
 
-import com.navimee.firestore.Paths;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.navimee.logger.LogTypes;
 import com.navimee.models.entities.contracts.Entity;
 import org.joda.time.DateTime;
@@ -10,24 +10,29 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Date;
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Log implements Comparable<Log>, Entity {
 
     private LogTypes type;
     private Date time;
     private String reference;
-    private Integer count;
     private String id;
+    private String country;
 
     public Log() {
     }
 
-    public Log(LogTypes type, String reference, Integer count) {
+    public Log(LogTypes type, String format, Object... args) {
         DateTime warsaw = DateTime.now(DateTimeZone.UTC);
 
         this.type = type;
-        this.reference = Paths.get(reference);
-        this.count = count;
+        this.reference = String.format(format, args).toUpperCase();
         this.time = warsaw.toDate();
+        this.country = System.getenv().get("COUNTRY");
+    }
+
+    public Log(LogTypes type, Throwable exception) {
+        this(type, new Exception(exception));
     }
 
     public Log(LogTypes type, Exception exception) {
@@ -41,11 +46,7 @@ public class Log implements Comparable<Log>, Entity {
         this.type = type;
         this.reference = sw.toString();
         this.time = warsaw.toDate();
-        this.count = null;
-    }
-
-    public Log(LogTypes type, String reference) {
-        this(type, reference, null);
+        this.country = System.getenv().get("COUNTRY");
     }
 
     public LogTypes getType() {
@@ -62,14 +63,6 @@ public class Log implements Comparable<Log>, Entity {
 
     public void setTime(Date time) {
         this.time = time;
-    }
-
-    public Integer getCount() {
-        return count;
-    }
-
-    public void setCount(Integer count) {
-        this.count = count;
     }
 
     public String getId() {
@@ -91,5 +84,13 @@ public class Log implements Comparable<Log>, Entity {
     @Override
     public int compareTo(Log o) {
         return time.compareTo(o.time);
+    }
+
+    public String getCountry() {
+        return country;
+    }
+
+    public void setCountry(String country) {
+        this.country = country;
     }
 }

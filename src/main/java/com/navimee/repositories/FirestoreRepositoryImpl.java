@@ -2,38 +2,39 @@ package com.navimee.repositories;
 
 import com.google.cloud.firestore.Firestore;
 import com.navimee.contracts.repositories.FirestoreRepository;
-import com.navimee.contracts.repositories.PlacesRepository;
 import com.navimee.firestore.operations.DbDelete;
+import com.navimee.logger.LogTypes;
+import com.navimee.logger.Logger;
+import com.navimee.models.entities.Log;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
-
-import static com.navimee.firestore.Paths.BY_CITY;
 
 @Repository
 public class FirestoreRepositoryImpl implements FirestoreRepository {
 
     @Autowired
-    PlacesRepository placesRepository;
+    DbDelete dbDelete;
+
+    @Autowired
+    Firestore firestore;
 
     @Autowired
     ExecutorService executorService;
 
-    @Autowired
-    DbDelete delete;
-
-    @Autowired
-    Firestore db;
-
     @Override
-    public void deleteDocument(String document) {
-        delete.collection(db.collection(document), 1);
+    public CompletableFuture<Void> deleteDocument(String document) {
+        return CompletableFuture
+                .runAsync(() -> dbDelete.document(firestore.document(document)), executorService)
+                .thenRunAsync(() -> Logger.LOG(new Log(LogTypes.DELETION, "The [%s] was deleted", document)));
     }
 
     @Override
-    public void deleteCollection(String collection) {
-        placesRepository.getAvailableCities().forEach(city ->
-                delete.collection(db.collection(collection).document(BY_CITY).collection(city.getName()), 1));
+    public CompletableFuture<Void> deleteCollection(String collection) {
+        return CompletableFuture
+                .runAsync(() -> dbDelete.collection(firestore.collection(collection), 1), executorService)
+                .thenRunAsync(() -> Logger.LOG(new Log(LogTypes.DELETION, "The [%s] was deleted", collection)));
     }
 }

@@ -4,8 +4,6 @@ import com.navimee.models.entities.places.Place;
 
 public class FsPlace extends Place {
     private String facebook;
-    private double lat;
-    private double lon;
 
     public String getFacebook() {
         return facebook;

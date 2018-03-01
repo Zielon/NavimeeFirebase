@@ -8,5 +8,6 @@ import java.util.concurrent.Future;
 import java.util.function.Function;
 
 public interface FcmService {
+
     <T extends FcmSendable> Future send(List<T> sendables, Function<T, Map<String, Object>> function);
 }

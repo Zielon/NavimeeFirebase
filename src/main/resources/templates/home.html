@@ -8,106 +8,114 @@
     <script type="text/javascript" src="js/ajax.js"/>
 </head>
 <body>
-    <div th:replace="fragments/header :: header"/>
-    <div class="container">
-        <div sec:authorize="isAnonymous()">
-            <h3 class="text-center bg-primary">Not authorized !</h3>
-        </div>
-        <div sec:authorize="isAuthenticated()">
-            <h3 class="text-center bg-primary">Logs</h3>
-            <div class="input-group" style="margin-bottom: 5px; font-family: Consolas;">
-                 <span class="input-group-btn">
-                    <button type="button" class="btn btn-default" style="width: 11rem;" id="startButton" onclick="start()">   Start   </button>
-                  </span>
-                <input type="text" class="form-control" placeholder="A date format example -> 1970-12-24"/>
-                <span class="input-group-btn">
-                    <button type="button" class="btn btn-default" style="width: 11rem;" id="resetButton" onclick="reset()">   Delete   </button>
-                </span>
-            </div>
-            <div style="padding-top: 15px; text-align: center;">
-
-                <div class="[ form-group ]">
-                    <input type="checkbox" name="checkbox" id="checkbox-task" checked="true" onchange="filterChange('TASK')" autocomplete="off" />
-                    <div class="[ btn-group ]">
-                        <label for="checkbox-task" class="btn btn-primary btn-sm">
-                            <span class="[ glyphicon glyphicon-ok ]"></span>
-                            <span> </span>
-                        </label>
-                        <label for="checkbox-task" class="btn btn-default btn-sm active | centerAndAlign">
-                            TASK
-                        </label>
-                    </div>
-                </div>
-
-                <div class="[ form-group ]">
-                    <input type="checkbox" name="fancy-checkbox-success" id="checkbox-addition" checked="true" onchange="filterChange('ADDITION')" autocomplete="off" />
-                    <div class="[ btn-group ]">
-                        <label for="checkbox-addition" class="btn btn-success btn-sm">
-                            <span class="[ glyphicon glyphicon-ok ]"></span>
-                            <span> </span>
-                        </label>
-                        <label for="checkbox-addition" class="btn btn-default btn-sm active | centerAndAlign">
-                            ADDITION
-                        </label>
-                    </div>
-                </div>
-
-                <div class="[ form-group ]">
-                    <input type="checkbox" name="fancy-checkbox-info" id="checkbox-transfer" checked="true" onchange="filterChange('TRANSFER')" autocomplete="off" />
-                    <div class="[ btn-group ]">
-                        <label for="checkbox-transfer" class="btn btn-info btn-sm">
-                            <span class="[ glyphicon glyphicon-ok ]"></span>
-                            <span> </span>
-                        </label>
-                        <label for="checkbox-transfer" class="btn btn-default btn-sm active | centerAndAlign">
-                            TRANSFER
-                        </label>
-                    </div>
-                </div>
-
-                <div class="[ form-group ]">
-                    <input type="checkbox" name="fancy-checkbox-warning" id="checkbox-retrieval" checked="true" onchange="filterChange('RETRIEVAL')" autocomplete="off" />
-                    <div class="[ btn-group ]">
-                        <label for="checkbox-retrieval" class="btn btn-warning btn-sm">
-                            <span class="[ glyphicon glyphicon-ok ]"></span>
-                            <span> </span>
-                        </label>
-                        <label for="checkbox-retrieval" class="btn btn-default btn-sm active | centerAndAlign">
-                            RETRIEVAL
-                        </label>
-                    </div>
-                </div>
-
-                <div class="[ form-group ]">
-                    <input type="checkbox" name="fancy-checkbox-danger" id="checkbox-deletion" checked="true" onchange="filterChange('DELETION')" autocomplete="off" />
-                    <div class="[ btn-group ]">
-                        <label for="checkbox-deletion" class="btn btn-danger btn-sm">
-                            <span class="[ glyphicon glyphicon-ok ]"></span>
-                            <span> </span>
-                        </label>
-                        <label for="checkbox-deletion" class="btn btn-default btn-sm active | centerAndAlign">
-                            DELETION
-                        </label>
-                    </div>
-                </div>
-
-                <div class="[ form-group ]">
-                    <input type="checkbox" name="fancy-checkbox-danger" id="checkbox-exception" checked="true" onchange="filterChange('EXCEPTION')" autocomplete="off" />
-                    <div class="[ btn-group ]">
-                        <label for="checkbox-exception" class="btn btn-danger btn-sm">
-                            <span class="[ glyphicon glyphicon-ok ]"></span>
-                            <span> </span>
-                        </label>
-                        <label for="checkbox-exception" class="btn btn-default btn-sm active | centerAndAlign">
-                            EXCEPTION
-                        </label>
-                    </div>
-                </div>
-
-            </div>
-            <div class="loader" style="display: none"></div>
-            <table id="logs"></table>
-        </div>
+<div th:replace="fragments/header :: header"/>
+<div class="container">
+    <div sec:authorize="isAnonymous()">
+        <h3 class="text-center bg-primary">Not authorized !</h3>
     </div>
+    <div sec:authorize="isAuthenticated()">
+        <h3 class="text-center bg-primary">Logs</h3>
+        <div class="input-group" style="margin-bottom: 5px; font-family: Consolas;">
+                 <span class="input-group-btn">
+                    <button type="button" class="btn btn-default" style="width: 11rem;" id="startButton"
+                            onclick="start()">   Start   </button>
+                  </span>
+            <input type="text" class="form-control" placeholder="A date format example -> 1970-12-24"/>
+            <span class="input-group-btn">
+                    <button type="button" class="btn btn-default" style="width: 11rem;" id="resetButton"
+                            onclick="reset()">   Delete   </button>
+                </span>
+        </div>
+        <div style="padding-top: 15px; text-align: center;">
+
+            <div class="[ form-group ]">
+                <input type="checkbox" name="checkbox" id="checkbox-task" checked="true" onchange="filterChange('TASK')"
+                       autocomplete="off"/>
+                <div class="[ btn-group ]">
+                    <label for="checkbox-task" class="btn btn-primary btn-sm">
+                        <span class="[ glyphicon glyphicon-ok ]"></span>
+                        <span> </span>
+                    </label>
+                    <label for="checkbox-task" class="btn btn-default btn-sm active | centerAndAlign">
+                        TASK
+                    </label>
+                </div>
+            </div>
+
+            <div class="[ form-group ]">
+                <input type="checkbox" name="fancy-checkbox-success" id="checkbox-addition" checked="true"
+                       onchange="filterChange('ADDITION')" autocomplete="off"/>
+                <div class="[ btn-group ]">
+                    <label for="checkbox-addition" class="btn btn-success btn-sm">
+                        <span class="[ glyphicon glyphicon-ok ]"></span>
+                        <span> </span>
+                    </label>
+                    <label for="checkbox-addition" class="btn btn-default btn-sm active | centerAndAlign">
+                        ADDITION
+                    </label>
+                </div>
+            </div>
+
+            <div class="[ form-group ]">
+                <input type="checkbox" name="fancy-checkbox-info" id="checkbox-transfer" checked="true"
+                       onchange="filterChange('TRANSFER')" autocomplete="off"/>
+                <div class="[ btn-group ]">
+                    <label for="checkbox-transfer" class="btn btn-info btn-sm">
+                        <span class="[ glyphicon glyphicon-ok ]"></span>
+                        <span> </span>
+                    </label>
+                    <label for="checkbox-transfer" class="btn btn-default btn-sm active | centerAndAlign">
+                        TRANSFER
+                    </label>
+                </div>
+            </div>
+
+            <div class="[ form-group ]">
+                <input type="checkbox" name="fancy-checkbox-warning" id="checkbox-retrieval" checked="true"
+                       onchange="filterChange('RETRIEVAL')" autocomplete="off"/>
+                <div class="[ btn-group ]">
+                    <label for="checkbox-retrieval" class="btn btn-warning btn-sm">
+                        <span class="[ glyphicon glyphicon-ok ]"></span>
+                        <span> </span>
+                    </label>
+                    <label for="checkbox-retrieval" class="btn btn-default btn-sm active | centerAndAlign">
+                        RETRIEVAL
+                    </label>
+                </div>
+            </div>
+
+            <div class="[ form-group ]">
+                <input type="checkbox" name="fancy-checkbox-danger" id="checkbox-deletion" checked="true"
+                       onchange="filterChange('DELETION')" autocomplete="off"/>
+                <div class="[ btn-group ]">
+                    <label for="checkbox-deletion" class="btn btn-danger btn-sm">
+                        <span class="[ glyphicon glyphicon-ok ]"></span>
+                        <span> </span>
+                    </label>
+                    <label for="checkbox-deletion" class="btn btn-default btn-sm active | centerAndAlign">
+                        DELETION
+                    </label>
+                </div>
+            </div>
+
+            <div class="[ form-group ]">
+                <input type="checkbox" name="fancy-checkbox-danger" id="checkbox-exception" checked="true"
+                       onchange="filterChange('EXCEPTION')" autocomplete="off"/>
+                <div class="[ btn-group ]">
+                    <label for="checkbox-exception" class="btn btn-danger btn-sm">
+                        <span class="[ glyphicon glyphicon-ok ]"></span>
+                        <span> </span>
+                    </label>
+                    <label for="checkbox-exception" class="btn btn-default btn-sm active | centerAndAlign">
+                        EXCEPTION
+                    </label>
+                </div>
+            </div>
+
+        </div>
+        <div class="loader" style="display: none"></div>
+        <table id="logs"></table>
+    </div>
+</div>
 </body>
 </html>

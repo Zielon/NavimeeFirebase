@@ -1,79 +1,52 @@
 package com.navimee.queries.events;
 
-import com.google.cloud.firestore.GeoPoint;
-import com.navimee.contracts.services.PlacesService;
-import com.navimee.logger.LogTypes;
-import com.navimee.logger.Logger;
-import com.navimee.models.bo.FbEvent;
+import com.navimee.contracts.services.places.GeoService;
+import com.navimee.models.dto.events.FbEventDto;
 import com.navimee.models.dto.geocoding.GooglePlaceDto;
-import com.navimee.models.entities.Event;
-import com.navimee.models.entities.Log;
 import com.navimee.models.entities.coordinates.Coordinate;
-import com.navimee.models.entities.places.Place;
 import com.navimee.queries.places.googleGeocoding.enums.GeoType;
 
-import java.util.concurrent.Future;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
 
+import static com.navimee.asyncCollectors.Completable.sequence;
 import static com.navimee.queries.places.googleGeocoding.GoogleGeoTypeGetter.getType;
 
 public class EventsHelpers {
 
-    public static Function<FbEvent, Boolean> getCompelmentFunction(PlacesService placesService) {
+    public static Function<FbEventDto, Boolean> getCompelmentFunction(GeoService<GooglePlaceDto> geoService) {
         return event -> {
-            if (event.getPlace() == null || event.getPlace().getGeoPoint() == null) return false;
-            if (event.getSearchPlace() == null || event.getSearchPlace().getGeoPoint() == null) return false;
-
-            Future<GooglePlaceDto> place = placesService.
-                    downloadReverseGeocoding(new Coordinate(
-                            event.getPlace().getGeoPoint().getLatitude(),
-                            event.getPlace().getGeoPoint().getLongitude()));
-
-            Future<GooglePlaceDto> searchPlace = placesService.
-                    downloadReverseGeocoding(new Coordinate(
-                            event.getSearchPlace().getGeoPoint().getLatitude(),
-                            event.getSearchPlace().getGeoPoint().getLongitude()));
-
-            return complement(event, place, searchPlace);
+            if (event.getPlace() == null || event.getSearchPlace() == null) return false;
+            return complement(geoService, event);
         };
     }
 
-    public static Function<Event, Event> setAddress(PlacesService placesService) {
-        return event -> {
-            try {
-                GooglePlaceDto googlePlace = placesService.downloadReverseGeocoding(new Coordinate(event.getGeoPoint().getLatitude(), event.getGeoPoint().getLongitude())).get();
-                Place place = new Place();
+    private static boolean complement(GeoService<GooglePlaceDto> geoService, FbEventDto event) {
 
-                place.setCity(getType(googlePlace, GeoType.administrative_area_level_2));
-                place.setAddress(getType(googlePlace, GeoType.route) + " " + getType(googlePlace, GeoType.street_number));
-                place.setId("");
-                place.setName("");
+        List<CompletableFuture<GooglePlaceDto>> list = new ArrayList<>();
 
-                event.setPlace(place);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            return event;
-        };
-    }
+        list.add(geoService.geocodingCoordinate(new Coordinate(event.getPlace().getLat(), event.getPlace().getLon())));
+        list.add(geoService.geocodingCoordinate(new Coordinate(event.getSearchPlace().getLat(), event.getSearchPlace().getLon())));
 
-    private static boolean complement(FbEvent event, Future<GooglePlaceDto> placeDto, Future<GooglePlaceDto> searchPlaceDto) {
+        return sequence(list).thenApplyAsync(googlePlaceDtos -> {
 
-        try {
-            GooglePlaceDto searchPlace = searchPlaceDto.get();
-            GooglePlaceDto place = placeDto.get();
+            GooglePlaceDto place = googlePlaceDtos.get(0);
+            GooglePlaceDto searchPlace = googlePlaceDtos.get(1);
+
+            String address = event.getSearchPlace().getFullAddress();
+            if (searchPlace == null && !address.equals(""))
+                searchPlace = geoService.geocodingAddress(address).join();
+
+            address = event.getPlace().getFullAddress();
+            if (place == null && !address.equals(""))
+                searchPlace = geoService.geocodingAddress(address).join();
 
             // A place from an event is the same as the search place.
-            if (event.getPlace() != null
-                    && event.getPlace().getId() != null
-                    && event.getSearchPlace().getId().equals(event.getPlace().getId())) {
+            if (event.getSearchPlace().getId().equals(event.getPlace().getId())) {
 
-                event.setPlace(event.getSearchPlace());
-
-                if (searchPlace != null
-                        && event.getPlace().getAddress() == null
-                        || (event.getPlace().getAddress() != null && event.getPlace().getAddress().isEmpty())) {
-
+                if (event.getPlace().getAddress() == null && searchPlace != null) {
                     event.getPlace().setCity(getType(searchPlace, GeoType.administrative_area_level_2));
                     event.getPlace().setAddress(getType(searchPlace, GeoType.route) + " " + getType(searchPlace, GeoType.street_number));
                 }
@@ -86,21 +59,20 @@ public class EventsHelpers {
                 return false;
 
             // A place is somewhere near to a searchPlace -> look at the similar function() the epsilon is equal 0.5
-            if (similar(event.getSearchPlace().getGeoPoint().getLatitude(), place.geometry.lat)
-                    && similar(event.getSearchPlace().getGeoPoint().getLongitude(), place.geometry.lon)) {
+            if (similar(event.getSearchPlace().getLat(), place.geometry.lat)
+                    && similar(event.getSearchPlace().getLon(), place.geometry.lon)) {
 
                 event.getPlace().setCity(getType(place, GeoType.administrative_area_level_2));
                 event.getPlace().setAddress(getType(place, GeoType.route) + " " + getType(place, GeoType.street_number));
-                event.getPlace().setGeoPoint(new GeoPoint(place.geometry.lat, place.geometry.lon));
+                event.getPlace().setLat(place.geometry.lat);
+                event.getPlace().setLat(place.geometry.lon);
 
                 return true;
             }
 
-        } catch (Exception e) {
-            Logger.LOG(new Log(LogTypes.EXCEPTION, e));
-        }
+            return false;
 
-        return false;
+        }).join();
     }
 
     private static boolean similar(double a, double b) {

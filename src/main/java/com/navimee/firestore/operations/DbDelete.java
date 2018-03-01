@@ -1,6 +1,7 @@
 package com.navimee.firestore.operations;
 
 import com.google.cloud.firestore.*;
+import com.navimee.asyncCollectors.Completable;
 import com.navimee.logger.LogTypes;
 import com.navimee.logger.Logger;
 import com.navimee.models.entities.Log;
@@ -12,8 +13,6 @@ import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 
-import static com.navimee.asyncCollectors.CompletionCollector.waitForFutures;
-
 @Component
 public class DbDelete {
 
@@ -21,12 +20,12 @@ public class DbDelete {
     ExecutorService executorService;
 
     public void collection(CollectionReference collection, int deletedAll) {
-        int batchSize = 1000;
+        int batchSize = 3000;
         try {
             int deleted = 0;
 
             QuerySnapshot future = collection.limit(batchSize).get().get();
-            List<DocumentSnapshot> documents = future.getDocuments();
+            List<QueryDocumentSnapshot> documents = future.getDocuments();
             List<Future<WriteResult>> tasks = new ArrayList<>();
 
             for (DocumentSnapshot document : documents) {
@@ -35,12 +34,13 @@ public class DbDelete {
             }
 
             // Wait for all tasks to finish.
-            waitForFutures(executorService, tasks);
+            Completable.wait(executorService, tasks);
 
             if (deleted >= batchSize) {
                 deletedAll += deleted;
                 collection(collection, deletedAll);
             }
+
         } catch (Exception e) {
             Logger.LOG(new Log(LogTypes.EXCEPTION, e));
         }
@@ -50,8 +50,9 @@ public class DbDelete {
 
     public void document(DocumentReference document) {
         try {
-            for (CollectionReference collection : document.getCollections().get())
-                collection(collection, 1);
+            document.getCollections().forEach(collectionReference -> {
+                collection(collectionReference, 1);
+            });
             document.delete().get();
         } catch (Exception e) {
             Logger.LOG(new Log(LogTypes.EXCEPTION, e));
