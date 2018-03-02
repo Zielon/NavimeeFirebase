@@ -85,7 +85,7 @@ public class FoursquarePlacesServiceImpl implements PlacesDetailsService {
                 placesTasks.addAll(subPlaces.stream()
                         .map(p -> placesQuery.execute(new PlaceDetailsParams("venues", p.getId())))
                         .collect(toList()));
-                //TimeUnit.HOURS.sleep(1);
+                TimeUnit.HOURS.sleep(1);
             } catch (Exception e) {
                 e.printStackTrace();
             }
