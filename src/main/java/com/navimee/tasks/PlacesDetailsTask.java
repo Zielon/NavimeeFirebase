@@ -24,7 +24,7 @@ public class PlacesDetailsTask {
         coordinatesRepository.getAvailableCities().thenAcceptAsync(cities -> {
             for (City city : cities) {
                 try {
-                    placesService.savePlacesDetails(city.getId()).join();
+                    placesService.savePlacesDetails(city.getId());
                 } catch (Exception e) {
                     Logger.LOG(new Log(LogTypes.EXCEPTION, e));
                 }

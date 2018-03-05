@@ -19,7 +19,7 @@ public class RemovalTask {
 
     public void executeRemoveEventsTask() {
         try {
-            eventsRepository.removeEvents().join();
+            eventsRepository.removeEvents();
         } catch (Exception e) {
             Logger.LOG(new Log(LogTypes.EXCEPTION, e));
         }

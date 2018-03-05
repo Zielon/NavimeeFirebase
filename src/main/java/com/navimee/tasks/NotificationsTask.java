@@ -19,7 +19,7 @@ public class NotificationsTask {
 
     public void executeSendNotification() {
         try {
-            notifications.sendDaySchedule().get();
+            notifications.sendDaySchedule();
         } catch (Exception e) {
             Logger.LOG(new Log(LogTypes.EXCEPTION, e));
         }

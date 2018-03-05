@@ -37,9 +37,9 @@ public class FacebookEventsTask {
     public void executeEventsTask() {
         coordinatesRepository.getAvailableCities().thenAcceptAsync(cities -> {
             for (City city : cities) {
-                List<FbPlace> fbPlaces = facebookRepository.getPlaces(city.getId()).join();
-                eventsService.saveFacebookEvents(fbPlaces, true)
-                        .thenRunAsync(() -> Logger.LOG(new Log(LogTypes.TASK, "Facebook events update for %s [FB]", city.getName())));
+                facebookRepository.getPlaces(city.getId())
+                        .thenAcceptAsync(fbPlaces -> eventsService.saveFacebookEvents(fbPlaces, true)
+                                .thenRunAsync(() -> Logger.LOG(new Log(LogTypes.TASK, "Facebook events update for %s [FB]", city.getName()))));
             }
         }).thenRunAsync(() -> {
             List<FbPlace> places = new NavimeeData().getEventsDistributors().stream().map(FbPlace::new).collect(toList());
