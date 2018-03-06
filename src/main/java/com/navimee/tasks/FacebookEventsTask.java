@@ -37,6 +37,7 @@ public class FacebookEventsTask {
     public void executeEventsTask() {
         coordinatesRepository.getAvailableCities().thenAcceptAsync(cities -> {
             for (City city : cities) {
+                if(city.getName().equals("SOPOT"))
                 facebookRepository.getPlaces(city.getId())
                         .thenAcceptAsync(fbPlaces -> eventsService.saveFacebookEvents(fbPlaces, true)
                                 .thenRunAsync(() -> Logger.LOG(new Log(LogTypes.TASK, "Facebook events update for %s [FB]", city.getName()))));

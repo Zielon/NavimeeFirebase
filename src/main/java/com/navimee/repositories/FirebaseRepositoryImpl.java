@@ -2,6 +2,7 @@ package com.navimee.repositories;
 
 import com.firebase.geofire.GeoFire;
 import com.firebase.geofire.GeoLocation;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
 import com.navimee.contracts.repositories.FirebaseRepository;
 import com.navimee.firestore.PathBuilder;
@@ -39,7 +40,13 @@ public class FirebaseRepositoryImpl implements FirebaseRepository {
         return CompletableFuture.runAsync(() -> {
             GeoFire geoFire = new GeoFire(firebaseDatabase.getReference(HOTSPOT));
             Map<String, Event> entities = events.stream().collect(Collectors.toMap(Entity::getId, Function.identity()));
-            entities.forEach((key, v) -> geoFire.setLocation(key, new GeoLocation(v.getGeoPoint().getLatitude(), v.getGeoPoint().getLongitude())));
+
+            entities.forEach((key, v) -> geoFire.setLocation(key,
+                    new GeoLocation(v.getGeoPoint().getLatitude(), v.getGeoPoint().getLongitude()),
+                    (locationKey, databaseError) -> {
+                        firebaseDatabase.getReference(new PathBuilder().add(HOTSPOT).add(locationKey).build()).setValueAsync(v);
+                    }
+            ));
         }, executorService).thenRunAsync(() -> Logger.LOG(new Log(LogTypes.TRANSFER, "Transfer facebook events (%d) details [Firebase]", events.size())));
     }
 
