@@ -32,6 +32,7 @@ public class FirebasePaths {
     // Hotspot
     public static final String HOTSPOT = "HOTSPOT";
     public static final String HOTSPOT_CURRENT = "HOTSPOT_CURRENT";
+    public static final String USER_LOCATION = "USER_LOCATION";
 
     public static String get(CollectionReference collectionReference) {
         String path = collectionReference.getPath();
