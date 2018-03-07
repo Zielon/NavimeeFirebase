@@ -73,7 +73,7 @@ public class EventsRepositoryImpl implements EventsRepository {
     public CompletableFuture<Void> removeEvents() {
         return CompletableFuture.runAsync(() -> {
 
-            Date warsaw = LocalDateTime.now(DateTimeZone.UTC).toDate();
+            Date warsaw = LocalDateTime.now(DateTimeZone.UTC).minusMinutes(30).toDate();
 
             Query hotspot = database.collection(HOTSPOT).whereLessThan("endTime", warsaw);
             Query notification = database.collection(HOTSPOT).whereLessThan("endTime", warsaw);

@@ -30,7 +30,7 @@ import java.util.function.Function;
 
 import static com.navimee.firestore.FirebasePaths.FEEDBACK_COLLECTION;
 import static com.navimee.firestore.FirebasePaths.NOTIFICATIONS;
-import static com.navimee.reflection.Utils.nameof;
+import static com.navimee.utils.FieldsReflection.nameof;
 
 @Service
 public class FcmServiceImpl implements FcmService {

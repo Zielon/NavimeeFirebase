@@ -20,7 +20,7 @@ import java.util.concurrent.ExecutorService;
 
 import static com.navimee.firestore.FirebasePaths.EVENTS_NOTIFICATION;
 import static com.navimee.firestore.FirebasePaths.NOTIFICATIONS;
-import static com.navimee.reflection.Utils.nameof;
+import static com.navimee.utils.FieldsReflection.nameof;
 import static java.util.stream.Collectors.toList;
 
 @Repository

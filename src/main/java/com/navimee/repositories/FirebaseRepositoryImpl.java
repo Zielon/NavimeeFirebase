@@ -2,7 +2,6 @@ package com.navimee.repositories;
 
 import com.firebase.geofire.GeoFire;
 import com.firebase.geofire.GeoLocation;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
 import com.navimee.contracts.repositories.FirebaseRepository;
 import com.navimee.firestore.PathBuilder;
@@ -25,6 +24,7 @@ import java.util.stream.Collectors;
 
 import static com.navimee.firestore.FirebasePaths.HOTSPOT;
 import static com.navimee.firestore.FirebasePaths.HOTSPOT_CURRENT;
+import static com.navimee.utils.Converters.toMap;
 
 @Repository
 public class FirebaseRepositoryImpl implements FirebaseRepository {
@@ -43,9 +43,9 @@ public class FirebaseRepositoryImpl implements FirebaseRepository {
 
             entities.forEach((key, v) -> geoFire.setLocation(key,
                     new GeoLocation(v.getGeoPoint().getLatitude(), v.getGeoPoint().getLongitude()),
-                    (locationKey, databaseError) -> {
-                        firebaseDatabase.getReference(new PathBuilder().add(HOTSPOT).add(locationKey).build()).setValueAsync(v);
-                    }
+                    (locationKey, databaseError) ->
+                            firebaseDatabase.getReference(new PathBuilder().add(HOTSPOT).add(locationKey).build())
+                                    .updateChildrenAsync(toMap(v))
             ));
         }, executorService).thenRunAsync(() -> Logger.LOG(new Log(LogTypes.TRANSFER, "Transfer facebook events (%d) details [Firebase]", events.size())));
     }
@@ -55,7 +55,12 @@ public class FirebaseRepositoryImpl implements FirebaseRepository {
         return CompletableFuture.runAsync(() -> {
             GeoFire geoFire = new GeoFire(firebaseDatabase.getReference(HOTSPOT));
             Map<String, FsPlaceDetails> entities = placeDetails.stream().collect(Collectors.toMap(Entity::getId, Function.identity()));
-            entities.forEach((key, v) -> geoFire.setLocation(key, new GeoLocation(v.getLocationLat(), v.getLocationLng())));
+
+            entities.forEach((key, v) -> geoFire.setLocation(key,
+                    new GeoLocation(v.getLocationLat(), v.getLocationLng()), (locationKey, databaseError) ->
+                            firebaseDatabase.getReference(new PathBuilder().add(HOTSPOT).add(locationKey).build())
+                                    .updateChildrenAsync(toMap(v))
+            ));
         }, executorService).thenRunAsync(() -> Logger.LOG(new Log(LogTypes.TRANSFER, "Transfer foursquare details (%d) [Firebase]", placeDetails.size())));
     }
 
@@ -74,7 +79,11 @@ public class FirebaseRepositoryImpl implements FirebaseRepository {
             if (entities.isEmpty()) return;
             GeoFire geoFire = new GeoFire(firebaseDatabase.getReference(HOTSPOT_CURRENT));
             Map<String, T> filtered = entities.stream().filter(predicate).collect(Collectors.toMap(Entity::getId, Function.identity()));
-            filtered.forEach((key, value) -> geoFire.setLocation(key, function.apply(value)));
+
+            filtered.forEach((key, value) -> geoFire.setLocation(key, function.apply(value), (locationKey, databaseError) ->
+                    firebaseDatabase.getReference(new PathBuilder().add(HOTSPOT).add(locationKey).build())
+                            .updateChildrenAsync(toMap(value))));
+
         }, executorService).thenRunAsync(() -> Logger.LOG(new Log(LogTypes.TRANSFER, "Transfer %s [Firebase]", entities.get(0).getClass().getSimpleName())));
     }
 

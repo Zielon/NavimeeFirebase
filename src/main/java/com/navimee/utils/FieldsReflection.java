@@ -1,8 +1,8 @@
-package com.navimee.reflection;
+package com.navimee.utils;
 
 import java.lang.reflect.Field;
 
-public class Utils {
+public class FieldsReflection {
     public static <T> String nameof(Class<T> type, String fieldName) throws NoSuchFieldException {
         Field field = type.getDeclaredField(fieldName);
         return field.getName();
