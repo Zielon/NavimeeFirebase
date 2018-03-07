@@ -28,6 +28,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 import java.util.function.Function;
 
+import static com.navimee.firestore.FirebasePaths.EVENTS_NOTIFICATION;
 import static com.navimee.firestore.FirebasePaths.FEEDBACK_COLLECTION;
 import static com.navimee.firestore.FirebasePaths.NOTIFICATIONS;
 import static com.navimee.utils.FieldsReflection.nameof;
@@ -46,6 +47,8 @@ public class FcmServiceImpl implements FcmService {
 
     @Autowired
     FirebaseDatabase firebaseDatabase;
+
+    private final String COUNTRY = System.getenv().get("COUNTRY").toUpperCase();
 
     @Override
     public <T extends FcmSendable> Future send(List<T> sendables, Function<T, Map<String, Object>> function) {
@@ -81,8 +84,13 @@ public class FcmServiceImpl implements FcmService {
                 // To prevent sending multiple times the same event.
                 try {
                     String isSent = nameof(Notification.class, "sent");
-                    if (sendables.size() > 0 && sendables.get(0) instanceof Notification)
-                        sendables.forEach(data -> database.collection(NOTIFICATIONS).document(data.getId()).update(isSent, data.isSent()));
+                    if (sendables.size() > 0 && sendables.get(0) instanceof Notification){
+                        sendables.forEach(data -> database
+                                .collection(NOTIFICATIONS)
+                                .document(COUNTRY)
+                                .collection(EVENTS_NOTIFICATION)
+                                .document(data.getId()).update(isSent, data.isSent()));
+                    }
 
                     if (sendables.size() > 0 && sendables.get(0) instanceof Feedback)
                         sendables.forEach(data -> firebaseDatabase.getReference(new PathBuilder().add(FEEDBACK_COLLECTION).add(data.getId()).build()).updateChildrenAsync(data.toDictionary()));

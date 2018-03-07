@@ -3,14 +3,14 @@ package com.navimee.controllers.dto;
 public class SimulatorDto {
     private double latitude;
     private double longitude;
-    private double carCount;
-    private double steps;
+    private int carCount;
+    private int steps;
 
-    public double getCarCount() {
+    public int getCarCount() {
         return carCount;
     }
 
-    public void setCarCount(double carCount) {
+    public void setCarCount(int carCount) {
         this.carCount = carCount;
     }
 
@@ -30,11 +30,11 @@ public class SimulatorDto {
         this.latitude = latitude;
     }
 
-    public double getSteps() {
+    public int getSteps() {
         return steps;
     }
 
-    public void setSteps(double steps) {
+    public void setSteps(int steps) {
         this.steps = steps;
     }
 }

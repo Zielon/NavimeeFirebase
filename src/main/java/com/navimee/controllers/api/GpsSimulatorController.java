@@ -12,7 +12,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.IntStream;
 
 import static com.navimee.firestore.FirebasePaths.USER_LOCATION;
 import static com.navimee.gpsSimulator.PointsGenerator.getLocation;
@@ -27,7 +29,7 @@ public class GpsSimulatorController {
     @RequestMapping(value = "gps", method = RequestMethod.POST)
     public void simulator(@RequestBody SimulatorDto dto) throws InterruptedException {
         Random random = new Random();
-        Map<String, Simulator> cars = new HashMap<>();
+        Map<String, Simulator> cars = new ConcurrentHashMap<>();
         List<String> corporations = new ArrayList<>();
 
         corporations.add("Uber");
@@ -43,14 +45,14 @@ public class GpsSimulatorController {
             cars.put(uid, simulator);
         }
 
-        for (int j = 0; j < dto.getSteps(); j++) {
+        IntStream.range(0, dto.getSteps()).parallel().forEach(j -> {
             try {
-                cars.forEach((key, simulator) -> simulator.move(key));
-                TimeUnit.MILLISECONDS.sleep(250);
+                cars.keySet().parallelStream().forEach(key -> cars.get(key).move(key));
+                TimeUnit.MILLISECONDS.sleep(750);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-        }
+        });
 
         cars.forEach((key, simulator) ->
                 firebaseDatabase.getReference(new PathBuilder().add(USER_LOCATION).add(key).build()).removeValueAsync());
