@@ -81,7 +81,7 @@ public class FirebaseRepositoryImpl implements FirebaseRepository {
             Map<String, T> filtered = entities.stream().filter(predicate).collect(Collectors.toMap(Entity::getId, Function.identity()));
 
             filtered.forEach((key, value) -> geoFire.setLocation(key, function.apply(value), (locationKey, databaseError) ->
-                    firebaseDatabase.getReference(new PathBuilder().add(HOTSPOT).add(locationKey).build())
+                    firebaseDatabase.getReference(new PathBuilder().add(HOTSPOT_CURRENT).add(locationKey).build())
                             .updateChildrenAsync(toMap(value))));
 
         }, executorService).thenRunAsync(() -> Logger.LOG(new Log(LogTypes.TRANSFER, "Transfer %s [Firebase]", entities.get(0).getClass().getSimpleName())));

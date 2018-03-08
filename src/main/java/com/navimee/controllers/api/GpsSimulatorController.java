@@ -2,6 +2,7 @@ package com.navimee.controllers.api;
 
 import com.google.cloud.firestore.GeoPoint;
 import com.google.firebase.database.FirebaseDatabase;
+import com.navimee.controllers.dto.CarDto;
 import com.navimee.controllers.dto.SimulatorDto;
 import com.navimee.firestore.PathBuilder;
 import com.navimee.gpsSimulator.Simulator;
@@ -29,7 +30,7 @@ public class GpsSimulatorController {
     @RequestMapping(value = "gps", method = RequestMethod.POST)
     public void simulator(@RequestBody SimulatorDto dto) throws InterruptedException {
         Random random = new Random();
-        Map<String, Simulator> cars = new ConcurrentHashMap<>();
+        Map<CarDto, Simulator> cars = new ConcurrentHashMap<>();
         List<String> corporations = new ArrayList<>();
 
         corporations.add("Uber");
@@ -39,10 +40,15 @@ public class GpsSimulatorController {
 
         for (int i = 0; i < dto.getCarCount(); i++) {
             int taxi = random.nextInt(4);
-            String uid = corporations.get(taxi) + "_USER_LOCATION_" + UUID.randomUUID().toString() + "-TEST";
+            String uid = UUID.randomUUID().toString();
+
+            CarDto car = new CarDto();
+            car.setDriverType(corporations.get(taxi));
+            car.setUserId(uid);
+
             GeoPoint point = getLocation(dto.getLongitude(), dto.getLatitude());
             Simulator simulator = new Simulator(point.getLatitude(), point.getLongitude(), firebaseDatabase);
-            cars.put(uid, simulator);
+            cars.put(car, simulator);
         }
 
         IntStream.range(0, dto.getSteps()).parallel().forEach(j -> {
@@ -55,6 +61,6 @@ public class GpsSimulatorController {
         });
 
         cars.forEach((key, simulator) ->
-                firebaseDatabase.getReference(new PathBuilder().add(USER_LOCATION).add(key).build()).removeValueAsync());
+                firebaseDatabase.getReference(new PathBuilder().add(USER_LOCATION).add(key.getUserId()).build()).removeValueAsync());
     }
 }
