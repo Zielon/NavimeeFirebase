@@ -47,7 +47,7 @@ public class FacebookEventsTask {
         });
     }
 
-    @Scheduled(fixedDelay = EVENTS)
+    @Scheduled(cron = "0 0 12 * * ?")
     public void task() {
         if (!NavimeeApplication.TASKS_ACTIVE) return;
         this.executeEventsTask();

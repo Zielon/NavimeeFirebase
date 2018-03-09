@@ -15,7 +15,7 @@ import static com.navimee.utils.Converters.toMap;
 
 public class Simulator {
 
-    private static final double SIMULATOR_MOVEMENT_SPEED = 0.000055;
+    private static final double SIMULATOR_MOVEMENT_SPEED = 0.000075;
     private static final double ARRIVAL_RADIUS_IN_KM = 0.5 / 1000;
     private double initialLatitude;
     private double initialLongitude;
