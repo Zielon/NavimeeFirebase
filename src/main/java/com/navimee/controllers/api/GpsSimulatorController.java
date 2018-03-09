@@ -38,6 +38,8 @@ public class GpsSimulatorController {
         corporations.add("iTaxi");
         corporations.add("Taxi");
 
+        firebaseDatabase.getReference(USER_LOCATION).removeValueAsync();
+
         for (int i = 0; i < dto.getCarCount(); i++) {
             int taxi = random.nextInt(4);
             String uid = UUID.randomUUID().toString();
@@ -45,22 +47,14 @@ public class GpsSimulatorController {
             CarDto car = new CarDto();
             car.setDriverType(corporations.get(taxi));
             car.setUserId(uid);
+            car.setDelayTimeInMilliseconds(dto.getTimeInMilliseconds());
 
             GeoPoint point = getLocation(dto.getLongitude(), dto.getLatitude());
             Simulator simulator = new Simulator(point.getLatitude(), point.getLongitude(), firebaseDatabase);
             cars.put(car, simulator);
         }
 
-        IntStream.range(0, dto.getSteps()).parallel().forEach(j -> {
-            try {
-                cars.keySet().parallelStream().forEach(key -> cars.get(key).move(key));
-                TimeUnit.MILLISECONDS.sleep(750);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        });
-
-        cars.forEach((key, simulator) ->
-                firebaseDatabase.getReference(new PathBuilder().add(USER_LOCATION).add(key.getUserId()).build()).removeValueAsync());
+        IntStream.range(0, dto.getSteps()).parallel().forEach(j -> cars.keySet().parallelStream().forEach(key -> cars.get(key).move(key)));
+        firebaseDatabase.getReference(USER_LOCATION).removeValueAsync();
     }
 }

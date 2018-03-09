@@ -8,6 +8,7 @@ import com.navimee.controllers.dto.CarDto;
 import com.navimee.firestore.PathBuilder;
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import static com.navimee.firestore.FirebasePaths.USER_LOCATION;
 import static com.navimee.utils.Converters.toMap;
@@ -49,9 +50,16 @@ public class Simulator {
         double newLon = currentLocation.getLongitude() + Math.cos(angle) * SIMULATOR_MOVEMENT_SPEED;
 
         currentLocation = new GeoPoint(newLat, newLon);
+
         geoFire.setLocation(car.getUserId(), new GeoLocation(newLat, newLon),
                 (locationKey, databaseError) -> {
                     firebaseDatabase.getReference(new PathBuilder().add(USER_LOCATION).add(car.getUserId()).build()).updateChildrenAsync(toMap(car));
                 });
+
+        try {
+            TimeUnit.MILLISECONDS.sleep(car.getDelayTimeInMilliseconds());
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 }

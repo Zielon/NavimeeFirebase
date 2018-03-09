@@ -5,6 +5,7 @@ public class SimulatorDto {
     private double longitude;
     private int carCount;
     private int steps;
+    private int timeInMilliseconds;
 
     public int getCarCount() {
         return carCount;
@@ -36,5 +37,13 @@ public class SimulatorDto {
 
     public void setSteps(int steps) {
         this.steps = steps;
+    }
+
+    public int getTimeInMilliseconds() {
+        return timeInMilliseconds;
+    }
+
+    public void setTimeInMilliseconds(int timeInMilliseconds) {
+        this.timeInMilliseconds = timeInMilliseconds;
     }
 }

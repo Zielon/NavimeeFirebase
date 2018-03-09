@@ -8,12 +8,12 @@ import java.util.Random;
 
 public class PointsGenerator {
 
-    public static final int RADIUS = 10000; // in meters
+    public static final int RADIUS = 15000; // in meters
 
     public static List<GeoPoint> generate(double x0, double y0) {
         List<GeoPoint> points = new ArrayList<>();
 
-        for (int i = 0; i < 20; i++) {
+        for (int i = 0; i < 50; i++) {
             points.add(getLocation(x0, y0));
         }
 
