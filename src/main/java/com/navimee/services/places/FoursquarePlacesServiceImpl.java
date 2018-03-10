@@ -37,6 +37,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.TimeUnit;
 
 import static com.navimee.asyncCollectors.Completable.sequence;
 import static com.navimee.linq.Distinct.distinctByKey;
@@ -68,6 +69,8 @@ public class FoursquarePlacesServiceImpl implements PlacesDetailsService {
     @Autowired
     FirebaseRepository firebaseRepository;
 
+    private static int COUNTER = 0;
+
     @Override
     public CompletableFuture<Void> savePlacesDetails(String city) {
 
@@ -79,16 +82,18 @@ public class FoursquarePlacesServiceImpl implements PlacesDetailsService {
 
         List<CompletableFuture<FsPlaceDetailsDto>> placesTasks = new ArrayList<>();
 
-        Collections.spliter(places, 4000).forEach(subPlaces -> {
-            try {
-                placesTasks.addAll(subPlaces.stream()
-                        .map(p -> placesQuery.execute(new PlaceDetailsParams("venues", p.getId())))
-                        .collect(toList()));
-                //TimeUnit.HOURS.sleep(1);
-            } catch (Exception e) {
-                e.printStackTrace();
+        for(FsPlace place : places){
+            placesTasks.add(placesQuery.execute(new PlaceDetailsParams("venues", place.getId())));
+            COUNTER++;
+            if(COUNTER == 4000){
+                try {
+                    TimeUnit.HOURS.sleep(1);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                COUNTER = 0;
             }
-        });
+        }
 
         return sequence(placesTasks).thenAcceptAsync(tasks ->
 
