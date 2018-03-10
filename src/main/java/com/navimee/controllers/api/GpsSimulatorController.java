@@ -1,5 +1,7 @@
 package com.navimee.controllers.api;
 
+import com.firebase.geofire.GeoFire;
+import com.firebase.geofire.GeoLocation;
 import com.google.cloud.firestore.GeoPoint;
 import com.google.firebase.database.FirebaseDatabase;
 import com.navimee.controllers.dto.CarDto;
@@ -19,6 +21,7 @@ import java.util.stream.IntStream;
 
 import static com.navimee.firestore.FirebasePaths.USER_LOCATION;
 import static com.navimee.gpsSimulator.PointsGenerator.getLocation;
+import static com.navimee.utils.Converters.toMap;
 
 @RestController
 @RequestMapping(value = "api/simulator")
@@ -46,7 +49,7 @@ public class GpsSimulatorController {
 
             CarDto car = new CarDto();
             car.setDriverType(corporations.get(taxi));
-            car.setUserId(uid);
+            car.setUserId(corporations.get(taxi) + "_" + uid);
             car.setDelayTimeInMilliseconds(dto.getTimeInMilliseconds());
 
             GeoPoint point = getLocation(dto.getLongitude(), dto.getLatitude());
