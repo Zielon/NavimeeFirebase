@@ -48,7 +48,8 @@ public class Simulator {
 
         currentLocation = new GeoPoint(newLat, newLon);
 
-        geoFire.setLocation(car.getUserId(), new GeoLocation(newLat, newLon), (locationKey, databaseError) -> {});
+        geoFire.setLocation(car.getUserId(), new GeoLocation(newLat, newLon), (locationKey, databaseError) -> {
+        });
 
         try {
             TimeUnit.MILLISECONDS.sleep(car.getDelayTimeInMilliseconds());

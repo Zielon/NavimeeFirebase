@@ -10,7 +10,6 @@ import com.navimee.logger.LogTypes;
 import com.navimee.logger.Logger;
 import com.navimee.models.dto.places.facebook.FbPlaceDto;
 import com.navimee.models.entities.Log;
-import com.navimee.models.entities.coordinates.Coordinate;
 import com.navimee.models.entities.places.Place;
 import com.navimee.models.entities.places.facebook.FbPlace;
 import com.navimee.queries.places.FacebookPlacesQuery;
@@ -55,29 +54,28 @@ public class FacebookPlacesServiceImpl implements PlacesService {
 
     @Override
     public CompletableFuture<Void> savePlaces(String city) {
+        return coordinatesRepository.getCoordinates(city).thenAcceptAsync(coordinates -> {
+            FacebookPlacesQuery facebookPlacesQuery =
+                    new FacebookPlacesQuery(facebookConfiguration, executorService, httpClient);
 
-        List<Coordinate> coordinates = coordinatesRepository.getCoordinates(city).join();
-
-        FacebookPlacesQuery facebookPlacesQuery =
-                new FacebookPlacesQuery(facebookConfiguration, executorService, httpClient);
-
-        List<CompletableFuture<List<FbPlaceDto>>> tasks = coordinates.stream()
-                .map(c -> facebookPlacesQuery.execute(new PlacesParams(c.getLatitude(), c.getLongitude())))
-                .collect(toList());
-
-        return sequence(tasks).thenAcceptAsync(places -> {
-            List<FbPlace> entities = places.parallelStream()
-                    .flatMap(Collection::stream)
-                    .filter(Objects::nonNull)
-                    .map(dto -> modelMapper.map(dto, FbPlace.class))
-                    .filter(distinctByKey(Place::getId))
+            List<CompletableFuture<List<FbPlaceDto>>> tasks = coordinates.stream()
+                    .map(c -> facebookPlacesQuery.execute(new PlacesParams(c.getLatitude(), c.getLongitude())))
                     .collect(toList());
 
-            facebookRepository.setPlaces(entities, city);
+            sequence(tasks).thenAcceptAsync(places -> {
+                List<FbPlace> entities = places.parallelStream()
+                        .flatMap(Collection::stream)
+                        .filter(Objects::nonNull)
+                        .map(dto -> modelMapper.map(dto, FbPlace.class))
+                        .filter(distinctByKey(Place::getId))
+                        .collect(toList());
 
-        }, executorService).exceptionally(throwable -> {
-            Logger.LOG(new Log(LogTypes.EXCEPTION, throwable));
-            return null;
-        }).thenRunAsync(() -> Logger.LOG(new Log(LogTypes.TASK, "Facebook places update for %s [FB]", city)));
+                facebookRepository.setPlaces(entities, city);
+
+            }, executorService).exceptionally(throwable -> {
+                Logger.LOG(new Log(LogTypes.EXCEPTION, throwable));
+                return null;
+            }).thenRunAsync(() -> Logger.LOG(new Log(LogTypes.TASK, "Facebook places update for %s [FB]", city)));
+        });
     }
 }

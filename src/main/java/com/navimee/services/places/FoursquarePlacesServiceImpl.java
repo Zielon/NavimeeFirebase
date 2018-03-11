@@ -8,7 +8,6 @@ import com.navimee.contracts.repositories.places.PlacesDetailsRepository;
 import com.navimee.contracts.services.HttpClient;
 import com.navimee.contracts.services.places.PlacesDetailsService;
 import com.navimee.foursquareCategories.CategoryTree;
-import com.navimee.general.Collections;
 import com.navimee.logger.LogTypes;
 import com.navimee.logger.Logger;
 import com.navimee.models.dto.categories.FsCategoriesDto;
@@ -16,7 +15,6 @@ import com.navimee.models.dto.placeDetails.FsPlaceDetailsDto;
 import com.navimee.models.dto.places.foursquare.FsPlaceDto;
 import com.navimee.models.dto.timeframes.PopularDto;
 import com.navimee.models.entities.Log;
-import com.navimee.models.entities.coordinates.Coordinate;
 import com.navimee.models.entities.places.Place;
 import com.navimee.models.entities.places.foursquare.FsPlace;
 import com.navimee.models.entities.places.foursquare.FsPlaceDetails;
@@ -47,90 +45,81 @@ import static java.util.stream.Collectors.toList;
 @Qualifier(Qualifiers.FOURSQUARE)
 public class FoursquarePlacesServiceImpl implements PlacesDetailsService {
 
+    private static int COUNTER = 0;
     @Autowired
     FoursquareConfiguration foursquareConfiguration;
-
     @Autowired
     CoordinatesRepository coordinatesRepository;
-
     @Autowired
     @Qualifier(Qualifiers.FOURSQUARE)
     PlacesDetailsRepository<FsPlaceDetails, FsPlace> foursquareRepository;
-
     @Autowired
     ModelMapper modelMapper;
-
     @Autowired
     ExecutorService executorService;
-
     @Autowired
     HttpClient httpClient;
-
     @Autowired
     FirebaseRepository firebaseRepository;
 
-    private static int COUNTER = 0;
-
     @Override
     public CompletableFuture<Void> savePlacesDetails(String city) {
+        return foursquareRepository.getPlaces(city).thenAcceptAsync(places -> {
+            FoursquareDetailsQuery placesQuery =
+                    new FoursquareDetailsQuery(foursquareConfiguration, executorService, httpClient);
 
-        List<FsPlace> places = foursquareRepository.getPlaces(city).join();
+            List<CompletableFuture<FsPlaceDetailsDto>> placesTasks = new ArrayList<>();
 
-        // DbGet data from the external foursquare API
-        FoursquareDetailsQuery placesQuery =
-                new FoursquareDetailsQuery(foursquareConfiguration, executorService, httpClient);
-
-        List<CompletableFuture<FsPlaceDetailsDto>> placesTasks = new ArrayList<>();
-
-        for(FsPlace place : places){
-            placesTasks.add(placesQuery.execute(new PlaceDetailsParams("venues", place.getId())));
-            COUNTER++;
-            if(COUNTER == 4000){
-                try {
-                    TimeUnit.HOURS.sleep(1);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
+            for (FsPlace place : places) {
+                placesTasks.add(placesQuery.execute(new PlaceDetailsParams("venues", place.getId())));
+                COUNTER++;
+                if (COUNTER == 4000) {
+                    try {
+                        TimeUnit.HOURS.sleep(1);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    COUNTER = 0;
                 }
-                COUNTER = 0;
             }
-        }
 
-        return sequence(placesTasks).thenAcceptAsync(tasks ->
+            sequence(placesTasks).thenAcceptAsync(tasks ->
 
-                getCategoryTree().thenAcceptAsync(categoryTree -> {
+                    getCategoryTree().thenAcceptAsync(categoryTree -> {
 
-                    List<FsPlaceDetails> entitiesDetails = tasks.stream()
-                            .filter(Objects::nonNull)
-                            .map(dto -> modelMapper.map(dto, FsPlaceDetails.class))
-                            .filter(distinctByKey(FsPlaceDetails::getId))
-                            .filter(d -> d.getStatsCheckinsCount() > 600 || d.getLikesCount() > 600)
-                            .filter(categoryTree.getPredicate())
-                            .collect(toList());
+                        List<FsPlaceDetails> entitiesDetails = tasks.stream()
+                                .filter(Objects::nonNull)
+                                .map(dto -> modelMapper.map(dto, FsPlaceDetails.class))
+                                .filter(distinctByKey(FsPlaceDetails::getId))
+                                .filter(d -> d.getStatsCheckinsCount() > 600 || d.getLikesCount() > 600)
+                                .filter(categoryTree.getPredicate())
+                                .collect(toList());
 
-                    // Update timeframes for every place
-                    FoursquareTimeFramesQuery timeframeQuery =
-                            new FoursquareTimeFramesQuery(foursquareConfiguration, executorService, httpClient);
+                        // Update timeframes for every place
+                        FoursquareTimeFramesQuery timeframeQuery =
+                                new FoursquareTimeFramesQuery(foursquareConfiguration, executorService, httpClient);
 
-                    List<CompletableFuture<PopularDto>> popularTasks = entitiesDetails.stream()
-                            .map(p -> timeframeQuery.execute(new PlaceDetailsParams("venues", p.getId())))
-                            .collect(toList());
+                        List<CompletableFuture<PopularDto>> popularTasks = entitiesDetails.stream()
+                                .map(p -> timeframeQuery.execute(new PlaceDetailsParams("venues", p.getId())))
+                                .collect(toList());
 
-                    sequence(popularTasks).thenAcceptAsync(populars -> {
-                        populars.stream().filter(Objects::nonNull)
-                                .forEach(dto -> entitiesDetails.stream()
-                                        .filter(details -> details.getId().equals(dto.getPlaceId()))
-                                        .findFirst().get()
-                                        .setPopular(modelMapper.map(dto, FsPopular.class)));
+                        sequence(popularTasks).thenAcceptAsync(populars -> {
+                            populars.stream().filter(Objects::nonNull)
+                                    .forEach(dto -> entitiesDetails.stream()
+                                            .filter(details -> details.getId().equals(dto.getPlaceId()))
+                                            .findFirst().get()
+                                            .setPopular(modelMapper.map(dto, FsPopular.class)));
 
-                        List<FsPlaceDetails> entities = entitiesDetails.stream()
-                                .filter(details -> details.getPopular() != null).collect(toList());
+                            List<FsPlaceDetails> entities = entitiesDetails.stream()
+                                    .filter(details -> details.getPopular() != null).collect(toList());
 
-                        foursquareRepository.setPlacesDetails(entities);
-                        firebaseRepository.transferPlaces(entities);
+                            foursquareRepository.setPlacesDetails(entities);
+                            firebaseRepository.transferPlaces(entities);
 
-                    }, executorService).thenRunAsync(() -> Logger.LOG(new Log(LogTypes.TASK, "Foursquare details update for %s [FS]", city)));
-                })
-        );
+                        }, executorService).thenRunAsync(() -> Logger.LOG(new Log(LogTypes.TASK, "Foursquare details update for %s [FS]", city)));
+                    })
+            );
+        });
     }
 
     @Override
@@ -147,30 +136,29 @@ public class FoursquarePlacesServiceImpl implements PlacesDetailsService {
 
     @Override
     public CompletableFuture<Void> savePlaces(String city) {
+        return coordinatesRepository.getCoordinates(city).thenAcceptAsync(coordinates -> {
+            // DbGet data from the external foursquare API
+            FoursquarePlacesQuery foursquarePlacesQuery =
+                    new FoursquarePlacesQuery(foursquareConfiguration, executorService, httpClient);
 
-        List<Coordinate> coordinates = coordinatesRepository.getCoordinates(city).join();
-
-        // DbGet data from the external foursquare API
-        FoursquarePlacesQuery foursquarePlacesQuery =
-                new FoursquarePlacesQuery(foursquareConfiguration, executorService, httpClient);
-
-        List<CompletableFuture<List<FsPlaceDto>>> tasks = coordinates.stream()
-                .map(c -> foursquarePlacesQuery.execute(new PlaceDetailsParams(c.getLatitude(), c.getLongitude(), "/venues/search")))
-                .collect(toList());
-
-        return sequence(tasks).thenAcceptAsync(places -> {
-            List<FsPlace> entities = places.parallelStream()
-                    .flatMap(Collection::stream)
-                    .filter(Objects::nonNull)
-                    .map(dto -> modelMapper.map(dto, FsPlace.class))
-                    .filter(distinctByKey(Place::getId))
+            List<CompletableFuture<List<FsPlaceDto>>> tasks = coordinates.stream()
+                    .map(c -> foursquarePlacesQuery.execute(new PlaceDetailsParams(c.getLatitude(), c.getLongitude(), "/venues/search")))
                     .collect(toList());
 
-            foursquareRepository.setPlaces(entities, city).join();
+            sequence(tasks).thenAcceptAsync(places -> {
+                List<FsPlace> entities = places.parallelStream()
+                        .flatMap(Collection::stream)
+                        .filter(Objects::nonNull)
+                        .map(dto -> modelMapper.map(dto, FsPlace.class))
+                        .filter(distinctByKey(Place::getId))
+                        .collect(toList());
 
-        }, executorService).exceptionally(throwable -> {
-            Logger.LOG(new Log(LogTypes.EXCEPTION, throwable));
-            return null;
-        }).thenRunAsync(() -> Logger.LOG(new Log(LogTypes.TASK, "Foursquare places update for %s [FS]", city)));
+                foursquareRepository.setPlaces(entities, city).join();
+
+            }, executorService).exceptionally(throwable -> {
+                Logger.LOG(new Log(LogTypes.EXCEPTION, throwable));
+                return null;
+            }).thenRunAsync(() -> Logger.LOG(new Log(LogTypes.TASK, "Foursquare places update for %s [FS]", city)));
+        });
     }
 }

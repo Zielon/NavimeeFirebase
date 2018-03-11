@@ -18,7 +18,6 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 
-import static com.navimee.tasks.TasksFixedTimes.EVENTS;
 import static java.util.stream.Collectors.toList;
 
 @Component
@@ -44,7 +43,7 @@ public class FacebookEventsTask {
         }).thenRunAsync(() -> {
             List<FbPlace> places = new NavimeeData().getEventsDistributors().stream().map(FbPlace::new).collect(toList());
             eventsService.saveFacebookEvents(places, true);
-        });
+        }).thenRunAsync(() -> Logger.LOG(new Log(LogTypes.TASK, "Facebook events update for distributors [FB]")));
     }
 
     @Scheduled(cron = "0 0 12 * * ?")
