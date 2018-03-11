@@ -3,9 +3,6 @@ package com.navimee.tasks;
 import com.navimee.NavimeeApplication;
 import com.navimee.contracts.repositories.places.CoordinatesRepository;
 import com.navimee.contracts.services.places.PlacesDetailsService;
-import com.navimee.logger.LogTypes;
-import com.navimee.logger.Logger;
-import com.navimee.models.entities.Log;
 import com.navimee.models.entities.coordinates.City;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -23,11 +20,7 @@ public class PlacesDetailsTask {
     public void executeDetailsTask() {
         coordinatesRepository.getAvailableCities().thenAcceptAsync(cities -> {
             for (City city : cities) {
-                try {
-                    placesService.savePlacesDetails(city.getId());
-                } catch (Exception e) {
-                    Logger.LOG(new Log(LogTypes.EXCEPTION, e));
-                }
+                placesService.savePlacesDetails(city.getId());
             }
         });
     }

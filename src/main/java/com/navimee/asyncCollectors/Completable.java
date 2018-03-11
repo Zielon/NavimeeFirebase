@@ -20,10 +20,15 @@ public class Completable {
 
     public static <T> CompletableFuture<List<T>> sequence(List<CompletableFuture<T>> futures) {
         CompletableFuture<Void> allDoneFuture = CompletableFuture.allOf(futures.toArray(new CompletableFuture[futures.size()]));
-        return allDoneFuture.thenApply(v -> futures.stream()
-                .map(CompletableFuture::join)
-                .collect(Collectors.<T>toList())
-        );
+        return allDoneFuture
+                .exceptionally(throwable -> {
+                    throwable.printStackTrace();
+                    return null;
+                })
+                .thenApply(v -> futures.stream()
+                        .map(CompletableFuture::join)
+                        .collect(Collectors.<T>toList())
+                );
     }
 
     private static <T> List<T> collect(CompletionService<T> completionService, int size, BiConsumer<List<T>, T> consumer) {

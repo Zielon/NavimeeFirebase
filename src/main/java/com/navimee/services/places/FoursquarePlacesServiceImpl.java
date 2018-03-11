@@ -69,18 +69,19 @@ public class FoursquarePlacesServiceImpl implements PlacesDetailsService {
                     new FoursquareDetailsQuery(foursquareConfiguration, executorService, httpClient);
 
             List<CompletableFuture<FsPlaceDetailsDto>> placesTasks = new ArrayList<>();
-
-            for (FsPlace place : places) {
-                placesTasks.add(placesQuery.execute(new PlaceDetailsParams("venues", place.getId())));
-                COUNTER++;
-                if (COUNTER == 4000) {
-                    try {
+            try {
+                for (FsPlace place : places) {
+                    placesTasks.add(placesQuery.execute(new PlaceDetailsParams("venues", place.getId())));
+                    COUNTER++;
+                    if (COUNTER >= 4000) {
                         TimeUnit.HOURS.sleep(1);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
+                        COUNTER = 0;
                     }
-                    COUNTER = 0;
                 }
+                // Wait even longer
+                TimeUnit.HOURS.sleep(1);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
             }
 
             sequence(placesTasks).thenAcceptAsync(tasks ->
