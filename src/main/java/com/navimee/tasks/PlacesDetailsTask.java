@@ -20,6 +20,7 @@ public class PlacesDetailsTask {
     public void executeDetailsTask() {
         coordinatesRepository.getAvailableCities().thenAcceptAsync(cities -> {
             for (City city : cities) {
+                if(city.getId().equals("WARSZAWA"))
                 placesService.savePlacesDetails(city.getId());
             }
         });

@@ -37,8 +37,8 @@ public class ChatRepositoryImpl implements ChatRepository {
                         .set(chat, SetOptions.merge());
 
                 if (chat.isAdvertisement()) {
-                    chat.setId(chat.getId() + "_OGLOSZENIA");
-                    chat.setName(chat.getName() + " ogłoszenia");
+                    chat.setId(chat.getId() + "_OFERTY");
+                    chat.setName(chat.getName() + " oferty");
                     database.document(new PathBuilder().add(GROUP).addCountry().add(chat.getId()).add(ROOM_DETAILS).build())
                             .set(chat, SetOptions.merge());
                 }

@@ -1,5 +1,6 @@
 package com.navimee.services.places;
 
+import com.google.cloud.firestore.annotation.Exclude;
 import com.navimee.configuration.Qualifiers;
 import com.navimee.configuration.specific.FoursquareConfiguration;
 import com.navimee.contracts.repositories.FirebaseRepository;
@@ -74,13 +75,14 @@ public class FoursquarePlacesServiceImpl implements PlacesDetailsService {
                     placesTasks.add(placesQuery.execute(new PlaceDetailsParams("venues", place.getId())));
                     COUNTER++;
                     if (COUNTER >= 4000) {
-                        TimeUnit.HOURS.sleep(1);
+                        //TimeUnit.HOURS.sleep(1);
                         COUNTER = 0;
+                        break;
                     }
                 }
                 // Wait even longer
-                TimeUnit.HOURS.sleep(1);
-            } catch (InterruptedException e) {
+                //TimeUnit.HOURS.sleep(1);
+            } catch (Exception e) {
                 e.printStackTrace();
             }
 

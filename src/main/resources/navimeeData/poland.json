@@ -53,13 +53,6 @@
       "advertisement": false
     },
     {
-      "id": "SOPOT",
-      "name": "Sopot",
-      "admin": "ADMIN_DRIVELY",
-      "editable": false,
-      "advertisement": true
-    },
-    {
       "id": "KATOWICE",
       "name": "Katowice",
       "admin": "ADMIN_DRIVELY",
@@ -67,15 +60,8 @@
       "advertisement": true
     },
     {
-      "id": "GDANSK",
-      "name": "Gdańsk",
-      "admin": "ADMIN_DRIVELY",
-      "editable": false,
-      "advertisement": true
-    },
-    {
-      "id": "GDYNIA",
-      "name": "Gdynia",
+      "id": "TROJMIASTO",
+      "name": "Trójmiasto",
       "admin": "ADMIN_DRIVELY",
       "editable": false,
       "advertisement": true
