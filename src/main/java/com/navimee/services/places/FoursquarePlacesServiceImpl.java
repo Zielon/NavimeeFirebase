@@ -1,6 +1,5 @@
 package com.navimee.services.places;
 
-import com.google.cloud.firestore.annotation.Exclude;
 import com.navimee.configuration.Qualifiers;
 import com.navimee.configuration.specific.FoursquareConfiguration;
 import com.navimee.contracts.repositories.FirebaseRepository;
@@ -36,7 +35,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.TimeUnit;
 
 import static com.navimee.asyncCollectors.Completable.sequence;
 import static com.navimee.linq.Distinct.distinctByKey;

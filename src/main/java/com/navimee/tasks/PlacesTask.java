@@ -43,7 +43,7 @@ public class PlacesTask {
     @Autowired
     ExecutorService executorService;
 
-    public void executePlacesTask() throws ExecutionException, InterruptedException {
+    public void executePlacesTask() {
         NavimeeData navimeeData = new NavimeeData();
         Map<String, List<Coordinate>> coordinates = navimeeData.getCoordinates();
         List<City> staticData = navimeeData.getCities();

@@ -16,7 +16,7 @@ public interface FirebaseRepository {
 
     CompletableFuture<Void> transferPlaces(List<FsPlaceDetails> placeDetails);
 
-    void deleteCurrentHotspot();
+    CompletableFuture<Void> deleteCurrentHotspot();
 
     CompletableFuture<Void> deleteEvents(List<Event> events);
 

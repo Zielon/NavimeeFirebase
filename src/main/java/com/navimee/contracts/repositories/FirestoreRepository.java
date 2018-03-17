@@ -7,5 +7,4 @@ public interface FirestoreRepository {
     CompletableFuture<Void> deleteDocument(String document);
 
     CompletableFuture<Void> deleteCollection(String collection);
-
 }

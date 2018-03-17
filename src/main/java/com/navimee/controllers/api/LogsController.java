@@ -7,8 +7,6 @@ import com.navimee.firestore.FirebasePaths;
 import com.navimee.models.entities.Log;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -16,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.Future;
 
 import static java.util.stream.Collectors.toList;
 
@@ -65,12 +64,7 @@ public class LogsController {
     }
 
     @RequestMapping(value = "delete", method = RequestMethod.POST)
-    public ResponseEntity<?> delete() {
-        try {
-            firestoreRepository.deleteCollection(FirebasePaths.LOGS).join();
-        } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-        return new ResponseEntity<>(HttpStatus.OK);
+    public Future<Void> delete() {
+        return firestoreRepository.deleteCollection(FirebasePaths.LOGS);
     }
 }
