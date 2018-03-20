@@ -1,5 +1,7 @@
 package com.navimee.controllers.api;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.navimee.contracts.repositories.UsersRepository;
 import com.navimee.controllers.dto.FieldUpdateDto;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,10 +11,11 @@ import java.util.concurrent.Future;
 
 @RestController
 @RequestMapping(value = "api/edit")
-public class EditController {
+public class UsersController {
 
     @Autowired
     UsersRepository usersRepository;
+    private ObjectMapper mapper = new ObjectMapper();
 
     @RequestMapping(value = "update/usersField", method = RequestMethod.POST)
     public Future<Void> editUsersFileds(@RequestBody FieldUpdateDto dto) throws Exception {
@@ -48,5 +51,17 @@ public class EditController {
     @RequestMapping(value = "delete/usersCollection/{collection}", method = RequestMethod.POST)
     public Future<Void> deleteUsersCollection(@PathVariable String collection) throws NoSuchFieldException {
         return usersRepository.deleteUsersCollection(collection);
+    }
+
+    @RequestMapping(value = "get/users", method = RequestMethod.GET, produces = "application/json")
+    public Future<String> allUsers() {
+        return usersRepository.getAllUsers().thenApplyAsync(users -> {
+            try {
+                return mapper.writeValueAsString(users);
+            } catch (JsonProcessingException e) {
+                e.printStackTrace();
+            }
+            return "Error";
+        });
     }
 }
