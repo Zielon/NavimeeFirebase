@@ -5,14 +5,22 @@ import com.navimee.models.entities.contracts.Entity;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class User implements Entity {
-    private String id;
-    private String token;
     private String email;
+    private String id;
+    private boolean online;
     private String name;
-    private boolean bigEventsNotification;
+    private String avatar;
+    private String token;
+    private String city;
+    private String country;
+
+    //Settings
     private boolean dayScheduleNotification;
+    private boolean bigEventsNotification;
     private boolean chatPrivateNotification;
     private boolean chatGroupNotification;
+    private boolean shareLocalization;
+    private String driverType;
 
     public String getEmail() {
         return email;
@@ -76,5 +84,53 @@ public class User implements Entity {
 
     public void setChatPrivateNotification(boolean chatPrivateNotification) {
         this.chatPrivateNotification = chatPrivateNotification;
+    }
+
+    public boolean isShareLocalization() {
+        return shareLocalization;
+    }
+
+    public void setShareLocalization(boolean shareLocalization) {
+        this.shareLocalization = shareLocalization;
+    }
+
+    public String getDriverType() {
+        return driverType;
+    }
+
+    public void setDriverType(String driverType) {
+        this.driverType = driverType;
+    }
+
+    public String getCountry() {
+        return country;
+    }
+
+    public void setCountry(String country) {
+        this.country = country;
+    }
+
+    public String getCity() {
+        return city;
+    }
+
+    public void setCity(String city) {
+        this.city = city;
+    }
+
+    public String getAvatar() {
+        return avatar;
+    }
+
+    public void setAvatar(String avatar) {
+        this.avatar = avatar;
+    }
+
+    public boolean isOnline() {
+        return online;
+    }
+
+    public void setOnline(boolean online) {
+        this.online = online;
     }
 }
