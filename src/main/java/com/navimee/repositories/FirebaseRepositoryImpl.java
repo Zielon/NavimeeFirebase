@@ -17,6 +17,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -65,12 +66,14 @@ public class FirebaseRepositoryImpl implements FirebaseRepository {
     }
 
     @Override
-    public void deleteCurrentHotspot() {
-        try {
-            firebaseDatabase.getReference(HOTSPOT_CURRENT).removeValueAsync().get();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+    public CompletableFuture<Void> deleteCurrentHotspot() {
+        return CompletableFuture.runAsync(() -> {
+            try {
+                firebaseDatabase.getReference(HOTSPOT_CURRENT).removeValueAsync().get();
+            } catch (InterruptedException | ExecutionException e) {
+                e.printStackTrace();
+            }
+        });
     }
 
     @Override

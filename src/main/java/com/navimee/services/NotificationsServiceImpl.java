@@ -68,6 +68,8 @@ public class NotificationsServiceImpl implements NotificationsService {
         return new ChildEventListener() {
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                 Feedback feedback = dataSnapshot.getValue(Feedback.class);
+                if (feedback == null || feedback.getUserId() == null) return;
+
                 usersRepository.getUser(feedback.getUserId()).thenAcceptAsync(user -> {
                     if (user == null || feedback.isSent()) return;
 

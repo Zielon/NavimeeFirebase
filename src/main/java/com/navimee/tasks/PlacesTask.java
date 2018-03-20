@@ -6,9 +6,6 @@ import com.navimee.contracts.repositories.FirestoreRepository;
 import com.navimee.contracts.repositories.places.CoordinatesRepository;
 import com.navimee.contracts.services.places.PlacesService;
 import com.navimee.firestore.PathBuilder;
-import com.navimee.logger.LogTypes;
-import com.navimee.logger.Logger;
-import com.navimee.models.entities.Log;
 import com.navimee.models.entities.coordinates.City;
 import com.navimee.models.entities.coordinates.Coordinate;
 import com.navimee.staticData.NavimeeData;
@@ -46,7 +43,7 @@ public class PlacesTask {
     @Autowired
     ExecutorService executorService;
 
-    public void executePlacesTask() throws ExecutionException, InterruptedException {
+    public void executePlacesTask() {
         NavimeeData navimeeData = new NavimeeData();
         Map<String, List<Coordinate>> coordinates = navimeeData.getCoordinates();
         List<City> staticData = navimeeData.getCities();
@@ -68,12 +65,8 @@ public class PlacesTask {
         allDone.thenAcceptAsync(results -> {
             coordinatesRepository.getAvailableCities().thenAcceptAsync(cities -> {
                 for (City city : cities) {
-                    try {
-                        facebookService.savePlaces(city.getId());
-                        //foursquareService.savePlaces(city.getId());
-                    } catch (Exception e) {
-                        Logger.LOG(new Log(LogTypes.EXCEPTION, e));
-                    }
+                    facebookService.savePlaces(city.getId()).join();
+                    foursquareService.savePlaces(city.getId()).join();
                 }
             });
         }, executorService);

@@ -35,7 +35,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.TimeUnit;
 
 import static com.navimee.asyncCollectors.Completable.sequence;
 import static com.navimee.linq.Distinct.distinctByKey;
@@ -69,18 +68,20 @@ public class FoursquarePlacesServiceImpl implements PlacesDetailsService {
                     new FoursquareDetailsQuery(foursquareConfiguration, executorService, httpClient);
 
             List<CompletableFuture<FsPlaceDetailsDto>> placesTasks = new ArrayList<>();
-
-            for (FsPlace place : places) {
-                placesTasks.add(placesQuery.execute(new PlaceDetailsParams("venues", place.getId())));
-                COUNTER++;
-                if (COUNTER == 4000) {
-                    try {
-                        TimeUnit.HOURS.sleep(1);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
+            try {
+                for (FsPlace place : places) {
+                    placesTasks.add(placesQuery.execute(new PlaceDetailsParams("venues", place.getId())));
+                    COUNTER++;
+                    if (COUNTER >= 4000) {
+                        //TimeUnit.HOURS.sleep(1);
+                        COUNTER = 0;
+                        break;
                     }
-                    COUNTER = 0;
                 }
+                // Wait even longer
+                //TimeUnit.HOURS.sleep(1);
+            } catch (Exception e) {
+                e.printStackTrace();
             }
 
             sequence(placesTasks).thenAcceptAsync(tasks ->
