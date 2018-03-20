@@ -54,7 +54,7 @@ public class UsersController {
     }
 
     @RequestMapping(value = "get/users", method = RequestMethod.GET, produces = "application/json")
-    public Future<String> events() {
+    public Future<String> allUsers() {
         return usersRepository.getAllUsers().thenApplyAsync(users -> {
             try {
                 return mapper.writeValueAsString(users);

@@ -39,7 +39,7 @@ public class LongRunOperationsController {
 
     @RequestMapping(value = "update/foursquaredetails/city", method = RequestMethod.POST)
     public ResponseEntity<?> updatePlacesCity(@RequestBody FoursquareDetailsCity dto) {
-        placesService.savePlacesDetails(dto.getCity().toUpperCase());
+        placesService.savePlacesDetails(dto.getCityId().toUpperCase());
         return new ResponseEntity<>(HttpStatus.OK);
     }
 }

@@ -1,13 +1,13 @@
 package com.navimee.controllers.dto;
 
 public class FoursquareDetailsCity {
-    private String city;
+    private String cityId;
 
-    public String getCity() {
-        return city;
+    public String getCityId() {
+        return cityId;
     }
 
-    public void setCity(String city) {
-        this.city = city;
+    public void setCityId(String cityId) {
+        this.cityId = cityId;
     }
 }
