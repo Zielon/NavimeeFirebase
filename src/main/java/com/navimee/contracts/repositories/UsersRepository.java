@@ -17,5 +17,7 @@ public interface UsersRepository {
 
     CompletableFuture<Void> deleteUsersCollection(String collection);
 
+    CompletableFuture<Void> deleteUser(String id);
+
     CompletableFuture<List<User>> getUsersWithBigEventsOn();
 }

@@ -5,6 +5,7 @@ import com.google.cloud.firestore.FieldValue;
 import com.google.cloud.firestore.Firestore;
 import com.google.cloud.firestore.Query;
 import com.navimee.contracts.repositories.UsersRepository;
+import com.navimee.firestore.FirebasePaths;
 import com.navimee.firestore.PathBuilder;
 import com.navimee.firestore.operations.DbDelete;
 import com.navimee.firestore.operations.DbGet;
@@ -16,6 +17,8 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 
+import static com.navimee.firestore.FirebasePaths.FRIENDS;
+import static com.navimee.firestore.FirebasePaths.GROUP;
 import static com.navimee.firestore.FirebasePaths.USERS;
 
 @Repository
@@ -67,6 +70,16 @@ public class UsersRepositoryImpl implements UsersRepository {
                             CollectionReference reference = database.collection(new PathBuilder().add(USERS).add(user.getId()).add(collection).build());
                             dbDelete.collection(reference, 0);
                         }), executorService);
+    }
+
+    @Override
+    public CompletableFuture<Void> deleteUser(String id) {
+        return CompletableFuture.runAsync(
+                () -> {
+                    dbDelete.collection(database.collection(new PathBuilder().add(USERS).add(id).add(FRIENDS).build()));
+                    dbDelete.collection(database.collection(new PathBuilder().add(USERS).add(id).add(GROUP).build()));
+                    database.document(new PathBuilder().add(USERS).add(id).build()).delete();
+                }, executorService);
     }
 
     @Override

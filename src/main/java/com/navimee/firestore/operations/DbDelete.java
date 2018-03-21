@@ -19,6 +19,10 @@ public class DbDelete {
     @Autowired
     ExecutorService executorService;
 
+    public void collection(CollectionReference collection) {
+        collection(collection, 0);
+    }
+
     public void collection(CollectionReference collection, int deletedAll) {
         int batchSize = 3000;
         try {
