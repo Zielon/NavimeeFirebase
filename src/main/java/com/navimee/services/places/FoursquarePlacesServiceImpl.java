@@ -72,7 +72,7 @@ public class FoursquarePlacesServiceImpl implements PlacesDetailsService {
                 for (FsPlace place : places) {
                     placesTasks.add(placesQuery.execute(new PlaceDetailsParams("venues", place.getId())));
                     COUNTER++;
-                    if (COUNTER >= 4000) {
+                    if (COUNTER >= 4500) {
                         //TimeUnit.HOURS.sleep(1);
                         COUNTER = 0;
                         break;
